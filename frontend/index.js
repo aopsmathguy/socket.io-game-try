@@ -106,8 +106,8 @@ var myGameArea = {
 
   },
   clear: function () {
-    this.context.fillStyle = "#080";
-    this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);
+    myGameArea.context.fillStyle = "#080";
+    myGameArea.context.fillRect(0, 0, this.canvas.width, this.canvas.height);
   }
 }
 var controlsBundle = {
