@@ -39,7 +39,7 @@ io.on('connection', client => {
 	  controlId = client.id;
 	  gameState.players[controlId] = new Player(300,200);
 	    controls[controlId] = {
-	      keys : [],
+	      keys : {},
 	      mouseDown : false
 	    }
 	}
