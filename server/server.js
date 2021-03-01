@@ -10,21 +10,26 @@ io.on('connection', client => {
       delete controls[client.id];
     });
     client.on('keydown', (keycode) => {
-    	controls[client.id].keys[keycode] = true;
-    	gameState.players[client.id].justKeyDowned[keycode] = true;
+    	if (controls[client.id] && gameState.players[client.id])
+    	{
+    		controls[client.id].keys[keycode] = true;
+    		gameState.players[client.id].justKeyDowned[keycode] = true;
+    	}
     });
     client.on('keyup', (keycode) => {
-    	controls[client.id].keys[keycode] = false;
+    	if (controls[client.id] && gameState.players[client.id])
+    		controls[client.id].keys[keycode] = false;
     });
     client.on('mousemove', (ang) => {
-    	controls[client.id].ang = ang;
+    	if (controls[client.id] && gameState.players[client.id])
+    		controls[client.id].ang = ang;
     });
     client.on('mousedown', () => {
-    	controls[client.id].mouseDown = true;
-    	gameState.players[client.id].justMouseDowned = true;
-    });
-    client.on('mouseup', () => {
-    	controls[client.id].mouseDown = false;
+    	if (controls[client.id] && gameState.players[client.id])
+    	{
+    	    controls[client.id].mouseDown = true;
+    	    gameState.players[client.id].justMouseDowned = true;
+    	}
     });
 	function addPlayer(msg){
 	  controlId = client.id;
