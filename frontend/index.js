@@ -1,4 +1,4 @@
-const socket = io('http://localhost:3000/');
+const socket = io('https://limitless-everglades-60126.herokuapp.com/');
 
 socket.on('init', handleInit);
 socket.on('gameState', (msg) => {
