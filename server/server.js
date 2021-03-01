@@ -631,7 +631,7 @@ var Vector = function (x, y) {
 
 }
 makeObstacles();
-setInterval(updateGameArea, 1000/20);
+setInterval(updateGameArea, 1000/10);
 function updateGameArea() {
   gameState.step();
   gameState.step();
