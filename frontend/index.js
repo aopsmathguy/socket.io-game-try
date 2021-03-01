@@ -5,9 +5,7 @@ socket.on('gameState', (msg) => {
    var obj = JSON.parse(msg);
    giveMethods(obj);
    gameState = obj;
-   updateGameArea();
 });
-
 const canvas = document.getElementById('canvas');
 const initialScreen = document.getElementById('initialScreen');
 const joinGameBtn = document.getElementById('joinGameButton');
@@ -94,7 +92,7 @@ var myGameArea = {
       elapsed = now - then;
       if (elapsed > this.fpsInterval) {
         then = now - elapsed % this.fpsInterval;
-        //updateGameArea();
+        updateGameArea();
       }
     }
     this.interval = function () {
@@ -106,7 +104,6 @@ var myGameArea = {
 
   },
   clear: function () {
-    console.log(this);
     this.context.fillStyle = "#080";
     this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);
   }
