@@ -2,9 +2,7 @@ const socket = io('https://limitless-everglades-60126.herokuapp.com/');
 
 socket.on('init', handleInit);
 socket.on('gameState', (msg) => {
-   var obj = JSON.parse(msg);
-   giveMethods(obj);
-   gameState = obj;
+   gameState = JSON.parse(msg);
 });
 const canvas = document.getElementById('canvas');
 const initialScreen = document.getElementById('initialScreen');
@@ -568,6 +566,7 @@ var resetControls = function()
 function updateGameArea() {
   if (gameState != undefined)
   {
+    giveMethods(gameState);
     gameState.render();
   }
 }
