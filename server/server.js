@@ -27,9 +27,13 @@ io.on('connection', client => {
     client.on('mousedown', () => {
     	if (controls[client.id] && gameState.players[client.id])
     	{
-    	    controls[client.id].mouseDown = true;
+    		controls[client.id].mouseDown = true;
     	    gameState.players[client.id].justMouseDowned = true;
     	}
+    });
+    client.on('mouseup', () => {
+    	if (controls[client.id] && gameState.players[client.id])
+    		controls[client.id].mouseDown = false;
     });
 	function addPlayer(msg){
 	  controlId = client.id;
