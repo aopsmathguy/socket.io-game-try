@@ -595,8 +595,8 @@ var linearGameState = function()
      }
      //out.players[i].pos.x = leftFraction * left.players[i].pos.x + rightFraction * right.players[i].pos.x;
      //out.players[i].pos.y = leftFraction * left.players[i].pos.y + rightFraction * right.players[i].pos.y;
-     out.players[i].pos.x = left.players[i].pos.x;
-     out.players[i].pos.y = left.players[i].pos.y;
+     out.players[i].pos.x = right.players[i].pos.x;
+     out.players[i].pos.y = right.players[i].pos.y;
   }
   return out;
 }
