@@ -1,4 +1,4 @@
-const buffer = 1000;
+const buffer = 100;
 
 const socket = io('https://limitless-everglades-60126.herokuapp.com/');
 
@@ -581,8 +581,8 @@ var linearGameState = function()
   }
   var right = gameStates[rightIdx];
   var left = gameStates[rightIdx - 1];
-  var leftFraction = (right.time - displayTime)/(right.time - left.time);
-  var rightFraction = (displayTime - left.time)/(right.time - left.time);
+  var rightFraction = (right.time - displayTime)/(right.time - left.time);
+  var leftFraction = (displayTime - left.time)/(right.time - left.time);
 
   var out = Object.assign({}, right);
   console.log(left.players[controlId],right.players[controlId]);
