@@ -560,8 +560,7 @@ var displayCrosshair = function () {
 }
 var linearGameState = function()
 {
-  var time = serverTime();
-  var displayTime = time - buffer;
+  var displayTime = serverTime() - buffer;
   var rightIdx = 1;
   var time = 0;
   while (rightIdx < gameStates.length && gameStates[rightIdx].time < displayTime)
