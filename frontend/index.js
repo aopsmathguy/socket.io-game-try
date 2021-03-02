@@ -589,7 +589,7 @@ var linearGameState = function()
   var out = Object(right);
   for (var i in out.players)
   {
-     if (i >= left.players.length || i >= left.players.length)
+     if (i >= left.players.length || i >= right.players.length)
      {
         continue;
      }
