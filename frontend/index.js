@@ -568,9 +568,9 @@ var linearGameState = function()
   {
       rightIdx += 1
   }
-  if (rightIdx >= gameStates.length)
+  if (rightIdx < gameStates.length)
   {
-    rightIdx -= 1;
+    rightIdx += 1;
   }
   var right = Object(gameStates[rightIdx]);
   var left = Object(gameStates[rightIdx - 1]);
