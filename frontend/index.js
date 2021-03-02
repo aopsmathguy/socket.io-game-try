@@ -585,6 +585,7 @@ var linearGameState = function()
   var rightFraction = (displayTime - gameStates[rightIdx - 1].time)/(gameStates[rightIdx].time - gameStates[rightIdx-1].time);
 
   out = Object(right);
+  return out;
   for (var i in out.players)
   {
      if (i >= left.players.length || i >= left.players.length)
@@ -594,7 +595,6 @@ var linearGameState = function()
      out.players[i].pos.x = leftFraction * left.players[i].pos.x + rightFraction * right.players[i].pos.x;
      out.players[i].pos.y = leftFraction * left.players[i].pos.y + rightFraction * right.players[i].pos.y;
   }
-  return out;
 }
 var resetControls = function()
 {
