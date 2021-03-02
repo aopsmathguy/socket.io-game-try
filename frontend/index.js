@@ -244,30 +244,18 @@ var Player = function (xStart, yStart) {
     var firstHand = (this.weapon != -1 ? new Vector(this.radius - gameState.weapons[this.weapon].recoil, 3) : new Vector(this.radius * 0.75, this.radius * 0.8));
     var secondHand = (this.weapon != -1 ? new Vector(2 * this.radius - gameState.weapons[this.weapon].recoil, 6) : new Vector(this.radius * 0.75, -this.radius * 0.8));
     if (this.weapon != -1) {
-      var weapon = gameState.weapons[this.weapon];
-       for (var i = 0; i < weapon.bullets.length; i++) {
-         weapon.bullets[i].display();
-       }
-       var ctx = myGameArea.context;
-       ctx.strokeStyle = weapon.color;
-
-       drawer.lineWidth(ctx, 8);
-       ctx.beginPath();
-       drawer.moveContext(ctx, weapon.pos.add((new Vector(-weapon.length / 2, 0)).rotate(controlsBundle.ang)));
-       drawer.lineContext(ctx, weapon.pos.add((new Vector(weapon.length / 2, 0)).rotate(controlsBundle.ang)));
-       ctx.closePath();
-       ctx.stroke();
+      this.weapons[this.weapon].display();
     }
     ctx.strokeStyle = '#000';
     drawer.lineWidth(ctx, 3);
     ctx.beginPath();
-    drawer.circle(ctx, this.pos.add(firstHand.rotate(controlsBundle.ang)), 6);
+    drawer.circle(ctx, this.pos.add(firstHand.rotate(this.weapons[this.weapon].ang)), 6);
     ctx.closePath();
     ctx.stroke();
     ctx.fill();
 
     ctx.beginPath();
-    drawer.circle(ctx, this.pos.add(secondHand.rotate(controlsBundle.ang)), 6);
+    drawer.circle(ctx, this.pos.add(secondHand.rotate(this.weapons[this.weapon].ang)), 6);
     ctx.closePath();
     ctx.stroke();
     ctx.fill();
