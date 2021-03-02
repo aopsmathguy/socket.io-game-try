@@ -244,7 +244,7 @@ var Player = function (xStart, yStart) {
     var firstHand = (this.weapon != -1 ? new Vector(this.radius - gameState.weapons[this.weapon].recoil, 3) : new Vector(this.radius * 0.75, this.radius * 0.8));
     var secondHand = (this.weapon != -1 ? new Vector(2 * this.radius - gameState.weapons[this.weapon].recoil, 6) : new Vector(this.radius * 0.75, -this.radius * 0.8));
     if (this.weapon != -1) {
-      this.weapons[this.weapon].display();
+      gameState.weapons[this.weapon].display();
     }
     ctx.strokeStyle = '#000';
     drawer.lineWidth(ctx, 3);
