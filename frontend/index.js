@@ -38,7 +38,7 @@ function sendControls()
 {
   socket.emit('controls',controlsBundle);
 }
-var gameStates = [];
+var gameStates = new var[0];
 var controlId;
 var drawer;
 var myGameArea = {
@@ -568,10 +568,15 @@ var linearGameState = function()
   {
       rightIdx += 1
   }
+  if (rightIdx == gameStates.length)
+  {
+    rightIdx = gameStates.length - 1;
+  }
   var right = gameStates[rightIdx];
   var left = gameStates[rightIdx - 1];
   var leftFraction = (right.time - displayTime)/(right.time - left.time);
   var rightFraction = (displayTime - left.time)/(right.time - left.time);
+
   console.log(leftFraction, rightFraction);
   var out = Object(right);
   for (var i in out.players)
