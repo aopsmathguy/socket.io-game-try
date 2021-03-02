@@ -256,7 +256,7 @@ var GameState = function (time, players, obstacles, weapons) {
   }
   this.displayObstacle = function(i)
   {
-    var obstacle = obstacles[i];
+    var obstacle = this.obstacles[i];
     var ctx = myGameArea.context;
     ctx.fillStyle = obstacle.color;
     ctx.beginPath();
