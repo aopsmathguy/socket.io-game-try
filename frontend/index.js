@@ -561,6 +561,7 @@ var displayCrosshair = function () {
 var linearGameState = function()
 {
   var displayTime = serverTime() - buffer;
+  console.log(displayTime);
   var rightIdx = 1;
   var time = 0;
   while (rightIdx < gameStates.length && gameStates[rightIdx].time < displayTime)
@@ -574,7 +575,7 @@ var linearGameState = function()
       }
       
   }
-  console.log(rightIdx, gameStates.length);
+  //console.log(rightIdx, gameStates.length);
   if (rightIdx >= gameStates.length)
   {
     rightIdx = gameStates.length - 1;
