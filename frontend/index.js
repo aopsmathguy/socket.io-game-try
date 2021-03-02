@@ -567,14 +567,20 @@ var linearGameState = function()
   var time = 0;
   while (rightIdx < gameStates.length && time < displayTime)
   {
-      rightIdx += 1;
+      if (rightIdx > 1)
+      {
+        gameStates.splice(rightIdx - 2, 1);
+      }
+      else{
+        rightIdx += 1;
+      }
       time =  gameStates[rightIdx].time;
   }
-  if (rightIdx == gameStates.length)
+  if (rightIdx >= gameStates.length)
   {
     rightIdx = gameStates.length - 1;
   }
-  var right = gameStates[rightIdx - 1];
+  var right = gameStates[rightIdx];
   var left = gameStates[rightIdx - 1];
   var leftFraction = (right.time - displayTime)/(right.time - left.time);
   var rightFraction = (displayTime - left.time)/(right.time - left.time);
