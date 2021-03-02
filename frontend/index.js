@@ -244,18 +244,30 @@ var Player = function (xStart, yStart) {
     var firstHand = (this.weapon != -1 ? new Vector(this.radius - gameState.weapons[this.weapon].recoil, 3) : new Vector(this.radius * 0.75, this.radius * 0.8));
     var secondHand = (this.weapon != -1 ? new Vector(2 * this.radius - gameState.weapons[this.weapon].recoil, 6) : new Vector(this.radius * 0.75, -this.radius * 0.8));
     if (this.weapon != -1) {
-      gameState.weapons[this.weapon].display();
+      var weapon = gameState.weapons[this.weapon];
+       for (var i = 0; i < weapon.bullets.length; i++) {
+         weapon.bullets[i].display();
+       }
+       var ctx = myGameArea.context;
+       ctx.strokeStyle = weapon.color;
+
+       drawer.lineWidth(ctx, 8);
+       ctx.beginPath();
+       drawer.moveContext(ctx, weapon.pos.add((new Vector(-weapon.length / 2, 0)).rotate(controlsBundle.ang)));
+       drawer.lineContext(ctx, weapon.pos.add((new Vector(weapon.length / 2, 0)).rotate(controlsBundle.ang)));
+       ctx.closePath();
+       ctx.stroke();
     }
     ctx.strokeStyle = '#000';
     drawer.lineWidth(ctx, 3);
     ctx.beginPath();
-    drawer.circle(ctx, this.pos.add(firstHand.rotate(this.ang)), 6);
+    drawer.circle(ctx, this.pos.add(firstHand.rotate(controlsBundle.ang)), 6);
     ctx.closePath();
     ctx.stroke();
     ctx.fill();
 
     ctx.beginPath();
-    drawer.circle(ctx, this.pos.add(secondHand.rotate(this.ang)), 6);
+    drawer.circle(ctx, this.pos.add(secondHand.rotate(controlsBundle.ang)), 6);
     ctx.closePath();
     ctx.stroke();
     ctx.fill();
@@ -270,7 +282,8 @@ var Player = function (xStart, yStart) {
       ctx.fillStyle = '#fff';
       ctx.lineWidth = 2;
       ctx.textAlign = "center";
-      ctx.fillText(gameState.weapons[this.weapon].bulletsRemaining + '|' + gameState.weapons[this.weapon].capacity, myGameArea.canvas.width / 2, myGameArea.canvas.height - 100);
+      ctx.fillText(gameState.
+                   [this.weapon].bulletsRemaining + '|' + gameState.weapons[this.weapon].capacity, myGameArea.canvas.width / 2, myGameArea.canvas.height - 100);
       ctx.restore();
     }
   }
