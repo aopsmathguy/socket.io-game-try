@@ -440,6 +440,7 @@ var Drawer = function () {
   }
   this.update = function (state) {
     character = state.players[controlId];
+    giveMethods(character.pos);
     this.scroll = character.pos.add((new Vector(Math.random() - 0.5, Math.random() - 0.5)).multiply(this.screenShake));
     this.scale = 0.9 * (this.scale - this.targetScale) + this.targetScale;
   }
