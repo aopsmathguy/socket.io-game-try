@@ -1,8 +1,10 @@
+const buffer = 100;
+
 const socket = io('https://limitless-everglades-60126.herokuapp.com/');
 
 socket.on('init', handleInit);
 socket.on('gameState', (msg) => {
-   gameState = JSON.parse(msg);
+   gameStates.push(JSON.parse(msg));
 });
 const canvas = document.getElementById('canvas');
 const initialScreen = document.getElementById('initialScreen');
@@ -37,7 +39,7 @@ function sendControls()
   console.log(controlsBundle);
   socket.emit('controls',controlsBundle);
 }
-var gameState;
+var gameStates = [];
 var controlId;
 var drawer;
 var myGameArea = {
@@ -180,36 +182,126 @@ var GameState = function (time, players, obstacles, weapons) {
   this.render = function () {
     myGameArea.clear();
     drawer.update();
-    this.obstacles.forEach((obstacle) => obstacle.display());
-    this.weapons.forEach((weapon) => { if (!weapon.hold) { weapon.display() } });
-    for (var i in this.players) {
-      this.players[i].display();
+    for (var idx in this.obstacles)
+    {
+      this.displayObstacle(idx);
     }
-    this.players[controlId].displayReloadTime();
-    this.players[controlId].displayBulletCount();
+    for (var idx in this.weapons)
+    {
+      if (!this.weapons[idx].hold) {
+        this.displayWeapon(idx)
+      }
+    }
+    for (var idx in this.players) {
+      this.displayPlayer(idx);
+    }
+    this.displayReloadTime();
+    this.displayBulletCount();
     myGameArea.printFps();
     displayCrosshair();
+  }
+  this.displayPlayer = function(i)
+  {
+    var player = this.players[i];
+
+    var color = '#fcc976';
+    var ctx = myGameArea.context;
+
+    ctx.fillStyle = pSBC(0.5, color);
+    ctx.beginPath();
+    drawer.circle(ctx, player.pos, player.radius);
+    ctx.closePath();
+    ctx.fill();
+
+    ctx.fillStyle = color;
+    ctx.beginPath();
+    drawer.circle(ctx, player.pos, player.radius * player.health / 100);
+    ctx.closePath();
+    ctx.fill();
+
+    var firstHand = (player.weapon != -1 ? new Vector(player.radius - this.weapons[player.weapon].recoil, 3) : new Vector(player.radius * 0.75, player.radius * 0.8));
+    var secondHand = (player.weapon != -1 ? new Vector(2 * player.radius - this.weapons[player.weapon].recoil, 6) : new Vector(player.radius * 0.75, -player.radius * 0.8));
+    if (player.weapon != -1) {
+      this.displayWeapon(player.weapon);
+    }
+    ctx.strokeStyle = '#000';
+    drawer.lineWidth(ctx, 3);
+    ctx.beginPath();
+    drawer.circle(ctx, player.pos.add(firstHand.rotate(player.ang)), 6);
+    ctx.closePath();
+    ctx.stroke();
+    ctx.fill();
+
+    ctx.beginPath();
+    drawer.circle(ctx, player.pos.add(secondHand.rotate(player.ang)), 6);
+    ctx.closePath();
+    ctx.stroke();
+    ctx.fill();
+  }
+  this.displayWeapon = function(i)
+  {
+    var weapon = this.weapons[i];
+    for (var i = 0; i < weapon.bullets.length; i++) {
+      weapon.bullets[i].display();
+    }
+    var ctx = myGameArea.context;
+    ctx.strokeStyle = weapon.color;
+
+    drawer.lineWidth(ctx, 8);
+    ctx.beginPath();
+    drawer.moveContext(ctx, weapon.pos.add((new Vector(-weapon.length / 2, 0)).rotate(weapon.ang)));
+    drawer.lineContext(ctx, weapon.pos.add((new Vector(weapon.length / 2, 0)).rotate(weapon.ang)));
+    ctx.closePath();
+    ctx.stroke();
+  }
+  this.displayObstacle = function(i)
+  {
+    var obstacle = obstacles[i];
+    var ctx = myGameArea.context;
+    ctx.fillStyle = obstacle.color;
+    ctx.beginPath();
+    drawer.moveContext(ctx, obstacle.vs[0]);
+    for (var i = 1; i < obstacle.vs.length; i++) {
+      drawer.lineContext(ctx, obstacle.vs[i]);
+    }
+    ctx.closePath();
+    ctx.fill();
+  }
+  this.displayBulletCount = function () {
+    var player = this.players[controlId];
+    if (player && this.weapon != -1) {
+      var ctx = myGameArea.context;
+      ctx.save();
+      ctx.font = "bold 40px Courier New";
+      ctx.fillStyle = '#fff';
+      ctx.lineWidth = 2;
+      ctx.textAlign = "center";
+      ctx.fillText(this.weapons[player.weapon].bulletsRemaining + '|' + this.weapons[player.weapon].capacity, myGameArea.canvas.width / 2, myGameArea.canvas.height - 100);
+      ctx.restore();
+    }
+  }
+  this.displayReloadTime = function () {
+    var player = this.players[controlId];
+    if (player.weapon != -1 && this.weapons[player.weapon].reloadStartTime != -1) {
+      var ctx = myGameArea.context;
+      ctx.save();
+      ctx.globalAlpha = 0.8;
+
+      ctx.strokeStyle = '#fff';
+      drawer.lineWidth(ctx, 6);
+      ctx.beginPath();
+      drawer.moveContext(ctx, player.pos.add(new Vector(-player.radius, player.radius * 2)));
+      drawer.lineContext(ctx, player.pos.add(new Vector(player.radius - 2 * player.radius * (this.time - this.weapons[player.weapon].reloadStartTime) / this.weapons[player.weapon].reloadTime, player.radius * 2)));
+      ctx.closePath();
+      ctx.stroke();
+      ctx.restore();
+    }
   }
   this.toString = function () {
     return JSON.stringify(this);
   }
 }
 var makeObstacles = function () {
-  var players = {
-  };
-  var obstacles = [
-    new Obstacle([new Vector(100, 100), new Vector(200, 200), new Vector(260, 200), new Vector(260, 100), new Vector(200, 100)], '#f00'),
-    new Obstacle([new Vector(0, 100), new Vector(43.4314575051, 100), new Vector(143.4314575051, 200), new Vector(0, 200)], '#f00'),
-    new Obstacle([new Vector(400, 200), new Vector(400, 300), new Vector(300, 300), new Vector(300, 240)], '#00f'),
-    new Obstacle([new Vector(40, 300), new Vector(260, 300), new Vector(260, 240), new Vector(40, 240)], '#00f')
-  ];
-  var weapons = [
-    new Gun(100, 50, 30, true, 900, 1, 32, 1000, 30, 7, 900, 0, 0.12, 0.9, 2, 0.9, 0.8, '#800'),
-    new Gun(200, 350, 45, true, 600, 1, 30, 1400, 40, 8, 1500, 0, 0.08, 0.91, 3, 0.9, 0.6, '#f80'),
-    new Gun(200, 50, 60, false, 450, 1, 10, 1500, 50, 20, 2000, 0, 0.3, 0.83, 6, 0.9, 0.3, '#008'),
-    new Gun(200, 220, 35, false, 450, 8, 2, 1200, 25, 9, 700, 0.3, 0, 0.83, 6, 0.9, 0.5, '#808')
-  ];
-  gameState = new GameState(Date.now(), players, obstacles, weapons);
   drawer = new Drawer();
 }
 var Player = function (xStart, yStart) {
@@ -225,71 +317,7 @@ var Player = function (xStart, yStart) {
   setIfUndefined(this, 'vel', new Vector(0, 0));
 
   setIfUndefined(this, 'ang', 0);
-  this.display = function () {
-    var color = '#fcc976';
-    var ctx = myGameArea.context;
-
-    ctx.fillStyle = pSBC(0.5, color);
-    ctx.beginPath();
-    drawer.circle(ctx, this.pos, this.radius);
-    ctx.closePath();
-    ctx.fill();
-
-    ctx.fillStyle = color;
-    ctx.beginPath();
-    drawer.circle(ctx, this.pos, this.radius * this.health / 100);
-    ctx.closePath();
-    ctx.fill();
-
-    var firstHand = (this.weapon != -1 ? new Vector(this.radius - gameState.weapons[this.weapon].recoil, 3) : new Vector(this.radius * 0.75, this.radius * 0.8));
-    var secondHand = (this.weapon != -1 ? new Vector(2 * this.radius - gameState.weapons[this.weapon].recoil, 6) : new Vector(this.radius * 0.75, -this.radius * 0.8));
-    if (this.weapon != -1) {
-      gameState.weapons[this.weapon].display();
-    }
-    ctx.strokeStyle = '#000';
-    drawer.lineWidth(ctx, 3);
-    ctx.beginPath();
-    drawer.circle(ctx, this.pos.add(firstHand.rotate(this.ang)), 6);
-    ctx.closePath();
-    ctx.stroke();
-    ctx.fill();
-
-    ctx.beginPath();
-    drawer.circle(ctx, this.pos.add(secondHand.rotate(this.ang)), 6);
-    ctx.closePath();
-    ctx.stroke();
-    ctx.fill();
-
-
-  }
-  this.displayBulletCount = function () {
-    if (this.weapon != -1) {
-      var ctx = myGameArea.context;
-      ctx.save();
-      ctx.font = "bold 40px Courier New";
-      ctx.fillStyle = '#fff';
-      ctx.lineWidth = 2;
-      ctx.textAlign = "center";
-      ctx.fillText(gameState.weapons[this.weapon].bulletsRemaining + '|' + gameState.weapons[this.weapon].capacity, myGameArea.canvas.width / 2, myGameArea.canvas.height - 100);
-      ctx.restore();
-    }
-  }
-  this.displayReloadTime = function () {
-    if (this.weapon != -1 && gameState.weapons[this.weapon].reloadStartTime != -1) {
-      var ctx = myGameArea.context;
-      ctx.save();
-      ctx.globalAlpha = 0.8;
-
-      ctx.strokeStyle = '#fff';
-      drawer.lineWidth(ctx, 6);
-      ctx.beginPath();
-      drawer.moveContext(ctx, this.pos.add(new Vector(-this.radius, this.radius * 2)));
-      drawer.lineContext(ctx, this.pos.add(new Vector(this.radius - 2 * this.radius * (gameState.time - gameState.weapons[this.weapon].reloadStartTime) / gameState.weapons[this.weapon].reloadTime, this.radius * 2)));
-      ctx.closePath();
-      ctx.stroke();
-      ctx.restore();
-    }
-  }
+  
   /*this.drawHealthBar = function()
   {
        var ctx = myGameArea.context;
@@ -351,21 +379,6 @@ var Gun = function (startX, startY, length, auto, firerate, multishot, capacity,
   setIfUndefined(this, 'lastFireTime', 0);
   setIfUndefined(this, 'hold', false);
   setIfUndefined(this, 'bullets', []);
-  this.display = function () {
-    for (var i = 0; i < this.bullets.length; i++) {
-      this.bullets[i].display();
-    }
-    var ctx = myGameArea.context;
-    ctx.strokeStyle = this.color;
-
-    drawer.lineWidth(ctx, 8);
-    ctx.beginPath();
-    drawer.moveContext(ctx, this.pos.add((new Vector(-this.length / 2, 0)).rotate(this.ang)));
-    drawer.lineContext(ctx, this.pos.add((new Vector(this.length / 2, 0)).rotate(this.ang)));
-    ctx.closePath();
-    ctx.stroke();
-  
-  }
 }
 var Bullet = function (weapon) {
   this.type = "Bullet";
@@ -425,8 +438,8 @@ var Drawer = function () {
     var newEnd = end.subtract(this.scroll).multiply(this.scale).add((new Vector(myGameArea.canvas.width, myGameArea.canvas.height)).multiply(0.5));
     return ctx.createLinearGradient(newStart.x, newStart.y, newEnd.x, newEnd.y);
   }
-  this.update = function () {
-    character = gameState.players[controlId];
+  this.update = function (state) {
+    character = state.players[controlId];
     this.scroll = character.pos.add((new Vector(Math.random() - 0.5, Math.random() - 0.5)).multiply(this.screenShake));
     this.scale = 0.9 * (this.scale - this.targetScale) + this.targetScale;
   }
@@ -449,17 +462,6 @@ var Obstacle = function (vs, color) {
     for (var i = 0; i < this.vs.length; i++) {
       this.maxRadius = Math.max(this.center.distanceTo(this.vs[i]), this.maxRadius);
     }
-  }
-  this.display = function () {
-    var ctx = myGameArea.context;
-    ctx.fillStyle = this.color;
-    ctx.beginPath();
-    drawer.moveContext(ctx, this.vs[0]);
-    for (var i = 1; i < this.vs.length; i++) {
-      drawer.lineContext(ctx, this.vs[i]);
-    }
-    ctx.closePath();
-    ctx.fill();
   }
 }
 var Vector = function (x, y) {
@@ -558,16 +560,42 @@ var displayCrosshair = function () {
   controlsBundle.mouse.add(new Vector(10, 0)).drawLine(controlsBundle.mouse.add(new Vector(-10, 0)), '#fff', 2);
   controlsBundle.mouse.add(new Vector(0, 10)).drawLine(controlsBundle.mouse.add(new Vector(0, -10)), '#fff', 2);
 }
+var linearGameState = function()
+{
+  var time = serverTime();
+  var displayTime = time - buffer;
+  var rightIdx = 0;
+  while (rightIdx < gameStates.length && gameStates[rightIdx].time < displayTime)
+  {
+    if (rightIdx > 0)
+    {
+       gameStates.splice(rightIdx - 1, 1)
+    }
+    rightIdx += 1
+  }
+  var right = Object(gameStates[rightIdx]);
+  var left = Object(gameStates[rightIdx - 1]);
+  var leftFraction = (gameStates[rightIdx].time - displayTime)/(gameStates[rightIdx].time - gameStates[rightIdx-1].time);
+  var rightFraction = 1 - leftFraction
+
+  out = Object(right);
+  for (var i in out.players)
+  {
+     out.players[i].pos = leftFraction * left.players[i].pos + rightFraction * right.players[i].pos;
+  }
+  return out;
+}
 var resetControls = function()
 {
   controlsBundle.justKeyDown = {};
   controlsBundle.justDowned = false;
 }
 function updateGameArea() {
-  if (gameState != undefined)
+  if (gameStates.length > 1)
   {
-    giveMethods(gameState);
-    gameState.render();
+    var state = linearGameState();
+    giveMethods(state);
+    state.render();
   }
 }
 function hexToRgbA(hex, alpha) {
