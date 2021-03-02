@@ -439,6 +439,7 @@ var Drawer = function () {
     return ctx.createLinearGradient(newStart.x, newStart.y, newEnd.x, newEnd.y);
   }
   this.update = function (state) {
+    console.log(state.players[controlId]);
     character = state.players[controlId];
     giveMethods(character.pos);
     this.scroll = character.pos.add((new Vector(Math.random() - 0.5, Math.random() - 0.5)).multiply(this.screenShake));
