@@ -584,7 +584,7 @@ var linearGameState = function()
   var leftFraction = (right.time - displayTime)/(right.time - left.time);
   var rightFraction = (displayTime - left.time)/(right.time - left.time);
 
-  var out = Object.assign({}, left);
+  var out = Object.assign({}, right);
   console.log(left.players[controlId],right.players[controlId]);
   for (var i in out.players)
   {
