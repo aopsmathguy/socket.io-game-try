@@ -566,9 +566,9 @@ var linearGameState = function()
   var rightIdx = 0;
   while (rightIdx < gameStates.length && gameStates[rightIdx].time < displayTime)
   {
-    if (rightIdx > 0)
+    if (rightIdx > 1)
     {
-       gameStates.splice(rightIdx - 1, 1)
+       gameStates.splice(rightIdx - 2, 1)
     }
     else{
       rightIdx += 1
