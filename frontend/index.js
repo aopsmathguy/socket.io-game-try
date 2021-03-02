@@ -441,7 +441,6 @@ var Drawer = function () {
   this.update = function (state) {
     console.log(state.players[controlId]);
     character = state.players[controlId];
-    giveMethods(character.pos);
     this.scroll = character.pos.add((new Vector(Math.random() - 0.5, Math.random() - 0.5)).multiply(this.screenShake));
     this.scale = 0.9 * (this.scale - this.targetScale) + this.targetScale;
   }
@@ -584,7 +583,8 @@ var linearGameState = function()
   out = Object(right);
   for (var i in out.players)
   {
-     out.players[i].pos = leftFraction * left.players[i].pos + rightFraction * right.players[i].pos;
+     out.players[i].pos.x = leftFraction * left.players[i].pos.x + rightFraction * right.players[i].pos.x;
+     out.players[i].pos.y = leftFraction * left.players[i].pos.y + rightFraction * right.players[i].pos.y;
   }
   return out;
 }
