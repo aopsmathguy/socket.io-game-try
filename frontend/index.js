@@ -570,7 +570,9 @@ var linearGameState = function()
     {
        gameStates.splice(rightIdx - 2, 1)
     }
-    rightIdx += 1
+    else{
+      rightIdx += 1
+    }
   }
   if (rightIdx >= gameStates.length)
   {
