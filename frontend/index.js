@@ -574,11 +574,8 @@ var linearGameState = function()
   }
   var right = Object(gameStates[rightIdx]);
   var left = Object(gameStates[rightIdx - 1]);
-  //var rightFraction = (gameStates[rightIdx].time - displayTime)/(gameStates[rightIdx].time - gameStates[rightIdx-1].time);
-  //var leftFraction = (displayTime - gameStates[rightIdx - 1].time)/(gameStates[rightIdx].time - gameStates[rightIdx-1].time);
-  return left;
-  var rightFraction = 0;
-  var leftFraction = 1;
+  var rightFraction = (gameStates[rightIdx].time - displayTime)/(gameStates[rightIdx].time - gameStates[rightIdx-1].time);
+  var leftFraction = (displayTime - gameStates[rightIdx - 1].time)/(gameStates[rightIdx].time - gameStates[rightIdx-1].time);
   console.log(leftFraction, rightFraction)
 
   var out = Object(right);
@@ -590,8 +587,6 @@ var linearGameState = function()
      }
      out.players[i].pos.x = leftFraction * left.players[i].pos.x + rightFraction * right.players[i].pos.x;
      out.players[i].pos.y = leftFraction * left.players[i].pos.y + rightFraction * right.players[i].pos.y;
-     //out.players[i].pos.x = right.players[i].pos.x;
-     //out.players[i].pos.y = right.players[i].pos.y;
   }
   return out;
 }
