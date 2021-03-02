@@ -586,7 +586,7 @@ var linearGameState = function()
   var rightFraction = 0;
   console.log(leftFraction, rightFraction)
 
-  out = Object(right);
+  var out = Object(right);
   for (var i in out.players)
   {
      if (i >= left.players.length || i >= left.players.length)
