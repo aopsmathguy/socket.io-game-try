@@ -282,8 +282,7 @@ var Player = function (xStart, yStart) {
       ctx.fillStyle = '#fff';
       ctx.lineWidth = 2;
       ctx.textAlign = "center";
-      ctx.fillText(gameState.
-                   [this.weapon].bulletsRemaining + '|' + gameState.weapons[this.weapon].capacity, myGameArea.canvas.width / 2, myGameArea.canvas.height - 100);
+      ctx.fillText(gameState.weapons[this.weapon].bulletsRemaining + '|' + gameState.weapons[this.weapon].capacity, myGameArea.canvas.width / 2, myGameArea.canvas.height - 100);
       ctx.restore();
     }
   }
