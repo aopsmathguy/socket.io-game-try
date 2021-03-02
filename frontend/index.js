@@ -249,13 +249,13 @@ var Player = function (xStart, yStart) {
     ctx.strokeStyle = '#000';
     drawer.lineWidth(ctx, 3);
     ctx.beginPath();
-    drawer.circle(ctx, this.pos.add(firstHand.rotate(this.weapons[this.weapon].ang)), 6);
+    drawer.circle(ctx, this.pos.add(firstHand.rotate(this.ang)), 6);
     ctx.closePath();
     ctx.stroke();
     ctx.fill();
 
     ctx.beginPath();
-    drawer.circle(ctx, this.pos.add(secondHand.rotate(this.weapons[this.weapon].ang)), 6);
+    drawer.circle(ctx, this.pos.add(secondHand.rotate(this.ang)), 6);
     ctx.closePath();
     ctx.stroke();
     ctx.fill();
