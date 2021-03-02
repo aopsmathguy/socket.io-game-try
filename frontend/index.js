@@ -269,7 +269,7 @@ var GameState = function (time, players, obstacles, weapons) {
   }
   this.displayBulletCount = function () {
     var player = this.players[controlId];
-    if (player && this.weapon != -1) {
+    if (player && player.weapon != -1) {
       var ctx = myGameArea.context;
       ctx.save();
       ctx.font = "bold 40px Courier New";
