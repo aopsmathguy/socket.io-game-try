@@ -28,7 +28,6 @@ var controlId = 0;
 function handleInit(msg) {
   timeDifference = msg.data - Date.now();
   controlId = msg.id;
-  console.log(msg);
 }
 function serverTime()
 {
@@ -585,7 +584,6 @@ var linearGameState = function()
   var leftFraction = (right.time - displayTime)/(right.time - left.time);
   var rightFraction = (displayTime - left.time)/(right.time - left.time);
 
-  console.log(leftFraction, rightFraction);
   var out = Object(right);
   for (var i in out.players)
   {
