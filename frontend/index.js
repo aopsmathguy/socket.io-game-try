@@ -582,8 +582,8 @@ var linearGameState = function()
   var left = Object(gameStates[rightIdx - 1]);
   //var leftFraction = (gameStates[rightIdx].time - displayTime)/(gameStates[rightIdx].time - gameStates[rightIdx-1].time);
   //var rightFraction = (displayTime - gameStates[rightIdx - 1].time)/(gameStates[rightIdx].time - gameStates[rightIdx-1].time);
-  var leftFraction = 0.9;
-  var rightFraction = 0.1;
+  var leftFraction = 1;
+  var rightFraction = 0;
   console.log(leftFraction, rightFraction)
 
   out = Object(right);
