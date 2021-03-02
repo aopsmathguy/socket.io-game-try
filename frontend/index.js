@@ -566,13 +566,13 @@ var linearGameState = function()
   var time = 0;
   while (rightIdx < gameStates.length && gameStates[rightIdx].time < displayTime)
   {
-      /*if (rightIdx > 1)
+      if (rightIdx > 1)
       {
         gameStates.splice(rightIdx - 2, 1);
       }
-      else{*/
+      else{
         rightIdx += 1;
-      //}
+      }
       
   }
   if (rightIdx >= gameStates.length)
@@ -581,8 +581,8 @@ var linearGameState = function()
   }
   var right = gameStates[rightIdx];
   var left = gameStates[rightIdx - 1];
-  var rightFraction = (right.time - displayTime)/(right.time - left.time);
-  var leftFraction = (displayTime - left.time)/(right.time - left.time);
+  var leftFraction = (right.time - displayTime)/(right.time - left.time);
+  var rightFraction = (displayTime - left.time)/(right.time - left.time);
 
   var out = Object.assign({}, right);
   console.log(left.players[controlId],right.players[controlId]);
