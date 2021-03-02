@@ -566,7 +566,7 @@ var linearGameState = function()
   var time = serverTime();
   var displayTime = time - buffer;
   var rightIdx = 0;
-  while (rightIdx - 1 < gameStates.length && gameStates[rightIdx].time < displayTime)
+  while (rightIdx < gameStates.length && gameStates[rightIdx].time < displayTime)
   {
     if (rightIdx > 1)
     {
@@ -574,11 +574,14 @@ var linearGameState = function()
     }
     rightIdx += 1
   }
-  rightIdx -= 1;
+  if (rightIdx >= gameStates.length)
+  {
+    rightIdx -= 1;
+  }
   var right = Object(gameStates[rightIdx]);
   var left = Object(gameStates[rightIdx - 1]);
-  var leftFraction = 1- (gameStates[rightIdx].time - displayTime)/(gameStates[rightIdx].time - gameStates[rightIdx-1].time);
-  var rightFraction = 1 - leftFraction;
+  var leftFraction = (gameStates[rightIdx].time - displayTime)/(gameStates[rightIdx].time - gameStates[rightIdx-1].time);
+  var rightFraction = 1- leftFraction;
 
   out = Object(right);
   for (var i in out.players)
