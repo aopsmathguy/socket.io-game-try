@@ -565,16 +565,16 @@ var linearGameState = function()
   var displayTime = time - buffer;
   var rightIdx = 1;
   var time = 0;
-  while (rightIdx < gameStates.length && time < displayTime)
+  while (rightIdx < gameStates.length && gameStates[rightIdx].time < displayTime)
   {
-      if (rightIdx > 1)
+      /*if (rightIdx > 1)
       {
         gameStates.splice(rightIdx - 2, 1);
       }
-      else{
+      else{*/
         rightIdx += 1;
-      }
-      time =  gameStates[rightIdx].time;
+      //}
+      
   }
   if (rightIdx >= gameStates.length)
   {
