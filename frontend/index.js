@@ -181,7 +181,7 @@ var GameState = function (time, players, obstacles, weapons) {
   setIfUndefined(this, 'weapons', weapons);
   this.render = function () {
     myGameArea.clear();
-    drawer.update();
+    drawer.update(this);
     for (var idx in this.obstacles)
     {
       this.displayObstacle(idx);
