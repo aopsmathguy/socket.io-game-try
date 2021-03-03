@@ -631,11 +631,24 @@ var Vector = function (x, y) {
 
 }
 makeObstacles();
-setInterval(updateGameArea, 1000/20);
+setInterval(updateGameArea, 1000/5);
 function updateGameArea() {
   gameState.step();
   gameState.step();
   gameState.step();
+	
+  gameState.step();
+  gameState.step();
+  gameState.step();
+	
+  gameState.step();
+  gameState.step();
+  gameState.step();
+	
+  gameState.step();
+  gameState.step();
+  gameState.step();
+	
   emitGameState(gameState);
 }
 io.listen(process.env.PORT || 3000);
