@@ -28,6 +28,7 @@ var controlId = 0;
 function handleInit(msg) {
   timeDifference = msg.data - Date.now();
   controlId = msg.id;
+   console.log(timeDifference);
 }
 function serverTime()
 {
