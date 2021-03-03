@@ -1,4 +1,5 @@
-const buffer = 50;
+const buffer = 600;
+
 const socket = io('https://limitless-everglades-60126.herokuapp.com/');
 
 socket.on('init', handleInit);
@@ -55,7 +56,6 @@ var myGameArea = {
     window.oncontextmenu = function () {
       return false;     // cancel default menu
     }
-      
     this.time = Date.now();
     this.fpsUpdate = 60;
     this.frameTimes = [];
@@ -177,7 +177,7 @@ var GameState = function (time, players, obstacles, weapons) {
   setIfUndefined(this, 'players', players);
   setIfUndefined(this, 'obstacles', obstacles);
   setIfUndefined(this, 'weapons', weapons);
-  this.render = function (gameState2, gameState3) {
+  this.render = function () {
     myGameArea.clear();
     drawer.update(this);
     for (var idx in this.obstacles)
@@ -192,12 +192,6 @@ var GameState = function (time, players, obstacles, weapons) {
     }
     for (var idx in this.players) {
       this.displayPlayer(idx);
-    }
-    for (var idx in gameState2.players) {
-      gameState2.displayPlayer(idx);
-    }
-    for (var idx in gameState2.players) {
-      gameState3.displayPlayer(idx);
     }
     this.displayReloadTime();
     this.displayBulletCount();
@@ -334,7 +328,6 @@ var Player = function (xStart, yStart) {
        drawer.lineContext(ctx,this.pos.add(new Vector(-this.radius+2*this.radius + border,-this.radius * 2)));
        ctx.closePath();
        ctx.stroke();
-
        ctx.strokeStyle = '#f00';
        drawer.lineWidth(ctx,8);
        ctx.beginPath();
@@ -342,8 +335,6 @@ var Player = function (xStart, yStart) {
        drawer.lineContext(ctx,this.pos.add(new Vector(-this.radius+2*this.radius,-this.radius * 2)));
        ctx.closePath();
        ctx.stroke();
-
-
        ctx.strokeStyle = '#0f0';
        ctx.beginPath();
        drawer.moveContext(ctx,this.pos.add(new Vector(-this.radius,-this.radius * 2)));
@@ -592,7 +583,17 @@ var linearGameState = function()
 
   var right = gameStates[rightIdx];
   var left = gameStates[rightIdx - 1];
-  return [left, right];
+  
+  var out = JSON.parse(JSON.stringify(right));
+  for (var i in out.players)
+  {
+     if (left.players[i] == undefined || right.players[i] == undefined)
+     {
+        continue;
+     }
+     out.players[i].pos = linearPosition(left.players[i].pos, right.players[i].pos, displayTime, left.time, right.time);
+  }
+  return out;
 }
 var resetControls = function()
 {
@@ -602,20 +603,9 @@ var resetControls = function()
 function updateGameArea() {
   if (gameStates.length > 1)
   {
-    var states = linearGameState();
-    var state = Object(states[0]);
-    var displayTime = serverTime() - buffer;
-    for (var i in state.players)
-    {
-       if (states[0].players[i] == undefined || states[1].players[i] == undefined)
-       {
-          continue;
-       }
-       state.players[i].pos = linearPosition(states[0].players[i].pos, states[1].players[i].pos, displayTime, states[0].time, states[1].time);
-    }
+    var state = linearGameState();
     giveMethods(state);
-    giveMethods(states);
-    state.render(states[0],states[1]);
+    state.render();
   }
 }
 function hexToRgbA(hex, alpha) {
