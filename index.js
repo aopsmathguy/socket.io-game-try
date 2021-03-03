@@ -599,7 +599,7 @@ function copyObject(obj){
   {
     return obj;
   }
-  var out = {};
+  var out;
   for (var field in obj)
   {
     out[field] = copyObject(obj[field]);
