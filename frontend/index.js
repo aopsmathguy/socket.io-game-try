@@ -4,7 +4,8 @@ const socket = io('https://limitless-everglades-60126.herokuapp.com/');
 
 socket.on('init', handleInit);
 socket.on('gameState', (msg) => {
-   gameStates.push(JSON.parse(msg));
+   if (gameStates.length < 2)
+    gameStates.push(JSON.parse(msg));
 });
 const canvas = document.getElementById('canvas');
 const initialScreen = document.getElementById('initialScreen');
