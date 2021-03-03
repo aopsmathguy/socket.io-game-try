@@ -55,6 +55,7 @@ var myGameArea = {
     window.oncontextmenu = function () {
       return false;     // cancel default menu
     }
+      
     this.time = Date.now();
     this.fpsUpdate = 60;
     this.frameTimes = [];
