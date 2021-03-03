@@ -98,7 +98,7 @@ var myGameArea = {
       startTime = then;
       this.animate();
     }
-    
+
 
   },
   clear: function () {
@@ -315,12 +315,12 @@ var Player = function (xStart, yStart) {
   setIfUndefined(this, 'vel', new Vector(0, 0));
 
   setIfUndefined(this, 'ang', 0);
-  
+
   /*this.drawHealthBar = function()
   {
        var ctx = myGameArea.context;
      var border = 3;
-     
+
       ctx.strokeStyle = '#000';
        drawer.lineWidth(ctx,8 + 2*border);
        ctx.beginPath();
@@ -342,7 +342,7 @@ var Player = function (xStart, yStart) {
        ctx.closePath();
        ctx.stroke();
   }*/
-  
+
 }
 var Gun = function (startX, startY, length, auto, firerate, multishot, capacity, reloadTime, bulletSpeed, damage, range, defSpray, sprayCoef, stability, kickAnimation, animationMult, shootWalkSpeedMult, color) {
   this.type = "Gun";
@@ -573,7 +573,7 @@ var linearGameState = function()
       else{
         rightIdx += 1;
       }
-      
+
   }
   if (rightIdx >= gameStates.length)
   {
@@ -582,8 +582,8 @@ var linearGameState = function()
 
   var right = gameStates[rightIdx];
   var left = gameStates[rightIdx - 1];
-  
-  var out = JSON.parse(JSON.stringify(right));
+
+  var out = copyObject(right);
   for (var i in out.players)
   {
      if (left.players[i] == undefined || right.players[i] == undefined)
@@ -594,10 +594,17 @@ var linearGameState = function()
   }
   return out;
 }
-var resetControls = function()
-{
-  controlsBundle.justKeyDown = {};
-  controlsBundle.justDowned = false;
+function copyObject(obj){
+  if (typeof obj != "object")
+  {
+    return obj;
+  }
+  var out = {};
+  for (var field in obj)
+  {
+    out[field] = copyObject(obj[field]);
+  }
+  return out;
 }
 function updateGameArea() {
   if (gameStates.length > 1)
