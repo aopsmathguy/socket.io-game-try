@@ -558,6 +558,10 @@ var displayCrosshair = function () {
   controlsBundle.mouse.add(new Vector(10, 0)).drawLine(controlsBundle.mouse.add(new Vector(-10, 0)), '#fff', 2);
   controlsBundle.mouse.add(new Vector(0, 10)).drawLine(controlsBundle.mouse.add(new Vector(0, -10)), '#fff', 2);
 }
+var linearPosition = function(v1,v2,t,t1,t2)
+{
+  return new Vector(v1.x * (t2 - t)/(t2 - t1) + v2.x * (t - t1)/(t2 - t1), v1.y * (t2 - t)/(t2 - t1) + v2.y * (t - t1)/(t2 - t1));
+}
 var linearGameState = function()
 {
   var displayTime = serverTime() - buffer;
@@ -581,8 +585,6 @@ var linearGameState = function()
   }
   var right = gameStates[rightIdx];
   var left = gameStates[rightIdx - 1];
-  var leftFraction = (right.time - displayTime)/(right.time - left.time);
-  var rightFraction = (displayTime - left.time)/(right.time - left.time);
 
   var out = Object.assign({}, right);
   for (var i in out.players)
@@ -591,8 +593,7 @@ var linearGameState = function()
      {
         continue;
      }
-     out.players[i].pos.x = leftFraction * left.players[i].pos.x + rightFraction * right.players[i].pos.x;
-     out.players[i].pos.y = leftFraction * left.players[i].pos.y + rightFraction * right.players[i].pos.y;
+     out.players[i].pos = linearPosition(left.players[i].pos, right.players[i].pos, displayTime, left.time, right.time);
   }
   return out;
 }
