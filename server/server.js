@@ -1,5 +1,5 @@
-const gameWidth = 5000;
-const gameHeight = 5000;
+const gameWidth = 2000;
+const gameHeight = 2000;
 
 const io = require('socket.io')();
 
@@ -140,8 +140,8 @@ var makeObstacles = function () {
   ];
   for (var i =0 ; i < 50; i++)
 	{
-		var width = 40 + 200 * Math.random();
-		var height = 40 + 200 * Math.random();
+		var width = 100 + 600 * Math.random();
+		var height = 100 + 600 * Math.random();
 		var centerx = gameWidth * Math.random();
 		var centery = gameHeight * Math.random();
 		obstacles.push(new Obstacle([
