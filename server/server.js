@@ -634,12 +634,15 @@ makeObstacles();
 setInterval(updateGameArea, 1000/60);
 var stage = 0;
 function updateGameArea() {
-  gameState.step();
-  stage += 1;
-  if (stage >= 2)
+  if (Object.keys(gameState.players).length > 0)
   {
-    emitGameState(gameState);
-    stage = 0;
+		gameState.step();
+		stage += 1;
+		if (stage >= 2)
+		{
+			emitGameState(gameState);
+			stage = 0;
+		}
   }
 }
 io.listen(process.env.PORT || 3000);
