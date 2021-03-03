@@ -1,3 +1,6 @@
+const gameWidth = 5000;
+const gameHeight = 5000;
+
 const io = require('socket.io')();
 
 io.on('connection', client => {
@@ -37,11 +40,16 @@ io.on('connection', client => {
     });
 	function addPlayer(msg){
 	  controlId = client.id;
-	  gameState.players[controlId] = new Player(300,200);
-	    controls[controlId] = {
-	      keys : [],
-	      mouseDown : false
-	    }
+		var startPos;
+		do {
+	  	startPos = new Vector(gameWidth * Math.random(), gameHeight * Math.random());
+		}
+		while (gameState.inObjects(startPos));
+		gameState.players[controlId] = new Player(startPos.x,startPos.y);
+		controls[controlId] = {
+			keys : [],
+			mouseDown : false
+		}
 	}
    
 
@@ -106,6 +114,17 @@ var GameState = function (time, players, obstacles, weapons) {
       }
     }
   }
+	this.inObjects = function(v)
+	{
+		for (var i in this.obstacles)
+		{
+			if (this.obstacles[i].insideOf(v))
+			{
+				return true;
+			}
+		}
+		return false;
+	}
   this.toString = function () {
     return JSON.stringify(this);
   }
@@ -114,11 +133,24 @@ var makeObstacles = function () {
   var players = {
   };
   var obstacles = [
-    new Obstacle([new Vector(100, 100), new Vector(200, 200), new Vector(260, 200), new Vector(260, 100), new Vector(200, 100)], '#f00'),
+    /*new Obstacle([new Vector(100, 100), new Vector(200, 200), new Vector(260, 200), new Vector(260, 100), new Vector(200, 100)], '#f00'),
     new Obstacle([new Vector(0, 100), new Vector(43.4314575051, 100), new Vector(143.4314575051, 200), new Vector(0, 200)], '#f00'),
     new Obstacle([new Vector(400, 200), new Vector(400, 300), new Vector(300, 300), new Vector(300, 240)], '#00f'),
-    new Obstacle([new Vector(40, 300), new Vector(260, 300), new Vector(260, 240), new Vector(40, 240)], '#00f')
+    new Obstacle([new Vector(40, 300), new Vector(260, 300), new Vector(260, 240), new Vector(40, 240)], '#00f')*/
   ];
+  for (var i =0 ; i < 50; i++)
+	{
+		var width = 40 + 200 * Math.random();
+		var height = 40 + 200 * Math.random();
+		var centerx = gameWidth * Math.random();
+		var centery = gameHeight * Math.random();
+		obstacles.push(new Obstacle([
+			new Vector(centerx - width/2,centery - height/2), 
+			new Vector(centerx + width/2,centery - height/2),
+			new Vector(centerx + width/2,centery + height/2),
+			new Vector(centerx - width/2,centery + height/2)
+																], getRandomColor()));
+	}
   var weapons = [
     new Gun(100, 50, 30, true, 900, 1, 32, 1000, 30, 7, 900, 0, 0.12, 0.9, 2, 0.9, 0.8, '#800'),
     new Gun(200, 350, 45, true, 600, 1, 30, 1400, 40, 8, 1500, 0, 0.08, 0.91, 3, 0.9, 0.6, '#f80'),
@@ -126,6 +158,14 @@ var makeObstacles = function () {
     new Gun(200, 220, 35, false, 450, 8, 2, 1200, 25, 9, 700, 0.3, 0, 0.83, 6, 0.9, 0.5, '#808')
   ];
   gameState = new GameState(Date.now(), players, obstacles, weapons);
+}
+function getRandomColor() {
+  var letters = '0123456789ABCDEF';
+  var color = '#';
+  for (var i = 0; i < 6; i++) {
+    color += letters[Math.floor(Math.random() * 16)];
+  }
+  return color;
 }
 var Player = function (xStart, yStart) {
   this.type = "Player";
