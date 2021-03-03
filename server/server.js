@@ -615,7 +615,7 @@ function updateGameArea() {
     }
     giveMethods(state);
     giveMethods(states);
-    state.render(states[0],states[1]);
+    states[0].render(state,states[1]);
   }
 }
 function hexToRgbA(hex, alpha) {
