@@ -1,4 +1,5 @@
 const buffer = 600;
+
 const socket = io('https://limitless-everglades-60126.herokuapp.com/');
 
 socket.on('init', handleInit);
@@ -327,7 +328,6 @@ var Player = function (xStart, yStart) {
        drawer.lineContext(ctx,this.pos.add(new Vector(-this.radius+2*this.radius + border,-this.radius * 2)));
        ctx.closePath();
        ctx.stroke();
-
        ctx.strokeStyle = '#f00';
        drawer.lineWidth(ctx,8);
        ctx.beginPath();
@@ -335,8 +335,6 @@ var Player = function (xStart, yStart) {
        drawer.lineContext(ctx,this.pos.add(new Vector(-this.radius+2*this.radius,-this.radius * 2)));
        ctx.closePath();
        ctx.stroke();
-
-
        ctx.strokeStyle = '#0f0';
        ctx.beginPath();
        drawer.moveContext(ctx,this.pos.add(new Vector(-this.radius,-this.radius * 2)));
