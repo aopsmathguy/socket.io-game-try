@@ -571,6 +571,7 @@ var linearPosition = function(v1,v2,t,t1,t2)
 }
 var linearGameState = function()
 {
+  var displayTime = serverTime() - buffer;
   var rightIdx = 1;
   var time = 0;
   while (rightIdx < gameStates.length && gameStates[rightIdx].time < displayTime)
