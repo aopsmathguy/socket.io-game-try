@@ -1,4 +1,4 @@
-const buffer = 500;
+const buffer = 50;
 
 const socket = io('https://limitless-everglades-60126.herokuapp.com/');
 
@@ -28,7 +28,6 @@ var controlId = 0;
 function handleInit(msg) {
   timeDifference = msg.data - Date.now();
   controlId = msg.id;
-   console.log(timeDifference);
 }
 function serverTime()
 {
