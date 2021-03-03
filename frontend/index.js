@@ -606,11 +606,11 @@ function updateGameArea() {
     var state = Object(states[0]);
     for (var i in state.players)
     {
-       if (state.players[i] == undefined || right.players[i] == undefined)
+       if (states[0].players[i] == undefined || states[1].players[i] == undefined)
        {
           continue;
        }
-       state.players[i].pos = linearPosition(left.players[i].pos, right.players[i].pos, displayTime, left.time, right.time);
+       state.players[i].pos = linearPosition(states[0].players[i].pos, states[1].players[i].pos, displayTime, states[0].time, states[1].time);
     }
     state.render(states[0],states[1]);
   }
