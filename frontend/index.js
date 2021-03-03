@@ -594,8 +594,8 @@ var linearGameState = function()
      /*out.players[i].pos.x = leftFraction * left.players[i].pos.x + rightFraction * right.players[i].pos.x;
      out.players[i].pos.y = leftFraction * left.players[i].pos.y + rightFraction * right.players[i].pos.y;*/
      //out.players[i].pos = new Vector(leftFraction * left.players[i].pos.x + rightFraction * right.players[i].pos.x, leftFraction * left.players[i].pos.y + rightFraction * right.players[i].pos.y);
-     out.players[i].pos = new Vector(leftFraction * left.players[i].pos.x + rightFraction * right.players[i].pos.x,
-      leftFraction * left.players[i].pos.y + rightFraction * right.players[i].pos.y);
+     out.players[i].pos = new Vector(right.players[i].pos.x - leftFraction * right.players[i].vel.x,
+      right.players[i].pos.y - leftFraction * right.players[i].vel.y);
   }
   return out;
 }
