@@ -4,7 +4,6 @@ const socket = io('https://limitless-everglades-60126.herokuapp.com/');
 
 socket.on('init', handleInit);
 socket.on('gameState', (msg) => {
-   if (gameStates.length < 2)
     gameStates.push(JSON.parse(msg));
 });
 const canvas = document.getElementById('canvas');
@@ -561,6 +560,7 @@ var displayCrosshair = function () {
 }
 var linearPosition = function(v1,v2,t,t1,t2)
 {
+  return new Vector(v1.x * 0.5 + v2.x * 0.5, v1.y * 0.5 + v2.y * 0.5);
   return new Vector(v1.x * (t2 - t)/(t2 - t1) + v2.x * (t - t1)/(t2 - t1), v1.y * (t2 - t)/(t2 - t1) + v2.y * (t - t1)/(t2 - t1));
 }
 var linearGameState = function()
