@@ -1,153 +1,57 @@
-const buffer = 600;
+const io = require('socket.io')();
 
-const socket = io('https://limitless-everglades-60126.herokuapp.com/');
-
-socket.on('init', handleInit);
-socket.on('gameState', (msg) => {
-    gameStates.push(JSON.parse(msg));
-});
-const canvas = document.getElementById('canvas');
-const initialScreen = document.getElementById('initialScreen');
-const joinGameBtn = document.getElementById('joinGameButton');
-
-joinGameBtn.addEventListener('click', joinGame);
-
-
-function joinGame()
-{
-  initialScreen.style.display = 'none';
-  myGameArea.start();
-  drawer = new Drawer();
-  controlsBundle.start();
-  myGameArea.interval();
-
-  socket.emit('new player', {});
-}
-var timeDifference = 0;
-var controlId = 0;
-function handleInit(msg) {
-  timeDifference = msg.data - Date.now();
-  controlId = msg.id;
-}
-function serverTime()
-{
-  return Date.now() + timeDifference;
-}
-function sendControls()
-{
-  socket.emit('controls',controlsBundle);
-}
-var gameStates = [];
-var controlId;
-var drawer;
-var myGameArea = {
-  canvas: document.createElement("canvas"),
-  start: function () {
-    //make the canvas and stuff.
-    this.canvas = canvas;
-    this.canvas.style.border = "none";
-
-    this.canvas.style.margin = 0;
-    this.canvas.style.padding = 0;
-
-    this.canvas.width = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0);
-    this.canvas.height = Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0);
-    this.context = this.canvas.getContext("2d");
-    window.oncontextmenu = function () {
-      return false;     // cancel default menu
-    }
-    this.time = Date.now();
-    this.fpsUpdate = 60;
-    this.frameTimes = [];
-    this.printFps = function () {
-
-      var elapsed = Date.now() - this.time;
-      this.time = Date.now();
-      this.frameTimes.push(elapsed);
-      if (this.frameTimes.length > this.fpsUpdate) {
-        this.frameTimes.shift();
-      }
-      this.totalElapsed = 0;
-      for (var i = 0; i < this.frameTimes.length; i++) {
-        this.totalElapsed += this.frameTimes[i];
-      }
-      this.fps = this.frameTimes.length * 1000 / this.totalElapsed;
-
-
-      var ctx = myGameArea.context;
-      ctx.save();
-      ctx.font = "bold 45px Courier New";
-      ctx.fillStyle = "black";
-      ctx.textAlign = "left";
-      var displayNum = Math.floor(this.fps + 0.5);
-      ctx.fillText(displayNum, 10, 45);
-      ctx.restore();
-    }
-    this.fpsInterval = 1000 / 60;
-    this.animate = function () {
-      requestAnimationFrame(this.animate.bind(this));
-      now = Date.now();
-      elapsed = now - then;
-      if (elapsed > this.fpsInterval) {
-        then = now - elapsed % this.fpsInterval;
-        updateGameArea();
-      }
-    }
-    this.interval = function () {
-      then = Date.now();
-      startTime = then;
-      this.animate();
-    }
-    
-
-  },
-  clear: function () {
-    this.context.fillStyle = "#080";
-    this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);
-  }
-}
-var controlsBundle = {
-  keys: [],
-  mouse: 0,
-  mouseDown: false,
-  ang: 0,
-  start: function () {
-    window.addEventListener('keydown', function (e) {
-      controlsBundle.keys = (controlsBundle.keys || []);
-      controlsBundle.keys[e.keyCode] = true;
-      socket.emit('keydown', e.keyCode);
-    })
-    window.addEventListener('keyup', function (e) {
-      controlsBundle.keys[e.keyCode] = false;
-      socket.emit('keyup', e.keyCode);
-    })
-
-    const rect = myGameArea.canvas.getBoundingClientRect();
-    window.addEventListener('mousemove', function (e) {
-      controlsBundle.mouse = new Vector(e.clientX - rect.left, e.clientY - rect.top);
-      controlsBundle.ang = controlsBundle.mouse.subtract(new Vector(myGameArea.canvas.width, myGameArea.canvas.height).multiply(0.5)).ang();
-      socket.emit('mousemove', controlsBundle.ang);
+io.on('connection', client => {
+	client.emit('init', {data : Date.now(), id : client.id});
+	client.on('new player', addPlayer);
+    client.on('disconnect', function() {
+      if (gameState.players[client.id] != undefined)
+      	gameState.players[client.id].dropWeapon();
+      delete gameState.players[client.id];
+      delete controls[client.id];
     });
-    window.addEventListener('mousedown', function (e) {
-      if (e.button == 0) {
-        controlsBundle.mouseDown = true;
-        socket.emit('mousedown');
-      }
-    })
-    window.addEventListener('mouseup', function (e) {
-      if (e.button == 0) {
-        controlsBundle.mouseDown = false;
-        socket.emit('mouseup');
-      }
-    })
+    client.on('keydown', (keycode) => {
+    	if (controls[client.id] && gameState.players[client.id])
+    	{
+    		controls[client.id].keys[keycode] = true;
+    		gameState.players[client.id].justKeyDowned[keycode] = true;
+    	}
+    });
+    client.on('keyup', (keycode) => {
+    	if (controls[client.id] && gameState.players[client.id])
+    		controls[client.id].keys[keycode] = false;
+    });
+    client.on('mousemove', (ang) => {
+    	if (controls[client.id] && gameState.players[client.id])
+    		controls[client.id].ang = ang;
+    });
+    client.on('mousedown', () => {
+    	if (controls[client.id] && gameState.players[client.id])
+    	{
+    		controls[client.id].mouseDown = true;
+    	    gameState.players[client.id].justMouseDowned = true;
+    	}
+    });
+    client.on('mouseup', () => {
+    	if (controls[client.id] && gameState.players[client.id])
+    		controls[client.id].mouseDown = false;
+    });
+	function addPlayer(msg){
+	  controlId = client.id;
+	  gameState.players[controlId] = new Player(300,200);
+	    controls[controlId] = {
+	      keys : [],
+	      mouseDown : false
+	    }
+	}
+   
 
-    window.addEventListener("keydown", function (e) {
-      // space, page up, page down and arrow keys:
-      if ([32, 33, 34, 37, 38, 39, 40].indexOf(e.keyCode) > -1) {
-        e.preventDefault();
-      }
-    }, false);
-  }
+});
+
+var gameState;
+var controls = {};
+function emitGameState(gameState) {
+  // Send this event to everyone in the room.
+  io.sockets.emit('gameState', JSON.stringify(gameState));
 }
 var setIfUndefined = function (obj, field, value) {
   if (obj[field] === undefined) {
@@ -177,122 +81,29 @@ var GameState = function (time, players, obstacles, weapons) {
   setIfUndefined(this, 'players', players);
   setIfUndefined(this, 'obstacles', obstacles);
   setIfUndefined(this, 'weapons', weapons);
-  this.render = function () {
-    myGameArea.clear();
-    drawer.update(this);
-    for (var idx in this.obstacles)
+  this.step = function () {
+  	this.time = Date.now();
+  	for (var k in this.players)
     {
-      this.displayObstacle(idx);
+        this.players[k].controls(k);
     }
-    for (var idx in this.weapons)
-    {
-      if (!this.weapons[idx].hold) {
-        this.displayWeapon(idx)
+    for (var k in this.players) {
+      this.players[k].step();
+    }
+    this.obstacles.forEach((obstacle) => {
+      for (var k in this.players) {
+        this.players[k].intersect(obstacle);
       }
+    });
+    for (var k in this.weapons) {
+      this.weapons[k].bulletsStep();
     }
-    for (var idx in this.players) {
-      this.displayPlayer(idx);
-    }
-    this.displayReloadTime();
-    this.displayBulletCount();
-    myGameArea.printFps();
-    displayCrosshair();
-  }
-  this.displayPlayer = function(i)
-  {
-    var player = this.players[i];
+    for (var k in this.players) {
+      if (this.players[k].health <= 0) {
+        this.players[k].dropWeapon();
 
-    var color = '#fcc976';
-    var ctx = myGameArea.context;
-
-    ctx.fillStyle = pSBC(0.5, color);
-    ctx.beginPath();
-    drawer.circle(ctx, player.pos, player.radius);
-    ctx.closePath();
-    ctx.fill();
-
-    ctx.fillStyle = color;
-    ctx.beginPath();
-    drawer.circle(ctx, player.pos, player.radius * player.health / 100);
-    ctx.closePath();
-    ctx.fill();
-
-    var firstHand = (player.weapon != -1 ? new Vector(player.radius - this.weapons[player.weapon].recoil, 3) : new Vector(player.radius * 0.75, player.radius * 0.8));
-    var secondHand = (player.weapon != -1 ? new Vector(2 * player.radius - this.weapons[player.weapon].recoil, 6) : new Vector(player.radius * 0.75, -player.radius * 0.8));
-    if (player.weapon != -1) {
-      this.displayWeapon(player.weapon);
-    }
-    ctx.strokeStyle = '#000';
-    drawer.lineWidth(ctx, 3);
-    ctx.beginPath();
-    drawer.circle(ctx, player.pos.add(firstHand.rotate(player.ang)), 6);
-    ctx.closePath();
-    ctx.stroke();
-    ctx.fill();
-
-    ctx.beginPath();
-    drawer.circle(ctx, player.pos.add(secondHand.rotate(player.ang)), 6);
-    ctx.closePath();
-    ctx.stroke();
-    ctx.fill();
-  }
-  this.displayWeapon = function(i)
-  {
-    var weapon = this.weapons[i];
-    for (var i = 0; i < weapon.bullets.length; i++) {
-      weapon.bullets[i].display();
-    }
-    var ctx = myGameArea.context;
-    ctx.strokeStyle = weapon.color;
-
-    drawer.lineWidth(ctx, 8);
-    ctx.beginPath();
-    drawer.moveContext(ctx, weapon.pos.add((new Vector(-weapon.length / 2, 0)).rotate(weapon.ang)));
-    drawer.lineContext(ctx, weapon.pos.add((new Vector(weapon.length / 2, 0)).rotate(weapon.ang)));
-    ctx.closePath();
-    ctx.stroke();
-  }
-  this.displayObstacle = function(i)
-  {
-    var obstacle = this.obstacles[i];
-    var ctx = myGameArea.context;
-    ctx.fillStyle = obstacle.color;
-    ctx.beginPath();
-    drawer.moveContext(ctx, obstacle.vs[0]);
-    for (var i = 1; i < obstacle.vs.length; i++) {
-      drawer.lineContext(ctx, obstacle.vs[i]);
-    }
-    ctx.closePath();
-    ctx.fill();
-  }
-  this.displayBulletCount = function () {
-    var player = this.players[controlId];
-    if (player && player.weapon != -1) {
-      var ctx = myGameArea.context;
-      ctx.save();
-      ctx.font = "bold 40px Courier New";
-      ctx.fillStyle = '#fff';
-      ctx.lineWidth = 2;
-      ctx.textAlign = "center";
-      ctx.fillText(this.weapons[player.weapon].bulletsRemaining + '|' + this.weapons[player.weapon].capacity, myGameArea.canvas.width / 2, myGameArea.canvas.height - 100);
-      ctx.restore();
-    }
-  }
-  this.displayReloadTime = function () {
-    var player = this.players[controlId];
-    if (player.weapon != -1 && this.weapons[player.weapon].reloadStartTime != -1) {
-      var ctx = myGameArea.context;
-      ctx.save();
-      ctx.globalAlpha = 0.8;
-
-      ctx.strokeStyle = '#fff';
-      drawer.lineWidth(ctx, 6);
-      ctx.beginPath();
-      drawer.moveContext(ctx, player.pos.add(new Vector(-player.radius, player.radius * 2)));
-      drawer.lineContext(ctx, player.pos.add(new Vector(player.radius - 2 * player.radius * (this.time - this.weapons[player.weapon].reloadStartTime) / this.weapons[player.weapon].reloadTime, player.radius * 2)));
-      ctx.closePath();
-      ctx.stroke();
-      ctx.restore();
+        delete this.players[k];
+      }
     }
   }
   this.toString = function () {
@@ -300,7 +111,21 @@ var GameState = function (time, players, obstacles, weapons) {
   }
 }
 var makeObstacles = function () {
-  drawer = new Drawer();
+  var players = {
+  };
+  var obstacles = [
+    new Obstacle([new Vector(100, 100), new Vector(200, 200), new Vector(260, 200), new Vector(260, 100), new Vector(200, 100)], '#f00'),
+    new Obstacle([new Vector(0, 100), new Vector(43.4314575051, 100), new Vector(143.4314575051, 200), new Vector(0, 200)], '#f00'),
+    new Obstacle([new Vector(400, 200), new Vector(400, 300), new Vector(300, 300), new Vector(300, 240)], '#00f'),
+    new Obstacle([new Vector(40, 300), new Vector(260, 300), new Vector(260, 240), new Vector(40, 240)], '#00f')
+  ];
+  var weapons = [
+    new Gun(100, 50, 30, true, 900, 1, 32, 1000, 30, 7, 900, 0, 0.12, 0.9, 2, 0.9, 0.8, '#800'),
+    new Gun(200, 350, 45, true, 600, 1, 30, 1400, 40, 8, 1500, 0, 0.08, 0.91, 3, 0.9, 0.6, '#f80'),
+    new Gun(200, 50, 60, false, 450, 1, 10, 1500, 50, 20, 2000, 0, 0.3, 0.83, 6, 0.9, 0.3, '#008'),
+    new Gun(200, 220, 35, false, 450, 8, 2, 1200, 25, 9, 700, 0.3, 0, 0.83, 6, 0.9, 0.5, '#808')
+  ];
+  gameState = new GameState(Date.now(), players, obstacles, weapons);
 }
 var Player = function (xStart, yStart) {
   this.type = "Player";
@@ -315,34 +140,105 @@ var Player = function (xStart, yStart) {
   setIfUndefined(this, 'vel', new Vector(0, 0));
 
   setIfUndefined(this, 'ang', 0);
-  
-  /*this.drawHealthBar = function()
-  {
-       var ctx = myGameArea.context;
-     var border = 3;
-     
-      ctx.strokeStyle = '#000';
-       drawer.lineWidth(ctx,8 + 2*border);
-       ctx.beginPath();
-       drawer.moveContext(ctx,this.pos.add(new Vector(-this.radius - border,-this.radius * 2)));
-       drawer.lineContext(ctx,this.pos.add(new Vector(-this.radius+2*this.radius + border,-this.radius * 2)));
-       ctx.closePath();
-       ctx.stroke();
-       ctx.strokeStyle = '#f00';
-       drawer.lineWidth(ctx,8);
-       ctx.beginPath();
-       drawer.moveContext(ctx,this.pos.add(new Vector(-this.radius,-this.radius * 2)));
-       drawer.lineContext(ctx,this.pos.add(new Vector(-this.radius+2*this.radius,-this.radius * 2)));
-       ctx.closePath();
-       ctx.stroke();
-       ctx.strokeStyle = '#0f0';
-       ctx.beginPath();
-       drawer.moveContext(ctx,this.pos.add(new Vector(-this.radius,-this.radius * 2)));
-       drawer.lineContext(ctx,this.pos.add(new Vector(-this.radius+2*Math.max(0,this.health)/100*this.radius,-this.radius * 2)));
-       ctx.closePath();
-       ctx.stroke();
-  }*/
-  
+  setIfUndefined(this, 'justMouseDowned', false);
+  setIfUndefined(this, 'justKeyDowned', {});
+  this.intersect = function (obstacle) {
+    if (this.radius + obstacle.maxRadius < this.pos.distanceTo(obstacle.center)) {
+      return;
+    }
+    var pointOnOb = obstacle.closestPoint(this.pos);
+    var distanceToPointOnOb = pointOnOb.distanceTo(this.pos);
+    if (distanceToPointOnOb < this.radius) {
+      if (distanceToPointOnOb == 0) {
+        return;
+      }
+      this.pos = pointOnOb.add(this.pos.subtract(pointOnOb).multiply(this.radius / distanceToPointOnOb));
+      var ang = this.pos.angTo(pointOnOb);
+      var velMag = this.vel.rotate(-ang).y;
+      this.vel = (new Vector(0, velMag)).rotate(ang);
+    }
+  }
+  this.controls = function (k) {
+    var targetVel = new Vector((controls[k].keys[68] ? 1 : 0) + (controls[k].keys[65] ? -1 : 0), (controls[k].keys[83] ? 1 : 0) + (controls[k].keys[87] ? -1 : 0));
+    if (!targetVel.magnitude() == 0) {
+      targetVel = targetVel.multiply(this.speed / targetVel.magnitude());
+    }
+    if (this.weapon != -1 && gameState.time - gameState.weapons[this.weapon].lastFireTime < 60000 / gameState.weapons[this.weapon].firerate) {
+      targetVel = targetVel.multiply(gameState.weapons[this.weapon].shootWalkSpeedMult);
+    }
+    this.vel = this.vel.add(targetVel.subtract(this.vel).multiply(this.agility));
+    this.ang = controls[k].ang;
+
+    if (this.justKeyDowned[70]) {
+      var minDist = this.reachDist;
+      var idx = -1;
+      for (var i = 0; i < gameState.weapons.length; i++) {
+        if (gameState.weapons[i].hold) {
+          continue;
+        }
+        var distance = this.pos.distanceTo(gameState.weapons[i].pos);
+        if (distance < minDist) {
+          idx = i;
+          minDist = distance;
+        }
+      }
+      if (idx != -1) {
+        this.dropWeapon();
+        this.pickUpWeapon(idx);
+      }
+      this.justKeyDowned[70] = false;
+    }
+    if (this.justKeyDowned[71]) {
+      this.dropWeapon();
+      this.justKeyDowned[71] = false;
+    }
+    if (this.justKeyDowned[82] && this.weapon != -1) {
+      gameState.weapons[this.weapon].reload();
+      this.justKeyDowned[82] = false;
+    }
+    if (this.justKeyDowned[88]) {
+      gameState.weapons[this.weapon].cancelReload();
+      this.justKeyDowned[88] = false;
+    }
+
+    if (controls[k].mouseDown && this.weapon != -1 && gameState.weapons[this.weapon].auto) {
+      gameState.weapons[this.weapon].fireBullets();
+    }
+    else if (this.justMouseDowned) {
+      if (this.weapon != -1 && !gameState.weapons[this.weapon].auto) {
+        gameState.weapons[this.weapon].fireBullets();
+      }
+      this.justMouseDowned = false;
+    }
+    
+  }
+  this.pickUpWeapon = function (weapon) {
+    this.weapon = weapon;
+    gameState.weapons[this.weapon].pos = this.pos.add((new Vector(this.radius + gameState.weapons[this.weapon].length / 2 - gameState.weapons[this.weapon].recoil, 0)).rotate(this.ang));
+    gameState.weapons[this.weapon].vel = this.vel;
+    gameState.weapons[this.weapon].ang = this.ang;
+    gameState.weapons[this.weapon].hold = true;
+  }
+  this.dropWeapon = function () {
+    if (this.weapon != -1) {
+      gameState.weapons[this.weapon].pos = this.pos;
+      gameState.weapons[this.weapon].vel = new Vector(0, 0);
+      gameState.weapons[this.weapon].hold = false;
+      gameState.weapons[this.weapon].cancelReload();
+      this.weapon = -1;
+    }
+  }
+  this.step = function () {
+    this.pos = this.pos.add(this.vel);
+    if (this.weapon != -1) {
+      gameState.weapons[this.weapon].pos = this.pos.add((new Vector(this.radius + gameState.weapons[this.weapon].length / 2 - gameState.weapons[this.weapon].recoil, 0)).rotate(this.ang));
+      gameState.weapons[this.weapon].vel = this.vel;
+      gameState.weapons[this.weapon].ang = this.ang;
+
+      gameState.weapons[this.weapon].spray = gameState.weapons[this.weapon].stability * (gameState.weapons[this.weapon].spray - gameState.weapons[this.weapon].defSpray) + gameState.weapons[this.weapon].defSpray;
+      gameState.weapons[this.weapon].recoil *= gameState.weapons[this.weapon].animationMult;
+    }
+  }
 }
 var Gun = function (startX, startY, length, auto, firerate, multishot, capacity, reloadTime, bulletSpeed, damage, range, defSpray, sprayCoef, stability, kickAnimation, animationMult, shootWalkSpeedMult, color) {
   this.type = "Gun";
@@ -374,6 +270,44 @@ var Gun = function (startX, startY, length, auto, firerate, multishot, capacity,
   setIfUndefined(this, 'lastFireTime', 0);
   setIfUndefined(this, 'hold', false);
   setIfUndefined(this, 'bullets', []);
+  this.reload = function () {
+    if (this.bulletsRemaining < this.capacity && this.reloadStartTime == -1) {
+      this.reloadStartTime = gameState.time;
+    }
+  }
+  this.cancelReload = function () {
+    this.reloadStartTime = -1;
+  }
+  this.fireBullets = function () {
+    var timeNow = gameState.time;
+    if (timeNow - this.lastFireTime >= 60000 / this.firerate && this.reloadStartTime == -1) {
+      if (this.bulletsRemaining > 0) {
+        for (var i = 0; i < this.multishot; i++) {
+          this.bullets.push(new Bullet(this));
+        }
+        this.spray += this.sprayCoef;
+        this.recoil += this.kickAnimation;
+        this.lastFireTime = timeNow;
+        this.bulletsRemaining -= 1;
+      }
+      else {
+        this.reload();
+      }
+    }
+  }
+  this.bulletsStep = function () {
+    if (this.reloadStartTime != -1 && gameState.time - this.reloadStartTime >= this.reloadTime) {
+      this.bulletsRemaining = this.capacity;
+      this.reloadStartTime = -1;
+    }
+    for (var i = this.bullets.length - 1; i >= 0; i--) {
+      this.bullets[i].step();
+      if (this.bullets[i].stopAnimationAge > this.bullets[i].fadeTime) {
+        this.bullets.splice(i, 1);
+      }
+    }
+
+  }
 }
 var Bullet = function (weapon) {
   this.type = "Bullet";
@@ -393,52 +327,130 @@ var Bullet = function (weapon) {
   setIfUndefined(this, 'trailLength', this.bulletSpeed * this.fadeTime);
   setIfUndefined(this, 'stopAnimationAge', 0);
   setIfUndefined(this, 'color', weapon.color);
-  this.display = function () {
-    var ctx = myGameArea.context;
-    const g = drawer.createLinearGradient(ctx, this.pos, this.tailPos);
-    g.addColorStop(0, hexToRgbA(pSBC(0.5, this.color), 1)); // opaque
-    g.addColorStop(1, hexToRgbA(pSBC(0.3, this.color), 0)); // transparent
-    ctx.strokeStyle = g;
+  this.step = function () {
+    this.pos = this.pos.add(this.vel);
+    if (this.tailPos.distanceTo(this.pos) > this.trailLength) {
+      this.tailPos = this.pos.add((new Vector(-this.trailLength, 0)).rotate(this.ang));
+    }
 
-    drawer.lineWidth(ctx, 6);
-    ctx.beginPath();
-    drawer.moveContext(ctx, this.hitPoint != -1 ? this.hitPoint : this.pos);
-    drawer.lineContext(ctx, this.tailPos);
-    ctx.closePath();
-    ctx.stroke();
+    if (this.hitPoint == -1) {
+      var intersect = this.objectsIntersection(gameState.obstacles);
+      this.hitPoint = intersect[0];
+      if (intersect[1] != -1) {
+        gameState.players[intersect[1]].health -= this.damage;
+      }
+      if (this.pos.distanceTo(this.startPos) > this.range) {
+        this.hitPoint = this.pos.copy();
+      }
+    }
+    else {
+      this.stopAnimationAge += 1;
+    }
+  }
+  this.insideObject = function () {
+    for (var i = 0; i < gameState.obstacles.length; i++) {
+      if (gameState.obstacles[i].insideOf(this.pos)) {
+        return true;
+      }
+    }
+    return false;
+  }
+  this.pathIntersect = function (v1, v2) {
+    var v3 = this.pos;
+    var v4 = this.pos.subtract(this.vel);
+
+    var a1 = v2.y - v1.y;
+    var b1 = v1.x - v2.x;
+    var c1 = a1 * v1.x + b1 * v1.y;
+
+    var a2 = v4.y - v3.y;
+    var b2 = v3.x - v4.x;
+    var c2 = a2 * v3.x + b2 * v3.y;
+
+    var determinant = a1 * b2 - a2 * b1;
+
+    if (determinant == 0) {
+      return new Vector(Number.MAX_VALUE, Number.MAX_VALUE);
+    }
+    else {
+      return new Vector((b2 * c1 - b1 * c2) / determinant, (a1 * c2 - a2 * c1) / determinant);
+    }
+  }
+
+  this.segmentIntersect = function (v1, v2) {
+    var v3 = this.pos;
+    var v4 = this.pos.subtract(this.vel);
+    var intersectionPoint = this.pathIntersect(v1, v2);
+    if (intersectionPoint.onSegment(v1, v2) && intersectionPoint.onSegment(v3, v4)) {
+      return intersectionPoint;
+    }
+    else {
+      return -1;
+    }
+  }
+  this.objectIntersection = function (object) {
+    if (object.center.distanceTo(this.pos) > object.maxRadius + this.vel.magnitude()) {
+      return -1;
+    }
+    var vertices = object.vs;
+    vertices.push(vertices[0]);
+    var smallestDistance = Number.MAX_VALUE;
+    var objectPoint = -1;
+    for (var i = 0; i < vertices.length - 1; i++) {
+      var point = this.segmentIntersect(vertices[i], vertices[i + 1]);
+      if (point != -1) {
+        var dist = this.startPos.distanceTo(point);
+        if (dist < smallestDistance) {
+          smallestDistance = dist;
+          objectPoint = point;
+        }
+      }
+    }
+    return objectPoint;
+  }
+  this.playerIntersection = function (player) {
+    if (player.pos.distanceTo(this.pos) > player.radius + this.vel.magnitude()) {
+      return -1;
+    }
+    var v3 = this.pos;
+    var v4 = this.pos.subtract(this.vel);
+    var closestPoint = player.pos.closestToLine(v3, v4);
+    if (closestPoint.distanceTo(player.pos) <= player.radius && closestPoint.onSegment(v3, v4)) {
+      return closestPoint;
+    }
+    else {
+      return -1;
+    }
+  }
+  this.objectsIntersection = function (objects) {
+    var smallestDistance = Number.MAX_VALUE;
+    var objectsPoint = -1;
+    for (var i = 0; i < objects.length; i++) {
+      var point = this.objectIntersection(objects[i]);
+      if (point != -1) {
+        var dist = this.startPos.distanceTo(point);
+        if (dist < smallestDistance) {
+          smallestDistance = dist;
+          objectsPoint = point;
+        }
+      }
+    }
+    var playerHit = -1;
+    for (var key in gameState.players) {
+      var point = this.playerIntersection(gameState.players[key]);
+      if (point != -1) {
+        var dist = this.startPos.distanceTo(point);
+        if (dist < smallestDistance) {
+          smallestDistance = dist;
+          objectsPoint = point;
+          playerHit = key;
+        }
+      }
+    }
+    return [objectsPoint, playerHit];
   }
 }
-var Drawer = function () {
-  this.scroll = this.scroll || new Vector(0, 0);
-  this.scale = 1;
-  this.targetScale = 1 / 3000 * (myGameArea.canvas.width + myGameArea.canvas.height);
-  this.screenShake = this.screenShake || 0;
-  this.moveContext = function (ctx, point) {
-    var displayPoint = point.subtract(this.scroll).multiply(this.scale).add((new Vector(myGameArea.canvas.width, myGameArea.canvas.height)).multiply(0.5));
-    ctx.moveTo(displayPoint.x, displayPoint.y);
-  }
-  this.lineWidth = function (ctx, width) {
-    ctx.lineWidth = width * this.scale;
-  }
-  this.lineContext = function (ctx, point) {
-    var displayPoint = point.subtract(this.scroll).multiply(this.scale).add((new Vector(myGameArea.canvas.width, myGameArea.canvas.height)).multiply(0.5));
-    ctx.lineTo(displayPoint.x, displayPoint.y);
-  }
-  this.circle = function (ctx, point, radius) {
-    var displayPoint = point.subtract(this.scroll).multiply(this.scale).add((new Vector(myGameArea.canvas.width, myGameArea.canvas.height)).multiply(0.5));
-    ctx.arc(displayPoint.x, displayPoint.y, radius * this.scale, 0, 2 * Math.PI, false);
-  }
-  this.createLinearGradient = function (ctx, start, end) {
-    var newStart = start.subtract(this.scroll).multiply(this.scale).add((new Vector(myGameArea.canvas.width, myGameArea.canvas.height)).multiply(0.5));
-    var newEnd = end.subtract(this.scroll).multiply(this.scale).add((new Vector(myGameArea.canvas.width, myGameArea.canvas.height)).multiply(0.5));
-    return ctx.createLinearGradient(newStart.x, newStart.y, newEnd.x, newEnd.y);
-  }
-  this.update = function (state) {
-    character = state.players[controlId];
-    this.scroll = character.pos.add((new Vector(Math.random() - 0.5, Math.random() - 0.5)).multiply(this.screenShake));
-    this.scale = 0.9 * (this.scale - this.targetScale) + this.targetScale;
-  }
-}
+
 var Obstacle = function (vs, color) {
   this.type = "Obstacle";
   setIfUndefined(this, 'color', color);
@@ -457,6 +469,73 @@ var Obstacle = function (vs, color) {
     for (var i = 0; i < this.vs.length; i++) {
       this.maxRadius = Math.max(this.center.distanceTo(this.vs[i]), this.maxRadius);
     }
+  }
+  this.insideOf = function (point) {
+    // ray-casting algorithm based on
+    // https://wrf.ecse.rpi.edu/Research/Short_Notes/pnpoly.html/pnpoly.html
+    if (this.radius < point.distanceTo(this.center)) {
+      return false;
+    }
+    var x = point.x, y = point.y;
+
+    var inside = false;
+    for (var i = 0, j = this.vs.length - 1; i < this.vs.length; j = i++) {
+      var xi = this.vs[i].x, yi = this.vs[i].y;
+      var xj = this.vs[j].x, yj = this.vs[j].y;
+
+      var intersect = ((yi > y) != (yj > y))
+        && (x < (xj - xi) * (y - yi) / (yj - yi) + xi);
+      if (intersect) inside = !inside;
+    }
+
+    return inside;
+  }
+  this.closestPoint = function (point) {
+    var out = new Vector(0, 0);
+    var minimumDist = 1000000000;
+    for (var i = 0; i < this.vs.length; i++) {
+      var x1 = this.vs[i].x;
+      var y1 = this.vs[i].y;
+      if (i == this.vs.length - 1) {
+        var x2 = this.vs[0].x;
+        var y2 = this.vs[0].y;
+      }
+      else {
+        var x2 = this.vs[i + 1].x;
+        var y2 = this.vs[i + 1].y;
+      }
+
+      var e1x = x2 - x1;
+      var e1y = y2 - y1;
+      var area = e1x * e1x + e1y * e1y;
+      var e2x = point.x - x1;
+      var e2y = point.y - y1;
+      var val = e1x * e2x + e1y * e2y;
+      var on = (val > 0 && val < area);
+
+      var lenE1 = Math.sqrt(e1x * e1x + e1y * e1y);
+      var lenE2 = Math.sqrt(e2x * e2x + e2y * e2y);
+      var cos = val / (lenE1 * lenE2);
+
+      var projLen = cos * lenE2;
+      var px = x1 + (projLen * e1x) / lenE1;
+      var py = y1 + (projLen * e1y) / lenE1;
+      var distance = Math.sqrt((px - point.x) * (px - point.x) + (py - point.y) * (py - point.y));
+      if (Math.min(x1, x2) <= px && px <= Math.max(x1, x2) && Math.min(y1, y2) <= py && py <= Math.max(y1, y2)) {
+        if (minimumDist > distance) {
+          minimumDist = distance;
+          out = new Vector(px, py);
+        }
+      }
+    }
+    for (var i = 0; i < this.vs.length; i++) {
+      var distance = this.vs[i].distanceTo(point);
+      if (minimumDist > distance) {
+        minimumDist = distance;
+        out = this.vs[i];
+      }
+    }
+    return out;
   }
 }
 var Vector = function (x, y) {
@@ -551,98 +630,12 @@ var Vector = function (x, y) {
   }
 
 }
-var displayCrosshair = function () {
-  controlsBundle.mouse.add(new Vector(10, 0)).drawLine(controlsBundle.mouse.add(new Vector(-10, 0)), '#fff', 2);
-  controlsBundle.mouse.add(new Vector(0, 10)).drawLine(controlsBundle.mouse.add(new Vector(0, -10)), '#fff', 2);
-}
-var linearPosition = function(v1,v2,t,t1,t2)
-{
-  return new Vector(v1.x * 0.5 + v2.x * 0.5, v1.y * 0.5 + v2.y * 0.5);
-  return new Vector(v1.x * (t2 - t)/(t2 - t1) + v2.x * (t - t1)/(t2 - t1), v1.y * (t2 - t)/(t2 - t1) + v2.y * (t - t1)/(t2 - t1));
-}
-var linearGameState = function()
-{
-  var displayTime = serverTime() - buffer;
-  var rightIdx = 1;
-  var time = 0;
-  while (rightIdx < gameStates.length && gameStates[rightIdx].time < displayTime)
-  {
-      if (rightIdx > 1)
-      {
-        gameStates.splice(rightIdx - 2, 1);
-      }
-      else{
-        rightIdx += 1;
-      }
-      
-  }
-  if (rightIdx >= gameStates.length)
-  {
-    rightIdx = gameStates.length - 1;
-  }
-
-  var right = gameStates[rightIdx];
-  var left = gameStates[rightIdx - 1];
-  
-  var out = JSON.parse(JSON.stringify(right));
-  for (var i in out.players)
-  {
-     if (left.players[i] == undefined || right.players[i] == undefined)
-     {
-        continue;
-     }
-     out.players[i].pos = linearPosition(left.players[i].pos, right.players[i].pos, displayTime, left.time, right.time);
-  }
-  return out;
-}
-var resetControls = function()
-{
-  controlsBundle.justKeyDown = {};
-  controlsBundle.justDowned = false;
-}
+makeObstacles();
+setInterval(updateGameArea, 1000/20);
 function updateGameArea() {
-  if (gameStates.length > 1)
-  {
-    var state = linearGameState();
-    giveMethods(state);
-    state.render();
-  }
+  gameState.step();
+  gameState.step();
+  gameState.step();
+  emitGameState(gameState);
 }
-function hexToRgbA(hex, alpha) {
-  var c;
-  if (/^#([A-Fa-f0-9]{3}){1,2}$/.test(hex)) {
-    c = hex.substring(1).split('');
-    if (c.length == 3) {
-      c = [c[0], c[0], c[1], c[1], c[2], c[2]];
-    }
-    c = '0x' + c.join('');
-    return 'rgba(' + [(c >> 16) & 255, (c >> 8) & 255, c & 255].join(',') + ',' + alpha + ')';
-  }
-  throw new Error('Bad Hex');
-}
-// Version 4.0
-const pSBC = (p, c0, c1, l) => {
-  let r, g, b, P, f, t, h, i = parseInt, m = Math.round, a = typeof (c1) == "string";
-  if (typeof (p) != "number" || p < -1 || p > 1 || typeof (c0) != "string" || (c0[0] != 'r' && c0[0] != '#') || (c1 && !a)) return null;
-  if (!this.pSBCr) this.pSBCr = (d) => {
-    let n = d.length, x = {};
-    if (n > 9) {
-      [r, g, b, a] = d = d.split(","), n = d.length;
-      if (n < 3 || n > 4) return null;
-      x.r = i(r[3] == "a" ? r.slice(5) : r.slice(4)), x.g = i(g), x.b = i(b), x.a = a ? parseFloat(a) : -1
-    } else {
-      if (n == 8 || n == 6 || n < 4) return null;
-      if (n < 6) d = "#" + d[1] + d[1] + d[2] + d[2] + d[3] + d[3] + (n > 4 ? d[4] + d[4] : "");
-      d = i(d.slice(1), 16);
-      if (n == 9 || n == 5) x.r = d >> 24 & 255, x.g = d >> 16 & 255, x.b = d >> 8 & 255, x.a = m((d & 255) / 0.255) / 1000;
-      else x.r = d >> 16, x.g = d >> 8 & 255, x.b = d & 255, x.a = -1
-    } return x
-  };
-  h = c0.length > 9, h = a ? c1.length > 9 ? true : c1 == "c" ? !h : false : h, f = this.pSBCr(c0), P = p < 0, t = c1 && c1 != "c" ? this.pSBCr(c1) : P ? { r: 0, g: 0, b: 0, a: -1 } : { r: 255, g: 255, b: 255, a: -1 }, p = P ? p * -1 : p, P = 1 - p;
-  if (!f || !t) return null;
-  if (l) r = m(P * f.r + p * t.r), g = m(P * f.g + p * t.g), b = m(P * f.b + p * t.b);
-  else r = m((P * f.r ** 2 + p * t.r ** 2) ** 0.5), g = m((P * f.g ** 2 + p * t.g ** 2) ** 0.5), b = m((P * f.b ** 2 + p * t.b ** 2) ** 0.5);
-  a = f.a, t = t.a, f = a >= 0 || t >= 0, a = f ? a < 0 ? t : t < 0 ? a : a * P + t * p : 0;
-  if (h) return "rgb" + (f ? "a(" : "(") + r + "," + g + "," + b + (f ? "," + m(a * 1000) / 1000 : "") + ")";
-  else return "#" + (4294967296 + r * 16777216 + g * 65536 + b * 256 + (f ? m(a * 255) : 0)).toString(16).slice(1, f ? undefined : -2)
-}
+io.listen(process.env.PORT || 3000);
