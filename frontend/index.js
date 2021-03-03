@@ -571,7 +571,6 @@ var linearPosition = function(v1,v2,t,t1,t2)
 }
 var linearGameState = function()
 {
-  var displayTime = serverTime() - buffer;
   var rightIdx = 1;
   var time = 0;
   while (rightIdx < gameStates.length && gameStates[rightIdx].time < displayTime)
@@ -604,6 +603,7 @@ function updateGameArea() {
   {
     var states = linearGameState();
     var state = Object(states[0]);
+    var displayTime = serverTime() - buffer;
     for (var i in state.players)
     {
        if (states[0].players[i] == undefined || states[1].players[i] == undefined)
