@@ -140,8 +140,8 @@ var makeObstacles = function () {
   ];
   for (var i =0 ; i < 50; i++)
 	{
-		var width = 100 + 600 * Math.random();
-		var height = 100 + 600 * Math.random();
+		var width = 50 + 200 * Math.random();
+		var height = 50 + 200 * Math.random();
 		var centerx = gameWidth * Math.random();
 		var centery = gameHeight * Math.random();
 		obstacles.push(new Obstacle([
