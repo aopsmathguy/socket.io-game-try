@@ -177,7 +177,7 @@ var GameState = function (time, players, obstacles, weapons) {
   setIfUndefined(this, 'players', players);
   setIfUndefined(this, 'obstacles', obstacles);
   setIfUndefined(this, 'weapons', weapons);
-  this.render = function (gameState2) {
+  this.render = function (gameState2, gameState3) {
     myGameArea.clear();
     drawer.update(this);
     for (var idx in this.obstacles)
@@ -195,6 +195,9 @@ var GameState = function (time, players, obstacles, weapons) {
     }
     for (var idx in gameState2.players) {
       gameState2.displayPlayer(idx);
+    }
+    for (var idx in gameState2.players) {
+      gameState3.displayPlayer(idx);
     }
     this.displayReloadTime();
     this.displayBulletCount();
@@ -590,16 +593,6 @@ var linearGameState = function()
   var right = gameStates[rightIdx];
   var left = gameStates[rightIdx - 1];
   return [left, right];
-
-  var out = Object.assign({}, right);
-  for (var i in out.players)
-  {
-     if (left.players[i] == undefined || right.players[i] == undefined)
-     {
-        continue;
-     }
-     out.players[i].pos = linearPosition(left.players[i].pos, right.players[i].pos, displayTime, left.time, right.time);
-  }
 }
 var resetControls = function()
 {
@@ -610,8 +603,16 @@ function updateGameArea() {
   if (gameStates.length > 1)
   {
     var states = linearGameState();
-    giveMethods(states);
-    states[0].render(states[1]);
+    var state = Object(states[0]);
+    for (var i in state.players)
+    {
+       if (state.players[i] == undefined || right.players[i] == undefined)
+       {
+          continue;
+       }
+       state.players[i].pos = linearPosition(left.players[i].pos, right.players[i].pos, displayTime, left.time, right.time);
+    }
+    state.render(states[0],states[1]);
   }
 }
 function hexToRgbA(hex, alpha) {
