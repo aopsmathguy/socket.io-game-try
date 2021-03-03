@@ -614,6 +614,7 @@ function updateGameArea() {
        state.players[i].pos = linearPosition(states[0].players[i].pos, states[1].players[i].pos, displayTime, states[0].time, states[1].time);
     }
     giveMethods(state);
+    giveMethods(states);
     state.render(states[0],states[1]);
   }
 }
