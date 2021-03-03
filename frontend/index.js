@@ -583,7 +583,7 @@ var linearGameState = function()
   var right = gameStates[rightIdx];
   var left = gameStates[rightIdx - 1];
 
-  var out = copyObject(right);
+  var out = JSON.parse(JSON.stringify(right));
   for (var i in out.players)
   {
      if (left.players[i] == undefined || right.players[i] == undefined)
@@ -594,17 +594,10 @@ var linearGameState = function()
   }
   return out;
 }
-function copyObject(obj){
-  if (typeof obj != "object")
-  {
-    return obj;
-  }
-  var out = {};
-  for (var field in obj)
-  {
-    out[field] = copyObject(obj[field]);
-  }
-  return out;
+var resetControls = function()
+{
+  controlsBundle.justKeyDown = {};
+  controlsBundle.justDowned = false;
 }
 function updateGameArea() {
   if (gameStates.length > 1)
