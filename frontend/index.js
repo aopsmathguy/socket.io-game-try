@@ -241,7 +241,7 @@ var GameState = function (time, players, weapons) {
   this.displayWeapon = function(i)
   {
     var weapon = this.weapons[i];
-    for (var i = 0; i < weapon.bullets.length; i++) {
+    for (var i in bullets) {
       weapon.bullets[i].display();
     }
     var ctx = myGameArea.context;
@@ -597,6 +597,21 @@ var linearGameState = function()
         continue;
      }
      out.players[i].pos = linearPosition(left.players[i].pos, right.players[i].pos, displayTime, left.time, right.time);
+  }
+  for (var i in out.weapons)
+  {
+     if (left.weapons[i] == undefined || right.weapons[i] == undefined)
+     {
+        continue;
+     }
+     for (var j in out.weapons[i].bullets)
+     {
+        if (left.weapons[i].bullets[j] == undefined || right.weapons[i].bullets[j] == undefined)
+        {
+           continue;
+        }
+        out.weapons[i].bullets[j].pos = linearPosition( left.weapons[i].bullets[j].pos,  right.weapons[i].bullets[j].pos, displayTime, left.time, right.time);
+     }
   }
   return out;
 }
