@@ -329,7 +329,8 @@ var Gun = function (startX, startY, length, auto, firerate, multishot, capacity,
   setIfUndefined(this, 'bullets', {});
   setIfUndefined(this, 'bulletsArrLength', 0);
   this.reload = function () {
-    if (this.bulletsRemaining < this.capacity && this.reloadStartTime == -1) {
+    var timeNow = gameState.time;
+    if (this.bulletsRemaining < this.capacity && this.reloadStartTime == -1 && timeNow - this.lastFireTime >= 60000 / this.firerate) {
       this.reloadStartTime = gameState.time;
     }
   }
