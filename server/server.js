@@ -4,7 +4,7 @@ const gameHeight = 2000;
 const io = require('socket.io')();
 
 io.on('connection', client => {
-	client.emit('init', {data : Date.now(), id : client.id});
+	client.emit('init', {data : Date.now(), id : client.id, obstacles : obstacles});
 	client.on('new player', addPlayer);
     client.on('disconnect', function() {
       if (gameState.players[client.id] != undefined)
@@ -54,7 +54,7 @@ io.on('connection', client => {
    
 
 });
-
+var obstacles;
 var gameState;
 var controls = {};
 function emitGameState(gameState) {
@@ -83,11 +83,10 @@ var giveMethods = function (obj) {
     obj.construct();
   }
 }
-var GameState = function (time, players, obstacles, weapons) {
+var GameState = function (time, players, weapons) {
   this.type = "GameState";
   setIfUndefined(this, 'time', time);
   setIfUndefined(this, 'players', players);
-  setIfUndefined(this, 'obstacles', obstacles);
   setIfUndefined(this, 'weapons', weapons);
   this.step = function () {
   	this.time = Date.now();
@@ -98,7 +97,7 @@ var GameState = function (time, players, obstacles, weapons) {
     for (var k in this.players) {
       this.players[k].step();
     }
-    this.obstacles.forEach((obstacle) => {
+    obstacles.forEach((obstacle) => {
       for (var k in this.players) {
         this.players[k].intersect(obstacle);
       }
@@ -116,9 +115,9 @@ var GameState = function (time, players, obstacles, weapons) {
   }
 	this.inObjects = function(v)
 	{
-		for (var i in this.obstacles)
+		for (var i in obstacles)
 		{
-			if (this.obstacles[i].insideOf(v))
+			if (obstacles[i].insideOf(v))
 			{
 				return true;
 			}
@@ -132,7 +131,7 @@ var GameState = function (time, players, obstacles, weapons) {
 var makeObstacles = function () {
   var players = {
   };
-  var obstacles = [
+  obstacles = [
     /*new Obstacle([new Vector(100, 100), new Vector(200, 200), new Vector(260, 200), new Vector(260, 100), new Vector(200, 100)], '#f00'),
     new Obstacle([new Vector(0, 100), new Vector(43.4314575051, 100), new Vector(143.4314575051, 200), new Vector(0, 200)], '#f00'),
     new Obstacle([new Vector(400, 200), new Vector(400, 300), new Vector(300, 300), new Vector(300, 240)], '#00f'),
@@ -157,7 +156,7 @@ var makeObstacles = function () {
     new Gun(200, 50, 60, false, 450, 1, 10, 1500, 50, 20, 2000, 0, 0.3, 0.83, 6, 0.9, 0.3, '#008'),
     new Gun(200, 220, 35, false, 450, 8, 2, 1200, 25, 9, 700, 0.3, 0, 0.83, 6, 0.9, 0.5, '#808')
   ];
-  gameState = new GameState(Date.now(), players, obstacles, weapons);
+  gameState = new GameState(Date.now(), players, weapons);
 }
 function getRandomColor() {
   var letters = '0123456789ABCDEF';
@@ -374,7 +373,7 @@ var Bullet = function (weapon) {
     }
 
     if (this.hitPoint == -1) {
-      var intersect = this.objectsIntersection(gameState.obstacles);
+      var intersect = this.objectsIntersection(obstacles);
       this.hitPoint = intersect[0];
       if (intersect[1] != -1) {
         gameState.players[intersect[1]].health -= this.damage;
@@ -388,8 +387,8 @@ var Bullet = function (weapon) {
     }
   }
   this.insideObject = function () {
-    for (var i = 0; i < gameState.obstacles.length; i++) {
-      if (gameState.obstacles[i].insideOf(this.pos)) {
+    for (var i = 0; i < obstacles.length; i++) {
+      if (obstacles[i].insideOf(this.pos)) {
         return true;
       }
     }
