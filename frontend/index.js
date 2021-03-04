@@ -25,9 +25,12 @@ function joinGame()
 }
 var timeDifference = 0;
 var controlId = 0;
+var obstacles;
 function handleInit(msg) {
   timeDifference = msg.data - Date.now();
   controlId = msg.id;
+  obstacles = msg.obstacles;
+  giveMethods(obstacles);
 }
 function serverTime()
 {
@@ -171,16 +174,15 @@ var giveMethods = function (obj) {
     obj.construct();
   }
 }
-var GameState = function (time, players, obstacles, weapons) {
+var GameState = function (time, players, weapons) {
   this.type = "GameState";
   setIfUndefined(this, 'time', time);
   setIfUndefined(this, 'players', players);
-  setIfUndefined(this, 'obstacles', obstacles);
   setIfUndefined(this, 'weapons', weapons);
   this.render = function () {
     myGameArea.clear();
     drawer.update(this);
-    for (var idx in this.obstacles)
+    for (var idx in obstacles)
     {
       this.displayObstacle(idx);
     }
@@ -254,7 +256,7 @@ var GameState = function (time, players, obstacles, weapons) {
   }
   this.displayObstacle = function(i)
   {
-    var obstacle = this.obstacles[i];
+    var obstacle = obstacles[i];
     var ctx = myGameArea.context;
       
     ctx.fillStyle = obstacle.color;
