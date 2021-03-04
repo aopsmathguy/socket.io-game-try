@@ -1,4 +1,4 @@
-var buffer = 100;
+var buffer = 70;
 
 const socket = io('https://limitless-everglades-60126.herokuapp.com/');
 
@@ -218,7 +218,8 @@ var GameState = function (time, players, weapons) {
     drawer.circle(ctx, player.pos, player.radius * player.health / 100);
     ctx.closePath();
     ctx.fill();
-
+    var ang = (i == controlId ? controlsBundle.ang : player.ang);
+     
     var firstHand = (player.weapon != -1 ? new Vector(player.radius - this.weapons[player.weapon].recoil, 3) : new Vector(player.radius * 0.75, player.radius * 0.8));
     var secondHand = (player.weapon != -1 ? new Vector(2 * player.radius - this.weapons[player.weapon].recoil, 6) : new Vector(player.radius * 0.75, -player.radius * 0.8));
     if (player.weapon != -1) {
@@ -227,13 +228,13 @@ var GameState = function (time, players, weapons) {
     ctx.strokeStyle = '#000';
     drawer.lineWidth(ctx, 3);
     ctx.beginPath();
-    drawer.circle(ctx, player.pos.add(firstHand.rotate(player.ang)), 6);
+    drawer.circle(ctx, player.pos.add(firstHand.rotate(ang)), 6);
     ctx.closePath();
     ctx.stroke();
     ctx.fill();
 
     ctx.beginPath();
-    drawer.circle(ctx, player.pos.add(secondHand.rotate(player.ang)), 6);
+    drawer.circle(ctx, player.pos.add(secondHand.rotate(ang)), 6);
     ctx.closePath();
     ctx.stroke();
     ctx.fill();
@@ -241,8 +242,8 @@ var GameState = function (time, players, weapons) {
   this.displayWeapon = function(i)
   {
     var weapon = this.weapons[i];
-    for (var i in bullets) {
-      weapon.bullets[i].display();
+    for (var j in weapon.bullets) {
+      weapon.bullets[j].display();
     }
     var ctx = myGameArea.context;
     ctx.strokeStyle = weapon.color;
@@ -301,6 +302,20 @@ var GameState = function (time, players, weapons) {
       ctx.restore();
     }
   }
+  this.snapWeapons = function()
+  {
+     for (var i in this.players)
+     {
+       if (this.players[i].weapon == -1)
+       {
+          continue;
+       }
+       var player = this.players[i];
+        var ang = (i == controlId ? controlsBundle.ang : player.ang);
+       this.weapons[player.weapon].pos = player.pos.add((new Vector(player.radius + this.weapons[player.weapon].length / 2 - this.weapons[player.weapon].recoil, 0)).rotate(ang));
+        this.weapons[player.weapon].ang = ang;
+     }
+  }
   this.toString = function () {
     return JSON.stringify(this);
   }
@@ -321,7 +336,7 @@ var Player = function (xStart, yStart) {
   setIfUndefined(this, 'vel', new Vector(0, 0));
 
   setIfUndefined(this, 'ang', 0);
-
+  
   /*this.drawHealthBar = function()
   {
        var ctx = myGameArea.context;
@@ -379,7 +394,8 @@ var Gun = function (startX, startY, length, auto, firerate, multishot, capacity,
   setIfUndefined(this, 'recoil', 0);
   setIfUndefined(this, 'lastFireTime', 0);
   setIfUndefined(this, 'hold', false);
-  setIfUndefined(this, 'bullets', []);
+  setIfUndefined(this, 'bullets', {});
+  
 }
 var Bullet = function (weapon) {
   this.type = "Bullet";
@@ -402,7 +418,7 @@ var Bullet = function (weapon) {
   this.display = function () {
     var ctx = myGameArea.context;
     const g = drawer.createLinearGradient(ctx, this.pos, this.tailPos);
-    g.addColorStop(0, hexToRgbA(pSBC(0.5, this.color), 1)); // opaque
+    g.addColorStop(0, hexToRgbA(pSBC(0.3, this.color), 1)); // opaque
     g.addColorStop(1, hexToRgbA(pSBC(0.3, this.color), 0)); // transparent
     ctx.strokeStyle = g;
 
@@ -583,7 +599,10 @@ var linearGameState = function()
   }
   if (rightIdx >= gameStates.length)
   {
-    return gameStates[gameStates.length - 1];
+     var out = JSON.parse(JSON.stringify(gameStates[gameStates.length - 1]));
+    giveMethods(out);
+     out.snapWeapons();
+    return out;
   }
 
   var right = gameStates[rightIdx];
@@ -606,13 +625,20 @@ var linearGameState = function()
      }
      for (var j in out.weapons[i].bullets)
      {
-        if (left.weapons[i].bullets[j] == undefined || right.weapons[i].bullets[j] == undefined)
+        if (left.weapons[i].bullets[j] == undefined)
         {
-           continue;
+            
         }
-        out.weapons[i].bullets[j].pos = linearPosition( left.weapons[i].bullets[j].pos,  right.weapons[i].bullets[j].pos, displayTime, left.time, right.time);
+        else
+        {
+           out.weapons[i].bullets[j].pos = linearPosition(left.weapons[i].bullets[j].pos, right.weapons[i].bullets[j].pos, displayTime, left.time, right.time);
+
+           out.weapons[i].bullets[j].tailPos = linearPosition(left.weapons[i].bullets[j].tailPos, right.weapons[i].bullets[j].tailPos, displayTime, left.time, right.time);
+        }
      }
   }
+  giveMethods(out);
+  out.snapWeapons();
   return out;
 }
 var resetControls = function()
@@ -624,7 +650,6 @@ function updateGameArea() {
   if (gameStates.length > 1)
   {
     var state = linearGameState();
-    giveMethods(state);
     state.render();
   }
 }
