@@ -165,14 +165,14 @@ var makeObstacles = function () {
   for (var i = 0; i < 10; i++)
   {
      var random = Math.floor(viableWeapons.length * Math.random());
-     var weapon = viableWeapons[random].deepCopy();
+     var weapon = deepCopy(viableWeapons[random]);
      weapon.pos = findSpawnPosition();
      weapons.push(weapon);
   }
   gameState = new GameState(Date.now(), players, weapons);
 }
-function deepCopy(){
-   var out = JSON.parse(JSON.stringify(this));
+function deepCopy(obj){
+   var out = JSON.parse(JSON.stringify(obj));
    giveMethods(out);
 }
 function getRandomColor() {
