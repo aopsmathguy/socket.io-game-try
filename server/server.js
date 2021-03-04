@@ -162,10 +162,9 @@ var makeObstacles = function () {
     new Gun(200, 220, 35, false, 450, 8, 2, 1200, 25, 9, 700, 0.3, 0, 0.83, 6, 0.9, 0.5, '#808')
   ];
    var weapons = [];
-  for (var i = 0; i < 10; i++)
+  for (var i = 0; i < viableWeapons.length; i++)
   {
-     var random = Math.floor(viableWeapons.length * Math.random());
-     var weapon = deepCopy(viableWeapons[random]);
+     var weapon = viableWeapons[i];
      weapon.pos = findSpawnPosition();
      weapons.push(weapon);
   }
