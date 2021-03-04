@@ -165,7 +165,7 @@ var makeObstacles = function () {
   for (var i = 0; i < 10; i++)
   {
      var random = Math.floor(viableWeapons.length * Math.random());
-     var weapon = viableWeapons[random].copy();
+     var weapon = viableWeapons[random].deepCopy();
      weapon.pos = findSpawnPosition();
      weapons.push(weapon);
   }
