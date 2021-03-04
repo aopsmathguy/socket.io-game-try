@@ -1,5 +1,5 @@
-const gameWidth = 2000;
-const gameHeight = 2000;
+const gameWidth = 4000;
+const gameHeight = 4000;
 
 const io = require('socket.io')();
 
@@ -136,11 +136,12 @@ var inObjects = function(v)
 var makeObstacles = function () {
   var players = {
   };
+  var wallThick = 10;
   obstacles = [
-    /*new Obstacle([new Vector(100, 100), new Vector(200, 200), new Vector(260, 200), new Vector(260, 100), new Vector(200, 100)], '#f00'),
-    new Obstacle([new Vector(0, 100), new Vector(43.4314575051, 100), new Vector(143.4314575051, 200), new Vector(0, 200)], '#f00'),
-    new Obstacle([new Vector(400, 200), new Vector(400, 300), new Vector(300, 300), new Vector(300, 240)], '#00f'),
-    new Obstacle([new Vector(40, 300), new Vector(260, 300), new Vector(260, 240), new Vector(40, 240)], '#00f')*/
+    new Obstacle([new Vector(0, 0), new Vector(0, gameHeight), new Vector(-wallThick, gameHeight), new Vector(-wallThick, 0)], '#000'),
+    new Obstacle([new Vector(gameWidth, 0), new Vector(gameWidth, gameHeight), new Vector(gameWidth+wallThick, gameHeight), new Vector(gameWidth+wallThick, 0)], '#000'),
+    new Obstacle([new Vector(0, 0), new Vector(gameWidth, 0), new Vector(gameWidth, -wallThick), new Vector(0, -wallThick)], '#000'),
+    new Obstacle([new Vector(0, gameHeight), new Vector(gameWidth, gameHeight), new Vector(gameWidth, gameHeight+wallThick), new Vector(0, gameHeight+wallThick)], '#000')
   ];
   for (var i =0 ; i < 50; i++)
 	{
