@@ -143,7 +143,7 @@ var makeObstacles = function () {
     new Obstacle([new Vector(0, 0), new Vector(gameWidth, 0), new Vector(gameWidth, -wallThick), new Vector(0, -wallThick)], '#000'),
     new Obstacle([new Vector(0, gameHeight), new Vector(gameWidth, gameHeight), new Vector(gameWidth, gameHeight+wallThick), new Vector(0, gameHeight+wallThick)], '#000')
   ];
-  for (var i =0 ; i < 50; i++)
+  for (var i =0 ; i < 100; i++)
 	{
 		var width = 50 + 200 * Math.random();
 		var height = 50 + 200 * Math.random();
@@ -325,7 +325,8 @@ var Gun = function (startX, startY, length, auto, firerate, multishot, capacity,
   setIfUndefined(this, 'recoil', 0);
   setIfUndefined(this, 'lastFireTime', 0);
   setIfUndefined(this, 'hold', false);
-  setIfUndefined(this, 'bullets', []);
+  setIfUndefined(this, 'bullets', {});
+  setIfUndefined(this, 'bulletsArrLength', 0);
   this.reload = function () {
     if (this.bulletsRemaining < this.capacity && this.reloadStartTime == -1) {
       this.reloadStartTime = gameState.time;
@@ -339,7 +340,8 @@ var Gun = function (startX, startY, length, auto, firerate, multishot, capacity,
     if (timeNow - this.lastFireTime >= 60000 / this.firerate && this.reloadStartTime == -1) {
       if (this.bulletsRemaining > 0) {
         for (var i = 0; i < this.multishot; i++) {
-          this.bullets.push(new Bullet(this));
+          this.bullets[this.bulletsArrLength] = new Bullet(this);
+          this.bulletsArrLength += 1;
         }
         this.spray += this.sprayCoef;
         this.recoil += this.kickAnimation;
@@ -356,10 +358,10 @@ var Gun = function (startX, startY, length, auto, firerate, multishot, capacity,
       this.bulletsRemaining = this.capacity;
       this.reloadStartTime = -1;
     }
-    for (var i = this.bullets.length - 1; i >= 0; i--) {
+    for (var i in this.bullets) {
       this.bullets[i].step();
       if (this.bullets[i].stopAnimationAge > this.bullets[i].fadeTime) {
-        this.bullets.splice(i, 1);
+        delete this.bullets[i];
       }
     }
 
