@@ -448,11 +448,11 @@ var Bullet = function (weapon) {
       return -1;
     }
     var vertices = object.vs;
-    vertices.push(vertices[0]);
+    //vertices.push(vertices[0]);
     var smallestDistance = Number.MAX_VALUE;
     var objectPoint = -1;
-    for (var i = 0; i < vertices.length - 1; i++) {
-      var point = this.segmentIntersect(vertices[i], vertices[i + 1]);
+    for (var i = 0; i < vertices.length; i++) {
+      var point = this.segmentIntersect(vertices[i], vertices[(i + 1) % vertices.length]);
       if (point != -1) {
         var dist = this.startPos.distanceTo(point);
         if (dist < smallestDistance) {
