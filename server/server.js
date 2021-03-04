@@ -50,13 +50,13 @@ io.on('connection', client => {
    
 
 });
-var findSpawnPosition = function()
+var findSpawnPosition = function(objects)
 {
    var startPos;
    do {
       startPos = new Vector(gameWidth * Math.random(), gameHeight * Math.random());
    }
-   while (gameState.inObjects(startPos));
+   while (inObjects(startPos));
    return startPos;
 }
 var obstacles;
@@ -118,20 +118,20 @@ var GameState = function (time, players, weapons) {
       }
     }
   }
-	this.inObjects = function(v)
-	{
-		for (var i in obstacles)
-		{
-			if (obstacles[i].insideOf(v))
-			{
-				return true;
-			}
-		}
-		return false;
-	}
   this.toString = function () {
     return JSON.stringify(this);
   }
+}
+var inObjects = function(v)
+{
+   for (var i in obstacles)
+   {
+      if (obstacles[i].insideOf(v))
+      {
+         return true;
+      }
+   }
+   return false;
 }
 var makeObstacles = function () {
   var players = {
