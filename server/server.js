@@ -40,11 +40,7 @@ io.on('connection', client => {
     });
 	function addPlayer(msg){
 	  controlId = client.id;
-		var startPos;
-		do {
-	  	startPos = new Vector(gameWidth * Math.random(), gameHeight * Math.random());
-		}
-		while (gameState.inObjects(startPos));
+		var startPos = findSpawnPosition();
 		gameState.players[controlId] = new Player(startPos.x,startPos.y);
 		controls[controlId] = {
 			keys : [],
@@ -54,6 +50,15 @@ io.on('connection', client => {
    
 
 });
+var findSpawnPosition = function()
+{
+   var startPos;
+   do {
+      startPos = new Vector(gameWidth * Math.random(), gameHeight * Math.random());
+   }
+   while (gameState.inObjects(startPos));
+   return startPos;
+}
 var obstacles;
 var gameState;
 var controls = {};
@@ -150,13 +155,25 @@ var makeObstacles = function () {
 			new Vector(centerx - width/2,centery + height/2)
 																], getRandomColor()));
 	}
-  var weapons = [
+  var viableWeapons = [
     new Gun(100, 50, 30, true, 900, 1, 32, 1000, 30, 7, 900, 0, 0.12, 0.9, 2, 0.9, 0.8, '#800'),
     new Gun(200, 350, 45, true, 600, 1, 30, 1400, 40, 8, 1500, 0, 0.08, 0.91, 3, 0.9, 0.6, '#f80'),
     new Gun(200, 50, 60, false, 450, 1, 10, 1500, 50, 20, 2000, 0, 0.3, 0.83, 6, 0.9, 0.3, '#008'),
     new Gun(200, 220, 35, false, 450, 8, 2, 1200, 25, 9, 700, 0.3, 0, 0.83, 6, 0.9, 0.5, '#808')
   ];
+   var weapons = [];
+  for (var i = 0; i < 10; i++)
+  {
+     var random = Math.floor(viableWeapons.length * Math.random());
+     var weapon = viableWeapons[random].copy();
+     weapon.pos = findSpawnPosition();
+     weapons.push(weapon);
+  }
   gameState = new GameState(Date.now(), players, weapons);
+}
+function deepCopy(){
+   var out = JSON.parse(JSON.stringify(this));
+   giveMethods(out);
 }
 function getRandomColor() {
   var letters = '0123456789ABCDEF';
@@ -617,25 +634,6 @@ var Vector = function (x, y) {
   }
   this.angTo = function (v) {
     return (this.subtract(v)).ang();
-  }
-  this.drawLine = function (v, color, thickness) {
-    if (v == null) {
-      return;
-    }
-    var ctx = myGameArea.context;
-    ctx.strokeStyle = color;
-    ctx.lineWidth = thickness;
-    ctx.beginPath();
-    ctx.moveTo(this.x, this.y);
-    ctx.lineTo(v.x, v.y);
-    ctx.stroke();
-  }
-  this.dot = function (r, color) {
-    var ctx = myGameArea.context;
-    ctx.beginPath();
-    ctx.arc(this.x, this.y, r, 0, 2 * Math.PI, false);
-    ctx.fillStyle = color;
-    ctx.fill();
   }
   this.onSegment = function (v1, v2) {
     var buffer = 0.0001
