@@ -256,7 +256,10 @@ var GameState = function (time, players, obstacles, weapons) {
   {
     var obstacle = this.obstacles[i];
     var ctx = myGameArea.context;
+      
     ctx.fillStyle = obstacle.color;
+    ctx.strokeStyle = "#000";
+    drawer.lineWidth(ctx, 3);
     ctx.beginPath();
     drawer.moveContext(ctx, obstacle.vs[0]);
     for (var i = 1; i < obstacle.vs.length; i++) {
@@ -264,6 +267,7 @@ var GameState = function (time, players, obstacles, weapons) {
     }
     ctx.closePath();
     ctx.fill();
+    ctx.stroke();
   }
   this.displayBulletCount = function () {
     var player = this.players[controlId];
