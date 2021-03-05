@@ -113,7 +113,6 @@ var GameState = function (time, players, weapons) {
     for (var k in this.players) {
       if (this.players[k].health <= 0) {
         this.players[k].dropWeapon();
-
         delete this.players[k];
       }
     }
@@ -163,12 +162,16 @@ var makeObstacles = function () {
     new Gun(200, 50, 70, false, 60, 1, 5, 2000, 70, 102, 30, 830, 240, 3000, 0, 0.3, 0.83, 6, 0.9, 0.3, '#8f0'),
     new Gun(200, 220, 35, false, 450, 8, 2, 1400, 25, 13, 6, 490, 104, 700, 0.3, 0, 0.83, 6, 0.9, 0.5, '#808')
   ];
+  var numEach = [4,2,2,1,2];
    var weapons = [];
   for (var i = 0; i < viableWeapons.length; i++)
   {
-     var weapon = viableWeapons[i];
-     weapon.pos = findSpawnPosition();
-     weapons.push(weapon);
+    for (var j = 0; j < numEach[i]; j++)
+    {
+       var weapon = viableWeapons[i].copy();
+       weapon.pos = findSpawnPosition();
+       weapons.push(weapon);
+    }
   }
   gameState = new GameState(Date.now(), players, weapons);
 }
@@ -372,6 +375,10 @@ var Gun = function (startX, startY, length, auto, firerate, multishot, capacity,
       }
     }
 
+  }
+  this.copy = function()
+  {
+    return new Gun(this.pos.x,this.pos.y,this.length,this.auto,this.firerate,this.multishot,this.capacity,this.reloadTime,this.bulletSpeed,this.damage,this.range,this.defSpray,this.sprayCoef,this.stability,this.kickAnimation,this.animationMult,this.shootWalkSpeedMult,this.color);
   }
 }
 var Bullet = function (weapon) {
