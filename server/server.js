@@ -336,6 +336,10 @@ var Gun = function (startX, startY, length, auto, firerate, multishot, capacity,
   setIfUndefined(this, 'hold', false);
   setIfUndefined(this, 'bullets', {});
   setIfUndefined(this, 'bulletsArrLength', 0);
+  this.copy = function()
+  {
+    return new Gun(this.pos.x,this.pos.y,this.length,this.auto,this.firerate,this.multishot,this.capacity,this.reloadTime,this.bulletSpeed,this.damage,this.damageDrop,this.damageRange,this.damageDropTension,this.range,this.defSpray,this.sprayCoef,this.stability,this.kickAnimation,this.animationMult,this.shootWalkSpeedMult,this.color);
+  }
   this.reload = function () {
     var timeNow = gameState.time;
     if (this.bulletsRemaining < this.capacity && this.reloadStartTime == -1 && timeNow - this.lastFireTime >= 60000 / this.firerate) {
@@ -376,10 +380,7 @@ var Gun = function (startX, startY, length, auto, firerate, multishot, capacity,
     }
 
   }
-  this.copy = function()
-  {
-    return new Gun(this.pos.x,this.pos.y,this.length,this.auto,this.firerate,this.multishot,this.capacity,this.reloadTime,this.bulletSpeed,this.damage,this.range,this.defSpray,this.sprayCoef,this.stability,this.kickAnimation,this.animationMult,this.shootWalkSpeedMult,this.color);
-  }
+  
 }
 var Bullet = function (weapon) {
   this.type = "Bullet";
