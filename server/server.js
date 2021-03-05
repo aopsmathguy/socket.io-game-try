@@ -157,11 +157,11 @@ var makeObstacles = function () {
 																], getRandomColor()));
 	}
   var viableWeapons = [
-    new Gun(100, 50, 30, true, 900, 1, 32, 1000, 30, 7, 900, 0, 0.12, 0.9, 2, 0.9, 0.8, '#800'),
-    new Gun(200, 350, 45, true, 600, 1, 30, 1400, 40, 8, 1250, 0, 0.08, 0.91, 3, 0.9, 0.6, '#f80'),
-    new Gun(200, 50, 60, false, 350, 1, 10, 1500, 50, 20, 2000, 0, 0.3, 0.83, 6, 0.9, 0.3, '#008'),
-    new Gun(200, 50, 70, false, 60, 1, 5, 2000, 70, 90, 3000, 0, 0.3, 0.83, 6, 0.9, 0.3, '#8f0'),
-    new Gun(200, 220, 35, false, 450, 8, 2, 1200, 25, 9, 700, 0.3, 0, 0.83, 6, 0.9, 0.5, '#808')
+    new Gun(100, 50, 30, true, 900, 1, 32, 1000, 30, 7, 3, 500, 150, 1000, 0, 0.12, 0.9, 2, 0.9, 0.8, '#800'),
+    new Gun(200, 350, 45, true, 600, 1, 30, 1400, 40, 8, 2, 550, 270, 1250, 0, 0.08, 0.91, 3, 0.9, 0.6, '#f80'),
+    new Gun(200, 50, 60, false, 350, 1, 10, 1500, 50, 20, 3, 710, 200, 2000, 0, 0.3, 0.83, 6, 0.9, 0.3, '#008'),
+    new Gun(200, 50, 70, false, 60, 1, 5, 2000, 70, 102, 30, 830, 240, 3000, 0, 0.3, 0.83, 6, 0.9, 0.3, '#8f0'),
+    new Gun(200, 220, 35, false, 450, 8, 2, 1400, 25, 13, 6, 490, 104, 700, 0.3, 0, 0.83, 6, 0.9, 0.5, '#808')
   ];
    var weapons = [];
   for (var i = 0; i < viableWeapons.length; i++)
@@ -297,7 +297,7 @@ var Player = function (xStart, yStart) {
     }
   }
 }
-var Gun = function (startX, startY, length, auto, firerate, multishot, capacity, reloadTime, bulletSpeed, damage, range, defSpray, sprayCoef, stability, kickAnimation, animationMult, shootWalkSpeedMult, color) {
+var Gun = function (startX, startY, length, auto, firerate, multishot, capacity, reloadTime, bulletSpeed, damage, damageDrop, damageRange, damageDropTension, range, defSpray, sprayCoef, stability, kickAnimation, animationMult, shootWalkSpeedMult, color) {
   this.type = "Gun";
   setIfUndefined(this, 'pos', new Vector(startX, startY));
   setIfUndefined(this, 'vel', new Vector(0, 0));
@@ -311,7 +311,12 @@ var Gun = function (startX, startY, length, auto, firerate, multishot, capacity,
   setIfUndefined(this, 'defSpray', defSpray);
   setIfUndefined(this, 'sprayCoef', sprayCoef);
   setIfUndefined(this, 'bulletSpeed', bulletSpeed);
+   
   setIfUndefined(this, 'damage', damage);
+  setIfUndefined(this, 'damageDrop', damageDrop);
+  setIfUndefined(this, 'damageRange', damageRange);
+  setIfUndefined(this, 'damageDropTension', damageDropTension);
+   
   setIfUndefined(this, 'range', range);
   setIfUndefined(this, 'stability', stability);
   setIfUndefined(this, 'kickAnimation', kickAnimation);
@@ -380,7 +385,13 @@ var Bullet = function (weapon) {
   setIfUndefined(this, 'vel', (new Vector(weapon.bulletSpeed, 0)).rotate(weapon.ang + weapon.spray * (Math.random() - 0.5)).add(weapon.vel));
   setIfUndefined(this, 'ang', this.vel.ang());
   setIfUndefined(this, 'bulletSpeed', weapon.bulletSpeed);
+   
   setIfUndefined(this, 'damage', weapon.damage);
+  setIfUndefined(this, 'damageDrop', weapon.damageDrop);
+  setIfUndefined(this, 'damageRange', weapon.damageRange);
+  setIfUndefined(this, 'damageDropTension', weapon.damageDropTension);
+  
+   
   setIfUndefined(this, 'range', weapon.range);
   setIfUndefined(this, 'hitPoint', -1);
   setIfUndefined(this, 'fadeTime', 10);
@@ -397,7 +408,7 @@ var Bullet = function (weapon) {
       var intersect = this.objectsIntersection(obstacles);
       this.hitPoint = intersect[0];
       if (intersect[1] != -1) {
-        gameState.players[intersect[1]].health -= this.damage;
+        gameState.players[intersect[1]].health -= this.calculateDamage();
       }
       if (this.pos.distanceTo(this.startPos) > this.range) {
         this.hitPoint = this.pos.copy();
@@ -405,6 +416,13 @@ var Bullet = function (weapon) {
     }
     else {
       this.stopAnimationAge += 1;
+    }
+  }
+  this.calculateDamage = function(){
+    if(this.hitPoint != -1)
+    {
+      var distance = this.hitPoint.distanceTo(this.startPos);
+      return this.damage - this.damageDrop/(1 + exp(-(distance - this.damageRange)/this.damageDropTension));
     }
   }
   this.insideObject = function () {
