@@ -627,7 +627,8 @@ var linearGameState = function()
      {
         if (left.weapons[i].bullets[j] == undefined)
         {
-            
+            var lefty = new Vector(right.weapons[i].bullets[j].pos.x - right.weapons[i].bullets[j].vel.x, right.weapons[i].bullets[j].pos.y - right.weapons[i].bullets[j].vel.y);
+            out.weapons[i].bullets[j].pos = linearPosition(lefty, right.weapons[i].bullets[j].pos, displayTime, left.time, right.time);
         }
         else
         {
@@ -635,6 +636,7 @@ var linearGameState = function()
 
            out.weapons[i].bullets[j].tailPos = linearPosition(left.weapons[i].bullets[j].tailPos, right.weapons[i].bullets[j].tailPos, displayTime, left.time, right.time);
         }
+        
      }
   }
   giveMethods(out);
