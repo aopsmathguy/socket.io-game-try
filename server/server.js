@@ -422,7 +422,7 @@ var Bullet = function (weapon) {
     if(this.hitPoint != -1)
     {
       var distance = this.hitPoint.distanceTo(this.startPos);
-      return this.damage - this.damageDrop/(1 + exp(-(distance - this.damageRange)/this.damageDropTension));
+      return this.damage - this.damageDrop/(1 + Math.exp(-(distance - this.damageRange)/this.damageDropTension));
     }
   }
   this.insideObject = function () {
