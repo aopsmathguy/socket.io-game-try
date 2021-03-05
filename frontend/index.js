@@ -36,10 +36,6 @@ function serverTime()
 {
   return Date.now() + timeDifference;
 }
-function sendControls()
-{
-  socket.emit('controls',controlsBundle);
-}
 var gameStates = [];
 var controlId;
 var drawer;
@@ -105,8 +101,12 @@ var myGameArea = {
 
   },
   clear: function () {
+    this.canvas.width  = window.innerWidth;
+    this.canvas.height = window.innerHeight;
+    
     this.context.fillStyle = "#080";
     this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);
+    
   }
 }
 var controlsBundle = {
@@ -180,8 +180,6 @@ var GameState = function (time, players, weapons) {
   setIfUndefined(this, 'players', players);
   setIfUndefined(this, 'weapons', weapons);
   this.render = function () {
-    myGameArea.clear();
-    drawer.update(this);
     for (var idx in obstacles)
     {
       this.displayObstacle(idx);
@@ -279,7 +277,6 @@ var GameState = function (time, players, weapons) {
       ctx.save();
       ctx.font = "bold 40px Courier New";
       ctx.fillStyle = '#fff';
-      ctx.lineWidth = 2;
       ctx.textAlign = "center";
       ctx.fillText(this.weapons[player.weapon].bulletsRemaining + '|' + this.weapons[player.weapon].capacity, myGameArea.canvas.width / 2, myGameArea.canvas.height - 100);
       ctx.restore();
@@ -287,7 +284,7 @@ var GameState = function (time, players, weapons) {
   }
   this.displayReloadTime = function () {
     var player = this.players[controlId];
-    if (player.weapon != -1 && this.weapons[player.weapon].reloadStartTime != -1) {
+    if (player && player.weapon != -1 && this.weapons[player.weapon].reloadStartTime != -1) {
       var ctx = myGameArea.context;
       ctx.save();
       ctx.globalAlpha = 0.8;
@@ -433,7 +430,7 @@ var Bullet = function (weapon) {
 var Drawer = function () {
   this.scroll = this.scroll || new Vector(0, 0);
   this.scale = 1;
-  this.targetScale = 1 / 3000 * (myGameArea.canvas.width + myGameArea.canvas.height);
+  this.targetScale;
   this.screenShake = this.screenShake || 0;
   this.moveContext = function (ctx, point) {
     var displayPoint = point.subtract(this.scroll).multiply(this.scale).add((new Vector(myGameArea.canvas.width, myGameArea.canvas.height)).multiply(0.5));
@@ -456,7 +453,10 @@ var Drawer = function () {
     return ctx.createLinearGradient(newStart.x, newStart.y, newEnd.x, newEnd.y);
   }
   this.update = function (state) {
+    
     character = state.players[controlId];
+    
+    this.targetScale = 1 / 40000 * (9 * myGameArea.canvas.width + 16 * myGameArea.canvas.height);
     this.scroll = character.pos.add((new Vector(Math.random() - 0.5, Math.random() - 0.5)).multiply(this.screenShake));
     this.scale = 0.9 * (this.scale - this.targetScale) + this.targetScale;
   }
@@ -646,10 +646,26 @@ var resetControls = function()
   controlsBundle.justKeyDown = {};
   controlsBundle.justDowned = false;
 }
+var lastDeadTime = -1;
 function updateGameArea() {
   if (gameStates.length > 1)
   {
     var state = linearGameState();
+    myGameArea.clear();
+    if (state.players[controlId] != undefined)
+    {
+      drawer.update(state);
+      lastDeadTime = -1;
+    }
+    else if (lastDeadTime == -1)
+    {
+      lastDeadTime = Date.now();
+    }
+    else if (Date.now() - lastDeadTime > 5000)
+    {
+      socket.emit('new player', {});
+      lastDeadTime = -2;
+    }
     state.render();
   }
 }
