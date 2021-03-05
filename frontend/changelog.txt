@@ -1,0 +1,12 @@
+v1.0.1: Damage Dropoff
+Mar 4, 2021
+
+Weapons now have reduced damage at range.
+
+Sniper now one shots at close range
+shotgun now one shots at close range
+
+v1.0.0: First version
+Mar 3, 2021
+
+Client crashes when killed, randomly generated rectangle obstacles, constant damage at all ranges
