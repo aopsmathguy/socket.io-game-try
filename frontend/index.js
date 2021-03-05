@@ -1,4 +1,4 @@
-var buffer = 70;
+var buffer = 0;
 
 const socket = io('https://limitless-everglades-60126.herokuapp.com/');
 
