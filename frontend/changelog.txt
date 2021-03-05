@@ -1,3 +1,12 @@
+v1.0.2: Respawn Update
+Mar 5, 2021
+
+You can now respawn after 5 seconds after dying.
+
+Added a auto shotgun
+Nerfed double barrel damage dropoff
+buffed double barrel spread and bullet speed
+
 v1.0.1: Damage Dropoff
 Mar 4, 2021
 
