@@ -599,10 +599,11 @@ var linearGameState = function()
   }
   if (rightIdx >= gameStates.length)
   {
-     var out = JSON.parse(JSON.stringify(gameStates[gameStates.length - 1]));
+     /*var out = JSON.parse(JSON.stringify(gameStates[gameStates.length - 1]));
     giveMethods(out);
      out.snapWeapons();
-    return out;
+    return out;*/
+      rightIdx = gameStates.length - 1;
   }
 
   var right = gameStates[rightIdx];
