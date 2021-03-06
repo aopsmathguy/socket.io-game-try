@@ -8,7 +8,7 @@ io.on('connection', client => {
 	client.on('new player', addPlayer);
     client.on('disconnect', function() {
       if (gameState.players[client.id] != undefined)
-      	gameState.players[client.id].dropWeapon();
+      	gameState.dropWeapon(client.id);
       delete gameState.players[client.id];
       delete controls[client.id];
     });
@@ -71,23 +71,6 @@ var setIfUndefined = function (obj, field, value) {
     obj[field] = value;
   }
 }
-var giveMethods = function (obj) {
-  if (obj == null) {
-    return;
-  }
-
-  if (typeof obj === "object") {
-    for (var field in obj) {
-      giveMethods(obj[field]);
-    }
-  }
-
-  var type = obj.type;
-  if (type != undefined) {
-    obj.construct = window[type];
-    obj.construct();
-  }
-}
 var GameState = function (time, players, weapons) {
   this.type = "GameState";
   setIfUndefined(this, 'time', time);
@@ -97,10 +80,10 @@ var GameState = function (time, players, weapons) {
   	this.time = Date.now();
   	for (var k in this.players)
     {
-        this.players[k].controls(k);
+        this.controls(k);
     }
     for (var k in this.players) {
-      this.players[k].step();
+      this.playerStep(k);
     }
     obstacles.forEach((obstacle) => {
       for (var k in this.players) {
@@ -112,9 +95,90 @@ var GameState = function (time, players, weapons) {
     }
     for (var k in this.players) {
       if (this.players[k].health <= 0) {
-        this.players[k].dropWeapon();
+        this.dropWeapon(k);
         delete this.players[k];
       }
+    }
+  }
+	this.controls = function (k) {
+    var targetVel = new Vector((controls[k].keys[68] ? 1 : 0) + (controls[k].keys[65] ? -1 : 0), (controls[k].keys[83] ? 1 : 0) + (controls[k].keys[87] ? -1 : 0));
+    if (!targetVel.magnitude() == 0) {
+      targetVel = targetVel.multiply(this.players[k].speed / targetVel.magnitude());
+    }
+    if (this.players[k].weapon != -1 && this.time - this.weapons[this.players[k].weapon].lastFireTime < 60000 / this.weapons[this.players[k].weapon].firerate) {
+      targetVel = targetVel.multiply(this.weapons[this.players[k].weapon].shootWalkSpeedMult);
+    }
+    this.players[k].vel = this.players[k].vel.add(targetVel.subtract(this.players[k].vel).multiply(this.players[k].agility));
+    this.players[k].ang = controls[k].ang;
+
+    if (this.players[k].justKeyDowned[70]) {
+      var minDist = this.players[k].reachDist;
+      var idx = -1;
+      for (var i = 0; i < this.weapons.length; i++) {
+        if (this.weapons[i].hold) {
+          continue;
+        }
+        var distance = this.players[k].pos.distanceTo(this.weapons[i].pos);
+        if (distance < minDist) {
+          idx = i;
+          minDist = distance;
+        }
+      }
+      if (idx != -1) {
+        this.dropWeapon(k);
+        this.pickUpWeapon(k,idx);
+      }
+      this.players[k].justKeyDowned[70] = false;
+    }
+    if (this.players[k].justKeyDowned[71]) {
+      this.dropWeapon(k);
+      this.players[k].justKeyDowned[71] = false;
+    }
+    if (this.players[k].justKeyDowned[82] && this.players[k].weapon != -1) {
+      this.weapons[this.players[k].weapon].reload();
+      this.players[k].justKeyDowned[82] = false;
+    }
+    if (this.players[k].justKeyDowned[88]) {
+      this.weapons[this.players[k].weapon].cancelReload();
+      this.players[k].justKeyDowned[88] = false;
+    }
+
+    if (controls[k].mouseDown && this.players[k].weapon != -1 && this.weapons[this.players[k].weapon].auto) {
+      this.weapons[this.players[k].weapon].fireBullets();
+    }
+    else if (this.players[k].justMouseDowned) {
+      if (this.players[k].weapon != -1 && !this.weapons[this.players[k].weapon].auto) {
+        this.weapons[this.players[k].weapon].fireBullets();
+      }
+      this.players[k].justMouseDowned = false;
+    }
+
+  }
+	this.playerStep = function (k) {
+    this.players[k].pos = this.players[k].pos.add(this.players[k].vel);
+    if (this.players[k].weapon != -1) {
+      this.weapons[this.players[k].weapon].pos = this.players[k].pos.add((new Vector(this.players[k].radius + this.weapons[this.players[k].weapon].length / 2 - this.weapons[this.players[k].weapon].recoil, 0)).rotate(this.players[k].ang));
+      this.weapons[this.players[k].weapon].vel = this.players[k].vel;
+      this.weapons[this.players[k].weapon].ang = this.players[k].ang;
+
+      this.weapons[this.players[k].weapon].spray = this.weapons[this.players[k].weapon].stability * (this.weapons[this.players[k].weapon].spray - this.weapons[this.players[k].weapon].defSpray) + this.weapons[this.players[k].weapon].defSpray;
+      this.weapons[this.players[k].weapon].recoil *= this.weapons[this.players[k].weapon].animationMult;
+    }
+  }
+	this.pickUpWeapon = function (k, weapon) {
+    this.players[k].weapon = weapon;
+    this.weapons[this.players[k].weapon].pos = this.players[k].pos.add((new Vector(this.players[k].radius + this.weapons[this.players[k].weapon].length / 2 - this.weapons[this.players[k].weapon].recoil, 0)).rotate(this.players[k].ang));
+    this.weapons[this.players[k].weapon].vel = this.players[k].vel;
+    this.weapons[this.players[k].weapon].ang = this.players[k].ang;
+    this.weapons[this.players[k].weapon].hold = true;
+  }
+	this.dropWeapon = function (k) {
+    if (this.players[k].weapon != -1) {
+      this.weapons[this.players[k].weapon].pos = this.players[k].pos;
+      this.weapons[this.players[k].weapon].vel = new Vector(0, 0);
+      this.weapons[this.players[k].weapon].hold = false;
+      this.weapons[this.players[k].weapon].cancelReload();
+      this.players[k].weapon = -1;
     }
   }
   this.toString = function () {
@@ -176,11 +240,7 @@ var makeObstacles = function () {
   }
   gameState = new GameState(Date.now(), players, weapons);
 }
-function deepCopy(obj){
-   var out = JSON.parse(JSON.stringify(obj));
-   giveMethods(out);
-}
-function getRandomColor() {
+getRandomColor() {
   var letters = '0123456789ABCDEF';
   var color = '#';
   for (var i = 0; i < 6; i++) {
@@ -219,87 +279,10 @@ var Player = function (xStart, yStart) {
       this.vel = (new Vector(0, velMag)).rotate(ang);
     }
   }
-  this.controls = function (k) {
-    var targetVel = new Vector((controls[k].keys[68] ? 1 : 0) + (controls[k].keys[65] ? -1 : 0), (controls[k].keys[83] ? 1 : 0) + (controls[k].keys[87] ? -1 : 0));
-    if (!targetVel.magnitude() == 0) {
-      targetVel = targetVel.multiply(this.speed / targetVel.magnitude());
-    }
-    if (this.weapon != -1 && gameState.time - gameState.weapons[this.weapon].lastFireTime < 60000 / gameState.weapons[this.weapon].firerate) {
-      targetVel = targetVel.multiply(gameState.weapons[this.weapon].shootWalkSpeedMult);
-    }
-    this.vel = this.vel.add(targetVel.subtract(this.vel).multiply(this.agility));
-    this.ang = controls[k].ang;
 
-    if (this.justKeyDowned[70]) {
-      var minDist = this.reachDist;
-      var idx = -1;
-      for (var i = 0; i < gameState.weapons.length; i++) {
-        if (gameState.weapons[i].hold) {
-          continue;
-        }
-        var distance = this.pos.distanceTo(gameState.weapons[i].pos);
-        if (distance < minDist) {
-          idx = i;
-          minDist = distance;
-        }
-      }
-      if (idx != -1) {
-        this.dropWeapon();
-        this.pickUpWeapon(idx);
-      }
-      this.justKeyDowned[70] = false;
-    }
-    if (this.justKeyDowned[71]) {
-      this.dropWeapon();
-      this.justKeyDowned[71] = false;
-    }
-    if (this.justKeyDowned[82] && this.weapon != -1) {
-      gameState.weapons[this.weapon].reload();
-      this.justKeyDowned[82] = false;
-    }
-    if (this.justKeyDowned[88]) {
-      gameState.weapons[this.weapon].cancelReload();
-      this.justKeyDowned[88] = false;
-    }
 
-    if (controls[k].mouseDown && this.weapon != -1 && gameState.weapons[this.weapon].auto) {
-      gameState.weapons[this.weapon].fireBullets();
-    }
-    else if (this.justMouseDowned) {
-      if (this.weapon != -1 && !gameState.weapons[this.weapon].auto) {
-        gameState.weapons[this.weapon].fireBullets();
-      }
-      this.justMouseDowned = false;
-    }
 
-  }
-  this.pickUpWeapon = function (weapon) {
-    this.weapon = weapon;
-    gameState.weapons[this.weapon].pos = this.pos.add((new Vector(this.radius + gameState.weapons[this.weapon].length / 2 - gameState.weapons[this.weapon].recoil, 0)).rotate(this.ang));
-    gameState.weapons[this.weapon].vel = this.vel;
-    gameState.weapons[this.weapon].ang = this.ang;
-    gameState.weapons[this.weapon].hold = true;
-  }
-  this.dropWeapon = function () {
-    if (this.weapon != -1) {
-      gameState.weapons[this.weapon].pos = this.pos;
-      gameState.weapons[this.weapon].vel = new Vector(0, 0);
-      gameState.weapons[this.weapon].hold = false;
-      gameState.weapons[this.weapon].cancelReload();
-      this.weapon = -1;
-    }
-  }
-  this.step = function () {
-    this.pos = this.pos.add(this.vel);
-    if (this.weapon != -1) {
-      gameState.weapons[this.weapon].pos = this.pos.add((new Vector(this.radius + gameState.weapons[this.weapon].length / 2 - gameState.weapons[this.weapon].recoil, 0)).rotate(this.ang));
-      gameState.weapons[this.weapon].vel = this.vel;
-      gameState.weapons[this.weapon].ang = this.ang;
 
-      gameState.weapons[this.weapon].spray = gameState.weapons[this.weapon].stability * (gameState.weapons[this.weapon].spray - gameState.weapons[this.weapon].defSpray) + gameState.weapons[this.weapon].defSpray;
-      gameState.weapons[this.weapon].recoil *= gameState.weapons[this.weapon].animationMult;
-    }
-  }
 }
 var Gun = function (startX, startY, length, auto, firerate, multishot, capacity, reloadTime, bulletSpeed, damage, damageDrop, damageRange, damageDropTension, range, defSpray, sprayCoef, stability, kickAnimation, animationMult, shootWalkSpeedMult, color) {
   this.type = "Gun";
