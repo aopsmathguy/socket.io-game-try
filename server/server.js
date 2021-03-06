@@ -91,7 +91,7 @@ var GameState = function (time, players, weapons) {
       }
     });
     for (var k in this.weapons) {
-      this.weapons[k].bulletsStep();
+      this.weapons[k].bulletsStep(this);
     }
     for (var k in this.players) {
       if (this.players[k].health <= 0) {
@@ -135,7 +135,7 @@ var GameState = function (time, players, weapons) {
       this.players[k].justKeyDowned[71] = false;
     }
     if (this.players[k].justKeyDowned[82] && this.players[k].weapon != -1) {
-      this.weapons[this.players[k].weapon].reload();
+      this.weapons[this.players[k].weapon].reload(this.time);
       this.players[k].justKeyDowned[82] = false;
     }
     if (this.players[k].justKeyDowned[88]) {
@@ -144,11 +144,11 @@ var GameState = function (time, players, weapons) {
     }
 
     if (controls[k].mouseDown && this.players[k].weapon != -1 && this.weapons[this.players[k].weapon].auto) {
-      this.weapons[this.players[k].weapon].fireBullets();
+      this.weapons[this.players[k].weapon].fireBullets(this.time);
     }
     else if (this.players[k].justMouseDowned) {
       if (this.players[k].weapon != -1 && !this.weapons[this.players[k].weapon].auto) {
-        this.weapons[this.players[k].weapon].fireBullets();
+        this.weapons[this.players[k].weapon].fireBullets(this.time);
       }
       this.players[k].justMouseDowned = false;
     }
@@ -279,7 +279,10 @@ var Player = function (xStart, yStart) {
       this.vel = (new Vector(0, velMag)).rotate(ang);
     }
   }
-
+  this.takeDamage = function(damage)
+	{
+		this.health -= damage;
+	}
 
 
 
@@ -324,17 +327,15 @@ var Gun = function (startX, startY, length, auto, firerate, multishot, capacity,
   {
     return new Gun(this.pos.x,this.pos.y,this.length,this.auto,this.firerate,this.multishot,this.capacity,this.reloadTime,this.bulletSpeed,this.damage,this.damageDrop,this.damageRange,this.damageDropTension,this.range,this.defSpray,this.sprayCoef,this.stability,this.kickAnimation,this.animationMult,this.shootWalkSpeedMult,this.color);
   }
-  this.reload = function () {
-    var timeNow = gameState.time;
+  this.reload = function (timeNow) {
     if (this.bulletsRemaining < this.capacity && this.reloadStartTime == -1 && timeNow - this.lastFireTime >= 60000 / this.firerate) {
-      this.reloadStartTime = gameState.time;
+      this.reloadStartTime = timeNow;
     }
   }
   this.cancelReload = function () {
     this.reloadStartTime = -1;
   }
-  this.fireBullets = function () {
-    var timeNow = gameState.time;
+  this.fireBullets = function (timeNow) {
     if (timeNow - this.lastFireTime >= 60000 / this.firerate && this.reloadStartTime == -1) {
       if (this.bulletsRemaining > 0) {
         for (var i = 0; i < this.multishot; i++) {
@@ -347,17 +348,17 @@ var Gun = function (startX, startY, length, auto, firerate, multishot, capacity,
         this.bulletsRemaining -= 1;
       }
       else {
-        this.reload();
+        this.reload(timeNow);
       }
     }
   }
-  this.bulletsStep = function () {
-    if (this.reloadStartTime != -1 && gameState.time - this.reloadStartTime >= this.reloadTime) {
+  this.bulletsStep = function (state) {
+    if (this.reloadStartTime != -1 && state.time - this.reloadStartTime >= this.reloadTime) {
       this.bulletsRemaining = this.capacity;
       this.reloadStartTime = -1;
     }
     for (var i in this.bullets) {
-      this.bullets[i].step();
+      this.bullets[i].step(state);
       if (this.bullets[i].stopAnimationAge > this.bullets[i].fadeTime) {
         delete this.bullets[i];
       }
@@ -390,17 +391,18 @@ var Bullet = function (weapon) {
   setIfUndefined(this, 'trailLength', this.bulletSpeed * this.fadeTime);
   setIfUndefined(this, 'stopAnimationAge', 0);
   setIfUndefined(this, 'color', weapon.color);
-  this.step = function () {
+  this.step = function (state) {
     this.pos = this.pos.add(this.vel);
     if (this.tailPos.distanceTo(this.pos) > this.trailLength) {
       this.tailPos = this.pos.add((new Vector(-this.trailLength, 0)).rotate(this.ang));
     }
 
     if (this.hitPoint == -1) {
-      var intersect = this.objectsIntersection(obstacles);
+      var intersect = this.objectsIntersection(obstacles,state);
       this.hitPoint = intersect[0];
       if (intersect[1] != -1) {
-        gameState.players[intersect[1]].health -= this.calculateDamage();
+
+        state.players[intersect[1]].takeDamage(this.calculateDamage());
       }
       if (this.hitPoint == -1 && this.pos.distanceTo(this.startPos) > this.range) {
         this.hitPoint = this.pos.copy();
@@ -492,7 +494,7 @@ var Bullet = function (weapon) {
       return -1;
     }
   }
-  this.objectsIntersection = function (objects) {
+  this.objectsIntersection = function (objects,state) {
     var smallestDistance = Number.MAX_VALUE;
     var objectsPoint = -1;
     for (var i = 0; i < objects.length; i++) {
@@ -506,8 +508,8 @@ var Bullet = function (weapon) {
       }
     }
     var playerHit = -1;
-    for (var key in gameState.players) {
-      var point = this.playerIntersection(gameState.players[key]);
+    for (var key in state.players) {
+      var point = this.playerIntersection(state.players[key]);
       if (point != -1) {
         var dist = this.startPos.distanceTo(point);
         if (dist < smallestDistance) {
