@@ -47,7 +47,7 @@ io.on('connection', client => {
 			mouseDown : false
 		}
 	}
-   
+
 
 });
 var findSpawnPosition = function(objects)
@@ -149,18 +149,18 @@ var makeObstacles = function () {
 		var centerx = gameWidth * Math.random();
 		var centery = gameHeight * Math.random();
 		obstacles.push(new Obstacle([
-			new Vector(centerx - width/2,centery - height/2), 
+			new Vector(centerx - width/2,centery - height/2),
 			new Vector(centerx + width/2,centery - height/2),
 			new Vector(centerx + width/2,centery + height/2),
 			new Vector(centerx - width/2,centery + height/2)
 																], getRandomColor()));
 	}
   var viableWeapons = [
-    new Gun(100, 50, 30, true, 900, 1, 32, 1000, 35, 7, 3, 500, 150, 1000, 0, 0.12, 0.9, 2, 0.9, 0.8, '#800'),
+    new Gun(100, 50, 30, true, 900, 1, 32, 1000, 35, 7, 3, 500, 150, 1000, 0, 0.12, 0.9, 2, 0.9, 0.8, '#f00'),
     new Gun(200, 350, 45, true, 600, 1, 30, 1400, 42, 8, 2, 550, 270, 1250, 0, 0.08, 0.91, 3, 0.9, 0.6, '#f80'),
-    new Gun(200, 50, 60, false, 350, 1, 15, 1500, 50, 20, 3, 710, 200, 2000, 0, 0.3, 0.83, 6, 0.9, 0.3, '#008'),
+    new Gun(200, 50, 60, false, 350, 1, 15, 1500, 50, 20, 3, 710, 200, 2000, 0, 0.3, 0.83, 6, 0.9, 0.3, '#00f'),
     new Gun(200, 50, 70, false, 60, 1, 5, 2000, 70, 102, 30, 830, 240, 3000, 0, 0.3, 0.83, 6, 0.9, 0.3, '#8f0'),
-    new Gun(200, 220, 35, false, 450, 8, 2, 1250, 30, 13, 9, 350, 56, 700, 0.23, 0, 0.83, 6, 0.9, 0.5, '#808'),
+    new Gun(200, 220, 35, false, 450, 8, 2, 1250, 30, 13, 9, 350, 56, 700, 0.23, 0, 0.83, 6, 0.9, 0.5, '#f0f'),
     new Gun(200, 220, 40, true, 300, 6, 5, 1750, 25, 10, 7, 220, 36, 600, 0.3, 0, 0.83, 6, 0.9, 0.5, '#0ff')
   ];
   var numEach = [4,2,2,1,2,2];
@@ -271,7 +271,7 @@ var Player = function (xStart, yStart) {
       }
       this.justMouseDowned = false;
     }
-    
+
   }
   this.pickUpWeapon = function (weapon) {
     this.weapon = weapon;
@@ -315,12 +315,12 @@ var Gun = function (startX, startY, length, auto, firerate, multishot, capacity,
   setIfUndefined(this, 'defSpray', defSpray);
   setIfUndefined(this, 'sprayCoef', sprayCoef);
   setIfUndefined(this, 'bulletSpeed', bulletSpeed);
-   
+
   setIfUndefined(this, 'damage', damage);
   setIfUndefined(this, 'damageDrop', damageDrop);
   setIfUndefined(this, 'damageRange', damageRange);
   setIfUndefined(this, 'damageDropTension', damageDropTension);
-   
+
   setIfUndefined(this, 'range', range);
   setIfUndefined(this, 'stability', stability);
   setIfUndefined(this, 'kickAnimation', kickAnimation);
@@ -381,7 +381,7 @@ var Gun = function (startX, startY, length, auto, firerate, multishot, capacity,
     }
 
   }
-  
+
 }
 var Bullet = function (weapon) {
   this.type = "Bullet";
@@ -394,13 +394,13 @@ var Bullet = function (weapon) {
   setIfUndefined(this, 'vel', (new Vector(weapon.bulletSpeed, 0)).rotate(weapon.ang + weapon.spray * (Math.random() - 0.5)).add(weapon.vel));
   setIfUndefined(this, 'ang', this.vel.ang());
   setIfUndefined(this, 'bulletSpeed', weapon.bulletSpeed);
-   
+
   setIfUndefined(this, 'damage', weapon.damage);
   setIfUndefined(this, 'damageDrop', weapon.damageDrop);
   setIfUndefined(this, 'damageRange', weapon.damageRange);
   setIfUndefined(this, 'damageDropTension', weapon.damageDropTension);
-  
-   
+
+
   setIfUndefined(this, 'range', weapon.range);
   setIfUndefined(this, 'hitPoint', -1);
   setIfUndefined(this, 'fadeTime', 10);
@@ -419,7 +419,7 @@ var Bullet = function (weapon) {
       if (intersect[1] != -1) {
         gameState.players[intersect[1]].health -= this.calculateDamage();
       }
-      if (this.pos.distanceTo(this.startPos) > this.range) {
+      if (this.hitPoint == -1 && this.pos.distanceTo(this.startPos) > this.range) {
         this.hitPoint = this.pos.copy();
       }
     }
