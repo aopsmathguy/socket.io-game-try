@@ -240,7 +240,7 @@ var makeObstacles = function () {
   }
   gameState = new GameState(Date.now(), players, weapons);
 }
-getRandomColor() {
+function getRandomColor() {
   var letters = '0123456789ABCDEF';
   var color = '#';
   for (var i = 0; i < 6; i++) {
