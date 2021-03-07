@@ -306,7 +306,7 @@ var Player = function (xStart, yStart) {
       {
         continue;
       }
-      if (player.pos.distanceTo(this.pos.add((new Vector(this.punchReach,0)).rotate(this.ang))) < player.radius)
+      if (player.pos.distanceTo(this.pos.add((new Vector(this.radius + this.punchReach,0)).rotate(this.ang))) < player.radius)
       {
         player.takeDamage(this.punchDamage);
       }
