@@ -428,7 +428,7 @@ var Bullet = function (weapon) {
 
   setIfUndefined(this, 'range', weapon.range);
   setIfUndefined(this, 'hitPoint', -1);
-  setIfUndefined(this, 'fadeTime', 15);
+  setIfUndefined(this, 'fadeTime', 10);
   setIfUndefined(this, 'trailLength', this.bulletSpeed * this.fadeTime);
   setIfUndefined(this, 'stopAnimationAge', 0);
   setIfUndefined(this, 'color', weapon.color);
