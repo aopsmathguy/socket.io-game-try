@@ -4,6 +4,8 @@ you can punch close range for 24 damage
 
 buffed mac 10 damage at close range
 buffed orange gun dropoff damage
+nerfed sniper damage at all ranges
+buffed sniper firerate and walkspeed
 
 v1.0.2: Respawn Update
 Mar 5, 2021
