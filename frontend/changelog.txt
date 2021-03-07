@@ -1,6 +1,9 @@
 v1.0.3: Punch Update
 
-you punch close range for 24 damage
+you can punch close range for 24 damage
+
+buffed mac 10 damage at close range
+buffed orange gun dropoff damage
 
 v1.0.2: Respawn Update
 Mar 5, 2021
