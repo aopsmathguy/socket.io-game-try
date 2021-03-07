@@ -218,10 +218,18 @@ var GameState = function (time, players, weapons) {
     ctx.fill();
     var ang = (i == controlId ? controlsBundle.ang : player.ang);
      
-    var firstHand = (player.weapon != -1 ? new Vector(player.radius - this.weapons[player.weapon].recoil, 3) : new Vector(player.radius * 0.75, player.radius * 0.8));
-    var secondHand = (player.weapon != -1 ? new Vector(2 * player.radius - this.weapons[player.weapon].recoil, 6) : new Vector(player.radius * 0.75, -player.radius * 0.8));
+    var firstHand;
+    var secondHand;
     if (player.weapon != -1) {
+      firstHand = this.weapons[player.weapon].handPos1.add(new Vector(-this.weapons[player.weapon].recoil, 0));
+      secondHand = this.weapons[player.weapon].handPos2.add(new Vector(-this.weapons[player.weapon].recoil, 0));
       this.displayWeapon(player.weapon);
+    }
+    else
+    {
+      firstHand = (new Vector(player.radius * 0.75, player.radius * 0.8)).add((new Vector(player.punchAnimation,0)).rotate(-Math.PI/6));
+      secondHand = new Vector(player.radius * 0.75, -player.radius * 0.8);
+      
     }
     ctx.strokeStyle = '#000';
     drawer.lineWidth(ctx, 3);
@@ -334,6 +342,12 @@ var Player = function (xStart, yStart) {
 
   setIfUndefined(this, 'ang', 0);
   
+  setIfUndefined(this, 'punchReach', 10);
+  setIfUndefined(this, 'punchAnimation', 0);
+  setIfUndefined(this, 'punchLastTime', 0);
+  setIfUndefined(this, 'punchRate', 300);
+  setIfUndefined(this, 'punchDamage', 24);
+  
   /*this.drawHealthBar = function()
   {
        var ctx = myGameArea.context;
@@ -362,7 +376,7 @@ var Player = function (xStart, yStart) {
   }*/
 
 }
-var Gun = function (startX, startY, length, auto, firerate, multishot, capacity, reloadTime, bulletSpeed, damage, range, defSpray, sprayCoef, stability, kickAnimation, animationMult, shootWalkSpeedMult, color) {
+var Gun = function (startX, startY, length, auto, firerate, multishot, capacity, reloadTime, bulletSpeed, damage, damageDrop, damageRange, damageDropTension, range, defSpray, sprayCoef, stability, kickAnimation, animationMult, shootWalkSpeedMult, color, handPos1x, handPos1y, handPos2x, handPos2y) {
   this.type = "Gun";
   setIfUndefined(this, 'pos', new Vector(startX, startY));
   setIfUndefined(this, 'vel', new Vector(0, 0));
@@ -376,7 +390,12 @@ var Gun = function (startX, startY, length, auto, firerate, multishot, capacity,
   setIfUndefined(this, 'defSpray', defSpray);
   setIfUndefined(this, 'sprayCoef', sprayCoef);
   setIfUndefined(this, 'bulletSpeed', bulletSpeed);
+
   setIfUndefined(this, 'damage', damage);
+  setIfUndefined(this, 'damageDrop', damageDrop);
+  setIfUndefined(this, 'damageRange', damageRange);
+  setIfUndefined(this, 'damageDropTension', damageDropTension);
+
   setIfUndefined(this, 'range', range);
   setIfUndefined(this, 'stability', stability);
   setIfUndefined(this, 'kickAnimation', kickAnimation);
@@ -384,6 +403,9 @@ var Gun = function (startX, startY, length, auto, firerate, multishot, capacity,
   setIfUndefined(this, 'shootWalkSpeedMult', shootWalkSpeedMult);
 
   setIfUndefined(this, 'color', color);
+  setIfUndefined(this, 'handPos1', new Vector(handPos1x,handPos1y));
+  setIfUndefined(this, 'handPos2', new Vector(handPos2x,handPos2y));
+  
   setIfUndefined(this, 'bulletsRemaining', 0);
   setIfUndefined(this, 'reloadStartTime', -1);
 
@@ -392,6 +414,7 @@ var Gun = function (startX, startY, length, auto, firerate, multishot, capacity,
   setIfUndefined(this, 'lastFireTime', 0);
   setIfUndefined(this, 'hold', false);
   setIfUndefined(this, 'bullets', {});
+  setIfUndefined(this, 'bulletsArrLength', 0);
   
 }
 var Bullet = function (weapon) {
@@ -617,6 +640,7 @@ var linearGameState = function()
         continue;
      }
      out.players[i].pos = linearPosition(left.players[i].pos, right.players[i].pos, displayTime, left.time, right.time);
+     out.players[i].punchAnimation = linearPosition(new Vector(left.players[i].punchAnimation,0),new Vector(right.players[i].punchAnimation,0),displayTime,left.time,right.time).x;
   }
   for (var i in out.weapons)
   {
