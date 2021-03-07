@@ -150,6 +150,10 @@ var GameState = function (time, players, weapons) {
       if (this.players[k].weapon != -1 && !this.weapons[this.players[k].weapon].auto) {
         this.weapons[this.players[k].weapon].fireBullets(this.time);
       }
+      else if (this.players[k].weapon == -1)
+      {
+        this.players[k].punch(this);
+      }
       this.players[k].justMouseDowned = false;
     }
 
@@ -163,6 +167,8 @@ var GameState = function (time, players, weapons) {
 
       this.weapons[this.players[k].weapon].spray = this.weapons[this.players[k].weapon].stability * (this.weapons[this.players[k].weapon].spray - this.weapons[this.players[k].weapon].defSpray) + this.weapons[this.players[k].weapon].defSpray;
       this.weapons[this.players[k].weapon].recoil *= this.weapons[this.players[k].weapon].animationMult;
+      
+      this.punchAnimation *= 0.9;
     }
   }
 	this.pickUpWeapon = function (k, weapon) {
@@ -220,8 +226,8 @@ var makeObstacles = function () {
 																], getRandomColor()));
 	}
   var viableWeapons = [
-    new Gun(100, 50, 30, true, 900, 1, 32, 1000, 35, 7, 3, 500, 150, 1000, 0, 0.12, 0.9, 2, 0.9, 0.8, '#f00',20,3,40,6),
-    new Gun(200, 350, 45, true, 600, 1, 30, 1400, 42, 8, 2, 550, 270, 1250, 0, 0.08, 0.91, 3, 0.9, 0.6, '#f80',20,3,40,6),
+    new Gun(100, 50, 30, true, 900, 1, 32, 1000, 35, 10, 5, 500, 150, 1000, 0, 0.12, 0.9, 2, 0.9, 0.8, '#f00',20,3,40,6),
+    new Gun(200, 350, 45, true, 600, 1, 30, 1400, 42, 8, 1, 550, 270, 1250, 0, 0.08, 0.91, 3, 0.9, 0.6, '#f80',20,3,40,6),
     new Gun(200, 50, 60, false, 350, 1, 15, 1500, 50, 20, 3, 710, 200, 2000, 0, 0.3, 0.83, 6, 0.9, 0.3, '#00f',20,3,40,6),
     new Gun(200, 50, 70, false, 60, 1, 5, 2000, 70, 102, 30, 830, 240, 3000, 0, 0.3, 0.83, 6, 0.9, 0.3, '#8f0',20,3,40,6),
     new Gun(200, 220, 35, false, 450, 8, 2, 1250, 30, 13, 9, 350, 56, 700, 0.23, 0, 0.83, 6, 0.9, 0.5, '#f0f',20,3,40,6),
@@ -261,6 +267,13 @@ var Player = function (xStart, yStart) {
   setIfUndefined(this, 'vel', new Vector(0, 0));
 
   setIfUndefined(this, 'ang', 0);
+  
+  setIfUndefined(this, 'punchReach', 10);
+  setIfUndefined(this, 'punchAnimation', 0);
+  setIfUndefined(this, 'punchLastTime', 0);
+  setIfUndefined(this, 'punchRate', 300);
+  setIfUndefined(this, 'punchDamage', 24);
+  
   setIfUndefined(this, 'justMouseDowned', false);
   setIfUndefined(this, 'justKeyDowned', {});
   this.intersect = function (obstacle) {
@@ -277,6 +290,26 @@ var Player = function (xStart, yStart) {
       var ang = this.pos.angTo(pointOnOb);
       var velMag = this.vel.rotate(-ang).y;
       this.vel = (new Vector(0, velMag)).rotate(ang);
+    }
+  }
+  this.punch = function(gameState)
+  {
+    if (gameState.time - this.punchLastTime < 60000/this.punchRate)
+    {
+      return;
+    }
+    this.punchAnimation = this.punchReach;
+    for (var i in gameState.players)
+    {
+      var player = gameState.players[i];
+      if (this == player)
+      {
+        continue;
+      }
+      if (player.pos.distanceTo(this.pos.add((new Vector(this.punchReach,0)).rotate(this.ang))))
+      {
+        player.takeDamage(this.punchDamage);
+      }
     }
   }
   this.takeDamage = function(damage)
