@@ -299,6 +299,7 @@ var Player = function (xStart, yStart) {
       return;
     }
     this.punchAnimation = this.punchReach;
+    this.punchLastTime = gameState.time;
     for (var i in gameState.players)
     {
       var player = gameState.players[i];
