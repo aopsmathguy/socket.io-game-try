@@ -254,7 +254,7 @@ var GameState = function (time, players, weapons) {
     var ctx = myGameArea.context;
     
     ctx.strokeStyle = "#000";
-    drawer.lineWidth(ctx, 8);
+    drawer.lineWidth(ctx, 12);
     ctx.beginPath();
     drawer.moveContext(ctx, weapon.pos.add((new Vector(-weapon.length / 2, 0)).rotate(weapon.ang)));
     drawer.lineContext(ctx, weapon.pos.add((new Vector(weapon.length / 2, 0)).rotate(weapon.ang)));
@@ -265,8 +265,8 @@ var GameState = function (time, players, weapons) {
     ctx.strokeStyle = weapon.color;
     drawer.lineWidth(ctx, 6);
     ctx.beginPath();
-    drawer.moveContext(ctx, weapon.pos.add((new Vector(-weapon.length / 2 + 1, 0)).rotate(weapon.ang)));
-    drawer.lineContext(ctx, weapon.pos.add((new Vector(weapon.length / 2 - 1, 0)).rotate(weapon.ang)));
+    drawer.moveContext(ctx, weapon.pos.add((new Vector(-weapon.length / 2 + 3, 0)).rotate(weapon.ang)));
+    drawer.lineContext(ctx, weapon.pos.add((new Vector(weapon.length / 2 - 3, 0)).rotate(weapon.ang)));
     ctx.closePath();
     ctx.stroke();
   }
