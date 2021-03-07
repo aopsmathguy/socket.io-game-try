@@ -229,7 +229,7 @@ var makeObstacles = function () {
     new Gun(100, 50, 30, true, 900, 1, 32, 1000, 35, 10, 5, 500, 150, 1000, 0, 0.12, 0.9, 2, 0.9, 0.8, '#f00',20,3,40,6),
     new Gun(200, 350, 45, true, 600, 1, 30, 1400, 42, 8, 1, 550, 270, 1250, 0, 0.08, 0.91, 3, 0.9, 0.6, '#f80',20,3,40,6),
     new Gun(200, 50, 60, false, 350, 1, 15, 1500, 50, 20, 3, 710, 200, 2000, 0, 0.3, 0.83, 6, 0.9, 0.3, '#00f',20,3,40,6),
-    new Gun(200, 50, 70, false, 60, 1, 5, 2000, 70, 102, 30, 830, 240, 3000, 0, 0.3, 0.83, 6, 0.9, 0.3, '#8f0',20,3,40,6),
+    new Gun(200, 50, 70, false, 70, 1, 5, 2000, 70, 70, 20, 830, 240, 3000, 0, 0.3, 0.83, 6, 0.9, 0.4, '#8f0',20,3,40,6),
     new Gun(200, 220, 35, false, 450, 8, 2, 1250, 30, 13, 9, 350, 56, 700, 0.23, 0, 0.83, 6, 0.9, 0.5, '#f0f',20,3,40,6),
     new Gun(200, 220, 40, true, 300, 6, 5, 1750, 25, 10, 7, 220, 36, 600, 0.3, 0, 0.83, 6, 0.9, 0.5, '#0ff',20,3,40,6)
   ];
@@ -307,7 +307,7 @@ var Player = function (xStart, yStart) {
       {
         continue;
       }
-      if (player.pos.distanceTo(this.pos.add((new Vector(this.radius + this.punchReach,0)).rotate(this.ang))) < player.radius)
+      if (player.pos.distanceTo(this.pos.add((new Vector(this.radius + this.punchReach,0)).rotate(this.ang))) < this.punchReach + player.radius)
       {
         player.takeDamage(this.punchDamage);
       }
