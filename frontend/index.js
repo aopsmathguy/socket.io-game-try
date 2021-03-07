@@ -252,12 +252,21 @@ var GameState = function (time, players, weapons) {
       weapon.bullets[j].display();
     }
     var ctx = myGameArea.context;
-    ctx.strokeStyle = weapon.color;
-
+    
+    ctx.strokeStyle = "#000";
     drawer.lineWidth(ctx, 8);
     ctx.beginPath();
     drawer.moveContext(ctx, weapon.pos.add((new Vector(-weapon.length / 2, 0)).rotate(weapon.ang)));
     drawer.lineContext(ctx, weapon.pos.add((new Vector(weapon.length / 2, 0)).rotate(weapon.ang)));
+    ctx.closePath();
+    ctx.stroke();
+    
+    
+    ctx.strokeStyle = weapon.color;
+    drawer.lineWidth(ctx, 6);
+    ctx.beginPath();
+    drawer.moveContext(ctx, weapon.pos.add((new Vector(-weapon.length / 2 + 1, 0)).rotate(weapon.ang)));
+    drawer.lineContext(ctx, weapon.pos.add((new Vector(weapon.length / 2 - 1, 0)).rotate(weapon.ang)));
     ctx.closePath();
     ctx.stroke();
   }
