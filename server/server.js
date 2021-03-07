@@ -271,7 +271,7 @@ var Player = function (xStart, yStart) {
   setIfUndefined(this, 'punchReach', 10);
   setIfUndefined(this, 'punchAnimation', 0);
   setIfUndefined(this, 'punchLastTime', 0);
-  setIfUndefined(this, 'punchRate', 300);
+  setIfUndefined(this, 'punchRate', 200);
   setIfUndefined(this, 'punchDamage', 24);
   
   setIfUndefined(this, 'justMouseDowned', false);
