@@ -1,4 +1,4 @@
-v1.0.3: Punch Update
+v1.0.3: Punch and one shot Update
 
 you can punch close range for 24 damage
 
@@ -6,6 +6,9 @@ buffed mac 10 damage at close range
 buffed orange gun dropoff damage
 nerfed sniper damage at all ranges
 buffed sniper firerate and walkspeed
+
+added the Ofaccail™ BFG© one shot weapon at all ranges
+it is really ducking slow
 
 v1.0.2: Respawn Update
 Mar 5, 2021
