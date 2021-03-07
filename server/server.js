@@ -220,12 +220,12 @@ var makeObstacles = function () {
 																], getRandomColor()));
 	}
   var viableWeapons = [
-    new Gun(100, 50, 30, true, 900, 1, 32, 1000, 35, 7, 3, 500, 150, 1000, 0, 0.12, 0.9, 2, 0.9, 0.8, '#f00'),
-    new Gun(200, 350, 45, true, 600, 1, 30, 1400, 42, 8, 2, 550, 270, 1250, 0, 0.08, 0.91, 3, 0.9, 0.6, '#f80'),
-    new Gun(200, 50, 60, false, 350, 1, 15, 1500, 50, 20, 3, 710, 200, 2000, 0, 0.3, 0.83, 6, 0.9, 0.3, '#00f'),
-    new Gun(200, 50, 70, false, 60, 1, 5, 2000, 70, 102, 30, 830, 240, 3000, 0, 0.3, 0.83, 6, 0.9, 0.3, '#8f0'),
-    new Gun(200, 220, 35, false, 450, 8, 2, 1250, 30, 13, 9, 350, 56, 700, 0.23, 0, 0.83, 6, 0.9, 0.5, '#f0f'),
-    new Gun(200, 220, 40, true, 300, 6, 5, 1750, 25, 10, 7, 220, 36, 600, 0.3, 0, 0.83, 6, 0.9, 0.5, '#0ff')
+    new Gun(100, 50, 30, true, 900, 1, 32, 1000, 35, 7, 3, 500, 150, 1000, 0, 0.12, 0.9, 2, 0.9, 0.8, '#f00',20,3,40,6),
+    new Gun(200, 350, 45, true, 600, 1, 30, 1400, 42, 8, 2, 550, 270, 1250, 0, 0.08, 0.91, 3, 0.9, 0.6, '#f80',20,3,40,6),
+    new Gun(200, 50, 60, false, 350, 1, 15, 1500, 50, 20, 3, 710, 200, 2000, 0, 0.3, 0.83, 6, 0.9, 0.3, '#00f',20,3,40,6),
+    new Gun(200, 50, 70, false, 60, 1, 5, 2000, 70, 102, 30, 830, 240, 3000, 0, 0.3, 0.83, 6, 0.9, 0.3, '#8f0',20,3,40,6),
+    new Gun(200, 220, 35, false, 450, 8, 2, 1250, 30, 13, 9, 350, 56, 700, 0.23, 0, 0.83, 6, 0.9, 0.5, '#f0f',20,3,40,6),
+    new Gun(200, 220, 40, true, 300, 6, 5, 1750, 25, 10, 7, 220, 36, 600, 0.3, 0, 0.83, 6, 0.9, 0.5, '#0ff',20,3,40,6)
   ];
   var numEach = [4,2,2,1,2,2];
    var weapons = [];
@@ -287,7 +287,7 @@ var Player = function (xStart, yStart) {
 
 
 }
-var Gun = function (startX, startY, length, auto, firerate, multishot, capacity, reloadTime, bulletSpeed, damage, damageDrop, damageRange, damageDropTension, range, defSpray, sprayCoef, stability, kickAnimation, animationMult, shootWalkSpeedMult, color) {
+var Gun = function (startX, startY, length, auto, firerate, multishot, capacity, reloadTime, bulletSpeed, damage, damageDrop, damageRange, damageDropTension, range, defSpray, sprayCoef, stability, kickAnimation, animationMult, shootWalkSpeedMult, color, handPos1x, handPos1y, handPos2x, handPos2y) {
   this.type = "Gun";
   setIfUndefined(this, 'pos', new Vector(startX, startY));
   setIfUndefined(this, 'vel', new Vector(0, 0));
@@ -314,6 +314,9 @@ var Gun = function (startX, startY, length, auto, firerate, multishot, capacity,
   setIfUndefined(this, 'shootWalkSpeedMult', shootWalkSpeedMult);
 
   setIfUndefined(this, 'color', color);
+  setIfUndefined(this, 'handPos1', new Vector(handPos1x,handPos1y));
+  setIfUndefined(this, 'handPos2', new Vector(handPos2x,handPos2y));
+  
   setIfUndefined(this, 'bulletsRemaining', 0);
   setIfUndefined(this, 'reloadStartTime', -1);
 
@@ -325,7 +328,7 @@ var Gun = function (startX, startY, length, auto, firerate, multishot, capacity,
   setIfUndefined(this, 'bulletsArrLength', 0);
   this.copy = function()
   {
-    return new Gun(this.pos.x,this.pos.y,this.length,this.auto,this.firerate,this.multishot,this.capacity,this.reloadTime,this.bulletSpeed,this.damage,this.damageDrop,this.damageRange,this.damageDropTension,this.range,this.defSpray,this.sprayCoef,this.stability,this.kickAnimation,this.animationMult,this.shootWalkSpeedMult,this.color);
+    return new Gun(this.pos.x,this.pos.y,this.length,this.auto,this.firerate,this.multishot,this.capacity,this.reloadTime,this.bulletSpeed,this.damage,this.damageDrop,this.damageRange,this.damageDropTension,this.range,this.defSpray,this.sprayCoef,this.stability,this.kickAnimation,this.animationMult,this.shootWalkSpeedMult,this.color, this.handPos1.x,this.handPos1.y, this.handPos2.x,this.handPos2.y);
   }
   this.reload = function (timeNow) {
     if (this.bulletsRemaining < this.capacity && this.reloadStartTime == -1 && timeNow - this.lastFireTime >= 60000 / this.firerate) {
