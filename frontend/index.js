@@ -447,8 +447,8 @@ var Bullet = function (weapon) {
   this.display = function () {
     var ctx = myGameArea.context;
     const g = drawer.createLinearGradient(ctx, this.pos, this.tailPos);
-    g.addColorStop(0, hexToRgbA(pSBC(0.3, this.color), 1)); // opaque
-    g.addColorStop(1, hexToRgbA(pSBC(0.3, this.color), 0)); // transparent
+    g.addColorStop(0, hexToRgbA(pSBC(0, this.color), 1)); // opaque
+    g.addColorStop(1, hexToRgbA(pSBC(0, this.color), 0)); // transparent
     ctx.strokeStyle = g;
 
     drawer.lineWidth(ctx, 6);
