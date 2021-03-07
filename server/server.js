@@ -298,7 +298,7 @@ var Player = function (xStart, yStart) {
     {
       return;
     }
-    this.punchAnimation = this.punchReach;
+    this.punchAnimation = 30;
     this.punchLastTime = gameState.time;
     for (var i in gameState.players)
     {
