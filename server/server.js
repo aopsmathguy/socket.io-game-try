@@ -160,6 +160,7 @@ var GameState = function (time, players, weapons) {
   }
 	this.playerStep = function (k) {
     this.players[k].pos = this.players[k].pos.add(this.players[k].vel);
+    this.players[k].punchAnimation *= 0.9;
     if (this.players[k].weapon != -1) {
       this.weapons[this.players[k].weapon].pos = this.players[k].pos.add((new Vector(this.players[k].radius + this.weapons[this.players[k].weapon].length / 2 - this.weapons[this.players[k].weapon].recoil, 0)).rotate(this.players[k].ang));
       this.weapons[this.players[k].weapon].vel = this.players[k].vel;
@@ -168,7 +169,6 @@ var GameState = function (time, players, weapons) {
       this.weapons[this.players[k].weapon].spray = this.weapons[this.players[k].weapon].stability * (this.weapons[this.players[k].weapon].spray - this.weapons[this.players[k].weapon].defSpray) + this.weapons[this.players[k].weapon].defSpray;
       this.weapons[this.players[k].weapon].recoil *= this.weapons[this.players[k].weapon].animationMult;
       
-      this.punchAnimation *= 0.9;
     }
   }
 	this.pickUpWeapon = function (k, weapon) {
@@ -306,7 +306,7 @@ var Player = function (xStart, yStart) {
       {
         continue;
       }
-      if (player.pos.distanceTo(this.pos.add((new Vector(this.punchReach,0)).rotate(this.ang))))
+      if (player.pos.distanceTo(this.pos.add((new Vector(this.punchReach,0)).rotate(this.ang))) < player.radius)
       {
         player.takeDamage(this.punchDamage);
       }
