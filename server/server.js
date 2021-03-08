@@ -41,6 +41,7 @@ io.on('connection', client => {
 	function addPlayer(msg){
 	  controlId = client.id;
 		var startPos = findSpawnPosition();
+    
 		gameState.players[controlId] = new Player(startPos.x,startPos.y,msg.name);
 		controls[controlId] = {
 			keys : [],
@@ -226,7 +227,7 @@ var makeObstacles = function () {
 																], getRandomColor()));
 	}
   var viableWeapons = [
-    new Gun(100, 50, 30, false, 780, 1, 15, 800, 35, 13, 3, 500, 150, 1000, 0.1, 0.12, 0.9, 4, 0.9, 1, '#80f',20,0,20,0),
+    new Gun(100, 50, 30, false, 780, 1, 15, 800, 35, 23, 9, 500, 150, 1000, 0.1, 0.12, 0.9, 4, 0.9, 1, '#80f',20,0,20,0),
     
     new Gun(100, 50, 30, true, 900, 1, 32, 1000, 35, 10, 5, 500, 150, 1000, 0, 0.12, 0.9, 3, 0.9, 0.8, '#f00',20,3,40,6),
     new Gun(200, 350, 50, true, 600, 1, 30, 1400, 42, 8, 1, 550, 270, 1250, 0, 0.08, 0.91, 3, 0.9, 0.6, '#f80',20,3,45,6),
