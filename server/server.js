@@ -41,7 +41,7 @@ io.on('connection', client => {
 	function addPlayer(msg){
 	  controlId = client.id;
 		var startPos = findSpawnPosition();
-		gameState.players[controlId] = new Player(startPos.x,startPos.y);
+		gameState.players[controlId] = new Player(startPos.x,startPos.y,msg.name);
 		controls[controlId] = {
 			keys : [],
 			mouseDown : false
@@ -226,16 +226,16 @@ var makeObstacles = function () {
 																], getRandomColor()));
 	}
   var viableWeapons = [
-    new Gun(100, 50, 30, false, 780, 1, 15, 800, 70, 23, 9, 500, 150, 1400, 0.1, 0.12, 0.9, 4, 0.9, 1, '#80f',20,0,20,0),
+    new Gun(100, 50, 30, false, 780, 1, 15, 800, 35, 13, 3, 500, 150, 1000, 0.1, 0.12, 0.9, 4, 0.9, 1, '#80f',20,0,20,0),
     
-    new Gun(100, 50, 30, true, 900, 1, 32, 1000, 70, 10, 5, 500, 150, 1400, 0, 0.12, 0.9, 3, 0.9, 0.8, '#f00',20,3,40,6),
-    new Gun(200, 350, 50, true, 600, 1, 30, 1400, 84, 8, 1, 550, 270, 1600, 0, 0.08, 0.91, 3, 0.9, 0.6, '#f80',20,3,45,6),
-    new Gun(200, 50, 60, false, 350, 1, 15, 1500, 100, 25, 3, 710, 200, 2000, 0, 0.3, 0.83, 6, 0.9, 0.3, '#00f',20,3,40,6),
-    new Gun(200, 50, 70, false, 70, 1, 5, 2000, 140, 70, 20, 830, 240, 3000, 0, 0.3, 0.83, 12, 0.9, 0.4, '#8f0',20,3,40,6),
-    new Gun(200, 50, 90, false, 40, 1, 1, 3000, 180, 101, 0, 830, 240, 5000, 0, 0.3, 0.83, 15, 0.9, 0.2, '#000',20,3,40,6),
+    new Gun(100, 50, 30, true, 900, 1, 32, 1000, 35, 10, 5, 500, 150, 1000, 0, 0.12, 0.9, 3, 0.9, 0.8, '#f00',20,3,40,6),
+    new Gun(200, 350, 50, true, 600, 1, 30, 1400, 42, 8, 1, 550, 270, 1250, 0, 0.08, 0.91, 3, 0.9, 0.6, '#f80',20,3,45,6),
+    new Gun(200, 50, 60, false, 350, 1, 15, 1500, 50, 25, 3, 710, 200, 2000, 0, 0.3, 0.83, 6, 0.9, 0.3, '#00f',20,3,40,6),
+    new Gun(200, 50, 70, false, 70, 1, 5, 2000, 70, 70, 20, 830, 240, 3000, 0, 0.3, 0.83, 12, 0.9, 0.4, '#8f0',20,3,40,6),
+    new Gun(200, 50, 90, false, 40, 1, 1, 3000, 70, 101, 0, 830, 240, 5000, 0, 0.3, 0.83, 15, 0.9, 0.2, '#000',20,3,40,6),
     
-    new Gun(200, 220, 35, false, 450, 8, 2, 1250, 60, 13, 9, 350, 56, 1000, 0.23, 0, 0.83, 6, 0.9, 0.5, '#f0f',20,3,40,6),
-    new Gun(200, 220, 40, true, 300, 6, 5, 1750, 50, 10, 7, 220, 36, 800, 0.3, 0, 0.83, 6, 0.9, 0.5, '#0ff',20,3,40,6)
+    new Gun(200, 220, 35, false, 450, 8, 2, 1250, 30, 13, 9, 350, 56, 700, 0.23, 0, 0.83, 6, 0.9, 0.5, '#f0f',20,3,40,6),
+    new Gun(200, 220, 40, true, 300, 6, 5, 1750, 25, 10, 7, 220, 36, 600, 0.3, 0, 0.83, 6, 0.9, 0.5, '#0ff',20,3,40,6)
   ];
   var numEach = [4,2,2,2,1,1,2,2];
    var weapons = [];
@@ -258,7 +258,7 @@ function getRandomColor() {
   }
   return color;
 }
-var Player = function (xStart, yStart) {
+var Player = function (xStart, yStart, name) {
   this.type = "Player";
   setIfUndefined(this, 'speed', 4);
   setIfUndefined(this, 'agility', .1);
@@ -280,6 +280,9 @@ var Player = function (xStart, yStart) {
   
   setIfUndefined(this, 'justMouseDowned', false);
   setIfUndefined(this, 'justKeyDowned', {});
+  
+  
+  setIfUndefined(this, 'name', name);
   this.intersect = function (obstacle) {
     if (this.radius + obstacle.maxRadius < this.pos.distanceTo(obstacle.center)) {
       return;
