@@ -97,7 +97,7 @@ var GameState = function (time, players, weapons) {
     for (var k in this.players) {
       if (this.players[k].health <= 0) {
         this.dropWeapon(k);
-        delete this.players[k];
+        this.players[k].alive = false;
       }
     }
   }
@@ -284,6 +284,8 @@ var Player = function (xStart, yStart, name) {
   
   
   setIfUndefined(this, 'name', name);
+  setIfUndefined(this, 'alive', true);
+  
   this.intersect = function (obstacle) {
     if (this.radius + obstacle.maxRadius < this.pos.distanceTo(obstacle.center)) {
       return;
