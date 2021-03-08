@@ -7,11 +7,13 @@ socket.on('gameState', (msg) => {
     gameStates.push(JSON.parse(msg));
 });
 const canvas = document.getElementById('canvas');
+
 const initialScreen = document.getElementById('initialScreen');
+const gameCodeInput = document.getElementById('gameCodeInput');
 const joinGameBtn = document.getElementById('joinGameButton');
 
 joinGameBtn.addEventListener('click', joinGame);
-
+var name;
 
 function joinGame()
 {
@@ -20,8 +22,12 @@ function joinGame()
   drawer = new Drawer();
   controlsBundle.start();
   myGameArea.interval();
-
-  socket.emit('new player', {});
+  name = gameCodeInput.value || 'player:' + controlId.substring(0,4);
+  newPlayer();
+}
+function newPlayer()
+{
+  socket.emit('new player', {name:name});
 }
 var timeDifference = 0;
 var controlId = 0;
@@ -193,6 +199,10 @@ var GameState = function (time, players, weapons) {
     for (var idx in this.players) {
       this.displayPlayer(idx);
     }
+    for (var idx in this.players) {
+      if (idx != controlId)
+        this.displayName(idx);
+    }
     this.displayReloadTime();
     this.displayBulletCount();
     myGameArea.printFps();
@@ -309,12 +319,25 @@ var GameState = function (time, players, weapons) {
       ctx.strokeStyle = '#fff';
       drawer.lineWidth(ctx, 6);
       ctx.beginPath();
-      drawer.moveContext(ctx, player.pos.add(new Vector(-player.radius, player.radius * 2)));
-      drawer.lineContext(ctx, player.pos.add(new Vector(player.radius - 2 * player.radius * (this.time - this.weapons[player.weapon].reloadStartTime) / this.weapons[player.weapon].reloadTime, player.radius * 2)));
+      drawer.moveContext(ctx, player.pos.add(new Vector(-player.radius, player.radius * 3)));
+      drawer.lineContext(ctx, player.pos.add(new Vector(player.radius - 2 * player.radius * (this.time - this.weapons[player.weapon].reloadStartTime) / this.weapons[player.weapon].reloadTime, player.radius * 3)));
       ctx.closePath();
       ctx.stroke();
       ctx.restore();
     }
+    
+  }
+  this.displayName = function(i)
+  {
+    
+    var player = this.players[i];
+    var ctx = myGameArea.context;
+      ctx.save();
+      ctx.font = "bold 10px Courier New";
+      ctx.fillStyle = '#fff';
+      ctx.textAlign = "center";
+      drawer.fillText(ctx, player.pos.add(new Vector(0,40)), player.name);
+      ctx.restore();
   }
   this.snapWeapons = function()
   {
@@ -337,7 +360,7 @@ var GameState = function (time, players, weapons) {
 var makeObstacles = function () {
   drawer = new Drawer();
 }
-var Player = function (xStart, yStart) {
+var Player = function (xStart, yStart, name) {
   this.type = "Player";
   setIfUndefined(this, 'speed', 4);
   setIfUndefined(this, 'agility', .1);
@@ -354,8 +377,14 @@ var Player = function (xStart, yStart) {
   setIfUndefined(this, 'punchReach', 10);
   setIfUndefined(this, 'punchAnimation', 0);
   setIfUndefined(this, 'punchLastTime', 0);
-  setIfUndefined(this, 'punchRate', 300);
+  setIfUndefined(this, 'punchRate', 200);
   setIfUndefined(this, 'punchDamage', 24);
+  
+  setIfUndefined(this, 'justMouseDowned', false);
+  setIfUndefined(this, 'justKeyDowned', {});
+  
+  
+  setIfUndefined(this, 'name', name);
   
   /*this.drawHealthBar = function()
   {
@@ -483,6 +512,11 @@ var Drawer = function () {
     var newStart = start.subtract(this.scroll).multiply(this.scale).add((new Vector(myGameArea.canvas.width, myGameArea.canvas.height)).multiply(0.5));
     var newEnd = end.subtract(this.scroll).multiply(this.scale).add((new Vector(myGameArea.canvas.width, myGameArea.canvas.height)).multiply(0.5));
     return ctx.createLinearGradient(newStart.x, newStart.y, newEnd.x, newEnd.y);
+  }
+  this.fillText = function(ctx, point, txt)
+  {
+    var displayPoint = point.subtract(this.scroll).multiply(this.scale).add((new Vector(myGameArea.canvas.width, myGameArea.canvas.height)).multiply(0.5));
+    ctx.fillText(txt, displayPoint.x,displayPoint.y);
   }
   this.update = function (state) {
     
@@ -699,7 +733,7 @@ function updateGameArea() {
     }
     else if (Date.now() - lastDeadTime > 5000)
     {
-      socket.emit('new player', {});
+      newPlayer();
       lastDeadTime = -2;
     }
     state.render();
