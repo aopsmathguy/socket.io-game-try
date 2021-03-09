@@ -206,11 +206,8 @@ var giveMethods = function (obj) {
     obj.construct();
   }
 }
-var GameState = function (time, players, weapons) {
+var GameState = function () {
   this.type = "GameState";
-  setIfUndefined(this, 'time', time);
-  setIfUndefined(this, 'players', players);
-  setIfUndefined(this, 'weapons', weapons);
   this.render = function () {
     for (var idx in obstacles)
     {
@@ -396,32 +393,8 @@ var GameState = function (time, players, weapons) {
 var makeObstacles = function () {
   drawer = new Drawer();
 }
-var Player = function (xStart, yStart, name) {
+var Player = function () {
   this.type = "Player";
-  setIfUndefined(this, 'speed', 4);
-  setIfUndefined(this, 'agility', .1);
-  setIfUndefined(this, 'radius', 20);
-  setIfUndefined(this, 'reachDist', 50);
-  setIfUndefined(this, 'weapon', -1);
-  setIfUndefined(this, 'health', 100);
-
-  setIfUndefined(this, 'pos', new Vector(xStart, yStart));
-  setIfUndefined(this, 'vel', new Vector(0, 0));
-
-  setIfUndefined(this, 'ang', 0);
-  
-  setIfUndefined(this, 'punchReach', 10);
-  setIfUndefined(this, 'punchAnimation', 0);
-  setIfUndefined(this, 'punchLastTime', 0);
-  setIfUndefined(this, 'punchRate', 200);
-  setIfUndefined(this, 'punchDamage', 24);
-  
-  setIfUndefined(this, 'justMouseDowned', false);
-  setIfUndefined(this, 'justKeyDowned', {});
-  
-  
-  setIfUndefined(this, 'name', name);
-  setIfUndefined(this, 'alive', true);
   /*this.drawHealthBar = function()
   {
        var ctx = myGameArea.context;
@@ -450,65 +423,13 @@ var Player = function (xStart, yStart, name) {
   }*/
 
 }
-var Gun = function (startX, startY, length, auto, firerate, multishot, capacity, reloadTime, bulletSpeed, damage, damageDrop, damageRange, damageDropTension, range, defSpray, sprayCoef, stability, kickAnimation, animationMult, shootWalkSpeedMult, color, handPos1x, handPos1y, handPos2x, handPos2y) {
+var Gun = function () {
   this.type = "Gun";
-  setIfUndefined(this, 'pos', new Vector(startX, startY));
-  setIfUndefined(this, 'vel', new Vector(0, 0));
-  setIfUndefined(this, 'ang', 0);
-  setIfUndefined(this, 'length', length);
-  setIfUndefined(this, 'auto', auto);
-  setIfUndefined(this, 'multishot', multishot);
-  setIfUndefined(this, 'capacity', capacity);
-  setIfUndefined(this, 'reloadTime', reloadTime);
-  setIfUndefined(this, 'firerate', firerate);
-  setIfUndefined(this, 'defSpray', defSpray);
-  setIfUndefined(this, 'sprayCoef', sprayCoef);
-  setIfUndefined(this, 'bulletSpeed', bulletSpeed);
-
-  setIfUndefined(this, 'damage', damage);
-  setIfUndefined(this, 'damageDrop', damageDrop);
-  setIfUndefined(this, 'damageRange', damageRange);
-  setIfUndefined(this, 'damageDropTension', damageDropTension);
-
-  setIfUndefined(this, 'range', range);
-  setIfUndefined(this, 'stability', stability);
-  setIfUndefined(this, 'kickAnimation', kickAnimation);
-  setIfUndefined(this, 'animationMult', animationMult);
-  setIfUndefined(this, 'shootWalkSpeedMult', shootWalkSpeedMult);
-
-  setIfUndefined(this, 'color', color);
-  setIfUndefined(this, 'handPos1', new Vector(handPos1x,handPos1y));
-  setIfUndefined(this, 'handPos2', new Vector(handPos2x,handPos2y));
   
-  setIfUndefined(this, 'bulletsRemaining', 0);
-  setIfUndefined(this, 'reloadStartTime', -1);
-
-  setIfUndefined(this, 'spray', 0);
-  setIfUndefined(this, 'recoil', 0);
-  setIfUndefined(this, 'lastFireTime', 0);
-  setIfUndefined(this, 'hold', false);
-  setIfUndefined(this, 'bullets', {});
-  setIfUndefined(this, 'bulletsArrLength', 0);
   
 }
-var Bullet = function (weapon) {
+var Bullet = function () {
   this.type = "Bullet";
-  if (weapon === undefined) {
-    weapon = new Gun(0, 0, 0, false, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '#000');
-  }
-  setIfUndefined(this, 'startPos', weapon.pos.add((new Vector(weapon.length / 2, 0)).rotate(weapon.ang)));
-  setIfUndefined(this, 'tailPos', this.startPos.copy());
-  setIfUndefined(this, 'pos', this.startPos.copy());
-  setIfUndefined(this, 'vel', (new Vector(weapon.bulletSpeed, 0)).rotate(weapon.ang + weapon.spray * (Math.random() - 0.5)).add(weapon.vel));
-  setIfUndefined(this, 'ang', this.vel.ang());
-  setIfUndefined(this, 'bulletSpeed', weapon.bulletSpeed);
-  setIfUndefined(this, 'damage', weapon.damage);
-  setIfUndefined(this, 'range', weapon.range);
-  setIfUndefined(this, 'hitPoint', -1);
-  setIfUndefined(this, 'fadeTime', 10);
-  setIfUndefined(this, 'trailLength', this.bulletSpeed * this.fadeTime);
-  setIfUndefined(this, 'stopAnimationAge', 0);
-  setIfUndefined(this, 'color', weapon.color);
   this.display = function () {
     var ctx = myGameArea.context;
     const g = drawer.createLinearGradient(ctx, this.pos, this.tailPos);
@@ -563,25 +484,8 @@ var Drawer = function () {
     this.scale = 0.9 * (this.scale - this.targetScale) + this.targetScale;
   }
 }
-var Obstacle = function (vs, color) {
+var Obstacle = function () {
   this.type = "Obstacle";
-  setIfUndefined(this, 'color', color);
-
-  setIfUndefined(this, 'vs', vs);
-  if (this.center == undefined) {
-    this.center = new Vector(0, 0);
-    for (var i = 0; i < this.vs.length; i++) {
-      this.center = this.center.add(this.vs[i]);
-    }
-    this.center = this.center.multiply(1 / this.vs.length);
-
-  }
-  if (this.maxRadius == undefined) {
-    this.maxRadius = 0;
-    for (var i = 0; i < this.vs.length; i++) {
-      this.maxRadius = Math.max(this.center.distanceTo(this.vs[i]), this.maxRadius);
-    }
-  }
 }
 var Vector = function (x, y) {
   this.type = "Vector";
