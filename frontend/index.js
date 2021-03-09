@@ -6,6 +6,18 @@ socket.on('init', handleInit);
 socket.on('gameState', (msg) => {
     gameStates.push(JSON.parse(msg));
 });
+socket.on('killFeed', (msg) => {
+    var killer = msg.killer;
+    var dead = msg.dead;
+    console.log(killer,dead);
+    var state = gameStates[gameStates.length - 1];
+    killFeed.push([state.players[killer].name, state.players[dead].name]);
+    while (killFeed.length > 3)
+    {
+      killFeed.splice(0,1);
+    }
+});
+var killFeed = [];
 const canvas = document.getElementById('canvas');
 
 const initialScreen = document.getElementById('initialScreen');
@@ -37,6 +49,20 @@ function handleInit(msg) {
   controlId = msg.id;
   obstacles = msg.obstacles;
   giveMethods(obstacles);
+}
+function displayKillFeed()
+{
+  for (var idx in killFeed)
+  {
+    var txt = killFeed[idx][0] + " killed " + killFeed[idx][1];
+    var ctx = myGameArea.context;
+    ctx.save();
+    ctx.font = "bold 20px Courier New";
+    ctx.fillStyle = "#fff";
+    ctx.textAlign = "left";
+    ctx.fillText(txt, 10, 45 + idx * 20);
+    ctx.restore();
+  }
 }
 function serverTime()
 {
@@ -197,15 +223,17 @@ var GameState = function (time, players, weapons) {
       }
     }
     for (var idx in this.players) {
-      this.displayPlayer(idx);
+      if (this.players[idx].alive)
+        this.displayPlayer(idx);
     }
     for (var idx in this.players) {
-      if (idx != controlId)
+      if (this.players[idx].alive && idx != controlId)
         this.displayName(idx);
     }
     this.displayReloadTime();
     this.displayBulletCount();
-    myGameArea.printFps();
+    //myGameArea.printFps();
+    displayKillFeed();
     displayCrosshair();
   }
   this.displayPlayer = function(i)
@@ -298,6 +326,10 @@ var GameState = function (time, players, weapons) {
     ctx.stroke();
   }
   this.displayBulletCount = function () {
+    if (!this.players[controlId].alive)
+    {
+      return;
+    }
     var player = this.players[controlId];
     if (player && player.weapon != -1) {
       var ctx = myGameArea.context;
@@ -310,6 +342,10 @@ var GameState = function (time, players, weapons) {
     }
   }
   this.displayReloadTime = function () {
+    if (!this.players[controlId].alive)
+    {
+      return;
+    }
     var player = this.players[controlId];
     if (player && player.weapon != -1 && this.weapons[player.weapon].reloadStartTime != -1) {
       var ctx = myGameArea.context;
@@ -385,7 +421,7 @@ var Player = function (xStart, yStart, name) {
   
   
   setIfUndefined(this, 'name', name);
-  
+  setIfUndefined(this, 'alive', true);
   /*this.drawHealthBar = function()
   {
        var ctx = myGameArea.context;
@@ -722,7 +758,7 @@ function updateGameArea() {
   {
     var state = linearGameState();
     myGameArea.clear();
-    if (state.players[controlId] != undefined)
+    if (state.players[controlId] && state.players[controlId].alive)
     {
       drawer.update(state);
       lastDeadTime = -1;
