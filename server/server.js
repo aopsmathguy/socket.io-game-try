@@ -49,7 +49,7 @@ io.on('connection', client => {
     }
     else
     {
-      gameState.players[controlId] = new Player(startPos.x,startPos.y,msg.name);
+      gameState.players[controlId] = new Player(startPos.x,startPos.y,msg.name, controlId);
       controls[controlId] = {
         keys : [],
         mouseDown : false
@@ -72,6 +72,9 @@ var findSpawnPosition = function(objects)
 var obstacles;
 var gameState;
 var controls = {};
+function emitNewKill(killer,dead){
+  io.sockets.emit('killFeed', {killer : killer, dead: dead});
+}
 function emitGameState(gameState) {
   // Send this event to everyone in the room.
   io.sockets.emit('gameState', JSON.stringify(gameState));
@@ -118,6 +121,7 @@ var GameState = function (time, players, weapons) {
       if (this.players[k].health <= 0) {
         this.dropWeapon(k);
         this.players[k].alive = false;
+        emitNewKill(this.players[k].lastHitBy,k);
       }
     }
   }
@@ -198,6 +202,7 @@ var GameState = function (time, players, weapons) {
     this.weapons[this.players[k].weapon].vel = this.players[k].vel;
     this.weapons[this.players[k].weapon].ang = this.players[k].ang;
     this.weapons[this.players[k].weapon].hold = true;
+    this.weapons[this.players[k].weapon].playerHolding = k;
   }
 	this.dropWeapon = function (k) {
     if (this.players[k].weapon != -1) {
@@ -205,7 +210,10 @@ var GameState = function (time, players, weapons) {
       this.weapons[this.players[k].weapon].vel = new Vector(0, 0);
       this.weapons[this.players[k].weapon].hold = false;
       this.weapons[this.players[k].weapon].cancelReload();
+      this.weapons[this.players[k].weapon].playerHolding = -1;
+      
       this.players[k].weapon = -1;
+      
     }
   }
   this.toString = function () {
@@ -279,7 +287,7 @@ function getRandomColor() {
   }
   return color;
 }
-var Player = function (xStart, yStart, name) {
+var Player = function (xStart, yStart, name, id) {
   this.type = "Player";
   setIfUndefined(this, 'speed', 4);
   setIfUndefined(this, 'agility', .1);
@@ -302,10 +310,13 @@ var Player = function (xStart, yStart, name) {
   setIfUndefined(this, 'justMouseDowned', false);
   setIfUndefined(this, 'justKeyDowned', {});
   
+  setIfUndefined(this, 'id', id);
   
   setIfUndefined(this, 'name', name);
   setIfUndefined(this, 'alive', true);
   
+  
+  setIfUndefined(this, 'lastHitBy', -1);
   this.intersect = function (obstacle) {
     if (this.radius + obstacle.maxRadius < this.pos.distanceTo(obstacle.center)) {
       return;
@@ -339,13 +350,14 @@ var Player = function (xStart, yStart, name) {
       }
       if (player.pos.distanceTo(this.pos.add((new Vector(this.radius + this.punchReach,0)).rotate(this.ang))) < this.punchReach + player.radius)
       {
-        player.takeDamage(this.punchDamage);
+        player.takeDamage(this.punchDamage, this.id);
       }
     }
   }
-  this.takeDamage = function(damage)
+  this.takeDamage = function(damage, playerId)
 	{
 		this.health -= damage;
+    this.lastHitBy = playerId;
 	}
 
 
@@ -390,6 +402,9 @@ var Gun = function (startX, startY, length, auto, firerate, multishot, capacity,
   setIfUndefined(this, 'hold', false);
   setIfUndefined(this, 'bullets', {});
   setIfUndefined(this, 'bulletsArrLength', 0);
+  
+  
+  setIfUndefined(this, 'playerHolding', -1);
   this.copy = function()
   {
     return new Gun(this.pos.x,this.pos.y,this.length,this.auto,this.firerate,this.multishot,this.capacity,this.reloadTime,this.bulletSpeed,this.damage,this.damageDrop,this.damageRange,this.damageDropTension,this.range,this.defSpray,this.sprayCoef,this.stability,this.kickAnimation,this.animationMult,this.shootWalkSpeedMult,this.color, this.handPos1.x,this.handPos1.y, this.handPos2.x,this.handPos2.y);
@@ -458,6 +473,9 @@ var Bullet = function (weapon) {
   setIfUndefined(this, 'trailLength', this.bulletSpeed * this.fadeTime);
   setIfUndefined(this, 'stopAnimationAge', 0);
   setIfUndefined(this, 'color', weapon.color);
+  
+  
+  setIfUndefined(this, 'bulletFiredBy', weapon.playerHolding);
   this.step = function (state) {
     this.pos = this.pos.add(this.vel);
     if (this.tailPos.distanceTo(this.pos) > this.trailLength) {
@@ -469,7 +487,7 @@ var Bullet = function (weapon) {
       this.hitPoint = intersect[0];
       if (intersect[1] != -1) {
 
-        state.players[intersect[1]].takeDamage(this.calculateDamage());
+        state.players[intersect[1]].takeDamage(this.calculateDamage(),this.bulletFiredBy);
       }
       if (this.hitPoint == -1 && this.pos.distanceTo(this.startPos) > this.range) {
         this.hitPoint = this.pos.copy();
