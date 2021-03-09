@@ -90,14 +90,25 @@ var GameState = function (time, players, weapons) {
   	this.time = Date.now();
   	for (var k in this.players)
     {
-        this.controls(k);
+        if (this.players[k].alive)
+        {
+          this.controls(k);
+        }
     }
     for (var k in this.players) {
-      this.playerStep(k);
+      if (this.players[k].alive)
+      {
+        this.playerStep(k);
+      }
+      
     }
     obstacles.forEach((obstacle) => {
       for (var k in this.players) {
-        this.players[k].intersect(obstacle);
+        if (this.players[k].alive)
+        {
+          this.players[k].intersect(obstacle);
+        }
+        
       }
     });
     for (var k in this.weapons) {
@@ -322,7 +333,7 @@ var Player = function (xStart, yStart, name) {
     for (var i in gameState.players)
     {
       var player = gameState.players[i];
-      if (this == player)
+      if (this == player || !player.alive)
       {
         continue;
       }
@@ -537,6 +548,10 @@ var Bullet = function (weapon) {
     return objectPoint;
   }
   this.playerIntersection = function (player) {
+    if (!player.alive)
+    {
+      return -1;
+    }
     if (player.pos.distanceTo(this.pos) > player.radius + this.vel.magnitude()) {
       return -1;
     }
