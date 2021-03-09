@@ -41,12 +41,21 @@ io.on('connection', client => {
 	function addPlayer(msg){
 	  controlId = client.id;
 		var startPos = findSpawnPosition();
-    
-		gameState.players[controlId] = new Player(startPos.x,startPos.y,msg.name);
-		controls[controlId] = {
-			keys : [],
-			mouseDown : false
-		}
+    if (gameState.players[controlId])
+    {
+		  gameState.players[controlId].pos = startPos;
+      gameState.players[controlId].health = 100;
+      gameState.players[controlId].alive = true;
+    }
+    else
+    {
+      gameState.players[controlId] = new Player(startPos.x,startPos.y,msg.name);
+      controls[controlId] = {
+        keys : [],
+        mouseDown : false
+      };
+    }
+		
 	}
 
 
