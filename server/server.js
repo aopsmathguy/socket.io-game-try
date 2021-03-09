@@ -118,7 +118,7 @@ var GameState = function (time, players, weapons) {
       this.weapons[k].bulletsStep(this);
     }
     for (var k in this.players) {
-      if (this.players[k].health <= 0) {
+      if (this.players[k].health <= 0 && this.players[k].alive) {
         this.dropWeapon(k);
         this.players[k].alive = false;
         emitNewKill(this.players[k].lastHitBy,k);
