@@ -11,10 +11,10 @@ socket.on('killFeed', (msg) => {
     var dead = msg.dead;
     console.log(killer,dead);
     var state = gameStates[gameStates.length - 1];
-    killFeed.push([state.players[killer].name, state.players[dead].name]);
+    killFeed.splice(0,0,[state.players[killer].name, state.players[dead].name]);
     while (killFeed.length > 3)
     {
-      killFeed.splice(0,1);
+      killFeed.splice(killFeed.length - 1,1);
     }
 });
 var killFeed = [];
