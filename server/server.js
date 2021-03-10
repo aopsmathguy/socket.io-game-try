@@ -5,7 +5,7 @@ const gridWidth = 250;
 const io = require('socket.io')();
 
 io.on('connection', client => {
-	client.emit('init', {data : Date.now(), id : client.id, obstacles : obstacles});
+	client.emit('init', {data : Date.now(), id : client.id, obstacles : obstacles, gameWidth: gameWidth, gameHeight: gameHeight, gridWidth:gridWidth});
 	client.on('new player', addPlayer);
     client.on('disconnect', function() {
       if (gameState.players[client.id] != undefined)
