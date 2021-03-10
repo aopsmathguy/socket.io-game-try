@@ -268,25 +268,19 @@ var makeObstacles = function () {
     new Obstacle([new Vector(0, 0), new Vector(gameWidth, 0), new Vector(gameWidth, -wallThick), new Vector(0, -wallThick)], '#000'),
     new Obstacle([new Vector(0, gameHeight), new Vector(gameWidth, gameHeight), new Vector(gameWidth, gameHeight+wallThick), new Vector(0, gameHeight+wallThick)], '#000')
   ];
-  for (var i = 0; i < gameWidth/gridWidth; i++)
-  {
-    for (var j = 0; j < gameWidth/gridWidth; j++)
-    {
-      obstacles[Math.floor(centerx/gridWidth)][Math.floor(centery/gridWidth)] = [];
-    }
-  }
   for (var i =0 ; i < 100; i++)
 	{
 		var width = 50 + 200 * Math.random();
 		var height = 50 + 200 * Math.random();
 		var centerx = gameWidth * Math.random();
 		var centery = gameHeight * Math.random();
-		obstacles[Math.floor(centerx/gridWidth)][Math.floor(centery/gridWidth)].push(new Obstacle([
+    var addTo = obstacles[Math.floor(centerx/gridWidth)][Math.floor(centery/gridWidth)];
+		addTo[addTo.length] = new Obstacle([
 			new Vector(centerx - width/2,centery - height/2),
 			new Vector(centerx + width/2,centery - height/2),
 			new Vector(centerx + width/2,centery + height/2),
 			new Vector(centerx - width/2,centery + height/2)
-																], getRandomColor()));
+																], getRandomColor());
 	}
   var viableWeapons = [
     new Gun(100, 50, 30, false, 780, 1, 15, 800, 35, 23, 9, 500, 150, 1000, 0.1, 0.12, 0.9, 4, 0.9, 1, '#80f',20,0,20,0),
