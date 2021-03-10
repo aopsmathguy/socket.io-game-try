@@ -621,7 +621,7 @@ var Bullet = function (weapon) {
     var smallestDistance = Number.MAX_VALUE;
     var objectsPoint = -1;
     loopThroughObstacles(this.pos,(obstacle) => {
-      var point = this.objectIntersection(objects[i]);
+      var point = this.objectIntersection(obstacle);
       if (point != -1) {
         var dist = this.startPos.distanceTo(point);
         if (dist < smallestDistance) {
