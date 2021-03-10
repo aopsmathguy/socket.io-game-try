@@ -85,10 +85,10 @@ function handleInit(msg) {
   controlId = msg.id;
   obstacles = msg.obstacles;
   borderObstacles = msg.borderObstacles;
-  
+
   giveMethods(obstacles);
   giveMethods(borderObstacles);
-  
+
   gameWidth = msg.gameWidth;
   gameHeight = msg.gameHeight;
   gridWidth = msg.gridWidth;
@@ -178,10 +178,10 @@ var myGameArea = {
   clear: function () {
     this.canvas.width  = window.innerWidth;
     this.canvas.height = window.innerHeight;
-    
+
     this.context.fillStyle = "#080";
     this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);
-    
+
   }
 }
 var controlsBundle = {
@@ -294,7 +294,7 @@ var GameState = function () {
     ctx.closePath();
     ctx.fill();
     var ang = (i == controlId ? controlsBundle.ang : player.ang);
-     
+
     var firstHand;
     var secondHand;
     if (player.weapon != -1) {
@@ -306,7 +306,7 @@ var GameState = function () {
     {
       firstHand = (new Vector(player.radius * 0.75, player.radius * 0.8)).add((new Vector(player.punchAnimation,0)).rotate(-Math.PI/6));
       secondHand = new Vector(player.radius * 0.75, -player.radius * 0.8);
-      
+
     }
     ctx.strokeStyle = '#000';
     drawer.lineWidth(ctx, 3);
@@ -329,7 +329,7 @@ var GameState = function () {
       weapon.bullets[j].display();
     }
     var ctx = myGameArea.context;
-    
+
     ctx.strokeStyle = "#000";
     drawer.lineWidth(ctx, 12);
     ctx.beginPath();
@@ -337,8 +337,8 @@ var GameState = function () {
     drawer.lineContext(ctx, weapon.pos.add((new Vector(weapon.length / 2, 0)).rotate(weapon.ang)));
     ctx.closePath();
     ctx.stroke();
-    
-    
+
+
     ctx.strokeStyle = weapon.color;
     drawer.lineWidth(ctx, 6);
     ctx.beginPath();
@@ -383,11 +383,11 @@ var GameState = function () {
       ctx.stroke();
       ctx.restore();
     }
-    
+
   }
   this.displayName = function(i)
   {
-    
+
     var player = this.players[i];
     var ctx = myGameArea.context;
       ctx.save();
@@ -450,8 +450,8 @@ var Player = function () {
 }
 var Gun = function () {
   this.type = "Gun";
-  
-  
+
+
 }
 var Bullet = function () {
   this.type = "Bullet";
@@ -501,9 +501,9 @@ var Drawer = function () {
     ctx.fillText(txt, displayPoint.x,displayPoint.y);
   }
   this.update = function (state) {
-    
+
     character = state.players[controlId];
-    
+
     this.targetScale = 1 / 40000 * (9 * myGameArea.canvas.width + 16 * myGameArea.canvas.height);
     this.scroll = character.pos.add((new Vector(Math.random() - 0.5, Math.random() - 0.5)).multiply(this.screenShake));
     this.scale = 0.9 * (this.scale - this.targetScale) + this.targetScale;
@@ -514,7 +514,7 @@ var Obstacle = function () {
   this.display = function()
   {
     var ctx = myGameArea.context;
-      
+
     ctx.fillStyle = this.color;
     ctx.strokeStyle = "#000";
     drawer.lineWidth(ctx, 3);
@@ -690,8 +690,9 @@ var linearGameState = function()
 
            out.weapons[i].bullets[j].tailPos = linearPosition(left.weapons[i].bullets[j].tailPos, right.weapons[i].bullets[j].tailPos, displayTime, left.time, right.time);
         }
-        
+
      }
+     out.weapons[i].recoil = linearPosition(new Vector(left.weapons[i].recoil,0),new Vector(right.weapons[i].recoil,0),displayTime,left.time,right.time).x;
   }
   giveMethods(out);
   out.snapWeapons();
