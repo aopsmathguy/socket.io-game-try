@@ -51,6 +51,10 @@ var obstacleSector = function(point)
 }
 var loopThroughObstacles = function(objectPos, inner)
 {
+  for (var i in borderObstacles)
+  {
+    inner(borderObstacles[i]);
+  }
   var sector = obstacleSector(objectPos);
   for (var i = sector[0] - 10; i < sector[0] + 11; i++)
   {
@@ -75,11 +79,16 @@ var loopThroughObstacles = function(objectPos, inner)
 var timeDifference = 0;
 var controlId = 0;
 var obstacles;
+var borderObstacles;
 function handleInit(msg) {
   timeDifference = msg.data - Date.now();
   controlId = msg.id;
   obstacles = msg.obstacles;
+  borderObstacles = msg.borderObstacles;
+  
   giveMethods(obstacles);
+  giveMethods(borderObstacles);
+  
   gameWidth = msg.gameWidth;
   gameHeight = msg.gameHeight;
   gridWidth = msg.gridWidth;
