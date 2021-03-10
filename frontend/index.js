@@ -1,3 +1,6 @@
+var gameWidth;
+var gameHeight;
+var gridWidth;
 var buffer = 50;
 
 const socket = io('https://limitless-everglades-60126.herokuapp.com/');
@@ -41,6 +44,34 @@ function newPlayer()
 {
   socket.emit('new player', {name:name});
 }
+
+var obstacleSector = function(point)
+{
+  return [Math.floor(point.x/gridWidth), Math.floor(point.y/gridWidth)];
+}
+var loopThroughObstacles = function(objectPos, inner)
+{
+  var sector = obstacleSector(objectPos);
+  for (var i = sector[0] - 10; i < sector[0] + 11; i++)
+  {
+    if (i < 0 || i >= obstacles.length)
+    {
+      continue;
+    }
+    for (var j = sector[1] - 10; j < sector[1] + 11; j++)
+    {
+      if (j < 0 || j >= obstacles[i].length)
+      {
+        continue;
+      }
+      var objectsToLoop = obstacles[i][j];
+      for (var idx in objectsToLoop)
+      {
+        inner(objectsToLoop[idx]);
+      }
+    }
+  }
+}
 var timeDifference = 0;
 var controlId = 0;
 var obstacles;
@@ -49,6 +80,9 @@ function handleInit(msg) {
   controlId = msg.id;
   obstacles = msg.obstacles;
   giveMethods(obstacles);
+  gameWidth = msg.gameWidth;
+  gameHeight = msg.gameHeight;
+  gridWidth = msg.gridWidth;
 }
 function displayKillFeed()
 {
@@ -209,10 +243,9 @@ var giveMethods = function (obj) {
 var GameState = function () {
   this.type = "GameState";
   this.render = function () {
-    for (var idx in obstacles)
-    {
-      this.displayObstacle(idx);
-    }
+    loopThroughObstacles(this.players[controlId].pos, (obstacle) => {
+       obstacle.display();
+    });
     for (var idx in this.weapons)
     {
       if (!this.weapons[idx].hold) {
@@ -303,23 +336,6 @@ var GameState = function () {
     drawer.moveContext(ctx, weapon.pos.add((new Vector(-weapon.length / 2 + 3, 0)).rotate(weapon.ang)));
     drawer.lineContext(ctx, weapon.pos.add((new Vector(weapon.length / 2 - 3, 0)).rotate(weapon.ang)));
     ctx.closePath();
-    ctx.stroke();
-  }
-  this.displayObstacle = function(i)
-  {
-    var obstacle = obstacles[i];
-    var ctx = myGameArea.context;
-      
-    ctx.fillStyle = obstacle.color;
-    ctx.strokeStyle = "#000";
-    drawer.lineWidth(ctx, 3);
-    ctx.beginPath();
-    drawer.moveContext(ctx, obstacle.vs[0]);
-    for (var i = 1; i < obstacle.vs.length; i++) {
-      drawer.lineContext(ctx, obstacle.vs[i]);
-    }
-    ctx.closePath();
-    ctx.fill();
     ctx.stroke();
   }
   this.displayBulletCount = function () {
@@ -486,6 +502,22 @@ var Drawer = function () {
 }
 var Obstacle = function () {
   this.type = "Obstacle";
+  this.display = function()
+  {
+    var ctx = myGameArea.context;
+      
+    ctx.fillStyle = this.color;
+    ctx.strokeStyle = "#000";
+    drawer.lineWidth(ctx, 3);
+    ctx.beginPath();
+    drawer.moveContext(ctx, this.vs[0]);
+    for (var i = 1; i < this.vs.length; i++) {
+      drawer.lineContext(ctx, this.vs[i]);
+    }
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+  }
 }
 var Vector = function (x, y) {
   this.type = "Vector";
