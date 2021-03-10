@@ -611,6 +611,10 @@ var linearGameState = function()
     return out;*/
       rightIdx = gameStates.length - 1;
   }
+  if (gameStates.length > 5)
+  {
+    buffer -= 1;
+  }
 
   var right = gameStates[rightIdx];
   var left = gameStates[rightIdx - 1];
