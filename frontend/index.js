@@ -642,6 +642,7 @@ var linearGameState = function()
      out.snapWeapons();
     return out;*/
       rightIdx = gameStates.length - 1;
+      buffer += 1;
   }
   if (gameStates.length > 5)
   {
