@@ -1,5 +1,5 @@
-const gameWidth = 4000;
-const gameHeight = 4000;
+const gameWidth = 10000;
+const gameHeight = 10000;
 const gridWidth = 250;
 
 const io = require('socket.io')();
@@ -262,12 +262,13 @@ var makeObstacles = function () {
   var players = {
   };
   var wallThick = 10;
-  obstacles = [
+  /*obstacles = [
     new Obstacle([new Vector(0, 0), new Vector(0, gameHeight), new Vector(-wallThick, gameHeight), new Vector(-wallThick, 0)], '#000'),
     new Obstacle([new Vector(gameWidth, 0), new Vector(gameWidth, gameHeight), new Vector(gameWidth+wallThick, gameHeight), new Vector(gameWidth+wallThick, 0)], '#000'),
     new Obstacle([new Vector(0, 0), new Vector(gameWidth, 0), new Vector(gameWidth, -wallThick), new Vector(0, -wallThick)], '#000'),
     new Obstacle([new Vector(0, gameHeight), new Vector(gameWidth, gameHeight), new Vector(gameWidth, gameHeight+wallThick), new Vector(0, gameHeight+wallThick)], '#000')
-  ];
+  ];*/
+  obstacles = [];
   for (var i = 0; i < gameWidth/gridWidth; i++)
   {
     obstacles[i] = [];
@@ -276,7 +277,7 @@ var makeObstacles = function () {
       obstacles[i][j] = [];
     }
   }
-  for (var i =0 ; i < 100; i++)
+  for (var i =0 ; i < 1000; i++)
 	{
 		var width = 50 + 200 * Math.random();
 		var height = 50 + 200 * Math.random();
