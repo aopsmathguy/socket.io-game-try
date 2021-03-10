@@ -1,5 +1,6 @@
 const gameWidth = 4000;
 const gameHeight = 4000;
+const gridWidth = 250;
 
 const io = require('socket.io')();
 
@@ -69,6 +70,33 @@ var findSpawnPosition = function(objects)
    while (inObjects(startPos));
    return startPos;
 }
+var obstacleSector = function(point)
+{
+  return [Math.floor(point.x/gridWidth), Math.floor(point.y/gridWidth)];
+}
+var loopThroughObstacles = function(objectPos, inner)
+{
+  var sector = obstacleSector(objectPos);
+  for (var i = sector[0] - 1; i < sector[0] + 2; i++)
+  {
+    if (i < 0 || i >= obstacles.length)
+    {
+      continue;
+    }
+    for (var j = sector[1] - 1; j < sector[1] + 2; j++)
+    {
+      if (j < 0 || j >= obstacles[i].length)
+      {
+        continue;
+      }
+      var objectsToLoop = obstacles[i][j];
+      for (var idx in objectsToLoop)
+      {
+        inner(objectsToLoop[idx]);
+      }
+    }
+  }
+}
 var obstacles;
 var gameState;
 var controls = {};
@@ -105,15 +133,14 @@ var GameState = function (time, players, weapons) {
       }
       
     }
-    obstacles.forEach((obstacle) => {
-      for (var k in this.players) {
-        if (this.players[k].alive)
-        {
-          this.players[k].intersect(obstacle);
-        }
-        
+    for (var k in this.players) {
+      if (this.players[k].alive)
+      {
+        loopThroughObstacles(this.players[k].pos, (obstacle) => {
+           this.players[k].intersect(obstacle);
+        });
       }
-    });
+    }
     for (var k in this.weapons) {
       this.weapons[k].bulletsStep(this);
     }
@@ -222,13 +249,13 @@ var GameState = function (time, players, weapons) {
 }
 var inObjects = function(v)
 {
-   for (var i in obstacles)
+   loopThroughObstacles(v,(obstacle) => 
    {
-      if (obstacles[i].insideOf(v))
+      if (obstacle.insideOf(v))
       {
          return true;
       }
-   }
+   });
    return false;
 }
 var makeObstacles = function () {
@@ -247,7 +274,7 @@ var makeObstacles = function () {
 		var height = 50 + 200 * Math.random();
 		var centerx = gameWidth * Math.random();
 		var centery = gameHeight * Math.random();
-		obstacles.push(new Obstacle([
+		obstacles[Math.floor(centerx/gridWidth)][Math.floor(centery/gridWidth)].push(new Obstacle([
 			new Vector(centerx - width/2,centery - height/2),
 			new Vector(centerx + width/2,centery - height/2),
 			new Vector(centerx + width/2,centery + height/2),
@@ -445,9 +472,7 @@ var Gun = function (startX, startY, length, auto, firerate, multishot, capacity,
         delete this.bullets[i];
       }
     }
-
   }
-
 }
 var Bullet = function (weapon) {
   this.type = "Bullet";
@@ -483,7 +508,7 @@ var Bullet = function (weapon) {
     }
 
     if (this.hitPoint == -1) {
-      var intersect = this.objectsIntersection(obstacles,state);
+      var intersect = this.objectsIntersection(state);
       this.hitPoint = intersect[0];
       if (intersect[1] != -1) {
 
@@ -505,11 +530,11 @@ var Bullet = function (weapon) {
     }
   }
   this.insideObject = function () {
-    for (var i = 0; i < obstacles.length; i++) {
-      if (obstacles[i].insideOf(this.pos)) {
+    loopThroughObstacles(this.pos,(obstacle) => {
+      if (obstacle.insideOf(this.pos)) {
         return true;
       }
-    }
+    });
     return false;
   }
   this.pathIntersect = function (v1, v2) {
@@ -583,10 +608,10 @@ var Bullet = function (weapon) {
       return -1;
     }
   }
-  this.objectsIntersection = function (objects,state) {
+  this.objectsIntersection = function (state) {
     var smallestDistance = Number.MAX_VALUE;
     var objectsPoint = -1;
-    for (var i = 0; i < objects.length; i++) {
+    loopThroughObstacles(this.pos,(obstacle) => {
       var point = this.objectIntersection(objects[i]);
       if (point != -1) {
         var dist = this.startPos.distanceTo(point);
@@ -595,7 +620,7 @@ var Bullet = function (weapon) {
           objectsPoint = point;
         }
       }
-    }
+    });
     var playerHit = -1;
     for (var key in state.players) {
       var point = this.playerIntersection(state.players[key]);
