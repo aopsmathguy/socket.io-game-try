@@ -268,6 +268,14 @@ var makeObstacles = function () {
     new Obstacle([new Vector(0, 0), new Vector(gameWidth, 0), new Vector(gameWidth, -wallThick), new Vector(0, -wallThick)], '#000'),
     new Obstacle([new Vector(0, gameHeight), new Vector(gameWidth, gameHeight), new Vector(gameWidth, gameHeight+wallThick), new Vector(0, gameHeight+wallThick)], '#000')
   ];
+  for (var i = 0; i < gameWidth/gridWidth; i++)
+  {
+    obstacles[i] = [];
+    for (var j = 0; j < gameHeight/gridWidth; j++)
+    {
+      obstacles[i][j] = [];
+    }
+  }
   for (var i =0 ; i < 100; i++)
 	{
 		var width = 50 + 200 * Math.random();
