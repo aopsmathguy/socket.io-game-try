@@ -6,7 +6,7 @@ const gridWidth = 250;
 const io = require('socket.io')();
 
 io.on('connection', client => {
-	client.emit('init', {data : Date.now(), id : client.id, obstacles : obstacles, gameWidth: gameWidth, gameHeight: gameHeight, gridWidth:gridWidth});
+	client.emit('init', {data : Date.now(), id : client.id, obstacles : obstacles, borderObstacles : borderObstacles, gameWidth: gameWidth, gameHeight: gameHeight, gridWidth:gridWidth});
 	client.on('new player', addPlayer);
     client.on('disconnect', function() {
       if (gameState.players[client.id] != undefined)
@@ -77,6 +77,10 @@ var obstacleSector = function(point)
 }
 var loopThroughObstacles = function(objectPos, inner)
 {
+  for (var i in borderObstacles)
+  {
+    inner(borderObstacles[i]);
+  }
   var sector = obstacleSector(objectPos);
   for (var i = sector[0] - 1; i < sector[0] + 2; i++)
   {
@@ -99,6 +103,7 @@ var loopThroughObstacles = function(objectPos, inner)
   }
 }
 var obstacles;
+var borderObstacles;
 var gameState;
 var controls = {};
 function emitNewKill(killer,dead){
@@ -265,12 +270,13 @@ var makeObstacles = function () {
   var players = {
   };
   var wallThick = 10;
-  /*obstacles = [
+  
+  borderObstacles = [
     new Obstacle([new Vector(0, 0), new Vector(0, gameHeight), new Vector(-wallThick, gameHeight), new Vector(-wallThick, 0)], '#000'),
     new Obstacle([new Vector(gameWidth, 0), new Vector(gameWidth, gameHeight), new Vector(gameWidth+wallThick, gameHeight), new Vector(gameWidth+wallThick, 0)], '#000'),
     new Obstacle([new Vector(0, 0), new Vector(gameWidth, 0), new Vector(gameWidth, -wallThick), new Vector(0, -wallThick)], '#000'),
     new Obstacle([new Vector(0, gameHeight), new Vector(gameWidth, gameHeight), new Vector(gameWidth, gameHeight+wallThick), new Vector(0, gameHeight+wallThick)], '#000')
-  ];*/
+  ];
   obstacles = [];
   for (var i = 0; i < gameWidth/gridWidth; i++)
   {
