@@ -1,5 +1,6 @@
-const gameWidth = 10000;
-const gameHeight = 10000;
+const gameWidth = 4000;
+const gameHeight = 4000;
+const numOb = 150;
 const gridWidth = 250;
 
 const io = require('socket.io')();
@@ -249,14 +250,16 @@ var GameState = function (time, players, weapons) {
 }
 var inObjects = function(v)
 {
+   var out = false;
    loopThroughObstacles(v,(obstacle) => 
    {
       if (obstacle.insideOf(v))
       {
-         return true;
+         out = true;
+         return;
       }
    });
-   return false;
+   return out;
 }
 var makeObstacles = function () {
   var players = {
@@ -277,7 +280,7 @@ var makeObstacles = function () {
       obstacles[i][j] = [];
     }
   }
-  for (var i =0 ; i < 1000; i++)
+  for (var i =0 ; i < numOb; i++)
 	{
 		var width = 50 + 200 * Math.random();
 		var height = 50 + 200 * Math.random();
