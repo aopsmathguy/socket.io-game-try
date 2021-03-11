@@ -10,16 +10,11 @@ socket.on('gameState', (msg) => {
     gameStates.push(JSON.parse(msg));
 });
 socket.on('killFeed', (msg) => {
-    var killer = msg.killer;
-    var dead = msg.dead;
-    console.log(killer,dead);
-    var state = gameStates[gameStates.length - 1];
-    killFeed.splice(0,0,[state.players[killer].name, state.players[dead].name]);
-    while (killFeed.length > 3)
-    {
-      killFeed.splice(killFeed.length - 1,1);
-    }
+    var message = msg.msg;
+    killFeed.splice(0,0,{msg : message, time : Date.now()});
+    killFeedScroll += 1;
 });
+var killFeedScroll = 0;
 var killFeed = [];
 const canvas = document.getElementById('canvas');
 
@@ -95,15 +90,36 @@ function handleInit(msg) {
 }
 function displayKillFeed()
 {
+  
+  var speed = 25;
+  var fadeTime = 1500;
+  var upTime = 20000;
+  
+  while (killFeed.length > 3)
+  {
+    killFeed[killFeed.length - 1].time = upTime - fadeTime;
+  }
+  
+  if (killFeedScroll > 0)
+    killFeedScroll -= 1/speed;
+  else
+    killFeedScroll = 0;
+  
+  while (killFeed.length > 0 && Date.now() - killFeed[killFeed.length - 1].time > upTime)
+  {
+      killFeed.splice(killFeed.length - 1,1);
+  }
   for (var idx in killFeed)
   {
-    var txt = killFeed[idx][0] + " killed " + killFeed[idx][1];
+    var txt = killFeed[idx].msg;
     var ctx = myGameArea.context;
+    var timeDiff = Date.now() - killFeed[idx].time;
     ctx.save();
+    ctx.globalAlpha = Math.min(1,timeDiff/fadeTime, (upTime - timeDiff)/fadeTime);
     ctx.font = "bold 20px Courier New";
     ctx.fillStyle = "#fff";
     ctx.textAlign = "left";
-    ctx.fillText(txt, 10, 45 + idx * 20);
+    ctx.fillText(txt, 10, 10+20*(1-killFeedScroll) + idx * 20);
     ctx.restore();
   }
 }
