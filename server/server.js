@@ -107,7 +107,7 @@ var borderObstacles;
 var gameState;
 var controls = {};
 function emitNewKill(killer,dead){
-  io.sockets.emit('killFeed', {killer : killer, dead: dead});
+  io.sockets.emit('killFeed', {msg : gameState.players[killer].name + " killed " + gameState.players[dead].name});
 }
 function emitGameState(gameState) {
   // Send this event to everyone in the room.
