@@ -293,7 +293,7 @@ var makeObstacles = function () {
   for (var i =0 ; i < numOb; i++)
 	{
 		var center = new Vector(gameWidth * Math.random(), gameHeight * Math.random());
-    var addTo = obstacles[Math.floor(centerx/gridWidth)][Math.floor(centery/gridWidth)];
+    var addTo = obstacles[Math.floor(center.x/gridWidth)][Math.floor(center.y/gridWidth)];
 
 		var resolution = 8;
 		var vertList = [];
