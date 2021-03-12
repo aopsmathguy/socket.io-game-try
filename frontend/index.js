@@ -92,7 +92,7 @@ function displayKillFeed()
 {
   
   var speed = 25;
-  var fadeTime = 1500;
+  var fadeTime = 667;
   var upTime = 20000;
   
   while (killFeed.length > 3)
