@@ -300,10 +300,10 @@ var makeObstacles = function () {
 		var distList = [];
 		for (var i = 0; i < resolution ; i++)
 		{
-			distList[i] = 50+200 * Math.random();
+			distList[i] = 50+100 * Math.random();
 
 		}
-		for (var i = 0; i < 4; i++)
+		for (var i = 0; i < 12; i++)
 		{
 			var temp = [];
 			for (var j = 0; j < resolution; j++)
