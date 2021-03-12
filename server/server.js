@@ -1,6 +1,6 @@
-const gameWidth = 4000;
-const gameHeight = 4000;
-const numOb = 120;
+const gameWidth = 1000;
+const gameHeight = 1000;
+const numOb = 2;
 const gridWidth = 250;
 
 const io = require('socket.io')();
