@@ -57,7 +57,7 @@ io.on('connection', client => {
         mouseDown : false
       };
     }
-		
+
 	}
 
 
@@ -137,7 +137,7 @@ var GameState = function (time, players, weapons) {
       {
         this.playerStep(k);
       }
-      
+
     }
     for (var k in this.players) {
       if (this.players[k].alive)
@@ -230,7 +230,7 @@ var GameState = function (time, players, weapons) {
 
       this.weapons[this.players[k].weapon].spray = this.weapons[this.players[k].weapon].stability * (this.weapons[this.players[k].weapon].spray - this.weapons[this.players[k].weapon].defSpray) + this.weapons[this.players[k].weapon].defSpray;
       this.weapons[this.players[k].weapon].recoil *= this.weapons[this.players[k].weapon].animationMult;
-      
+
     }
   }
 	this.pickUpWeapon = function (k, weapon) {
@@ -248,9 +248,9 @@ var GameState = function (time, players, weapons) {
       this.weapons[this.players[k].weapon].hold = false;
       this.weapons[this.players[k].weapon].cancelReload();
       this.weapons[this.players[k].weapon].playerHolding = -1;
-      
+
       this.players[k].weapon = -1;
-      
+
     }
   }
   this.toString = function () {
@@ -260,7 +260,7 @@ var GameState = function (time, players, weapons) {
 var inObjects = function(v)
 {
    var out = false;
-   loopThroughObstacles(v,(obstacle) => 
+   loopThroughObstacles(v,(obstacle) =>
    {
       if (obstacle.insideOf(v))
       {
@@ -274,7 +274,7 @@ var makeObstacles = function () {
   var players = {
   };
   var wallThick = 10;
-  
+
   borderObstacles = [
     new Obstacle([new Vector(0, 0), new Vector(0, gameHeight), new Vector(-wallThick, gameHeight), new Vector(-wallThick, 0)], '#000'),
     new Obstacle([new Vector(gameWidth, 0), new Vector(gameWidth, gameHeight), new Vector(gameWidth+wallThick, gameHeight), new Vector(gameWidth+wallThick, 0)], '#000'),
@@ -290,31 +290,49 @@ var makeObstacles = function () {
       obstacles[i][j] = [];
     }
   }
-  for (var i =0 ; i < numOb; i++)
+  for (var blah =0 ; blah < numOb; blah++)
 	{
-		var width = 50 + 200 * Math.random();
-		var height = 50 + 200 * Math.random();
-		var centerx = gameWidth * Math.random();
-		var centery = gameHeight * Math.random();
-    var addTo = obstacles[Math.floor(centerx/gridWidth)][Math.floor(centery/gridWidth)];
-		addTo[addTo.length] = new Obstacle([
-			new Vector(centerx - width/2,centery - height/2),
-			new Vector(centerx + width/2,centery - height/2),
-			new Vector(centerx + width/2,centery + height/2),
-			new Vector(centerx - width/2,centery + height/2)
-																], getRandomColor());
+		var center = new Vector(gameWidth * Math.random(), gameHeight * Math.random());
+    var addTo = obstacles[Math.floor(center.x/gridWidth)][Math.floor(center.y/gridWidth)];
+
+		var resolution = 8;
+		var vertList = [];
+		var distList = [];
+		for (var i = 0; i < resolution ; i++)
+		{
+			distList[i] = 50+200 * Math.random();
+
+		}
+		for (var i = 0; i < 4; i++)
+		{
+			var temp = [];
+			for (var j = 0; j < resolution; j++)
+			{
+				temp[j] = distList[j];
+			}
+			for (var j = 0; j < resolution; j++)
+			{
+				distList[j] = (temp[j] + 2*temp[(j+1) % resolution] + temp[(j+2) % resolution])/4;
+			}
+		}
+		for (var i = 0; i < resolution; i++)
+		{
+			var ang = i*2*Math.PI/resolution;
+			vertList[i] = center.add((new Vector(distList[i],0)).rotate(ang));
+		}
+		addTo[addTo.length] = new Obstacle(vertList, getRandomColor());
 	}
   var viableWeapons = [
     new Gun(100, 50, 30, false, 780, 1, 15, 1000, 35, 17, 4, 500, 150, 1000, 0.1, 0.12, 0.9, 4, 0.9, 1, 1, '#80f',20,0,20,0),
     new Gun(100, 50, 35, false, 600, 1, 6, 1500, 42, 33, 8, 750, 200, 1500, 0, 0.12, 0.9, 4, 0.9, 1, 0.6, '#ff0',20,3,20,3),
-    
+
     new Gun(100, 50, 30, true, 900, 1, 32, 1200, 35, 10, 5, 500, 150, 1000, 0, 0.12, 0.9, 3, 0.9, 1, 0.8, '#f00',20,3,35,6),
     new Gun(200, 350, 50, true, 600, 1, 30, 1500, 42, 8, 1, 550, 270, 1500, 0, 0.08, 0.91, 3, 0.9, 0.9, 0.6, '#f80',20,3,40,6),
     new Gun(200, 50, 60, false, 550, 1, 15, 1600, 50, 25, 3, 710, 200, 2000, 0, 0.3, 0.83, 6, 0.9, 0.9, 0.5, '#00f',20,3,45,6),
-    
+
     new Gun(200, 50, 70, false, 70, 1, 5, 2400, 70, 70, 20, 830, 240, 3000, 0, 0.3, 0.83, 12, 0.9, 0.8, 0.6, '#8f0',20,3,45,6),
     new Gun(200, 50, 90, false, 20, 1, 1, 3000, 200, 101, 0, 830, 240, 5000, 0, 0.3, 0.83, 15, 0.9, 0.7, 0.5, '#000',20,3,50,6),
-    
+
     new Gun(200, 220, 35, false, 450, 8, 2, 1250, 30, 13, 9, 350, 56, 700, 0.23, 0, 0.83, 6, 0.9, 1, 0.7, '#f0f',20,3,40,6),
     new Gun(200, 220, 40, true, 300, 6, 5, 1750, 25, 10, 7, 220, 36, 600, 0.3, 0, 0.83, 6, 0.9, 1, 0.5, '#0ff',20,3,40,6)
   ];
@@ -352,22 +370,22 @@ var Player = function (xStart, yStart, name, id) {
   setIfUndefined(this, 'vel', new Vector(0, 0));
 
   setIfUndefined(this, 'ang', 0);
-  
+
   setIfUndefined(this, 'punchReach', 10);
   setIfUndefined(this, 'punchAnimation', 0);
   setIfUndefined(this, 'punchLastTime', 0);
   setIfUndefined(this, 'punchRate', 200);
   setIfUndefined(this, 'punchDamage', 24);
-  
+
   setIfUndefined(this, 'justMouseDowned', false);
   setIfUndefined(this, 'justKeyDowned', {});
-  
+
   setIfUndefined(this, 'id', id);
-  
+
   setIfUndefined(this, 'name', name);
   setIfUndefined(this, 'alive', true);
-  
-  
+
+
   setIfUndefined(this, 'lastHitBy', -1);
   this.intersect = function (obstacle) {
     if (this.radius + obstacle.maxRadius < this.pos.distanceTo(obstacle.center)) {
@@ -439,14 +457,14 @@ var Gun = function (startX, startY, length, auto, firerate, multishot, capacity,
   setIfUndefined(this, 'stability', stability);
   setIfUndefined(this, 'kickAnimation', kickAnimation);
   setIfUndefined(this, 'animationMult', animationMult);
-  
+
   setIfUndefined(this, 'walkSpeedMult', walkSpeedMult);
   setIfUndefined(this, 'shootWalkSpeedMult', shootWalkSpeedMult);
 
   setIfUndefined(this, 'color', color);
   setIfUndefined(this, 'handPos1', new Vector(handPos1x,handPos1y));
   setIfUndefined(this, 'handPos2', new Vector(handPos2x,handPos2y));
-  
+
   setIfUndefined(this, 'bulletsRemaining', 0);
   setIfUndefined(this, 'reloadStartTime', -1);
 
@@ -456,8 +474,8 @@ var Gun = function (startX, startY, length, auto, firerate, multishot, capacity,
   setIfUndefined(this, 'hold', false);
   setIfUndefined(this, 'bullets', {});
   setIfUndefined(this, 'bulletsArrLength', 0);
-  
-  
+
+
   setIfUndefined(this, 'playerHolding', -1);
   this.copy = function()
   {
@@ -525,8 +543,8 @@ var Bullet = function (weapon) {
   setIfUndefined(this, 'trailLength', this.bulletSpeed * this.fadeTime);
   setIfUndefined(this, 'stopAnimationAge', 0);
   setIfUndefined(this, 'color', weapon.color);
-  
-  
+
+
   setIfUndefined(this, 'bulletFiredBy', weapon.playerHolding);
   this.step = function (state) {
     this.pos = this.pos.add(this.vel);
