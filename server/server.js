@@ -1,6 +1,6 @@
 const gameWidth = 4000;
 const gameHeight = 4000;
-const numOb = 150;
+const numOb = 10;
 const gridWidth = 250;
 
 const io = require('socket.io')();
@@ -295,7 +295,7 @@ var makeObstacles = function () {
 		var center = new Vector(gameWidth * Math.random(), gameHeight * Math.random());
     var addTo = obstacles[Math.floor(center.x/gridWidth)][Math.floor(center.y/gridWidth)];
 
-		var resolution = 8;
+		var resolution = 3;
 		var vertList = [];
 		var distList = [];
 		for (var i = 0; i < resolution ; i++)
