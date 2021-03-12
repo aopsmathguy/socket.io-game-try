@@ -1,6 +1,6 @@
-const gameWidth = 1000;
-const gameHeight = 1000;
-const numOb = 2;
+const gameWidth = 4000;
+const gameHeight = 4000;
+const numOb = 120;
 const gridWidth = 250;
 
 const io = require('socket.io')();
@@ -301,7 +301,7 @@ var makeObstacles = function () {
     var size = Math.random();
 		for (var i = 0; i < resolution ; i++)
 		{
-			distList[i] = 50 +  size * (50+100 * Math.random());
+			distList[i] = (1 +  size) * (10+70 * Math.random());
 
 		}
 		for (var i = 0; i < 6; i++)
