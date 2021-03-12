@@ -93,11 +93,12 @@ function displayKillFeed()
   
   var speed = 25;
   var fadeTime = 667;
-  var upTime = 20000;
-  
-  while (killFeed.length > 3)
+  var upTime = 30000;
+  var idx = killFeed.length - 1;
+  while (idx > 2)
   {
-    killFeed[killFeed.length - 1].time = upTime - fadeTime;
+    killFeed[idx].time = Math.min(Date.now() - upTime + fadeTime, killFeed[idx].time);
+    idx -= 1;
   }
   
   if (killFeedScroll > 0)
@@ -114,14 +115,39 @@ function displayKillFeed()
     var txt = killFeed[idx].msg;
     var ctx = myGameArea.context;
     var timeDiff = Date.now() - killFeed[idx].time;
-    ctx.save();
-    ctx.globalAlpha = Math.min(1,timeDiff/fadeTime, (upTime - timeDiff)/fadeTime);
-    ctx.font = "bold 20px Courier New";
-    ctx.fillStyle = "#fff";
-    ctx.textAlign = "left";
-    ctx.fillText(txt, 10, 10+20*(1-killFeedScroll) + idx * 20);
-    ctx.restore();
+    var txtAlpha = Math.min(1,timeDiff/fadeTime, (upTime - timeDiff)/fadeTime);
+    
+    var textPosX = 30;
+    var textPosY = 30 + 30*(1-killFeedScroll) + idx * 30;
+    
+    var buffer = 4;
+    
+    blackBoxedText(txt, "bold 16px Courier New", 16, textPosX, textPosY, buffer, txtAlpha);
+    
+    
   }
+}
+function blackBoxedText(txt, font, size, posx, posy, buffer, txtAlpha, align)
+{
+  ctx = myGameArea.context;
+    ctx.save();
+    ctx.globalAlpha = txtAlpha * 0.3;
+    ctx.font = font;
+    ctx.fillStyle = "#000";
+    ctx.textAlign = align || "left";
+    if (ctx.textAlign == "left")
+      ctx.fillRect(posx -buffer,posy - 12 - buffer, ctx.measureText(txt).width + 2 * buffer, size + 2 * buffer);
+    else
+      ctx.fillRect(posx - ctx.measureText(txt).width/2-buffer,posy - 12 - size/2 - buffer, ctx.measureText(txt).width + 2 * buffer, size + 2 * buffer);
+    ctx.restore();
+    
+    ctx.save();
+    ctx.globalAlpha = txtAlpha;
+    ctx.font = font;
+    ctx.fillStyle = "#fff";
+    ctx.textAlign = align || "left";
+    ctx.fillText(txt, posx, posy);
+    ctx.restore();
 }
 function serverTime()
 {
@@ -371,12 +397,12 @@ var GameState = function () {
     var player = this.players[controlId];
     if (player && player.weapon != -1) {
       var ctx = myGameArea.context;
-      ctx.save();
-      ctx.font = "bold 40px Courier New";
-      ctx.fillStyle = '#fff';
-      ctx.textAlign = "center";
-      ctx.fillText(this.weapons[player.weapon].bulletsRemaining + '|' + this.weapons[player.weapon].capacity, myGameArea.canvas.width / 2, myGameArea.canvas.height - 100);
-      ctx.restore();
+      
+      blackBoxedText(this.weapons[player.weapon].bulletsRemaining + '|' + this.weapons[player.weapon].capacity, 
+                    "bold 40px Courier New",
+                    40,
+                    myGameArea.canvas.width / 2, myGameArea.canvas.height - 100,
+                    10, 1, "center");
     }
   }
   this.displayReloadTime = function () {
