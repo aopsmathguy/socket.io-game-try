@@ -51,13 +51,13 @@ var loopThroughObstacles = function(objectPos, inner)
     inner(borderObstacles[i]);
   }
   var sector = obstacleSector(objectPos);
-  for (var i = sector[0] - 10; i < sector[0] + 11; i++)
+  for (var i = sector[0] - Math.floor(myGameArea.canvas.width/(2*drawer.scale*gridWidth)) - 2; i < sector[0] + Math.floor(myGameArea.canvas.width/(2*drawer.scale*gridWidth)) + 3; i++)
   {
     if (i < 0 || i >= obstacles.length)
     {
       continue;
     }
-    for (var j = sector[1] - 10; j < sector[1] + 11; j++)
+    for (var j = sector[1] - Math.floor(myGameArea.canvas.height/(2*drawer.scale*gridWidth)) - 2; j < sector[1] + Math.floor(myGameArea.canvas.height/(2*drawer.scale*gridWidth)) + 3; j++)
     {
       if (j < 0 || j >= obstacles[i].length)
       {
