@@ -304,7 +304,7 @@ var makeObstacles = function () {
 			distList[i] = 50 +  size * (50+100 * Math.random());
 
 		}
-		for (var i = 0; i < 12; i++)
+		for (var i = 0; i < 6; i++)
 		{
 			var temp = [];
 			for (var j = 0; j < resolution; j++)
