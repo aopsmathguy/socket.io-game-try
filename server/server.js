@@ -1,6 +1,6 @@
 const gameWidth = 4000;
 const gameHeight = 4000;
-const numOb = 150;
+const numOb = 120;
 const gridWidth = 250;
 
 const io = require('socket.io')();
@@ -273,7 +273,7 @@ var inObjects = function(v)
 var makeObstacles = function () {
   var players = {
   };
-  var wallThick = 10;
+  var wallThick = -40;
 
   borderObstacles = [
     new Obstacle([new Vector(0, 0), new Vector(0, gameHeight), new Vector(-wallThick, gameHeight), new Vector(-wallThick, 0)], '#000'),
@@ -301,7 +301,7 @@ var makeObstacles = function () {
     var size = Math.random();
 		for (var i = 0; i < resolution ; i++)
 		{
-			distList[i] = 10 +  size * (75+150 * Math.random());
+			distList[i] = 50 +  size * (50+100 * Math.random());
 
 		}
 		for (var i = 0; i < 12; i++)
