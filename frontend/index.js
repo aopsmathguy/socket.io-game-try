@@ -71,6 +71,21 @@ var loopThroughObstacles = function(objectPos, inner)
     }
   }
 }
+var fillDigits = function(num, length)
+{
+  var out = num.toString();
+  if (out.length > length)
+  {
+    return out.substring(out.length - length);
+  }
+  var zeroes = '';
+  for (var i = 0; i < length - out.length; i++)
+  {
+    zeroes = zeroes + '0';
+  }
+  return zeroes + out;
+    
+}
 var timeDifference = 0;
 var controlId = 0;
 var obstacles;
@@ -134,11 +149,12 @@ function blackBoxedText(txt, font, size, posx, posy, buffer, txtAlpha, align)
     ctx.globalAlpha = txtAlpha * 0.3;
     ctx.font = font;
     ctx.fillStyle = "#000";
+    var width = ctx.measureText(txt).width;
     ctx.textAlign = align || "left";
     if (ctx.textAlign == "left")
-      ctx.fillRect(posx -buffer,posy - 12 - buffer, ctx.measureText(txt).width + 2 * buffer, size + 2 * buffer);
+      ctx.fillRect(posx -buffer,posy - 12 - buffer, width + 2 * buffer, size + 2 * buffer);
     else
-      ctx.fillRect(posx - ctx.measureText(txt).width/2-buffer,posy - 12 - size/2 - buffer, ctx.measureText(txt).width + 2 * buffer, size + 2 * buffer);
+      ctx.fillRect(posx - width/2-buffer,posy - 12 - size/2 - buffer, width + 2 * buffer, size + 2 * buffer);
     ctx.restore();
     
     ctx.save();
@@ -148,6 +164,7 @@ function blackBoxedText(txt, font, size, posx, posy, buffer, txtAlpha, align)
     ctx.textAlign = align || "left";
     ctx.fillText(txt, posx, posy);
     ctx.restore();
+    return width;
 }
 function serverTime()
 {
@@ -311,7 +328,7 @@ var GameState = function () {
       if (this.players[idx].alive && idx != controlId)
         this.displayName(idx);
     }
-    this.displayReloadTime();
+    //this.displayReloadTime();
     this.displayBulletCount();
     //myGameArea.printFps();
     displayKillFeed();
@@ -398,11 +415,26 @@ var GameState = function () {
     if (player && player.weapon != -1) {
       var ctx = myGameArea.context;
       
-      blackBoxedText(this.weapons[player.weapon].bulletsRemaining + '|' + this.weapons[player.weapon].capacity, 
+      var weapon = this.weapons[player.weapon];
+      var width = blackBoxedText(fillDigits(weapon.bulletsRemaining,2) + '|' + fillDigits(weapon.capacity,2), 
                     "bold 40px Courier New",
                     40,
                     myGameArea.canvas.width / 2, myGameArea.canvas.height - 100,
                     10, 1, "center");
+      if (weapon.reloadStartTime != -1)
+      {
+        var ctx = myGameArea.context;
+        ctx.save();
+
+        ctx.strokeStyle = '#fff';
+        ctx.lineWidth = 6;
+        ctx.beginPath();
+        ctx.moveTo(myGameArea.canvas.width / 2 - width/ 2 - 10, myGameArea.canvas.height - 140);
+        ctx.lineTo(myGameArea.canvas.width / 2 + width/ 2 + 10 - (width+20) * (this.time - weapon.reloadStartTime) / weapon.reloadTime, myGameArea.canvas.height - 140);
+        ctx.closePath();
+        ctx.stroke();
+        ctx.restore();
+      }
     }
   }
   this.displayReloadTime = function () {
@@ -704,6 +736,7 @@ var linearGameState = function()
   var left = gameStates[rightIdx - 1];
 
   var out = JSON.parse(JSON.stringify(right));
+  out.time = displayTime;
   for (var i in out.players)
   {
      if (left.players[i] == undefined || right.players[i] == undefined)
