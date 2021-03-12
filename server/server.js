@@ -292,15 +292,16 @@ var makeObstacles = function () {
   }
   for (var blah =0 ; blah < numOb; blah++)
 	{
-		var center = new Vector(gameWidth * Math.random(), gameHeight * Math.random());
+		var center = findSpawnPosition();
     var addTo = obstacles[Math.floor(center.x/gridWidth)][Math.floor(center.y/gridWidth)];
 
 		var resolution = 32;
 		var vertList = [];
 		var distList = [];
+    var size = Math.random();
 		for (var i = 0; i < resolution ; i++)
 		{
-			distList[i] = 50+100 * Math.random();
+			distList[i] = 10 +  size * (75+150 * Math.random());
 
 		}
 		for (var i = 0; i < 12; i++)
