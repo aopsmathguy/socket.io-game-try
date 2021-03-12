@@ -305,7 +305,11 @@ var makeObstacles = function () {
 		}
 		for (var i = 0; i < 4; i++)
 		{
-			var temp = JSON.parse(JSON.stringify(distList));
+			var temp = [];
+			for (var j = 0; j < resolution; j++)
+			{
+				temp[j] = distList[j];
+			}
 			for (var j = 0; j < resolution; j++)
 			{
 				distList[j] = (temp[j] + 2*temp[(j+1) % resolution] + temp[(j+2) % resolution])/4;
