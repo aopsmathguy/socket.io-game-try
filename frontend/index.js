@@ -388,7 +388,8 @@ var GameState = function () {
   {
     var weapon = this.weapons[i];
     for (var j in weapon.bullets) {
-      weapon.bullets[j].display();
+      if (weapon.bullets[j])
+        weapon.bullets[j].display();
     }
     var ctx = myGameArea.context;
 
@@ -763,7 +764,7 @@ var linearGameState = function()
             giveMethods([rightBull.pos,rightBull.vel, rightBull.startPos]);
             if (rightBull.pos.distanceTo(rightBull.startPos) < framesPerTick * rightBull.vel.magnitude() * (right.time - displayTime)/(right.time - left.time))
             {
-                delete out.weapons[i].bullets[j];
+                out.weapons[i].bullets[j] = undefined;
             }
             out.weapons[i].bullets[j].pos = rightBull.pos.subtract(rightBull.vel.multiply(framesPerTick * (right.time - displayTime)/(right.time - left.time)));
         }
