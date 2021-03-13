@@ -917,7 +917,7 @@ function updateGameArea() {
   {
 		gameState.step();
 		stage += 1;
-		if (stage >= 2)
+		if (stage >= 6)
 		{
 			emitGameState(gameState);
 			stage = 0;
