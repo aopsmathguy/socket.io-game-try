@@ -764,9 +764,11 @@ var linearGameState = function()
             giveMethods([rightBull.pos,rightBull.vel, rightBull.startPos]);
             if (rightBull.pos.distanceTo(rightBull.startPos) < framesPerTick * rightBull.vel.magnitude() * (right.time - displayTime)/(right.time - left.time))
             {
-                out.weapons[i].bullets[j] = undefined;
+                delete out.weapons[i].bullets[j];
             }
-            out.weapons[i].bullets[j].pos = rightBull.pos.subtract(rightBull.vel.multiply(framesPerTick * (right.time - displayTime)/(right.time - left.time)));
+            else{
+                out.weapons[i].bullets[j].pos = rightBull.pos.subtract(rightBull.vel.multiply(framesPerTick * (right.time - displayTime)/(right.time - left.time)));
+            }
         }
         else
         {
