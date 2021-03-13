@@ -208,6 +208,7 @@ var GameState = function (time, players, weapons) {
 
     if (controls[k].mouseDown && this.players[k].weapon != -1 && this.weapons[this.players[k].weapon].auto) {
       this.weapons[this.players[k].weapon].fireBullets(this.time);
+      this.players[k].justMouseDowned = false;
     }
     else if (this.players[k].justMouseDowned) {
       if (this.players[k].weapon != -1 && !this.weapons[this.players[k].weapon].auto) {
