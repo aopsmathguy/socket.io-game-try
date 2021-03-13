@@ -765,8 +765,7 @@ var linearGameState = function()
             {
                 continue;
             }
-            var lefty = rightBull.pos.subtract(rightBull.vel.multiply(framesPerTick));
-            out.weapons[i].bullets[j].pos = linearPosition(lefty, rightBull.pos, displayTime, left.time, right.time);
+            out.weapons[i].bullets[j].pos = rightBull.pos.subtract(rightBull.vel.multiply(framesPerTick * (right.time - displayTime)/(right.time - left.time)));
         }
         else
         {
