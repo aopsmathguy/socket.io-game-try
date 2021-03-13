@@ -2,6 +2,7 @@ var gameWidth;
 var gameHeight;
 var gridWidth;
 var buffer = 50;
+var framesPerTick;
 
 const socket = io('https://limitless-everglades-60126.herokuapp.com/');
 
@@ -102,6 +103,8 @@ function handleInit(msg) {
   gameWidth = msg.gameWidth;
   gameHeight = msg.gameHeight;
   gridWidth = msg.gridWidth;
+    
+  framesPerTick = msg.framesPerTick;
 }
 function displayKillFeed()
 {
@@ -758,11 +761,11 @@ var linearGameState = function()
         {
             var rightBull = right.weapons[i].bullets[j];
             giveMethods([rightBull.pos,rightBull.vel, rightBull.startPos]);
-            if (rightBull.pos.distanceTo(rightBull.startPos) < 3 * rightBull.vel.magnitude() * (right.time - displayTime)/(right.time - left.time))
+            if (rightBull.pos.distanceTo(rightBull.startPos) < framesPerTick * rightBull.vel.magnitude() * (right.time - displayTime)/(right.time - left.time))
             {
                 continue;
             }
-            var lefty = new Vector(rightBull.pos.x - 3*rightBull.vel.x, rightBull.pos.y - 3*rightBull.vel.y);
+            var lefty = rightBull.pos.subtract(rightBull.vel.multiply(framesPerTick));
             out.weapons[i].bullets[j].pos = linearPosition(lefty, rightBull.pos, displayTime, left.time, right.time);
         }
         else
