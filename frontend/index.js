@@ -727,7 +727,7 @@ var linearGameState = function()
       rightIdx = gameStates.length - 1;
       buffer += 1;
   }
-  if (gameStates.length > 4)
+  if (gameStates.length > 5)
   {
     buffer -= 1;
   }
