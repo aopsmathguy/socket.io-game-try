@@ -756,8 +756,14 @@ var linearGameState = function()
      {
         if (left.weapons[i].bullets[j] == undefined)
         {
-            var lefty = new Vector(right.weapons[i].bullets[j].pos.x - 3*right.weapons[i].bullets[j].vel.x, right.weapons[i].bullets[j].pos.y - 3*right.weapons[i].bullets[j].vel.y);
-            out.weapons[i].bullets[j].pos = linearPosition(lefty, right.weapons[i].bullets[j].pos, displayTime, left.time, right.time);
+            var rightBull = right.weapons[i].bullets[j];
+            giveMethods([rightBull.pos,rightBull.vel, rightBull.startPos]);
+            if (rightBull.pos.distanceTo(rightBull.startPos) < 3 * rightBull.vel.magnitude() * (right.time - displayTime)/(right.time - left.time))
+            {
+                continue;
+            }
+            var lefty = new Vector(rightBull.pos.x - 3*rightBull.vel.x, rightBull.pos.y - 3*rightBull.vel.y);
+            out.weapons[i].bullets[j].pos = linearPosition(lefty, rightBull.pos, displayTime, left.time, right.time);
         }
         else
         {
