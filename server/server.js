@@ -2,11 +2,12 @@ const gameWidth = 4000;
 const gameHeight = 4000;
 const numOb = 120;
 const gridWidth = 250;
+const framesPerTick = 3;
 
 const io = require('socket.io')();
 
 io.on('connection', client => {
-	client.emit('init', {data : Date.now(), id : client.id, obstacles : obstacles, borderObstacles : borderObstacles, gameWidth: gameWidth, gameHeight: gameHeight, gridWidth:gridWidth});
+	client.emit('init', {data : Date.now(), id : client.id, obstacles : obstacles, borderObstacles : borderObstacles, gameWidth: gameWidth, gameHeight: gameHeight, gridWidth:gridWidth, framesPerTick:framesPerTick});
 	client.on('new player', addPlayer);
     client.on('disconnect', function() {
       if (gameState.players[client.id] != undefined)
@@ -917,7 +918,7 @@ function updateGameArea() {
   {
 		gameState.step();
 		stage += 1;
-		if (stage >= 3)
+		if (stage >= framesPerTick)
 		{
 			emitGameState(gameState);
 			stage = 0;
