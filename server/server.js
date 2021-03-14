@@ -15,6 +15,9 @@ io.on('connection', client => {
       delete gameState.players[client.id];
       delete controls[client.id];
     });
+	client.on('reconnect', function() {
+    client.sendBuffer = [];
+});
     client.on('keydown', (keycode) => {
     	if (controls[client.id] && gameState.players[client.id])
     	{
