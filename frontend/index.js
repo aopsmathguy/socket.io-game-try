@@ -33,7 +33,7 @@ function joinGame()
   drawer = new Drawer();
   controlsBundle.start();
   myGameArea.interval();
-  name = gameCodeInput.value || 'player:' + controlId.substring(0,4);
+  name = gameCodeInput.value || 'player:' + String(controlId).substring(0,4);
   newPlayer();
 }
 function newPlayer()
@@ -420,7 +420,8 @@ var GameState = function () {
       var ctx = myGameArea.context;
       
       var weapon = this.weapons[player.weapon];
-      var width = blackBoxedText(fillDigits(weapon.bulletsRemaining,2) + '|' + fillDigits(weapon.capacity,2), 
+      var length = String(weapon.capacity).length;
+      var width = blackBoxedText(fillDigits(weapon.bulletsRemaining,length) + '|' + fillDigits(weapon.capacity,length), 
                     "bold 40px Courier New",
                     40,
                     myGameArea.canvas.width / 2, myGameArea.canvas.height - 100,
