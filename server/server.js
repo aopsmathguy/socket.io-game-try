@@ -226,16 +226,21 @@ var GameState = function (time, players, weapons) {
 
   }
 	this.playerStep = function (k) {
-    this.players[k].pos = this.players[k].pos.add(this.players[k].vel);
-    this.players[k].punchAnimation *= 0.9;
-    if (this.players[k].weapon != -1) {
-      this.weapons[this.players[k].weapon].pos = this.players[k].pos.add((new Vector(this.players[k].radius + this.weapons[this.players[k].weapon].length / 2 - this.weapons[this.players[k].weapon].recoil, 0)).rotate(this.players[k].ang));
-      this.weapons[this.players[k].weapon].vel = this.players[k].vel;
-      this.weapons[this.players[k].weapon].ang = this.players[k].ang;
+    var player = this.players[k];
+    player.pos = player.pos.add(player.vel);
+    player.punchAnimation *= 0.9;
+    if (player.weapon != -1) {
+      var weapon = this.weapons[player.weapon];
+      weapon.pos = player.pos.add((new Vector(this.players[k].radius + this.weapons[this.players[k].weapon].length / 2 - this.weapons[this.players[k].weapon].recoil, 0)).rotate(this.players[k].ang));
+      weapon.vel = player.vel;
+      weapon.ang = player.ang;
 
-      this.weapons[this.players[k].weapon].spray = this.weapons[this.players[k].weapon].stability * (this.weapons[this.players[k].weapon].spray - this.weapons[this.players[k].weapon].defSpray) + this.weapons[this.players[k].weapon].defSpray;
-      this.weapons[this.players[k].weapon].recoil *= this.weapons[this.players[k].weapon].animationMult;
-
+      weapon.spray = weapon.stability * (weapon.spray - weapon.defSpray) + weapon.defSpray;
+      weapon.recoil *= weapon.animationMult;
+    }
+    if (this.time - player.lastHitTime > player.healInterval)
+    {
+      player.health = Math.min(100,player.health + 0.1);
     }
   }
 	this.pickUpWeapon = function (k, weapon) {
@@ -401,6 +406,9 @@ var Player = function (xStart, yStart, name, id) {
   setIfUndefined(this, 'justKeyDowned', {});
 
   setIfUndefined(this, 'id', id);
+  
+  setIfUndefined(this, 'healInterval', 5000);
+  setIfUndefined(this, 'lastHitTime', 0);
 
   setIfUndefined(this, 'name', name);
   setIfUndefined(this, 'alive', true);
@@ -440,14 +448,15 @@ var Player = function (xStart, yStart, name, id) {
       }
       if (player.pos.distanceTo(this.pos.add((new Vector(this.radius + this.punchReach,0)).rotate(this.ang))) < this.punchReach + player.radius)
       {
-        player.takeDamage(this.punchDamage, this.id);
+        player.takeDamage(this.punchDamage, this.id, gameState);
       }
     }
   }
-  this.takeDamage = function(damage, playerId)
+  this.takeDamage = function(damage, playerId, state)
 	{
 		this.health -= damage;
     this.lastHitBy = playerId;
+    this.lastHitTime = state.time;
 	}
 
 
@@ -632,7 +641,7 @@ var Bullet = function (weapon) {
       this.hitPoint = intersect[0];
       if (intersect[1] != -1) {
 
-        state.players[intersect[1]].takeDamage(this.calculateDamage(),this.bulletFiredBy);
+        state.players[intersect[1]].takeDamage(this.calculateDamage(),this.bulletFiredBy,state);
       }
       if (this.hitPoint == -1 && this.pos.distanceTo(this.startPos) > this.range) {
         this.hitPoint = this.pos.copy();
