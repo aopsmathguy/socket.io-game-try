@@ -667,6 +667,14 @@ var Vector = function (x, y) {
     ctx.fillStyle = color;
     ctx.fill();
   }
+  this.circle = function (r, color, thick) {
+    var ctx = myGameArea.context;
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, r, 0, 2 * Math.PI, false);
+    ctx.lineWidth = thick;
+    ctx.strokeStyle = color;
+    ctx.stroke();
+  }
   this.onSegment = function (v1, v2) {
     var buffer = 0.0001
     return Math.min(v1.x, v2.x) - buffer <= this.x && this.x <= Math.max(v1.x, v2.x) + buffer && Math.min(v1.y, v2.y) - buffer <= this.y && this.y <= Math.max(v1.y, v2.y) + buffer;
@@ -702,6 +710,7 @@ var Vector = function (x, y) {
 var displayCrosshair = function () {
   controlsBundle.mouse.add(new Vector(10, 0)).drawLine(controlsBundle.mouse.add(new Vector(-10, 0)), '#fff', 2);
   controlsBundle.mouse.add(new Vector(0, 10)).drawLine(controlsBundle.mouse.add(new Vector(0, -10)), '#fff', 2);
+  controlsBundle.mouse.circle(6,'#fff',2);
 }
 var linearPosition = function(v1,v2,t,t1,t2)
 {
