@@ -2,6 +2,10 @@ v1.0.4: The Beeg Update
 
 made buildings shape of smooth brains
 new crosshair
+killfeeds
+easier to read hud
+player names
+can't use long gun shoot through wall thing anymore
 
 added rev
 added laser gun
