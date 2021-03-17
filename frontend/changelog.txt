@@ -1,4 +1,5 @@
 v1.0.4: The Beeg Update
+Mar 17, 2021
 
 made buildings shape of smooth brains
 new crosshair
@@ -16,6 +17,7 @@ buffed both shotgun spreads and damages significantly
 buffed orange gun damage
 
 v1.0.3: Punch and one shot Update
+Mar 6, 2021
 
 you can punch close range for 24 damage
 
