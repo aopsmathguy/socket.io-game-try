@@ -1,3 +1,16 @@
+v1.0.4: The Beeg Update
+
+made buildings shape of smooth brains
+new crosshair
+
+added rev
+added laser gun
+
+buffed boring pistol damage
+buffed semi auto firerate and handling
+buffed both shotgun spreads and damages significantly
+buffed orange gun damage
+
 v1.0.3: Punch and one shot Update
 
 you can punch close range for 24 damage
