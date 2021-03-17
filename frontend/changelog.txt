@@ -10,6 +10,7 @@ can't use long gun shoot through wall thing anymore
 
 added rev
 added laser gun
+added lmg
 
 buffed boring pistol damage
 buffed semi auto firerate and handling
