@@ -131,13 +131,14 @@ var GameState = function(time, players, weapons) {
         this.time = Date.now();
         for (var k in this.players) {
             if (this.players[k].alive) {
+                this.snapWeapon(k);
+                this.mouseControls(k);
+                
                 this.controls(k);
                 this.playerStep(k);
                 loopThroughObstacles(this.players[k].pos, (obstacle) => {
                     this.players[k].intersect(obstacle);
                 });
-                this.snapWeapon(k);
-                this.mouseControls(k);
             }
         }
         for (var k in this.weapons) {
