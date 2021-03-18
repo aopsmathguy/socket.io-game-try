@@ -19,8 +19,9 @@ io.on('connection', client => {
     });
     client.on('new player', addPlayer);
     client.on('disconnect', function() {
-        if (gameState.players[client.id] != undefined)
-            gameState.dropWeapon(client.id);
+        var player = gameState.players[client.id];
+        if (player != undefined)
+            player.dropWeapon(gameState);
         delete gameState.players[client.id];
         delete controls[client.id];
     });
@@ -130,14 +131,15 @@ var GameState = function(time, players, weapons) {
     this.step = function() {
         this.time = Date.now();
         for (var k in this.players) {
-            if (this.players[k].alive) {
-                this.snapWeapon(k);
+            var player = this.players[k];
+            if (player.alive) {
+                player.snapWeapon(this);
                 this.mouseControls(k);
                 
                 this.controls(k);
-                this.playerStep(k);
-                loopThroughObstacles(this.players[k].pos, (obstacle) => {
-                    this.players[k].intersect(obstacle);
+                player.playerStep(this);
+                loopThroughObstacles(player.pos, (obstacle) => {
+                    player.intersect(obstacle);
                 });
             }
         }
@@ -145,17 +147,15 @@ var GameState = function(time, players, weapons) {
             this.weapons[k].bulletsStep(this);
         }
         for (var k in this.players) {
-            if (this.players[k].health <= 0 && this.players[k].alive) {
-                this.dropWeapon(k);
-                this.players[k].alive = false;
-                emitNewKill(this.players[k].lastHitBy, k);
+            var player = this.players[k];
+            if (player.health <= 0 && player.alive) {
+                this.players[k].dropWeapon(this);
+                player.alive = false;
+                emitNewKill(player.lastHitBy, k);
             }
         }
     }
     this.controls = function(k) {
-        
-
-
         var targetVel = new Vector((controls[k].keys[68] ? 1 : 0) + (controls[k].keys[65] ? -1 : 0), (controls[k].keys[83] ? 1 : 0) + (controls[k].keys[87] ? -1 : 0));
         if (!targetVel.magnitude() == 0) {
             targetVel = targetVel.multiply(this.players[k].speed / targetVel.magnitude());
@@ -183,13 +183,13 @@ var GameState = function(time, players, weapons) {
                 }
             }
             if (idx != -1) {
-                this.dropWeapon(k);
-                this.pickUpWeapon(k, idx);
+                this.players[k].dropWeapon(this);
+                this.players[k].pickUpWeapon(this,idx);
             }
             this.players[k].justKeyDowned[70] = false;
         }
         if (this.players[k].justKeyDowned[71]) {
-            this.dropWeapon(k);
+            this.players[k].dropWeapon(this);
             this.players[k].justKeyDowned[71] = false;
         }
         if (this.players[k].justKeyDowned[82] && this.players[k].weapon != -1) {
@@ -217,48 +217,7 @@ var GameState = function(time, players, weapons) {
             this.players[k].justMouseDowned = false;
         }
     }
-    this.playerStep = function(k) {
-        var player = this.players[k];
-        player.pos = player.pos.add(player.vel);
-        player.punchAnimation *= 0.9;
-        
-        if (this.time - player.lastHitTime > player.healInterval) {
-            player.health = Math.min(100, player.health + 0.1);
-        }
-    }
-    this.snapWeapon = function(k)
-    {
-        var player = this.players[k];
-        if (player.weapon != -1) {
-            var weapon = this.weapons[player.weapon];
-            weapon.pos = player.pos.add((new Vector(this.players[k].radius + this.weapons[this.players[k].weapon].length / 2 - this.weapons[this.players[k].weapon].recoil, 0)).rotate(this.players[k].ang));
-            weapon.vel = player.vel;
-            weapon.ang = player.ang;
-
-            weapon.spray = weapon.stability * (weapon.spray - weapon.defSpray) + weapon.defSpray;
-            weapon.recoil *= weapon.animationMult;
-        }
-    }
-    this.pickUpWeapon = function(k, weapon) {
-        this.players[k].weapon = weapon;
-        this.weapons[this.players[k].weapon].pos = this.players[k].pos.add((new Vector(this.players[k].radius + this.weapons[this.players[k].weapon].length / 2 - this.weapons[this.players[k].weapon].recoil, 0)).rotate(this.players[k].ang));
-        this.weapons[this.players[k].weapon].vel = this.players[k].vel;
-        this.weapons[this.players[k].weapon].ang = this.players[k].ang;
-        this.weapons[this.players[k].weapon].hold = true;
-        this.weapons[this.players[k].weapon].playerHolding = k;
-    }
-    this.dropWeapon = function(k) {
-        if (this.players[k].weapon != -1) {
-            this.weapons[this.players[k].weapon].pos = this.players[k].pos;
-            this.weapons[this.players[k].weapon].vel = new Vector(0, 0);
-            this.weapons[this.players[k].weapon].hold = false;
-            this.weapons[this.players[k].weapon].cancelReload();
-            this.weapons[this.players[k].weapon].playerHolding = -1;
-
-            this.players[k].weapon = -1;
-
-        }
-    }
+    
     this.toString = function() {
         return JSON.stringify(this);
     }
@@ -398,6 +357,48 @@ var Player = function(xStart, yStart, name, id) {
 
 
     setIfUndefined(this, 'lastHitBy', -1);
+    this.pickUpWeapon = function(state, weaponIdx) {
+        this.weapon = weaponIdx;
+        var weapon = state.weapons[this.weapon];
+        weapon.pos = this.pos.add((new Vector(this.radius + weapon.length / 2 - weapon.recoil, 0)).rotate(this.ang));
+        weapon.vel = this.vel;
+        weapon.ang = this.ang;
+        weapon.hold = true;
+        weapon.playerHolding = this.id;
+    }
+    this.dropWeapon = function(state) {
+        var weapon = state.weapons[this.weapon];
+        if (this.weapon != -1) {
+            weapon.pos = this.pos;
+            weapon.vel = new Vector(0, 0);
+            weapon.hold = false;
+            weapon.cancelReload();
+            weapon.playerHolding = -1;
+
+            this.weapon = -1;
+
+        }
+    }
+    this.snapWeapon = function(state)
+    {
+        if (this.weapon != -1) {
+            var weapon = state.weapons[this.weapon];
+            weapon.pos = this.pos.add((new Vector(this.radius + weapon.length / 2 - weapon.recoil, 0)).rotate(this.ang));
+            weapon.vel = this.vel;
+            weapon.ang = this.ang;
+
+            weapon.spray = weapon.stability * (weapon.spray - weapon.defSpray) + weapon.defSpray;
+            weapon.recoil *= weapon.animationMult;
+        }
+    }
+    this.playerStep = function(state) {
+        this.pos = this.pos.add(this.vel);
+        this.punchAnimation *= 0.9;
+        
+        if (state.time - this.lastHitTime > this.healInterval) {
+            this.health = Math.min(100, this.health + 0.1);
+        }
+    }
     this.intersect = function(obstacle) {
         if (this.radius + obstacle.maxRadius < this.pos.distanceTo(obstacle.center)) {
             return;
