@@ -131,17 +131,9 @@ var GameState = function(time, players, weapons) {
         this.time = Date.now();
         for (var k in this.players) {
             if (this.players[k].alive) {
+                this.snapWeapon(k);
                 this.controls(k);
-            }
-        }
-        for (var k in this.players) {
-            if (this.players[k].alive) {
                 this.playerStep(k);
-            }
-
-        }
-        for (var k in this.players) {
-            if (this.players[k].alive) {
                 loopThroughObstacles(this.players[k].pos, (obstacle) => {
                     this.players[k].intersect(obstacle);
                 });
@@ -224,6 +216,14 @@ var GameState = function(time, players, weapons) {
         var player = this.players[k];
         player.pos = player.pos.add(player.vel);
         player.punchAnimation *= 0.9;
+        
+        if (this.time - player.lastHitTime > player.healInterval) {
+            player.health = Math.min(100, player.health + 0.1);
+        }
+    }
+    this.snapWeapon = function(k)
+    {
+        var player = this.players[k];
         if (player.weapon != -1) {
             var weapon = this.weapons[player.weapon];
             weapon.pos = player.pos.add((new Vector(this.players[k].radius + this.weapons[this.players[k].weapon].length / 2 - this.weapons[this.players[k].weapon].recoil, 0)).rotate(this.players[k].ang));
@@ -232,9 +232,6 @@ var GameState = function(time, players, weapons) {
 
             weapon.spray = weapon.stability * (weapon.spray - weapon.defSpray) + weapon.defSpray;
             weapon.recoil *= weapon.animationMult;
-        }
-        if (this.time - player.lastHitTime > player.healInterval) {
-            player.health = Math.min(100, player.health + 0.1);
         }
     }
     this.pickUpWeapon = function(k, weapon) {
