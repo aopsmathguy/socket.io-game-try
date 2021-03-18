@@ -408,7 +408,7 @@ var Player = function(xStart, yStart, name, id) {
     }
     this.dropWeapon = function(state) {
         var weapon = state.weapons[this.weapon];
-        if (this.weapon != -1) 
+        if (this.weapon != -1) {
             this.weapons[this.slot] = -1;
             this.weapon = -1;
       
@@ -474,9 +474,6 @@ var Player = function(xStart, yStart, name, id) {
         this.lastHitBy = playerId;
         this.lastHitTime = state.time;
     }
-
-
-
 }
 var Gun = function(startX, startY, length, auto, firerate, multishot, capacity, reloadTime, bulletSpeed, damage, damageDrop, damageRange, damageDropTension, range, defSpray, sprayCoef, stability, kickAnimation, animationMult, walkSpeedMult, shootWalkSpeedMult, color, handPos1x, handPos1y, handPos2x, handPos2y) {
     this.type = "Gun";
