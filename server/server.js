@@ -131,12 +131,13 @@ var GameState = function(time, players, weapons) {
         this.time = Date.now();
         for (var k in this.players) {
             if (this.players[k].alive) {
-                this.snapWeapon(k);
                 this.controls(k);
                 this.playerStep(k);
                 loopThroughObstacles(this.players[k].pos, (obstacle) => {
                     this.players[k].intersect(obstacle);
                 });
+                this.snapWeapon(k);
+                this.mouseControls(k);
             }
         }
         for (var k in this.weapons) {
@@ -151,17 +152,7 @@ var GameState = function(time, players, weapons) {
         }
     }
     this.controls = function(k) {
-        if (controls[k].mouseDown && this.players[k].weapon != -1 && this.weapons[this.players[k].weapon].auto) {
-            this.weapons[this.players[k].weapon].fireBullets(this.time);
-            this.players[k].justMouseDowned = false;
-        } else if (this.players[k].justMouseDowned) {
-            if (this.players[k].weapon != -1 && !this.weapons[this.players[k].weapon].auto) {
-                this.weapons[this.players[k].weapon].fireBullets(this.time);
-            } else if (this.players[k].weapon == -1) {
-                this.players[k].punch(this);
-            }
-            this.players[k].justMouseDowned = false;
-        }
+        
 
 
         var targetVel = new Vector((controls[k].keys[68] ? 1 : 0) + (controls[k].keys[65] ? -1 : 0), (controls[k].keys[83] ? 1 : 0) + (controls[k].keys[87] ? -1 : 0));
@@ -211,6 +202,19 @@ var GameState = function(time, players, weapons) {
 
 
 
+    }
+    this.mouseControls = function(k){
+        if (controls[k].mouseDown && this.players[k].weapon != -1 && this.weapons[this.players[k].weapon].auto) {
+            this.weapons[this.players[k].weapon].fireBullets(this.time);
+            this.players[k].justMouseDowned = false;
+        } else if (this.players[k].justMouseDowned) {
+            if (this.players[k].weapon != -1 && !this.weapons[this.players[k].weapon].auto) {
+                this.weapons[this.players[k].weapon].fireBullets(this.time);
+            } else if (this.players[k].weapon == -1) {
+                this.players[k].punch(this);
+            }
+            this.players[k].justMouseDowned = false;
+        }
     }
     this.playerStep = function(k) {
         var player = this.players[k];
