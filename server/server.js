@@ -183,7 +183,6 @@ var GameState = function(time, players, weapons) {
                 }
             }
             if (idx != -1) {
-                this.players[k].dropWeapon(this);
                 this.players[k].pickUpWeapon(this,idx);
             }
             this.players[k].justKeyDowned[70] = false;
@@ -205,17 +204,20 @@ var GameState = function(time, players, weapons) {
 
     }
     this.mouseControls = function(k){
-        if (controls[k].mouseDown && this.players[k].weapon != -1 && this.weapons[this.players[k].weapon].auto) {
-            this.weapons[this.players[k].weapon].fireBullets(this.time);
+      var weapon = this.weapons[this.players[k].weapon];
+        if (controls[k].mouseDown && this.players[k].weapon != -1 && weapon.auto) {
+            weapon.fireBullets(this.time);
             this.players[k].justMouseDowned = false;
         } else if (this.players[k].justMouseDowned) {
-            if (this.players[k].weapon != -1 && !this.weapons[this.players[k].weapon].auto) {
-                this.weapons[this.players[k].weapon].fireBullets(this.time);
+            if (this.players[k].weapon != -1 && !weapon.auto) {
+                weapon.fireBullets(this.time);
             } else if (this.players[k].weapon == -1) {
                 this.players[k].punch(this);
             }
             this.players[k].justMouseDowned = false;
         }
+        weapon.spray = weapon.stability * (weapon.spray - weapon.defSpray) + weapon.defSpray;
+        weapon.recoil *= weapon.animationMult;
     }
     
     this.toString = function() {
@@ -330,7 +332,11 @@ var Player = function(xStart, yStart, name, id) {
     setIfUndefined(this, 'agility', 1);
     setIfUndefined(this, 'radius', 20);
     setIfUndefined(this, 'reachDist', 50);
-    setIfUndefined(this, 'weapon', -1);
+  
+    setIfUndefined(this, 'weapons', -1);
+    setIfUndefined(this, 'weapons', [-1,-1]);
+    setIfUndefined(this, 'slot', 0);
+  
     setIfUndefined(this, 'health', 100);
 
     setIfUndefined(this, 'pos', new Vector(xStart, yStart));
@@ -357,7 +363,41 @@ var Player = function(xStart, yStart, name, id) {
 
 
     setIfUndefined(this, 'lastHitBy', -1);
+    this.swapWeapon = function(state, newSlot)
+    {
+      if (this.slot != newSlot && this.weapon != -1)
+      {
+        state.weapons[this.weapon].cancelReload();
+      }
+      this.slot = newSlot;
+      if (newSlot < this.weapons.length)
+      {
+        this.weapon = this.weapons[this.slot];
+      }
+      else
+      {
+        this.weapon = -1;
+      }
+      this.snapWeapon(state);
+    }
     this.pickUpWeapon = function(state, weaponIdx) {
+        if (this.weapons[0] != -1 &&  this.weapons[1] != -1)
+        {
+          this.dropWeapon(state);
+          this.weapons[this.slot] = weaponIdx;
+          this.swapWeapon(state, this.slot);
+        }
+        else if (this.weapons[this.slot] != -1)
+        {
+          var insertIdx = 1 - this.slot;
+          this.weapons[insertIdx] = weaponIdx;
+          this.swapWeapon(state, insertIdx);
+        }
+        else
+        {
+          this.weapons[this.slot] = weaponIdx;
+          this.swapWeapon(state,this.slot);
+        }
         this.weapon = weaponIdx;
         var weapon = state.weapons[this.weapon];
         weapon.pos = this.pos.add((new Vector(this.radius + weapon.length / 2 - weapon.recoil, 0)).rotate(this.ang));
@@ -368,15 +408,15 @@ var Player = function(xStart, yStart, name, id) {
     }
     this.dropWeapon = function(state) {
         var weapon = state.weapons[this.weapon];
-        if (this.weapon != -1) {
+        if (this.weapon != -1) 
+            this.weapons[this.slot] = -1;
+            this.weapon = -1;
+      
             weapon.pos = this.pos;
             weapon.vel = new Vector(0, 0);
             weapon.hold = false;
             weapon.cancelReload();
             weapon.playerHolding = -1;
-
-            this.weapon = -1;
-
         }
     }
     this.snapWeapon = function(state)
@@ -386,9 +426,7 @@ var Player = function(xStart, yStart, name, id) {
             weapon.pos = this.pos.add((new Vector(this.radius + weapon.length / 2 - weapon.recoil, 0)).rotate(this.ang));
             weapon.vel = this.vel;
             weapon.ang = this.ang;
-
-            weapon.spray = weapon.stability * (weapon.spray - weapon.defSpray) + weapon.defSpray;
-            weapon.recoil *= weapon.animationMult;
+          
         }
     }
     this.playerStep = function(state) {
@@ -478,7 +516,9 @@ var Gun = function(startX, startY, length, auto, firerate, multishot, capacity, 
     setIfUndefined(this, 'spray', 0);
     setIfUndefined(this, 'recoil', 0);
     setIfUndefined(this, 'lastFireTime', 0);
+  
     setIfUndefined(this, 'hold', false);
+  
     setIfUndefined(this, 'bullets', {});
     setIfUndefined(this, 'bulletsArrLength', 0);
 
@@ -524,6 +564,8 @@ var Gun = function(startX, startY, length, auto, firerate, multishot, capacity, 
                 delete this.bullets[i];
             }
         }
+      
+            
     }
     this.intersectSeg = function(v1, v2) {
         var v3 = this.pos.add((new Vector(this.length / 2, 0)).rotate(this.ang));
