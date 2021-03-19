@@ -251,6 +251,7 @@ var controlsBundle = {
   mouse: 0,
   mouseDown: false,
   ang: 0,
+  previousAng: 0,
   start: function () {
     window.addEventListener('keydown', function (e) {
       controlsBundle.keys = (controlsBundle.keys || []);
@@ -266,7 +267,7 @@ var controlsBundle = {
     window.addEventListener('mousemove', function (e) {
       controlsBundle.mouse = new Vector(e.clientX - rect.left, e.clientY - rect.top);
       controlsBundle.ang = controlsBundle.mouse.subtract(new Vector(myGameArea.canvas.width, myGameArea.canvas.height).multiply(0.5)).ang();
-      socket.emit('mousemove', controlsBundle.ang);
+      //socket.emit('mousemove', controlsBundle.ang);
     });
     window.addEventListener('mousedown', function (e) {
       if (e.button == 0) {
@@ -287,6 +288,14 @@ var controlsBundle = {
         e.preventDefault();
       }
     }, false);
+  }
+}
+var emitMousePos = function()
+{
+  if (controlsBundle.ang != controlsBundle.previousAng)
+  {
+    socket.emit('mousemove',controlsBundle.ang);
+    controlsBundle.previousAng = controlsBundle.ang;
   }
 }
 var setIfUndefined = function (obj, field, value) {
@@ -829,6 +838,7 @@ function updateGameArea() {
     }
     state.render();
   }
+  emitMousePos();
 }
 function hexToRgbA(hex, alpha) {
   var c;
