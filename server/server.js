@@ -21,7 +21,7 @@ io.on('connection', client => {
     client.on('disconnect', function() {
         var player = gameState.players[client.id];
         if (player != undefined)
-            player.dropWeapon(gameState);
+            player.dropEverything(gameState);
         delete gameState.players[client.id];
         delete controls[client.id];
     });
@@ -46,11 +46,13 @@ io.on('connection', client => {
         if (controls[client.id] && gameState.players[client.id]) {
             controls[client.id].mouseDown = true;
             gameState.players[client.id].justMouseDowned = true;
+            gameState.players[client.id].autoShot = true;
         }
     });
     client.on('mouseup', () => {
         if (controls[client.id] && gameState.players[client.id])
             controls[client.id].mouseDown = false;
+            gameState.players[client.id].autoShot = false;
     });
 
     function addPlayer(msg) {
@@ -149,7 +151,7 @@ var GameState = function(time, players, weapons) {
         for (var k in this.players) {
             var player = this.players[k];
             if (player.health <= 0 && player.alive) {
-                this.players[k].dropWeapon(this);
+                player.dropEverything(this);
                 player.alive = false;
                 emitNewKill(player.lastHitBy, k);
             }
@@ -191,8 +193,10 @@ var GameState = function(time, players, weapons) {
             this.players[k].dropWeapon(this);
             this.players[k].justKeyDowned[71] = false;
         }
-        if (this.players[k].justKeyDowned[82] && this.players[k].weapon != -1) {
-            this.weapons[this.players[k].weapon].reload(this.time);
+        if (this.players[k].justKeyDowned[82]) {
+            if (this.players[k].weapon != -1){
+              this.weapons[this.players[k].weapon].reload(this.time);
+            }
             this.players[k].justKeyDowned[82] = false;
         }
         if (this.players[k].justKeyDowned[88]) {
@@ -207,7 +211,7 @@ var GameState = function(time, players, weapons) {
     }
     this.mouseControls = function(k){
       var weapon = this.weapons[this.players[k].weapon];
-        if (controls[k].mouseDown && this.players[k].weapon != -1 && weapon.auto) {
+        if (this.players[k].autoShot && this.players[k].weapon != -1 && weapon.auto) {
             weapon.fireBullets(this.time);
             this.players[k].justMouseDowned = false;
         } else if (this.players[k].justMouseDowned) {
@@ -357,6 +361,7 @@ var Player = function(xStart, yStart, name, id) {
 
     setIfUndefined(this, 'justMouseDowned', false);
     setIfUndefined(this, 'justKeyDowned', {});
+    setIfUndefined(this, 'autoShot', false);
 
     setIfUndefined(this, 'id', id);
 
@@ -384,6 +389,8 @@ var Player = function(xStart, yStart, name, id) {
         this.weapon = -1;
       }
       this.snapWeapon(state);
+      
+      this.autoShot = false;
     }
     this.pickUpWeapon = function(state, weaponIdx) {
         if (this.weapons[0] != -1 &&  this.weapons[1] != -1)
@@ -410,6 +417,7 @@ var Player = function(xStart, yStart, name, id) {
         weapon.ang = this.ang;
         weapon.hold = true;
         weapon.playerHolding = this.id;
+      
     }
     this.dropWeapon = function(state) {
         var weapon = state.weapons[this.weapon];
@@ -423,6 +431,13 @@ var Player = function(xStart, yStart, name, id) {
             weapon.cancelReload();
             weapon.playerHolding = -1;
         }
+        this.autoShot = false;
+    }
+    this.dropEverything = function(state)
+    {
+       this.dropWeapon(state);
+       this.swapWeapon(state, 1 - this.slot);
+       this.dropWeapon(state);
     }
     this.snapWeapon = function(state)
     {
