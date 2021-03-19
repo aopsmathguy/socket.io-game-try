@@ -218,8 +218,11 @@ var GameState = function(time, players, weapons) {
             }
             this.players[k].justMouseDowned = false;
         }
-        weapon.spray = weapon.stability * (weapon.spray - weapon.defSpray) + weapon.defSpray;
-        weapon.recoil *= weapon.animationMult;
+        if (this.players[k].weapon != -1)
+        {
+          weapon.spray = weapon.stability * (weapon.spray - weapon.defSpray) + weapon.defSpray;
+          weapon.recoil *= weapon.animationMult;
+        }
     }
     
     this.toString = function() {
