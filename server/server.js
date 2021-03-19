@@ -199,8 +199,10 @@ var GameState = function(time, players, weapons) {
             this.weapons[this.players[k].weapon].cancelReload();
             this.players[k].justKeyDowned[88] = false;
         }
-
-
+        if (this.players[k].justKeyDowned[81]) {
+            this.weapons[this.players[k].weapon].swapWeapon(this, 1 - this.players[k].slot);
+            this.players[k].justKeyDowned[81] = false;
+        }
 
     }
     this.mouseControls = function(k){
@@ -333,7 +335,7 @@ var Player = function(xStart, yStart, name, id) {
     setIfUndefined(this, 'radius', 20);
     setIfUndefined(this, 'reachDist', 50);
   
-    setIfUndefined(this, 'weapons', -1);
+    setIfUndefined(this, 'weapon', -1);
     setIfUndefined(this, 'weapons', [-1,-1]);
     setIfUndefined(this, 'slot', 0);
   
