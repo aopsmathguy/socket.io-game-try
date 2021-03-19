@@ -85,7 +85,7 @@ var fillDigits = function(num, length)
     zeroes = zeroes + '0';
   }
   return zeroes + out;
-    
+
 }
 var timeDifference = 0;
 var controlId = 0;
@@ -103,12 +103,12 @@ function handleInit(msg) {
   gameWidth = msg.gameWidth;
   gameHeight = msg.gameHeight;
   gridWidth = msg.gridWidth;
-    
+
   framesPerTick = msg.framesPerTick;
 }
 function displayKillFeed()
 {
-  
+
   var speed = 25;
   var fadeTime = 667;
   var upTime = 30000;
@@ -118,12 +118,12 @@ function displayKillFeed()
     killFeed[idx].time = Math.min(Date.now() - upTime + fadeTime, killFeed[idx].time);
     idx -= 1;
   }
-  
+
   if (killFeedScroll > 0)
     killFeedScroll -= 1/speed;
   else
     killFeedScroll = 0;
-  
+
   while (killFeed.length > 0 && Date.now() - killFeed[killFeed.length - 1].time > upTime)
   {
       killFeed.splice(killFeed.length - 1,1);
@@ -134,15 +134,15 @@ function displayKillFeed()
     var ctx = myGameArea.context;
     var timeDiff = Date.now() - killFeed[idx].time;
     var txtAlpha = Math.min(1,timeDiff/fadeTime, (upTime - timeDiff)/fadeTime);
-    
+
     var textPosX = 30;
     var textPosY = 30 + 30*(1-killFeedScroll) + idx * 30;
-    
+
     var buffer = 4;
-    
+
     blackBoxedText(txt, "bold 16px Courier New", 16, textPosX, textPosY, buffer, txtAlpha);
-    
-    
+
+
   }
 }
 function blackBoxedText(txt, font, size, posx, posy, buffer, txtAlpha, align)
@@ -159,7 +159,7 @@ function blackBoxedText(txt, font, size, posx, posy, buffer, txtAlpha, align)
     else
       ctx.fillRect(posx - width/2-buffer,posy - 12 - size/2 - buffer, width + 2 * buffer, size + 2 * buffer);
     ctx.restore();
-    
+
     ctx.save();
     ctx.globalAlpha = txtAlpha;
     ctx.font = font;
@@ -251,7 +251,6 @@ var controlsBundle = {
   mouse: 0,
   mouseDown: false,
   ang: 0,
-  previousAng: 0,
   start: function () {
     window.addEventListener('keydown', function (e) {
       controlsBundle.keys = (controlsBundle.keys || []);
@@ -267,7 +266,8 @@ var controlsBundle = {
     window.addEventListener('mousemove', function (e) {
       controlsBundle.mouse = new Vector(e.clientX - rect.left, e.clientY - rect.top);
       controlsBundle.ang = controlsBundle.mouse.subtract(new Vector(myGameArea.canvas.width, myGameArea.canvas.height).multiply(0.5)).ang();
-      //socket.emit('mousemove', controlsBundle.ang);
+      console.log('mousemove');
+      socket.emit('mousemove', controlsBundle.ang);
     });
     window.addEventListener('mousedown', function (e) {
       if (e.button == 0) {
@@ -292,11 +292,7 @@ var controlsBundle = {
 }
 var emitMousePos = function()
 {
-  if (controlsBundle.ang != controlsBundle.previousAng)
-  {
-    socket.emit('mousemove',controlsBundle.ang);
-    controlsBundle.previousAng = controlsBundle.ang;
-  }
+  socket.emit('mousemove', controlsBundle.ang);
 }
 var setIfUndefined = function (obj, field, value) {
   if (obj[field] === undefined) {
@@ -435,10 +431,10 @@ var GameState = function () {
     var player = this.players[controlId];
     if (player && player.weapon != -1) {
       var ctx = myGameArea.context;
-      
+
       var weapon = this.weapons[player.weapon];
       var length = String(weapon.capacity).length;
-      var width = blackBoxedText(fillDigits(weapon.bulletsRemaining,length) + '|' + fillDigits(weapon.capacity,length), 
+      var width = blackBoxedText(fillDigits(weapon.bulletsRemaining,length) + '|' + fillDigits(weapon.capacity,length),
                     "bold 40px Courier New",
                     40,
                     myGameArea.canvas.width / 2, myGameArea.canvas.height - 100,
@@ -838,7 +834,7 @@ function updateGameArea() {
     }
     state.render();
   }
-  emitMousePos();
+  //emitMousePos();
 }
 function hexToRgbA(hex, alpha) {
   var c;
