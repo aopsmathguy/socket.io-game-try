@@ -319,6 +319,10 @@ var GameState = function () {
     });
     for (var idx in this.weapons)
     {
+      this.displayBullets(idx)
+    }
+    for (var idx in this.weapons)
+    {
       if (!this.weapons[idx].hold) {
         this.displayWeapon(idx)
       }
@@ -387,10 +391,6 @@ var GameState = function () {
   this.displayWeapon = function(i)
   {
     var weapon = this.weapons[i];
-    for (var j in weapon.bullets) {
-      if (weapon.bullets[j])
-        weapon.bullets[j].display();
-    }
     var ctx = myGameArea.context;
 
     ctx.strokeStyle = "#000";
@@ -409,6 +409,14 @@ var GameState = function () {
     drawer.lineContext(ctx, weapon.pos.add((new Vector(weapon.length / 2 - 3, 0)).rotate(weapon.ang)));
     ctx.closePath();
     ctx.stroke();
+  }
+  this.displayBullets = function(i)
+  {
+    var weapon = this.weapons[i];
+    for (var j in weapon.bullets) {
+      if (weapon.bullets[j])
+        weapon.bullets[j].display();
+    }
   }
   this.displayBulletCount = function () {
     if (!this.players[controlId].alive)
