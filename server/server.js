@@ -200,7 +200,7 @@ var GameState = function(time, players, weapons) {
             this.players[k].justKeyDowned[88] = false;
         }
         if (this.players[k].justKeyDowned[81]) {
-            this.weapons[this.players[k].weapon].swapWeapon(this, 1 - this.players[k].slot);
+            this.players[k].swapWeapon(this, 1 - this.players[k].slot);
             this.players[k].justKeyDowned[81] = false;
         }
 
