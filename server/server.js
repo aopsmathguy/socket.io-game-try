@@ -692,7 +692,7 @@ var Bullet = function(weapon) {
     }
     this.pathIntersect = function(v1, v2) {
         var v3 = this.pos;
-        var v4 = this.startPos;
+        var v4 = this.pos.subtract(this.vel.multiply(2));
 
         var a1 = v2.y - v1.y;
         var b1 = v1.x - v2.x;
@@ -713,7 +713,7 @@ var Bullet = function(weapon) {
 
     this.segmentIntersect = function(v1, v2) {
         var v3 = this.pos;
-        var v4 = this.startPos;
+        var v4 = this.pos.subtract(this.vel.multiply(2));
         var intersectionPoint = this.pathIntersect(v1, v2);
         if (intersectionPoint.onSegment(v1, v2) && intersectionPoint.onSegment(v3, v4)) {
             return intersectionPoint;
@@ -749,7 +749,7 @@ var Bullet = function(weapon) {
             return -1;
         }
         var v3 = this.pos;
-        var v4 = this.startPos;
+        var v4 = this.pos.subtract(this.vel.multiply(2));
         var closestPoint = player.pos.closestToLine(v3, v4);
         if (closestPoint.distanceTo(player.pos) <= player.radius && closestPoint.onSegment(v3, v4)) {
             return closestPoint;
