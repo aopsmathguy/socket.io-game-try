@@ -324,13 +324,13 @@ var GameState = function () {
     });
     for (var idx in this.weapons)
     {
-      this.displayBullets(idx)
-    }
-    for (var idx in this.weapons)
-    {
       if (!this.weapons[idx].hold) {
         this.displayWeapon(idx)
       }
+    }
+    for (var idx in this.weapons)
+    {
+      this.displayBullets(idx)
     }
     for (var idx in this.players) {
       if (this.players[idx].alive)
