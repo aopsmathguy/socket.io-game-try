@@ -729,10 +729,10 @@ var linearPosition = function(v1,v2,t,t1,t2)
 {
   return new Vector(v1.x * (t2 - t)/(t2 - t1) + v2.x * (t - t1)/(t2 - t1), v1.y * (t2 - t)/(t2 - t1) + v2.y * (t - t1)/(t2 - t1));
 }
-var linearAng = function(ang1, ang2, t, t1,t2)
+var linearAng = function(a1, a2, t, t1,t2)
 {
-    var ang1 = (ang1 % (2*Math.PI) + 2*Math.PI) % (2 * Math.PI);
-    var ang2 = (ang2 % (2*Math.PI) + 2*Math.PI) % (2 * Math.PI);
+    var ang1 = (a1 % (2*Math.PI) + 2*Math.PI) % (2 * Math.PI);
+    var ang2 = (a2 % (2*Math.PI) + 2*Math.PI) % (2 * Math.PI);
     var difference = ang2 - ang1;
     var difference = (difference % (2*Math.PI) + 3*Math.PI) % (2 * Math.PI) - Math.Pi;
     return ang1 + difference * (t - t1)/(t2 - t1);
