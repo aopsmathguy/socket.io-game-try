@@ -731,10 +731,10 @@ var linearPosition = function(v1,v2,t,t1,t2)
 }
 var linearAng = function(a1, a2, t, t1,t2)
 {
-    var ang1 = (a1 % (2*Math.PI) + 2*Math.PI) % (2 * Math.PI);
-    var ang2 = (a2 % (2*Math.PI) + 2*Math.PI) % (2 * Math.PI);
-    var difference = ang2 - ang1;
-    var difference = (difference % (2*Math.PI) + 3*Math.PI) % (2 * Math.PI) - Math.Pi;
+    var dir1 = (a1 % (2*Math.PI) + 2*Math.PI) % (2 * Math.PI);
+    var dir2 = (a2 % (2*Math.PI) + 2*Math.PI) % (2 * Math.PI);
+    var difference = dir2 - dir1;
+    var difference = (difference % (2*Math.PI) + 3*Math.PI) % (2 * Math.PI) - Math.PI;
     return ang1 + difference * (t - t1)/(t2 - t1);
 }
 var linearGameState = function()
