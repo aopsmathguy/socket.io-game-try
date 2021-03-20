@@ -153,11 +153,12 @@ function blackBoxedText(txt, font, size, posx, posy, buffer, txtAlpha, align)
     ctx.font = font;
     ctx.fillStyle = "#000";
     var width = ctx.measureText(txt).width;
+    ctx.textBaseline = "middle";
     ctx.textAlign = align || "left";
     if (ctx.textAlign == "left")
-      ctx.fillRect(posx -buffer,posy - 12 - buffer, width + 2 * buffer, size + 2 * buffer);
+      ctx.fillRect(posx -buffer, posy - 3/4*size - buffer, width + 2 * buffer, size + 2 * buffer);
     else
-      ctx.fillRect(posx - width/2-buffer,posy - 12 - size/2 - buffer, width + 2 * buffer, size + 2 * buffer);
+      ctx.fillRect(posx - width/2-buffer, posy - 3/4*size - buffer, width + 2 * buffer, size + 2 * buffer);
     ctx.restore();
 
     ctx.save();
@@ -266,8 +267,7 @@ var controlsBundle = {
     window.addEventListener('mousemove', function (e) {
       controlsBundle.mouse = new Vector(e.clientX - rect.left, e.clientY - rect.top);
       controlsBundle.ang = controlsBundle.mouse.subtract(new Vector(myGameArea.canvas.width, myGameArea.canvas.height).multiply(0.5)).ang();
-      console.log('mousemove');
-      socket.emit('mousemove', controlsBundle.ang);
+      //socket.emit('mousemove', controlsBundle.ang);
     });
     window.addEventListener('mousedown', function (e) {
       if (e.button == 0) {
@@ -434,11 +434,13 @@ var GameState = function () {
 
       var weapon = this.weapons[player.weapon];
       var length = String(weapon.capacity).length;
+      var size = 40;
+      var buffer = 10;
       var width = blackBoxedText(fillDigits(weapon.bulletsRemaining,length) + '|' + fillDigits(weapon.capacity,length),
-                    "bold 40px Courier New",
-                    40,
+                    "bold " + size + "px Courier New",
+                    size,
                     myGameArea.canvas.width / 2, myGameArea.canvas.height - 100,
-                    10, 1, "center");
+                    buffer, 1, "center");
       if (weapon.reloadStartTime != -1)
       {
         var ctx = myGameArea.context;
@@ -447,8 +449,8 @@ var GameState = function () {
         ctx.strokeStyle = '#fff';
         ctx.lineWidth = 6;
         ctx.beginPath();
-        ctx.moveTo(myGameArea.canvas.width / 2 - width/ 2 - 10, myGameArea.canvas.height - 140);
-        ctx.lineTo(myGameArea.canvas.width / 2 + width/ 2 + 10 - (width+20) * (this.time - weapon.reloadStartTime) / weapon.reloadTime, myGameArea.canvas.height - 140);
+        ctx.moveTo(myGameArea.canvas.width / 2 - width/ 2 - buffer, myGameArea.canvas.height - 100 - 3/4 * size - buffer);
+        ctx.lineTo(myGameArea.canvas.width / 2 + width/ 2 + buffer - (width+20) * (this.time - weapon.reloadStartTime) / weapon.reloadTime, myGameArea.canvas.height - 100 - 3/4 * size - buffer);
         ctx.closePath();
         ctx.stroke();
         ctx.restore();
@@ -842,8 +844,8 @@ function updateGameArea() {
       lastDeadTime = -2;
     }
     state.render();
+    emitMousePos();
   }
-  //emitMousePos();
 }
 function hexToRgbA(hex, alpha) {
   var c;
