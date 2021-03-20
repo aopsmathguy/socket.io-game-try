@@ -1,6 +1,6 @@
-const gameWidth = 4000;
-const gameHeight = 4000;
-const numOb = 120;
+const gameWidth = 3000;
+const gameHeight = 3000;
+const numOb = 50;
 const gridWidth = 250;
 const framesPerTick = 3;
 
