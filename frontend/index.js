@@ -729,6 +729,14 @@ var linearPosition = function(v1,v2,t,t1,t2)
 {
   return new Vector(v1.x * (t2 - t)/(t2 - t1) + v2.x * (t - t1)/(t2 - t1), v1.y * (t2 - t)/(t2 - t1) + v2.y * (t - t1)/(t2 - t1));
 }
+var linearAng = function(ang1, ang2, t, t1,t2)
+{
+    var ang1 = (ang1 % (2*Math.PI) + 2*Math.PI) % (2 * Math.PI);
+    var ang2 = (ang2 % (2*Math.PI) + 2*Math.PI) % (2 * Math.PI);
+    var difference = ang2 - ang1;
+    var difference = (difference % (2*Math.PI) + 3*Math.PI) % (2 * Math.PI) - Math.Pi;
+    return ang1 + difference * (t - t1)/(t2 - t1);
+}
 var linearGameState = function()
 {
   var displayTime = serverTime() - buffer;
@@ -772,6 +780,7 @@ var linearGameState = function()
      }
      out.players[i].pos = linearPosition(left.players[i].pos, right.players[i].pos, displayTime, left.time, right.time);
      out.players[i].punchAnimation = linearPosition(new Vector(left.players[i].punchAnimation,0),new Vector(right.players[i].punchAnimation,0),displayTime,left.time,right.time).x;
+     out.players[i].ang = linearAng(left.players[i].ang, right.players[i].ang, displayTime, left.time, right.time);
   }
   for (var i in out.weapons)
   {
