@@ -735,7 +735,7 @@ var linearAng = function(a1, a2, t, t1,t2)
     var dir2 = (a2 % (2*Math.PI) + 2*Math.PI) % (2 * Math.PI);
     var difference = dir2 - dir1;
     var difference = (difference % (2*Math.PI) + 3*Math.PI) % (2 * Math.PI) - Math.PI;
-    return ang1 + difference * (t - t1)/(t2 - t1);
+    return dir1 + difference * (t - t1)/(t2 - t1);
 }
 var linearGameState = function()
 {
