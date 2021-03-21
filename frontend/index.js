@@ -500,7 +500,7 @@ var GameState = function () {
           continue;
        }
        var player = this.players[i];
-        var ang = (i == controlId ? controlsBundle.ang : player.ang);
+        var ang = player.ang;
        this.weapons[player.weapon].pos = player.pos.add((new Vector(player.radius + this.weapons[player.weapon].length / 2 - this.weapons[player.weapon].recoil, 0)).rotate(ang));
         this.weapons[player.weapon].ang = ang;
      }
@@ -764,7 +764,7 @@ var linearGameState = function()
       rightIdx = gameStates.length - 1;
       buffer += 1;
   }
-  if (gameStates.length > 4)
+  if (gameStates.length > 3)
   {
     buffer -= 1;
   }
