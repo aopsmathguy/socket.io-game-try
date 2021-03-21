@@ -267,7 +267,7 @@ var controlsBundle = {
     window.addEventListener('mousemove', function (e) {
       controlsBundle.mouse = new Vector(e.clientX - rect.left, e.clientY - rect.top);
       controlsBundle.ang = controlsBundle.mouse.subtract(new Vector(myGameArea.canvas.width, myGameArea.canvas.height).multiply(0.5)).ang();
-      socket.emit('mousemove', controlsBundle.ang);
+      //socket.emit('mousemove', controlsBundle.ang);
     });
     window.addEventListener('mousedown', function (e) {
       if (e.button == 0) {
@@ -844,7 +844,7 @@ function updateGameArea() {
       lastDeadTime = -2;
     }
     state.render();
-    //emitMousePos();
+    emitMousePos();
   }
 }
 function hexToRgbA(hex, alpha) {
