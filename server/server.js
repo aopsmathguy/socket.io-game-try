@@ -292,7 +292,7 @@ var makeObstacles = function() {
           }
           ob = new Obstacle(vertList, getRandomColor());
           insideOther = false;
-          loopThroughObstacles(ob.pos, (obstacle)=>{
+          loopThroughObstacles(ob.center, (obstacle)=>{
             if (ob.intersectOtherOb(obstacle))
             {
               insideOther = true;
