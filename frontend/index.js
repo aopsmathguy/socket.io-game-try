@@ -242,7 +242,7 @@ var myGameArea = {
     this.canvas.width  = window.innerWidth;
     this.canvas.height = window.innerHeight;
 
-    this.context.fillStyle = "#080";
+    this.context.fillStyle = "#8aae57";
     this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
   }
@@ -319,9 +319,6 @@ var giveMethods = function (obj) {
 var GameState = function () {
   this.type = "GameState";
   this.render = function () {
-    loopThroughObstacles(this.players[controlId].pos, (obstacle) => {
-       obstacle.display();
-    });
     for (var idx in this.weapons)
     {
       if (!this.weapons[idx].hold) {
@@ -332,6 +329,9 @@ var GameState = function () {
     {
       this.displayBullets(idx)
     }
+    loopThroughObstacles(this.players[controlId].pos, (obstacle) => {
+       obstacle.display();
+    });
     for (var idx in this.players) {
       if (this.players[idx].alive)
         this.displayPlayer(idx);
@@ -733,11 +733,21 @@ var linearPosition = function(v1,v2,t,t1,t2)
 }
 var linearAng = function(a1, a2, t, t1,t2)
 {
-    var dir1 = (a1 % (2*Math.PI) + 2*Math.PI) % (2 * Math.PI);
-    var dir2 = (a2 % (2*Math.PI) + 2*Math.PI) % (2 * Math.PI);
-    var difference = dir2 - dir1;
-    var difference = (difference % (2*Math.PI) + 3*Math.PI) % (2 * Math.PI) - Math.PI;
-    return dir1 + difference * (t - t1)/(t2 - t1);
+    if (t < t1)
+    {
+      return a1;
+    }
+    else if (t > t2)
+    {
+      return a2;
+    }
+    else {
+      var dir1 = (a1 % (2*Math.PI) + 2*Math.PI) % (2 * Math.PI);
+      var dir2 = (a2 % (2*Math.PI) + 2*Math.PI) % (2 * Math.PI);
+      var difference = dir2 - dir1;
+      var difference = (difference % (2*Math.PI) + 3*Math.PI) % (2 * Math.PI) - Math.PI;
+      return dir1 + difference * (t - t1)/(t2 - t1);
+    }
 }
 var linearGameState = function()
 {
