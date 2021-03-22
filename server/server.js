@@ -978,7 +978,7 @@ var Vector = function(x, y) {
 }
 makeObstacles();
 setInterval(updateGameArea, 1000 / 60);
-var stage = 0;m
+var stage = 0;
 
 function updateGameArea() {
     if (Object.keys(gameState.players).length > 0) {
