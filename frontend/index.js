@@ -256,10 +256,7 @@ var controlsBundle = {
     window.addEventListener('keydown', function (e) {
       controlsBundle.keys = (controlsBundle.keys || []);
       controlsBundle.keys[e.keyCode] = true;
-      socket.emit('keydown', e.keyCode);
-    })
-    window.addEventListener('keyup', function (e) {
-      controlsBundle.keys[e.keyCode] = false;
+        
       if (e.keyCode == 187)
       {
           drawer.zoom *= 1.2;
@@ -268,6 +265,11 @@ var controlsBundle = {
       {
           drawer.zoom /= 1.2;
       }
+        
+      socket.emit('keydown', e.keyCode);
+    })
+    window.addEventListener('keyup', function (e) {
+      controlsBundle.keys[e.keyCode] = false;
       socket.emit('keyup', e.keyCode);
     })
 
