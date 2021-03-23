@@ -882,7 +882,7 @@ var Obstacle = function(vs, color, intersectable) {
     {
       for (var i in this.vs)
       {
-        this.vs = this.vs.add(displace);
+        this.vs[i] = this.vs[i].add(displace);
       }
       this.center = this.center.add(displace);
     }
@@ -890,7 +890,7 @@ var Obstacle = function(vs, color, intersectable) {
     {
       for (var i in this.vs)
       {
-        this.vs = this.vs.rotate(ang);
+        this.vs[i] = this.vs[i].rotate(ang);
       }
       this.center = this.center.rotate(ang);
     }
