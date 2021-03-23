@@ -256,16 +256,6 @@ var controlsBundle = {
     window.addEventListener('keydown', function (e) {
       controlsBundle.keys = (controlsBundle.keys || []);
       controlsBundle.keys[e.keyCode] = true;
-        
-      if (e.keyCode == 187)
-      {
-          drawer.zoom *= 1.2;
-      }
-      else if (e.keyCode == 189)
-      {
-          drawer.zoom /= 1.2;
-      }
-        
       socket.emit('keydown', e.keyCode);
     })
     window.addEventListener('keyup', function (e) {
@@ -609,7 +599,7 @@ var Drawer = function () {
 
     character = state.players[controlId];
 
-    this.targetScale = this.zoom / 10000 * (9 * myGameArea.canvas.width + 16 * myGameArea.canvas.height);
+    this.targetScale = this.zoom / 30000 * (9 * myGameArea.canvas.width + 16 * myGameArea.canvas.height);
     this.scroll = character.pos.add((new Vector(Math.random() - 0.5, Math.random() - 0.5)).multiply(this.screenShake));
     this.scale = 0.9 * (this.scale - this.targetScale) + this.targetScale;
   }
