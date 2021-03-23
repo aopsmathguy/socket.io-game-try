@@ -261,7 +261,7 @@ var controlsBundle = {
       {
           drawer.zoom *= 1.2;
       }
-      else if (e.keyCode = 189)
+      else if (e.keyCode == 189)
       {
           drawer.zoom /= 1.2;
       }
