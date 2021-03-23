@@ -1,7 +1,7 @@
 const gameWidth = 3000;
 const gameHeight = 3000;
-const numOb = 50;
-const numHouse1 = 3;
+const numOb = 100;
+const numHouse1 = 10;
 const gridWidth = 250;
 const framesPerTick = 3;
 
