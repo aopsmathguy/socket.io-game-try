@@ -242,7 +242,7 @@ var myGameArea = {
     this.canvas.width  = window.innerWidth;
     this.canvas.height = window.innerHeight;
 
-    this.context.fillStyle = "#8aae57";
+    this.context.fillStyle = "#83b04a";
     this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
   }
@@ -319,6 +319,12 @@ var giveMethods = function (obj) {
 var GameState = function () {
   this.type = "GameState";
   this.render = function () {
+    loopThroughObstacles(this.players[controlId].pos, (obstacle) => {
+       if (!obstacle.intersectable)
+       {
+         obstacle.display();
+       }
+    });
     for (var idx in this.weapons)
     {
       if (!this.weapons[idx].hold) {
@@ -330,7 +336,10 @@ var GameState = function () {
       this.displayBullets(idx)
     }
     loopThroughObstacles(this.players[controlId].pos, (obstacle) => {
-       obstacle.display();
+      if (obstacle.intersectable)
+      {
+        obstacle.display();
+      }
     });
     for (var idx in this.players) {
       if (this.players[idx].alive)
