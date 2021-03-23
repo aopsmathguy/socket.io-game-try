@@ -847,9 +847,9 @@ var House1 = function(x,y,ang)
   this.ang = ang;
   this.wallThickness = 6;
   this.obstacles = [
-    new Obstacle([new Vector(-26,-50),new Vector(26,-50),new Vector(26,50),new Vector(-26,50)],'#008',false),
-    new Obstacle([new Vector(-20,-50),new Vector(-26,-50),new Vector(-26,50),new Vector(-20,50)],'#008',true),
-    new Obstacle([new Vector(20,-50),new Vector(26,-50),new Vector(26,50),new Vector(20,50)],'#008',true)
+    new Obstacle([new Vector(-52,-100),new Vector(52,-100),new Vector(52,100),new Vector(-52,100)],'#008',false),
+    new Obstacle([new Vector(-40,-100),new Vector(-52,-100),new Vector(-52,100),new Vector(-40,100)],'#008',true),
+    new Obstacle([new Vector(40,-100),new Vector(52,-100),new Vector(52,100),new Vector(40,100)],'#008',true)
   ];
   for (var i in this.obstacles)
   {
