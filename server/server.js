@@ -1,6 +1,7 @@
 const gameWidth = 3000;
 const gameHeight = 3000;
 const numOb = 50;
+const numHouse1 = 3;
 const gridWidth = 250;
 const framesPerTick = 3;
 
@@ -141,7 +142,10 @@ var GameState = function(time, players, weapons) {
                 this.controls(k);
                 player.playerStep(this);
                 loopThroughObstacles(player.pos, (obstacle) => {
-                    player.intersect(obstacle);
+                    if (obstacle.intersectable)
+                    {
+                      player.intersect(obstacle);
+                    }
                 });
             }
         }
@@ -248,10 +252,10 @@ var makeObstacles = function() {
     var wallThick = -40;
 
     borderObstacles = [
-        new Obstacle([new Vector(0, 0), new Vector(0, gameHeight), new Vector(-wallThick, gameHeight), new Vector(-wallThick, 0)], '#000'),
-        new Obstacle([new Vector(gameWidth, 0), new Vector(gameWidth, gameHeight), new Vector(gameWidth + wallThick, gameHeight), new Vector(gameWidth + wallThick, 0)], '#000'),
-        new Obstacle([new Vector(0, 0), new Vector(gameWidth, 0), new Vector(gameWidth, -wallThick), new Vector(0, -wallThick)], '#000'),
-        new Obstacle([new Vector(0, gameHeight), new Vector(gameWidth, gameHeight), new Vector(gameWidth, gameHeight + wallThick), new Vector(0, gameHeight + wallThick)], '#000')
+        new Obstacle([new Vector(0, 0), new Vector(0, gameHeight), new Vector(-wallThick, gameHeight), new Vector(-wallThick, 0)], '#000', true),
+        new Obstacle([new Vector(gameWidth, 0), new Vector(gameWidth, gameHeight), new Vector(gameWidth + wallThick, gameHeight), new Vector(gameWidth + wallThick, 0)], '#000', true),
+        new Obstacle([new Vector(0, 0), new Vector(gameWidth, 0), new Vector(gameWidth, -wallThick), new Vector(0, -wallThick)], '#000', true),
+        new Obstacle([new Vector(0, gameHeight), new Vector(gameWidth, gameHeight), new Vector(gameWidth, gameHeight + wallThick), new Vector(0, gameHeight + wallThick)], '#000', true)
     ];
     obstacles = [];
     for (var i = 0; i < gameWidth / gridWidth; i++) {
@@ -259,6 +263,37 @@ var makeObstacles = function() {
         for (var j = 0; j < gameHeight / gridWidth; j++) {
             obstacles[i][j] = [];
         }
+    }
+    for (var blah = 0; blah < numHouse1; blah ++)
+    {
+      var insideOther = true;
+      while (insideOther)
+      {
+        var center = findSpawnPosition();
+        var house1 = new House1(center.x,center.y,2*Math.PI*Math.random());
+        for (var i in house1.obstacles)
+        {
+          var ob = house1.obstacles[i];
+          insideOther = false;
+          loopThroughObstacles(ob.center, (obstacle)=>{
+            if (ob.intersectOtherOb(obstacle))
+            {
+              insideOther = true;
+              return;
+            }
+          });
+          if (insideOther)
+          {
+            break;
+          }
+        }
+      }
+      for (var i in house1.obstacles)
+      {
+        var ob = house1.obstacles[i];
+        var addTo = obstacles[Math.floor(ob.center.x / gridWidth)][Math.floor(ob.center.y / gridWidth)];
+        addTo[addTo.length] = ob;
+      }
     }
     for (var blah = 0; blah < numOb; blah++) {
         var insideOther = true;
@@ -290,7 +325,7 @@ var makeObstacles = function() {
               var ang = i * 2 * Math.PI / resolution;
               vertList[i] = center.add((new Vector(distList[i], 0)).rotate(ang));
           }
-          ob = new Obstacle(vertList, '#B1B1B1');
+          ob = new Obstacle(vertList, '#B1B1B1', true);
           insideOther = false;
           loopThroughObstacles(ob.center, (obstacle)=>{
             if (ob.intersectOtherOb(obstacle))
@@ -638,7 +673,7 @@ var Gun = function(name, startX, startY, length, auto, firerate, multishot, capa
     this.stickingThroughWall = function() {
         var out = false;
         loopThroughObstacles(this.pos, (obstacle) => {
-            if (this.intersectOb(obstacle)) {
+            if (obstacle.intersectable && this.intersectOb(obstacle)) {
                 out = true;
                 return;
             }
@@ -778,6 +813,10 @@ var Bullet = function(weapon) {
         var smallestDistance = Number.MAX_VALUE;
         var objectsPoint = -1;
         loopThroughObstacles(this.pos, (obstacle) => {
+            if (!obstacle.intersectable)
+            {
+              return;
+            }
             var point = this.objectIntersection(obstacle);
             if (point != -1) {
                 var dist = this.startPos.distanceTo(point);
@@ -802,12 +841,29 @@ var Bullet = function(weapon) {
         return [objectsPoint, playerHit];
     }
 }
-
-var Obstacle = function(vs, color) {
+var House1 = function(x,y,ang)
+{
+  this.center = new Vector(x,y);
+  this.ang = ang;
+  this.wallThickness = 6;
+  this.obstacles = [
+    new Obstacle([new Vector(-26,-50),new Vector(26,-50),new Vector(26,50),new Vector(-26,50)],'#008',false),
+    new Obstacle([new Vector(-20,-50),new Vector(-26,-50),new Vector(-26,50),new Vector(-20,50)],'#008',true),
+    new Obstacle([new Vector(20,-50),new Vector(26,-50),new Vector(26,50),new Vector(20,50)],'#008',true)
+  ];
+  for (var i in this.obstacles)
+  {
+    var ob = this.obstacles[i];
+    ob.rotate(this.ang);
+    ob.move(this.center);
+  }
+}
+var Obstacle = function(vs, color, intersectable) {
     this.type = "Obstacle";
     setIfUndefined(this, 'color', color);
 
     setIfUndefined(this, 'vs', vs);
+    setIfUndefined(this, 'intersectable', intersectable);
     if (this.center == undefined) {
         this.center = new Vector(0, 0);
         for (var i = 0; i < this.vs.length; i++) {
@@ -821,6 +877,22 @@ var Obstacle = function(vs, color) {
         for (var i = 0; i < this.vs.length; i++) {
             this.maxRadius = Math.max(this.center.distanceTo(this.vs[i]), this.maxRadius);
         }
+    }
+    this.move = function(displace)
+    {
+      for (var i in this.vs)
+      {
+        this.vs = this.vs.add(displace);
+      }
+      this.center = this.center.add(displace);
+    }
+    this.rotate = function(ang)
+    {
+      for (var i in this.vs)
+      {
+        this.vs = this.vs.rotate(ang);
+      }
+      this.center = this.center.rotate(ang);
     }
     this.insideOf = function(point) {
         // ray-casting algorithm based on
