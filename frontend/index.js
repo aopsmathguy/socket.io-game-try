@@ -629,7 +629,10 @@ var Obstacle = function () {
     }
     ctx.closePath();
     ctx.fill();
-    ctx.stroke();
+    if (this.intersectable)
+    {
+        ctx.stroke();
+    }
   }
 }
 var Vector = function (x, y) {
