@@ -351,11 +351,11 @@ var makeObstacles = function() {
         new Gun('MP5',200, 350, 50, true, 750, 1, 30, 1500, 42, 9, 2, 550, 270, 1500, 0, 0.06, 0.91, 4, 0.9, 0.9, 0.6, '#f80', 20, 3, 40, 6),
         new Gun('MK11',200, 50, 60, false, 550, 1, 15, 1600, 60, 26, 3, 710, 200, 2000, 0, 0.3, 0.83, 8, 0.84, 0.85, 0.5, '#f08', 20, 3, 45, 6),
 
-        new Gun('QBB-97',200, 350, 70, true, 600, 1, 75, 4500, 45, 13, 4, 550, 270, 1500, 0, 0.03, 0.96, 5, 0.9, 0.8, 0.5, '#fff', 20, 3, 45, 6),
+        new Gun('QBB-97',200, 350, 70, true, 600, 1, 75, 3000, 45, 13, 4, 550, 270, 1500, 0, 0.03, 0.96, 5, 0.9, 0.8, 0.5, '#fff', 20, 3, 45, 6),
         new Gun('Railgun',200, 350, 90, true, 1500, 1, 100, 2000, 100, 5, 0, 550, 270, 2000, 0, 0, 0.91, 2, 0.9, 0.85, 0.4, '#08f', 20, 3, 45, 6),
 
-        new Gun('Scout',200, 50, 70, false, 70, 1, 5, 2400, 70, 70, 20, 830, 240, 3000, 0, 0.3, 0.83, 14, 0.9, 0.9, 0.6, '#8f0', 20, 3, 45, 6),
-        new Gun('BFG',200, 50, 90, false, 40, 1, 1, 3000, 90, 101, 0, 830, 240, 5000, 0, 0.3, 0.83, 17, 0.9, 0.8, 0.5, '#000', 20, 3, 50, 6),
+        new Gun('Scout',200, 50, 70, false, 70, 1, 5, 2000, 70, 70, 20, 830, 240, 3000, 0, 0.3, 0.83, 14, 0.9, 0.9, 0.6, '#8f0', 20, 3, 45, 6),
+        new Gun('BFG',200, 50, 90, false, 40, 1, 1, 2000, 90, 101, 0, 830, 240, 5000, 0, 0.3, 0.83, 17, 0.9, 0.8, 0.5, '#000', 20, 3, 50, 6),
 
         new Gun('Stevens DB',200, 220, 35, false, 450, 8, 2, 1600, 30, 15, 9, 350, 56, 700, 0.15, 0, 0.83, 10, 0.9, 1, 0.7, '#f0f', 20, 3, 40, 6),
         new Gun('SPAS-12',200, 220, 50, false, 100, 8, 6, 1750, 40, 8, 1, 650, 100, 1300, 0.10, 0, 0.83, 10, 0.9, 1, 0.5, '#0ff', 20, 3, 40, 6)
@@ -528,6 +528,49 @@ var Player = function(xStart, yStart, name, id) {
             var velMag = this.vel.rotate(-ang).y;
             this.vel = (new Vector(0, velMag)).rotate(ang);
         }
+    }
+    this.intersectSegment = function(v1,v2)
+    {
+      if (!this.alive) {
+        return -1;
+      }
+      var closestPoint = this.pos.closestToLine(v1,v2);
+      var distance = closestPoint.distanceTo(this.pos);
+      if (distance > this.radius)
+      {
+        return -1;
+      }
+      var x = Math.sqrt(this.radius * this.radius - distance * distance);
+      var point1 = closestPoint.add(closestPoint.subtract(this.pos).normalize().rotate(Math.PI/2).multiply(x));
+      var point2 = closestPoint.add(closestPoint.subtract(this.pos).normalize().rotate(Math.PI/2).multiply(-x));
+      var point1On = point1.onSegment(v1,v2);
+      var point2On = point2.onSegment(v1,v2);
+      
+      var point1Dist = v1.distanceTo(point1);
+      var point2Dist = v1.distanceTo(point2);
+      
+      if (point1On)
+      {
+        if (point2On)
+        {
+           return (point1Dist < point2Dist ? point1 : point2);
+        }
+        else
+        {
+           return point1;
+        }
+      }
+      else
+      {
+        if (point2On)
+        {
+           return point2;
+        }
+        else
+        {
+           return -1;
+        }
+      }
     }
     this.punch = function(gameState) {
         if (gameState.time - this.punchLastTime < 60000 / this.punchRate) {
@@ -718,30 +761,6 @@ var Bullet = function(weapon) {
             return this.damage - this.damageDrop / (1 + Math.exp(-(distance - this.damageRange) / this.damageDropTension));
         }
     }
-    this.insideObject = function() {
-        loopThroughObstacles(this.pos, (obstacle) => {
-            if (obstacle.insideOf(this.pos)) {
-                return true;
-            }
-        });
-        return false;
-    }
-    this.playerIntersection = function(player) {
-        if (!player.alive) {
-            return -1;
-        }
-        if (player.pos.distanceTo(this.pos) > player.radius + this.vel.magnitude()) {
-            return -1;
-        }
-        var v3 = this.pos;
-        var v4 = this.pos.subtract(this.vel.multiply(2));
-        var closestPoint = player.pos.closestToLine(v3, v4);
-        if (closestPoint.distanceTo(player.pos) <= player.radius && closestPoint.onSegment(v3, v4)) {
-            return closestPoint;
-        } else {
-            return -1;
-        }
-    }
     this.objectsIntersection = function(state) {
         var smallestDistance = Number.MAX_VALUE;
         var objectsPoint = -1;
@@ -761,7 +780,7 @@ var Bullet = function(weapon) {
         });
         var playerHit = -1;
         for (var key in state.players) {
-            var point = this.playerIntersection(state.players[key]);
+            var point = state.players[key].intersectSegment(this.pos.subtract(this.vel.multiply(2)),this.pos);
             if (point != -1) {
                 var dist = this.startPos.distanceTo(point);
                 if (dist < smallestDistance) {
@@ -962,6 +981,10 @@ var Vector = function(x, y) {
     }
     this.magnitude = function() {
         return Math.sqrt(this.x * this.x + this.y * this.y);
+    }
+    this.normalize = function()
+    {
+        return this.multiply(1/this.magnitude());
     }
     this.multiply = function(n) {
         return new Vector(this.x * n, this.y * n);
