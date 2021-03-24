@@ -1,7 +1,8 @@
 const gameWidth = 3000;
 const gameHeight = 3000;
-const numOb = 100;
-const numHouse1 = 40;
+const numOb = 50;
+const numHouse1 = 3;
+const numHouse2 = 3;
 const gridWidth = 400;
 const framesPerTick = 3;
 
@@ -273,28 +274,56 @@ var makeObstacles = function() {
       while (insideOther)
       {
         var center = findSpawnPosition();
-        var house1 = new House1(center.x,center.y, 2*Math.PI*Math.random());
-        for (var i in house1.obstacles)
+        var house = new House1(center.x,center.y, 2*Math.PI*Math.random());
+        for (var i in house.obstacles)
         {
-          var ob = house1.obstacles[i];
+          var ob = house.obstacles[i];
           insideOther = false;
-          for (var i in ob.vs)
-          {
-            if (inObjects(ob.vs[i]))
+          loopThroughObstacles(ob.center, (obstacle) => {
+            if (ob.intersectOtherOb(obstacle))
             {
               insideOther = true;
-              break;
             }
-          }
+          });
           if (insideOther)
           {
             break;
           }
         }
       }
-      for (var i in house1.obstacles)
+      for (var i in house.obstacles)
       {
-        var ob = house1.obstacles[i];
+        var ob = house.obstacles[i];
+        var addTo = obstacles[Math.floor(ob.center.x / gridWidth)][Math.floor(ob.center.y / gridWidth)];
+        addTo[addTo.length] = ob;
+      }
+    }
+    for (var blah = 0; blah < numHouse2; blah ++)
+    {
+      var insideOther = true;
+      while (insideOther)
+      {
+        var center = findSpawnPosition();
+        var house = new House2(center.x,center.y, 2*Math.PI*Math.random());
+        for (var i in house.obstacles)
+        {
+          var ob = house.obstacles[i];
+          insideOther = false;
+          loopThroughObstacles(ob.center, (obstacle) => {
+            if (ob.intersectOtherOb(obstacle))
+            {
+              insideOther = true;
+            }
+          });
+          if (insideOther)
+          {
+            break;
+          }
+        }
+      }
+      for (var i in house.obstacles)
+      {
+        var ob = house.obstacles[i];
         var addTo = obstacles[Math.floor(ob.center.x / gridWidth)][Math.floor(ob.center.y / gridWidth)];
         addTo[addTo.length] = ob;
       }
@@ -331,14 +360,12 @@ var makeObstacles = function() {
           }
           ob = new Obstacle(vertList, '#B1B1B1', true);
           insideOther = false;
-          for (var i in ob.vs)
-          {
-            if (inObjects(ob.vs[i]))
+          loopThroughObstacles(ob.center, (obstacle) => {
+            if (ob.intersectOtherOb(obstacle))
             {
               insideOther = true;
-              break;
             }
-          }
+          });
 
         }
         addTo[addTo.length] = ob;
@@ -811,6 +838,22 @@ var House1 = function(x,y,ang)
     ob.move(this.center);
   }
 }
+var House2 = function(x,y,ang)
+{
+  this.center = new Vector(x,y);
+  this.ang = ang;
+  this.wallThickness = 6;
+  this.obstacles = [
+    new Obstacle([new Vector(-52,-100),new Vector(52,-100),new Vector(52,100),new Vector(-52,100)],'#800',false),
+    new Obstacle([new Vector(-40,-100),new Vector(-52,-100),new Vector(-52,100),new Vector(52,100),new Vector(52,-100), new Vector(40, -100),new Vector(40,88),new Vector(-40,88)],'#800',true)
+  ];
+  for (var i in this.obstacles)
+  {
+    var ob = this.obstacles[i];
+    ob.rotate(this.ang);
+    ob.move(this.center);
+  }
+}
 var Obstacle = function(vs, color, intersectable) {
     this.type = "Obstacle";
     setIfUndefined(this, 'color', color);
@@ -872,39 +915,19 @@ var Obstacle = function(vs, color, intersectable) {
     }
     this.closestPoint = function(point) {
         var out = new Vector(0, 0);
-        var minimumDist = 1000000000;
+        var minimumDist = Number.MAX_VALUE;
         for (var i = 0; i < this.vs.length; i++) {
-            var x1 = this.vs[i].x;
-            var y1 = this.vs[i].y;
-            if (i == this.vs.length - 1) {
-                var x2 = this.vs[0].x;
-                var y2 = this.vs[0].y;
-            } else {
-                var x2 = this.vs[i + 1].x;
-                var y2 = this.vs[i + 1].y;
-            }
-
-            var e1x = x2 - x1;
-            var e1y = y2 - y1;
-            var area = e1x * e1x + e1y * e1y;
-            var e2x = point.x - x1;
-            var e2y = point.y - y1;
-            var val = e1x * e2x + e1y * e2y;
-            var on = (val > 0 && val < area);
-
-            var lenE1 = Math.sqrt(e1x * e1x + e1y * e1y);
-            var lenE2 = Math.sqrt(e2x * e2x + e2y * e2y);
-            var cos = val / (lenE1 * lenE2);
-
-            var projLen = cos * lenE2;
-            var px = x1 + (projLen * e1x) / lenE1;
-            var py = y1 + (projLen * e1y) / lenE1;
-            var distance = Math.sqrt((px - point.x) * (px - point.x) + (py - point.y) * (py - point.y));
-            if (Math.min(x1, x2) <= px && px <= Math.max(x1, x2) && Math.min(y1, y2) <= py && py <= Math.max(y1, y2)) {
-                if (minimumDist > distance) {
-                    minimumDist = distance;
-                    out = new Vector(px, py);
-                }
+            var v1 = this.vs[i];
+            var v2 = this.vs[(i + 1) % this.vs.length];
+            var pt = point.closestToLine(v1,v2);
+            if (pt.onSegment(v1,v2))
+            {
+              var dist = pt.distanceTo(point);
+              if (dist < minimumDist)
+              {
+                out = pt;
+                minimumDist = dist;
+              }
             }
         }
         for (var i = 0; i < this.vs.length; i++) {
@@ -963,9 +986,9 @@ var Obstacle = function(vs, color, intersectable) {
       {
         return false;
       }
-      for (var idx in ob.vs)
+      for (var idx = 0; idx < ob.vs.length; idx ++)
       {
-        if (this.insideOf(ob.vs[idx]))
+        if (this.intersectSegment(ob.vs[idx], ob.vs[(idx + 1) % ob.vs.length]) != -1)
         {
           return true;
         }
@@ -1048,8 +1071,8 @@ var Vector = function(x, y) {
 
 }
 makeObstacles();
-setInterval(updateGameArea, 1000 / 60);
 var stage = 0;
+setInterval(updateGameArea, 1000 / 60);
 
 function updateGameArea() {
     if (Object.keys(gameState.players).length > 0) {
