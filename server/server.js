@@ -641,39 +641,18 @@ var Gun = function(name, startX, startY, length, auto, firerate, multishot, capa
 
 
     }
-    this.intersectSeg = function(v1, v2) {
-        var v3 = this.pos.add((new Vector(this.length / 2, 0)).rotate(this.ang));
-        var v4 = this.pos.add((new Vector(-this.length / 2, 0)).rotate(this.ang));
-
-        var o1 = orientation(v1, v2, v3);
-        var o2 = orientation(v1, v2, v4);
-        var o3 = orientation(v3, v4, v1);
-        var o4 = orientation(v3, v4, v2);
-        if (o1 != o2 && o3 != o4) {
-            return true;
-        }
-        if (o1 == 0 && v3.onSegment(v1, v2))
-            return true;
-        if (o2 == 0 && v4.onSegment(v1, v2))
-            return true;
-        if (o3 == 0 && v1.onSegment(v3, v4))
-            return true;
-        if (o4 == 0 && v2.onSegment(v3, v4))
-            return true;
-        return false;
-    }
     this.intersectOb = function(ob) {
-        if (ob.center.distanceTo(this.pos) > this.length / 2 + ob.maxRadius) {
-            return false;
+        var v1 = this.pos.add((new Vector(this.length / 2, 0)).rotate(this.ang));
+        var v2 = this.pos.add((new Vector(-this.length / 2, 0)).rotate(this.ang));
+
+        if (ob.intersectSegment(v1,v2) == -1)
+        {
+          return false;
         }
-        for (var i in ob.vs) {
-            var v1 = ob.vs[i];
-            var v2 = ob.vs[(i + 1) % ob.vs.length];
-            if (this.intersectSeg(v1, v2)) {
-                return true;
-            }
+        else
+        {
+          return true;
         }
-        return false;
     }
     this.stickingThroughWall = function() {
         var out = false;
