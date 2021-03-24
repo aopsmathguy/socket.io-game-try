@@ -273,18 +273,19 @@ var makeObstacles = function() {
       while (insideOther)
       {
         var center = findSpawnPosition();
-        var house1 = new House1(center.x,center.y,2*Math.PI*Math.random());
+        var house1 = new House1(center.x,center.y, 2*Math.PI*Math.random());
         for (var i in house1.obstacles)
         {
           var ob = house1.obstacles[i];
           insideOther = false;
-          loopThroughObstacles(ob.center, (obstacle)=>{
-            if (ob.intersectOtherOb(obstacle))
+          for (var i in ob.vs)
+          {
+            if (inObjects(ob.vs[i]))
             {
               insideOther = true;
-              return;
+              break;
             }
-          });
+          }
           if (insideOther)
           {
             break;
@@ -330,13 +331,14 @@ var makeObstacles = function() {
           }
           ob = new Obstacle(vertList, '#B1B1B1', true);
           insideOther = false;
-          loopThroughObstacles(ob.center, (obstacle)=>{
-            if (ob.intersectOtherOb(obstacle))
+          for (var i in ob.vs)
+          {
+            if (inObjects(ob.vs[i]))
             {
               insideOther = true;
-              return;
+              break;
             }
-          });
+          }
 
         }
         addTo[addTo.length] = ob;
