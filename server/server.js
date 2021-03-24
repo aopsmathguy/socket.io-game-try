@@ -925,7 +925,7 @@ var Obstacle = function(vs, color, intersectable) {
         }
         var minDist = Number.MAX_VALUE;
         var pointOfInter = -1;
-        for (var i in this.vs)
+        for (var i = 0; i < this.vs.length; i++)
         {
             var v3 = this.vs[i];
             var v4 = this.vs[(i + 1) % this.vs.length];
