@@ -747,57 +747,6 @@ var Bullet = function(weapon) {
         });
         return false;
     }
-    this.pathIntersect = function(v1, v2) {
-        var v3 = this.pos;
-        var v4 = this.pos.subtract(this.vel.multiply(2));
-
-        var a1 = v2.y - v1.y;
-        var b1 = v1.x - v2.x;
-        var c1 = a1 * v1.x + b1 * v1.y;
-
-        var a2 = v4.y - v3.y;
-        var b2 = v3.x - v4.x;
-        var c2 = a2 * v3.x + b2 * v3.y;
-
-        var determinant = a1 * b2 - a2 * b1;
-
-        if (determinant == 0) {
-            return new Vector(Number.MAX_VALUE, Number.MAX_VALUE);
-        } else {
-            return new Vector((b2 * c1 - b1 * c2) / determinant, (a1 * c2 - a2 * c1) / determinant);
-        }
-    }
-
-    this.segmentIntersect = function(v1, v2) {
-        var v3 = this.pos;
-        var v4 = this.pos.subtract(this.vel.multiply(2));
-        var intersectionPoint = this.pathIntersect(v1, v2);
-        if (intersectionPoint.onSegment(v1, v2) && intersectionPoint.onSegment(v3, v4)) {
-            return intersectionPoint;
-        } else {
-            return -1;
-        }
-    }
-    this.objectIntersection = function(object) {
-        if (object.center.distanceTo(this.pos) > object.maxRadius + this.vel.magnitude()) {
-            return -1;
-        }
-        var vertices = object.vs;
-        //vertices.push(vertices[0]);
-        var smallestDistance = Number.MAX_VALUE;
-        var objectPoint = -1;
-        for (var i = 0; i < vertices.length; i++) {
-            var point = this.segmentIntersect(vertices[i], vertices[(i + 1) % vertices.length]);
-            if (point != -1) {
-                var dist = this.startPos.distanceTo(point);
-                if (dist < smallestDistance) {
-                    smallestDistance = dist;
-                    objectPoint = point;
-                }
-            }
-        }
-        return objectPoint;
-    }
     this.playerIntersection = function(player) {
         if (!player.alive) {
             return -1;
@@ -822,7 +771,7 @@ var Bullet = function(weapon) {
             {
               return;
             }
-            var point = this.objectIntersection(obstacle);
+            var point = obstacle.intersectSegment(this.pos.subtract(this.vel.multiply(2)),this.pos);
             if (point != -1) {
                 var dist = this.startPos.distanceTo(point);
                 if (dist < smallestDistance) {
@@ -967,6 +916,47 @@ var Obstacle = function(vs, color, intersectable) {
             }
         }
         return out;
+    }
+    this.intersectSegment = function(v1,v2)
+    {
+        if (this.center.distanceTo(v1) > v1.distanceTo(v2) + this.maxRadius)
+        {
+          return -1;
+        }
+        var minDist = Number.MAX_VALUE;
+        var pointOfInter = -1;
+        for (var i in this.vs)
+        {
+            var v3 = this.vs[i];
+            var v4 = this.vs[(i + 1) % this.vs.length];
+            
+            var a1 = v2.y - v1.y;
+            var b1 = v1.x - v2.x;
+            var c1 = a1 * v1.x + b1 * v1.y;
+
+            var a2 = v4.y - v3.y;
+            var b2 = v3.x - v4.x;
+            var c2 = a2 * v3.x + b2 * v3.y;
+
+            var determinant = a1 * b2 - a2 * b1;
+            
+            var lineInter;
+            if (determinant == 0) {
+                continue;
+            } else {
+                 lineInter = new Vector((b2 * c1 - b1 * c2) / determinant, (a1 * c2 - a2 * c1) / determinant);
+            }
+            if (lineInter.onSegment(v1,v2) && lineInter.onSegment(v3,v4))
+            {
+                var distanceToV1 = lineInter.distanceTo(v1);
+                if (distanceToV1 < minDist)
+                {
+                  pointOfInter = lineInter;
+                  minDist = distanceToV1;
+                }
+            }
+        }
+        return pointOfInter;
     }
     this.intersectOtherOb = function(ob)
     {
