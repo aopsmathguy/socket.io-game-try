@@ -780,7 +780,8 @@ var Bullet = function(weapon) {
         });
         var playerHit = -1;
         for (var key in state.players) {
-            var point = state.players[key].intersectSegment(this.pos.subtract(this.vel.multiply(2)),this.pos);
+            var v1 = this.pos.distanceTo(this.startPos) > 2 * this.vel.magnitude() ? this.pos.subtract(this.vel.multiply(2)) : this.startPos;
+            var point = state.players[key].intersectSegment(v1, this.pos);
             if (point != -1) {
                 var dist = this.startPos.distanceTo(point);
                 if (dist < smallestDistance) {
