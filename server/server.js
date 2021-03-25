@@ -181,7 +181,7 @@ var GameState = function(time, players, weapons) {
         }
         if (this.players[k].weapon != -1) {
             targetVel = targetVel.multiply(this.weapons[this.players[k].weapon].walkSpeedMult);
-            if (this.weapons[this.players[k].weapon].lastFireTime == 0) {
+            if (this.weapons[this.players[k].weapon].lastFireTime != 0) {
                 targetVel = targetVel.multiply(this.weapons[this.players[k].weapon].shootWalkSpeedMult);
             }
         }
