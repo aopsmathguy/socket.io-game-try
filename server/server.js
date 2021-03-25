@@ -112,6 +112,7 @@ var loopThroughObstacles = function(objectPos, inner) {
         }
     }
 }
+
 var obstacles;
 var borderObstacles;
 var gameState;
@@ -137,8 +138,10 @@ var GameState = function(time, players, weapons) {
     setIfUndefined(this, 'time', time);
     setIfUndefined(this, 'players', players);
     setIfUndefined(this, 'weapons', weapons);
+    setIfUndefined(this, 'weaponsSectors', []);
     this.step = function() {
         this.time = Date.now();
+        this.updateWeaponsSectors();
         for (var i in this.weapons)
         {
           this.weapons[i].setLastFireTime(this);
@@ -174,6 +177,38 @@ var GameState = function(time, players, weapons) {
             }
         }
     }
+    this.updateWeaponsSectors = function()
+    {
+      this.weaponsSectors = [];
+      for (var i = 0; i < gameWidth / gridWidth; i++) {
+          this.weaponsSectors[i] = [];
+          for (var j = 0; j < gameHeight / gridWidth; j++) {
+              this.weaponsSectors[i][j] = [];
+          }
+      }
+      for (var i in this.weapons)
+      {
+        var sector = obstacleSector(this.weapons[i].pos);
+        this.weaponsSectors[sector[0]][sector[1]].push(i);
+      }
+    }
+    this.loopThroughWeapons = function(pos, inner) {
+        var sector = obstacleSector(pos);
+        for (var i = sector[0] - 1; i < sector[0] + 2; i++) {
+            if (i < 0 || i >= this.weaponsSectors.length) {
+                continue;
+            }
+            for (var j = sector[1] - 1; j < sector[1] + 2; j++) {
+                if (j < 0 || j >= this.weaponsSectors[i].length) {
+                    continue;
+                }
+                var arrWeaponIdx = this.weaponsSectors[i][j];
+                for (var idx in arrWeaponIdx) {
+                    inner(this.weapons[arrWeaponIdx[idx]]);
+                }
+            }
+        }
+    }
     this.controls = function(k) {
         var targetVel = new Vector((controls[k].keys[68] ? 1 : 0) + (controls[k].keys[65] ? -1 : 0), (controls[k].keys[83] ? 1 : 0) + (controls[k].keys[87] ? -1 : 0));
         if (!targetVel.magnitude() == 0) {
@@ -191,16 +226,16 @@ var GameState = function(time, players, weapons) {
         if (this.players[k].justKeyDowned[70]) {
             var minDist = this.players[k].reachDist;
             var idx = -1;
-            for (var i = 0; i < this.weapons.length; i++) {
-                if (this.weapons[i].hold) {
+            this.loopThroughWeapons( this.players[k].pos, (weapon) => {
+                if (weapon.hold) {
                     continue;
                 }
-                var distance = this.players[k].pos.distanceTo(this.weapons[i].pos);
+                var distance = this.players[k].pos.distanceTo(weapon.pos);
                 if (distance < minDist) {
                     idx = i;
                     minDist = distance;
                 }
-            }
+            });
             if (idx != -1) {
                 this.players[k].pickUpWeapon(this,idx);
             }
