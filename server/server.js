@@ -228,7 +228,7 @@ var GameState = function(time, players, weapons) {
             var idx = -1;
             this.loopThroughWeapons( this.players[k].pos, (weapon) => {
                 if (weapon.hold) {
-                    continue;
+                    return;
                 }
                 var distance = this.players[k].pos.distanceTo(weapon.pos);
                 if (distance < minDist) {
