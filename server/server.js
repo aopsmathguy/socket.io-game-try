@@ -535,6 +535,10 @@ var Player = function(xStart, yStart, name, id) {
             weapon.hold = false;
             weapon.cancelReload();
             weapon.playerHolding = -1;
+            if (weapon.lastFireTime != 0)
+            {
+              weapon.lastFireTime = -1;
+            }
         }
         this.autoShot = false;
     }
