@@ -46,6 +46,7 @@ io.on('connection', client => {
         }
     });
     client.on('mousemove', (ang) => {
+        console.log(ang);
         if (typeof ang !== 'undefined' && controls[client.id] && gameState.players[client.id])
             controls[client.id].ang = ang;
     });
