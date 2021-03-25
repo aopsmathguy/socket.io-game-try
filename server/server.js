@@ -140,6 +140,10 @@ var GameState = function(time, players, weapons) {
     setIfUndefined(this, 'weapons', weapons);
     this.step = function() {
         this.time = Date.now();
+        for (var i in this.weapons)
+        {
+          this.weapons[i].setLastFireTime();
+        }
         for (var k in this.players) {
             var player = this.players[k];
             if (player.alive) {
@@ -178,7 +182,7 @@ var GameState = function(time, players, weapons) {
         }
         if (this.players[k].weapon != -1) {
             targetVel = targetVel.multiply(this.weapons[this.players[k].weapon].walkSpeedMult);
-            if (this.time - this.weapons[this.players[k].weapon].lastFireTime < 60000 / this.weapons[this.players[k].weapon].firerate) {
+            if (this.weapons[this.players[k].weapon].lastFireTime == 0) {
                 targetVel = targetVel.multiply(this.weapons[this.players[k].weapon].shootWalkSpeedMult);
             }
         }
@@ -280,7 +284,7 @@ var makeObstacles = function() {
       while (insideOther)
       {
         var center = findSpawnPosition();
-        var house = new House1(center.x,center.y, 2*Math.PI*Math.random());
+        var house = new House1(center.x,center.y, Math.PI/2*Math.floor(4*Math.random()));
         for (var i in house.obstacles)
         {
           var ob = house.obstacles[i];
@@ -310,7 +314,7 @@ var makeObstacles = function() {
       while (insideOther)
       {
         var center = findSpawnPosition();
-        var house = new House2(center.x,center.y, 2*Math.PI*Math.random());
+        var house = new House2(center.x,center.y, Math.PI/2*Math.floor(4*Math.random()));
         for (var i in house.obstacles)
         {
           var ob = house.obstacles[i];
@@ -466,7 +470,12 @@ var Player = function(xStart, yStart, name, id) {
     {
       if (this.slot != newSlot && this.weapon != -1)
       {
-        state.weapons[this.weapon].cancelReload();
+        var prevWeapon = state.weapons[this.weapon];
+        prevWeapon.cancelReload();
+        if (prevWeapon.lastFireTime != 0)
+        {
+          prevWeapon.lastFireTime = -1;
+        }
       }
       this.slot = newSlot;
       if (newSlot < this.weapons.length)
@@ -476,6 +485,11 @@ var Player = function(xStart, yStart, name, id) {
       else
       {
         this.weapon = -1;
+      }
+      var currWeapon = state.weapons[this.weapon];
+      if (currWeapon.lastFireTime != 0)
+      {
+        currWeapon.lastFireTime = state.time;
       }
       this.snapWeapon(state);
 
@@ -677,16 +691,31 @@ var Gun = function(name, startX, startY, length, auto, firerate, multishot, capa
     this.copy = function() {
         return new Gun(this.name, this.pos.x, this.pos.y, this.length, this.auto, this.firerate, this.multishot, this.capacity, this.reloadTime, this.bulletSpeed, this.damage, this.damageDrop, this.damageRange, this.damageDropTension, this.range, this.defSpray, this.sprayCoef, this.stability, this.kickAnimation, this.animationMult, this.walkSpeedMult, this.shootWalkSpeedMult, this.color, this.handPos1.x, this.handPos1.y, this.handPos2.x, this.handPos2.y);
     }
+    this.setLastFireTime = function(state)
+    {
+      if (this.lastFireTime == 0)
+      {
+         
+      }
+      else if (this.lastFireTime == -1)
+      {
+        
+      }
+      else if (state.time - this.lastFireTime >= 60000 / this.firerate) {
+         this.lastFireTime = 0;
+      }
+    }
     this.reload = function(timeNow) {
-        if (this.bulletsRemaining < this.capacity && this.reloadStartTime == -1 && timeNow - this.lastFireTime >= 60000 / this.firerate) {
+        if (this.bulletsRemaining < this.capacity && this.reloadStartTime == -1 && this.lastFireTime == 0) {
             this.reloadStartTime = timeNow;
         }
     }
     this.cancelReload = function() {
         this.reloadStartTime = -1;
+        
     }
     this.fireBullets = function(timeNow) {
-        if (timeNow - this.lastFireTime >= 60000 / this.firerate && this.reloadStartTime == -1) {
+        if (this.lastFireTime == 0 && this.reloadStartTime == -1) {
             if (this.bulletsRemaining > 0) {
                 for (var i = 0; i < this.multishot; i++) {
                     if (!this.stickingThroughWall()) {
