@@ -31,8 +31,7 @@ io.on('connection', client => {
         client.sendBuffer = [];
     });
     client.on('keydown', (keycode) => {
-        if (keycode)
-        {
+        if (typeof keycode !== 'undefined') {
             if (controls[client.id] && gameState.players[client.id]) {
                 controls[client.id].keys[keycode] = true;
                 gameState.players[client.id].justKeyDowned[keycode] = true;
@@ -40,15 +39,15 @@ io.on('connection', client => {
         }
     });
     client.on('keyup', (keycode) => {
-        if (keycode)
+        if (typeof keycode !== 'undefined') {
         {
             if (controls[client.id] && gameState.players[client.id])
                 controls[client.id].keys[keycode] = false;
         }
     });
     client.on('mousemove', (ang) => {
-        if (controls[client.id] && gameState.players[client.id])
-            controls[client.id].ang = (ang ? ang : 0);
+        if (typeof ang !== 'undefined' && controls[client.id] && gameState.players[client.id])
+            controls[client.id].ang = ang;
     });
     client.on('mousedown', () => {
         if (controls[client.id] && gameState.players[client.id]) {
