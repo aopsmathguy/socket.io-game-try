@@ -204,7 +204,7 @@ var GameState = function(time, players, weapons) {
                 }
                 var arrWeaponIdx = this.weaponsSectors[i][j];
                 for (var idx in arrWeaponIdx) {
-                    inner(this.weapons[arrWeaponIdx[idx]]);
+                    inner(arrWeaponIdx[idx]);
                 }
             }
         }
@@ -226,13 +226,13 @@ var GameState = function(time, players, weapons) {
         if (this.players[k].justKeyDowned[70]) {
             var minDist = this.players[k].reachDist;
             var idx = -1;
-            this.loopThroughWeapons( this.players[k].pos, (weapon) => {
-                if (weapon.hold) {
+            this.loopThroughWeapons( this.players[k].pos, (weaponIdx) => {
+                if (this.weapons[weaponIdx].hold) {
                     return;
                 }
-                var distance = this.players[k].pos.distanceTo(weapon.pos);
+                var distance = this.players[k].pos.distanceTo(this.weapons[weaponIdx].pos);
                 if (distance < minDist) {
-                    idx = i;
+                    idx = weaponIdx;
                     minDist = distance;
                 }
             });
