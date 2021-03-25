@@ -142,7 +142,7 @@ var GameState = function(time, players, weapons) {
         this.time = Date.now();
         for (var i in this.weapons)
         {
-          this.weapons[i].setLastFireTime();
+          this.weapons[i].setLastFireTime(this);
         }
         for (var k in this.players) {
             var player = this.players[k];
