@@ -48,7 +48,7 @@ io.on('connection', client => {
     });
     client.on('mousemove', (ang) => {
         if (controls[client.id] && gameState.players[client.id])
-            controls[client.id].ang = ang || 0;
+            controls[client.id].ang = (ang ? ang : 0);
     });
     client.on('mousedown', () => {
         if (controls[client.id] && gameState.players[client.id]) {
