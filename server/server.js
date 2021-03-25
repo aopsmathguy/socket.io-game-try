@@ -46,7 +46,6 @@ io.on('connection', client => {
         }
     });
     client.on('mousemove', (ang) => {
-        console.log(ang);
         if (typeof ang !== 'undefined' && controls[client.id] && gameState.players[client.id])
             controls[client.id].ang = ang;
     });
@@ -486,10 +485,13 @@ var Player = function(xStart, yStart, name, id) {
       {
         this.weapon = -1;
       }
-      var currWeapon = state.weapons[this.weapon];
-      if (currWeapon.lastFireTime != 0)
+      if (this.weapon != -1)
       {
-        currWeapon.lastFireTime = state.time;
+        var currWeapon = state.weapons[this.weapon];
+        if (currWeapon.lastFireTime != 0)
+        {
+          currWeapon.lastFireTime = state.time;
+        }
       }
       this.snapWeapon(state);
 
