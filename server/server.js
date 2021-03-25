@@ -40,7 +40,7 @@ io.on('connection', client => {
     });
     client.on('keyup', (keycode) => {
         if (typeof keycode !== 'undefined') {
-        {
+        
             if (controls[client.id] && gameState.players[client.id])
                 controls[client.id].keys[keycode] = false;
         }
