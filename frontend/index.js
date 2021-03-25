@@ -406,7 +406,17 @@ var GameState = function () {
   {
     var weapon = this.weapons[i];
     var ctx = myGameArea.context;
-
+    if (!weapon.hold)
+    {
+      
+      ctx.strokeStyle = weapon.color;
+      drawer.lineWidth(ctx,6);
+      ctx.beginPath();
+      drawer.circle(ctx,weapon.pos,30);
+      ctx.closePath();
+      ctx.stroke();
+    }
+    
     ctx.strokeStyle = "#000";
     drawer.lineWidth(ctx, 12);
     ctx.beginPath();
@@ -562,7 +572,8 @@ var Bullet = function () {
     var ctx = myGameArea.context;
     const g = drawer.createLinearGradient(ctx, this.pos, this.tailPos);
     g.addColorStop(0, hexToRgbA(pSBC(0, this.color), 1)); // opaque
-    g.addColorStop(1, hexToRgbA(pSBC(0, this.color), 0)); // transparent
+    g.addColorStop(0.2, hexToRgbA(pSBC(0, this.color), 1));
+    g.addColorStop(1, hexToRgbA(pSBC(0.3, this.color), 0)); // transparent
     ctx.strokeStyle = g;
 
     drawer.lineWidth(ctx, 6);
