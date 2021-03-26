@@ -778,22 +778,15 @@ var Gun = function(name, startX, startY, length, auto, firerate, multishot, capa
             }
         });
         loopThroughObstacles(this.pos, (obstacle) => {
-            for (var i = 0; i < obstacle.vs.length; i++)
+            
+            var closestPoint = obstacle.closestPoint(this.pos);
+            var dist = this.pos.distanceTo(closestPoint);
+            var stretch = this.radius - dist;
+            if (stretch > 0)
             {
-                var v1 = obstacle.vs[i];
-                var v2 = obstacle.vs[(i+1)%obstacle.vs.length];
-                var closestPoint = this.pos.closestToLine(v1,v2);
-                if (!closestPoint.onSegment(v1,v2))
-                {
-                    continue;
-                }
-                var dist = this.pos.distanceTo(closestPoint);
-                var stretch = this.radius - dist;
-                if (stretch > 0)
-                {
-                    finalForce = finalForce.add((new Vector(stretch,0)).rotate(this.pos.angTo(closestPoint)));
-                }
+                finalForce = finalForce.add((new Vector(stretch,0)).rotate(this.pos.angTo(closestPoint)));
             }
+            
         });
         this.vel = this.vel.add(finalForce).multiply(0.9);
     }
