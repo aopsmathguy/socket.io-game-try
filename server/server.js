@@ -780,7 +780,7 @@ var Gun = function(name, startX, startY, length, auto, firerate, multishot, capa
         }
         for (var i in this.bullets) {
             this.bullets[i].step(state);
-            if (this.bullets[i].stopAnimationAge > this.bullets[i].fadeTime) {
+            if (this.bullets[i].delete) {
                 delete this.bullets[i];
             }
         }
@@ -831,13 +831,13 @@ var Bullet = function(weapon) {
 
     setIfUndefined(this, 'range', weapon.range);
     setIfUndefined(this, 'hitPoint', -1);
-    setIfUndefined(this, 'fadeTime', 10);
-    setIfUndefined(this, 'trailLength', this.bulletSpeed * this.fadeTime);
-    setIfUndefined(this, 'stopAnimationAge', 0);
+    setIfUndefined(this, 'trailLength', this.bulletSpeed * 10);
     setIfUndefined(this, 'color', weapon.color);
 
-
     setIfUndefined(this, 'bulletFiredBy', weapon.playerHolding);
+    setIfUndefined(this, 'delete', false);
+  
+  
     this.step = function(state) {
         this.pos = this.pos.add(this.vel);
         if (this.tailPos.distanceTo(this.pos) > this.trailLength) {
@@ -854,8 +854,13 @@ var Bullet = function(weapon) {
             if (this.hitPoint == -1 && this.pos.distanceTo(this.startPos) > this.range) {
                 this.hitPoint = this.pos.copy();
             }
-        } else {
-            this.stopAnimationAge += 1;
+        }
+        else
+        {
+            if (this.startPos.distanceTo(this.hitPoint) < this.startPos.distanceTo(this.tailPos))
+            {
+              this.delete = true;
+            }
         }
     }
     this.calculateDamage = function() {
