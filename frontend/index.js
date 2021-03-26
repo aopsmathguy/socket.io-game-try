@@ -510,7 +510,7 @@ var GameState = function () {
     var player = this.players[i];
     var pos = player.pos.add(new Vector(0,50));
     var disPos = drawer.transform(pos);
-    blackBoxedText(player.name, "bold 10px Courier New", 10, disPos.x, disPos.y, 2, 1,'center');
+    blackBoxedText(player.name, "bold 12px Courier New", 12, disPos.x, disPos.y, 3, 1,'center');
   }
   this.snapWeapons = function()
   {
@@ -624,9 +624,9 @@ var Drawer = function () {
 
     character = state.players[controlId];
 
-    this.targetScale = this.zoom / 30000 * (9 * myGameArea.canvas.width + 16 * myGameArea.canvas.height);
+    this.targetScale = this.zoom / 40000 * (9 * myGameArea.canvas.width + 16 * myGameArea.canvas.height);
     this.scroll = character.pos.add((new Vector(Math.random() - 0.5, Math.random() - 0.5)).multiply(this.screenShake));
-    this.scale = 0.9 * (this.scale - this.targetScale) + this.targetScale;
+    this.scale *= Math.pow(this.targetScale/this.scale,0.1);
   }
 }
 var Obstacle = function () {
