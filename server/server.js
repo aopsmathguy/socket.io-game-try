@@ -791,7 +791,7 @@ var Gun = function(name, startX, startY, length, auto, firerate, multishot, capa
             }
             
         });
-        this.vel = this.vel.add(finalForce).multiply(0.9);
+        this.vel = this.vel.add(finalForce).multiply(0.5);
     }
     this.step = function()
     {
