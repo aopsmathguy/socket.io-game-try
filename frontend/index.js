@@ -255,12 +255,18 @@ var controlsBundle = {
   start: function () {
     window.addEventListener('keydown', function (e) {
       controlsBundle.keys = (controlsBundle.keys || []);
-      controlsBundle.keys[e.keyCode] = true;
-      socket.emit('keydown', e.keyCode);
+      if (!controlsBundle.keys[e.keyCode])
+      {
+        controlsBundle.keys[e.keyCode] = true;
+        socket.emit('keydown', e.keyCode);
+      }
     })
     window.addEventListener('keyup', function (e) {
-      controlsBundle.keys[e.keyCode] = false;
-      socket.emit('keyup', e.keyCode);
+      if (controlsBundle.keys[e.keyCode])
+      {
+        controlsBundle.keys[e.keyCode] = false;
+        socket.emit('keyup', e.keyCode);
+      }
     })
 
     const rect = myGameArea.canvas.getBoundingClientRect();
