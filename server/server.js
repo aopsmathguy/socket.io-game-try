@@ -221,7 +221,7 @@ var GameState = function(time, players, weapons) {
             }
         }
         this.players[k].vel = this.players[k].vel.add(targetVel.subtract(this.players[k].vel).multiply(this.players[k].agility));
-        this.players[k].ang = controls[k].ang;
+        this.players[k].ang = controls[k].ang || 0;
 
         if (this.players[k].justKeyDowned[70]) {
             var minDist = this.players[k].reachDist;
