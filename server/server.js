@@ -3,7 +3,7 @@ const gameHeight = 4000;
 const numOb = 90;
 const numHouse1 = 6;
 const numHouse2 = 6;
-const gridWidth = 400;
+const gridWidth = 250;
 const framesPerTick = 3;
 
 const io = require('socket.io')();
@@ -774,20 +774,23 @@ var Gun = function(name, startX, startY, length, auto, firerate, multishot, capa
             var stretch = this.radius + weapon.radius - dist;
             if (stretch > 0)
             {
-                finalForce = finalForce.add((new Vector(0.1*stretch,0)).rotate(this.pos.angTo(weapon.pos)));
+                finalForce = finalForce.add((new Vector(0.4*stretch,0)).rotate(this.pos.angTo(weapon.pos)));
             }
         });
-        /*loopThroughObstacles(this.pos, (obstacle) => {
-            
+        loopThroughObstacles(this.pos, (obstacle) => {
+            if (this.pos.distanceTo(obstacle.center) > this.radius + obstacle.maxRadius)
+            {
+                return;
+            }
             var closestPoint = obstacle.closestPoint(this.pos);
             var dist = this.pos.distanceTo(closestPoint);
             var stretch = this.radius - dist;
             if (stretch > 0)
             {
-                finalForce = finalForce.add((new Vector(stretch,0)).rotate(this.pos.angTo(closestPoint)));
+                finalForce = finalForce.add((new Vector(0.4*stretch,0)).rotate(this.pos.angTo(closestPoint)));
             }
             
-        });*/
+        });
         this.vel = this.vel.add(finalForce).multiply(0.9);
     }
     this.step = function()
