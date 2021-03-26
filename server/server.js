@@ -763,7 +763,7 @@ var Gun = function(name, startX, startY, length, auto, firerate, multishot, capa
             var weapon = state.weapons[weaponIdx];
             if (weapon == this)
             {
-                continue;
+                return;
             }
             var dist = this.pos.distanceTo(weapon.pos);
             if (dist < 0.1)
