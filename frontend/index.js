@@ -346,7 +346,7 @@ var GameState = function () {
         this.displayPlayer(idx);
     }
     for (var idx in this.players) {
-      if (this.players[idx].alive && idx != controlId)
+      if (this.players[idx].alive)
         this.displayName(idx);
     }
     //this.displayReloadTime();
@@ -502,13 +502,9 @@ var GameState = function () {
   {
 
     var player = this.players[i];
-    var ctx = myGameArea.context;
-      ctx.save();
-      ctx.font = "bold 10px Courier New";
-      ctx.fillStyle = '#fff';
-      ctx.textAlign = "center";
-      drawer.fillText(ctx, player.pos.add(new Vector(0,40)), player.name);
-      ctx.restore();
+    var pos = player.pos.add(new Vector(0,40));
+    var disPos = drawer.transform(pos);
+    blackBoxedText(player.name, "bold 10px Courier New", 10, disPos.x, disPos.y, 2, 1,'center');
   }
   this.snapWeapons = function()
   {
@@ -591,28 +587,31 @@ var Drawer = function () {
   this.targetScale;
   this.screenShake = this.screenShake || 0;
   this.moveContext = function (ctx, point) {
-    var displayPoint = point.subtract(this.scroll).multiply(this.scale).add((new Vector(myGameArea.canvas.width, myGameArea.canvas.height)).multiply(0.5));
+    var displayPoint = this.transform(point);
     ctx.moveTo(displayPoint.x, displayPoint.y);
+  }
+  this.transform = function(point){
+    return point.subtract(this.scroll).multiply(this.scale).add((new Vector(myGameArea.canvas.width, myGameArea.canvas.height)).multiply(0.5));
   }
   this.lineWidth = function (ctx, width) {
     ctx.lineWidth = width * this.scale;
   }
   this.lineContext = function (ctx, point) {
-    var displayPoint = point.subtract(this.scroll).multiply(this.scale).add((new Vector(myGameArea.canvas.width, myGameArea.canvas.height)).multiply(0.5));
+    var displayPoint = this.transform(point);
     ctx.lineTo(displayPoint.x, displayPoint.y);
   }
   this.circle = function (ctx, point, radius) {
-    var displayPoint = point.subtract(this.scroll).multiply(this.scale).add((new Vector(myGameArea.canvas.width, myGameArea.canvas.height)).multiply(0.5));
+    var displayPoint = this.transform(point);
     ctx.arc(displayPoint.x, displayPoint.y, radius * this.scale, 0, 2 * Math.PI, false);
   }
   this.createLinearGradient = function (ctx, start, end) {
-    var newStart = start.subtract(this.scroll).multiply(this.scale).add((new Vector(myGameArea.canvas.width, myGameArea.canvas.height)).multiply(0.5));
-    var newEnd = end.subtract(this.scroll).multiply(this.scale).add((new Vector(myGameArea.canvas.width, myGameArea.canvas.height)).multiply(0.5));
+    var newStart = this.transform(start);
+    var newEnd = this.transform(end);
     return ctx.createLinearGradient(newStart.x, newStart.y, newEnd.x, newEnd.y);
   }
   this.fillText = function(ctx, point, txt)
   {
-    var displayPoint = point.subtract(this.scroll).multiply(this.scale).add((new Vector(myGameArea.canvas.width, myGameArea.canvas.height)).multiply(0.5));
+    var displayPoint = this.transform(point);
     ctx.fillText(txt, displayPoint.x,displayPoint.y);
   }
   this.update = function (state) {
