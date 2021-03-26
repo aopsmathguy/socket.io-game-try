@@ -761,7 +761,7 @@ var Gun = function(name, startX, startY, length, auto, firerate, multishot, capa
         var finalForce = new Vector(0,0);
         state.loopThroughWeapons(this.pos, (weaponIdx) => {
             var weapon = state.weapons[weaponIdx];
-            if (weapon == this)
+            if (weapon == this || weapon.hold)
             {
                 return;
             }
