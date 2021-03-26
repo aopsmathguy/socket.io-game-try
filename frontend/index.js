@@ -923,6 +923,7 @@ var linearGameState = function() {
         if (left.weapons[i] == undefined || right.weapons[i] == undefined) {
             continue;
         }
+        out.weapons[i].pos = linearPosition(left.weapons[i].pos,right.weapons[i].pos, displayTime, left.time,right.time);
         for (var j in out.weapons[i].bullets) {
             if (left.weapons[i].bullets[j] == undefined) {
                 var rightBull = right.weapons[i].bullets[j];
