@@ -502,7 +502,7 @@ var GameState = function () {
   {
 
     var player = this.players[i];
-    var pos = player.pos.add(new Vector(0,40));
+    var pos = player.pos.add(new Vector(0,50));
     var disPos = drawer.transform(pos);
     blackBoxedText(player.name, "bold 10px Courier New", 10, disPos.x, disPos.y, 2, 1,'center');
   }
@@ -795,11 +795,14 @@ var linearGameState = function()
      out.snapWeapons();
     return out;*/
       rightIdx = gameStates.length - 1;
-      buffer += 2;
   }
-  if (gameStates.length > 3)
+  if (gameStates.length > 4)
   {
-    buffer -= 1;
+    buffer -= 2;
+  }
+  else if (gameStates.length < 4)
+  {
+      buffer += 2;
   }
 
   var right = gameStates[rightIdx];
