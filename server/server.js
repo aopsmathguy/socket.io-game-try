@@ -386,7 +386,7 @@ var makeObstacles = function() {
           var center = findSpawnPosition();
           addTo = obstacles[Math.floor(center.x / gridWidth)][Math.floor(center.y / gridWidth)];
 
-          var resolution = 32;
+          var resolution = 6;
           var vertList = [];
           var distList = [];
           var size = Math.random();
@@ -394,7 +394,7 @@ var makeObstacles = function() {
               distList[i] = (0.5 + 0.5*size) * (40 + 70 * Math.random());
 
           }
-          for (var i = 0; i < 12; i++) {
+          for (var i = 0; i < 2; i++) {
               var temp = [];
               for (var j = 0; j < resolution; j++) {
                   temp[j] = distList[j];
