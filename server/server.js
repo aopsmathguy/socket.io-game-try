@@ -777,7 +777,7 @@ var Gun = function(name, startX, startY, length, auto, firerate, multishot, capa
                 finalForce = finalForce.add((new Vector(0.1*stretch,0)).rotate(this.pos.angTo(weapon.pos)));
             }
         });
-        loopThroughObstacles(this.pos, (obstacle) => {
+        /*loopThroughObstacles(this.pos, (obstacle) => {
             
             var closestPoint = obstacle.closestPoint(this.pos);
             var dist = this.pos.distanceTo(closestPoint);
@@ -787,7 +787,7 @@ var Gun = function(name, startX, startY, length, auto, firerate, multishot, capa
                 finalForce = finalForce.add((new Vector(stretch,0)).rotate(this.pos.angTo(closestPoint)));
             }
             
-        });
+        });*/
         this.vel = this.vel.add(finalForce).multiply(0.9);
     }
     this.step = function()
