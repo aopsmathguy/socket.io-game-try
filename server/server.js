@@ -145,6 +145,11 @@ var GameState = function(time, players, weapons) {
         for (var i in this.weapons)
         {
           this.weapons[i].setLastFireTime(this);
+          this.weapons[i].pushFromAll(this);
+        }
+        for (var i in this.weapons)
+        {
+          this.weapons[i].step();
         }
         for (var k in this.players) {
             var player = this.players[k];
@@ -723,6 +728,7 @@ var Gun = function(name, startX, startY, length, auto, firerate, multishot, capa
     setIfUndefined(this, 'lastFireTime', 0);
 
     setIfUndefined(this, 'hold', false);
+    setIfUndefined(this, 'radius', 30);
 
     setIfUndefined(this, 'bullets', {});
     setIfUndefined(this, 'bulletsArrLength', 0);
@@ -745,6 +751,59 @@ var Gun = function(name, startX, startY, length, auto, firerate, multishot, capa
       else if (state.time - this.lastFireTime >= 60000 / this.firerate) {
          this.lastFireTime = 0;
       }
+    }
+    this.pushFromAll = function(state)
+    {
+        if (this.hold)
+        {
+            return;
+        }
+        var finalForce = new Vector(0,0);
+        state.loopThroughWeapons(this.pos, (weaponIdx) => {
+            var weapon = state.weapons[weaponIdx];
+            if (weapon == this)
+            {
+                continue;
+            }
+            var dist = this.pos.distanceTo(weapon.pos);
+            if (dist < 0.1)
+            {
+                this.pos = this.pos.add(new Vector(Math.random(),Math.random()));
+                dist = this.pos.distanceTo(weapon.pos);
+            }
+            var stretch = this.radius + weapon.radius - dist;
+            if (stretch > 0)
+            {
+                finalForce = finalForce.add((new Vector(-0.1*stretch,0)).rotate(this.pos.angTo(weapon.pos)));
+            }
+        });
+        loopThroughObstacles(this.pos, (obstacle) => {
+            for (var i = 0; i < obstacle.vs.length; i++)
+            {
+                var v1 = obstacle.vs[i];
+                var v2 = obstacle.vs[(i+1)%obstacle.vs.length];
+                var closestPoint = this.pos.closestToLine(v1,v2);
+                if (!closestPoint.onSegment(v1,v2))
+                {
+                    continue;
+                }
+                var dist = this.pos.distanceTo(closestPoint);
+                var stretch = this.radius - dist;
+                if (stretch > 0)
+                {
+                    finalForce = finalForce.add((new Vector(-0.1*stretch,0)).rotate(this.pos.angTo(closestPoint)));
+                }
+            }
+        });
+        return finalForce;
+    }
+    this.step = function()
+    {
+        if (this.hold)
+        {
+            return;
+        }
+        this.pos = this.pos.add(this.vel);
     }
     this.reload = function(timeNow) {
         if (this.bulletsRemaining < this.capacity && this.reloadStartTime == -1 && this.lastFireTime == 0) {
@@ -947,7 +1006,6 @@ var Obstacle = function(vs, color, intersectable) {
             this.center = this.center.add(this.vs[i]);
         }
         this.center = this.center.multiply(1 / this.vs.length);
-
     }
     if (this.maxRadius == undefined) {
         this.maxRadius = 0;
