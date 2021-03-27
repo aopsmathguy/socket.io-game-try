@@ -93,10 +93,24 @@ var obstacleSector = function(point) {
     return [Math.floor(point.x / gridWidth), Math.floor(point.y / gridWidth)];
 }
 var loopThroughObstacles = function(objectPos, inner) {
-    for (var i in borderObstacles) {
-        inner(borderObstacles[i]);
-    }
     var sector = obstacleSector(objectPos);
+    if (sector[0] == 0)
+    {
+        inner(borderObstacles[0]);
+    }
+    else if (sector[0] == obstacles.length - 1)
+    {
+        inner(borderObstacles[1]);
+    }
+    if (sector[1] == 0)
+    {
+        inner(borderObstacles[2]);
+    }
+    else if (sector[1] == obstacles[0].length - 1)
+    {
+        inner(borderObstacles[3]);
+    }
+    
     for (var i = sector[0] - 1; i < sector[0] + 2; i++) {
         if (i < 0 || i >= obstacles.length) {
             continue;
