@@ -695,7 +695,7 @@ var Gun = function(name, startX, startY, length, auto, firerate, multishot, capa
     setIfUndefined(this, 'name', name);
     setIfUndefined(this, 'pos', new Vector(startX, startY));
     setIfUndefined(this, 'vel', new Vector(0, 0));
-    setIfUndefined(this, 'ang', 0);
+    setIfUndefined(this, 'ang', -Math.PI/6);
     setIfUndefined(this, 'length', length);
     setIfUndefined(this, 'auto', auto);
     setIfUndefined(this, 'multishot', multishot);
