@@ -913,7 +913,7 @@ var linearGameState = function() {
 
     var right = gameStates[rightIdx];
     var left = gameStates[rightIdx - 1];
-
+    console.log(1000/(right.time - left.time));
     var out = JSON.parse(JSON.stringify(right));
     giveMethods(out);
     out.time = displayTime;
@@ -978,6 +978,7 @@ function updateGameArea() {
         }
         state.render();
         emitMousePos();
+        
     }
 }
 
