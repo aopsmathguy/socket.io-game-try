@@ -571,7 +571,7 @@ var Player = function(xStart, yStart, name, id) {
             this.weapon = -1;
 
             weapon.pos = this.pos;
-            weapon.vel = (new Vector(-10, 0)).rotate(this.ang);
+            weapon.vel = (new Vector(-16, 0)).rotate(this.ang);
             
             weapon.ang = -Math.PI/6;
             
