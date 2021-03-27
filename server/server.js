@@ -1,6 +1,6 @@
 const gameWidth = 4000;
 const gameHeight = 4000;
-const numOb = 200;
+const numOb = 400;
 const numHouse1 = 30;
 const numHouse2 = 30;
 const gridWidth = 250;
