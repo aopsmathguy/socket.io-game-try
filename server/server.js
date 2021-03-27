@@ -781,7 +781,7 @@ var Gun = function(name, startX, startY, length, auto, firerate, multishot, capa
             }
         });
         loopThroughObstacles(this.pos, (obstacle) => {
-            if (this.pos.distanceTo(obstacle.center) > this.radius + obstacle.maxRadius)
+            if (this.pos.distanceTo(obstacle.center) > this.radius + obstacle.maxRadius || !obstacle.intersectable)
             {
                 return;
             }
