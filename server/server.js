@@ -571,7 +571,10 @@ var Player = function(xStart, yStart, name, id) {
             this.weapon = -1;
 
             weapon.pos = this.pos;
-            weapon.vel = new Vector(0, 0);
+            weapon.vel = (new Vector(-5, 0)).rotate(this.ang);
+            
+            weapon.ang = -Math.PI/6;
+            
             weapon.hold = false;
             weapon.cancelReload();
             weapon.playerHolding = -1;
@@ -774,7 +777,7 @@ var Gun = function(name, startX, startY, length, auto, firerate, multishot, capa
             var stretch = this.radius + weapon.radius - dist;
             if (stretch > 0)
             {
-                finalForce = finalForce.add((new Vector(0.4*stretch,0)).rotate(this.pos.angTo(weapon.pos)));
+                finalForce = finalForce.add((new Vector(0.3*stretch,0)).rotate(this.pos.angTo(weapon.pos)));
             }
         });
         loopThroughObstacles(this.pos, (obstacle) => {
@@ -787,11 +790,11 @@ var Gun = function(name, startX, startY, length, auto, firerate, multishot, capa
             var stretch = this.radius - dist;
             if (stretch > 0)
             {
-                finalForce = finalForce.add((new Vector(0.4*stretch,0)).rotate(this.pos.angTo(closestPoint)));
+                finalForce = finalForce.add((new Vector(0.3*stretch,0)).rotate(this.pos.angTo(closestPoint)));
             }
             
         });
-        this.vel = this.vel.add(finalForce).multiply(0.5);
+        this.vel = this.vel.add(finalForce).multiply(0.6);
     }
     this.step = function()
     {
