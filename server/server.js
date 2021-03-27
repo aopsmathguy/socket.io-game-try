@@ -407,7 +407,7 @@ var makeObstacles = function() {
           var distList = [];
           var size = Math.random();
           for (var i = 0; i < resolution; i++) {
-              distList[i] = (0.5 + 0.5*size) * (60 * Math.random());
+              distList[i] = (0.5 + 0.5*size) * (60);
 
           }
           for (var i = 0; i < 6; i++) {
