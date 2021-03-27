@@ -1,8 +1,8 @@
 const gameWidth = 4000;
 const gameHeight = 4000;
-const numOb = 400;
-const numHouse1 = 30;
-const numHouse2 = 30;
+const numOb = 70;
+const numHouse1 = 6;
+const numHouse2 = 6;
 const gridWidth = 250;
 const framesPerTick = 3;
 
@@ -386,7 +386,7 @@ var makeObstacles = function() {
           var center = findSpawnPosition();
           addTo = obstacles[Math.floor(center.x / gridWidth)][Math.floor(center.y / gridWidth)];
 
-          var resolution = 128;
+          var resolution = 16;
           var vertList = [];
           var distList = [];
           var size = Math.random();
@@ -394,7 +394,7 @@ var makeObstacles = function() {
               distList[i] = (0.5 + 0.5*size) * (40 + 70 * Math.random());
 
           }
-          for (var i = 0; i < 12; i++) {
+          for (var i = 0; i < 6; i++) {
               var temp = [];
               for (var j = 0; j < resolution; j++) {
                   temp[j] = distList[j];
