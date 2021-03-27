@@ -403,12 +403,12 @@ var makeObstacles = function() {
           var center = findSpawnPosition();
           addTo = obstacles[Math.floor(center.x / gridWidth)][Math.floor(center.y / gridWidth)];
 
-          var resolution = 16;
+          var resolution = 6;
           var vertList = [];
           var distList = [];
           var size = Math.random();
           for (var i = 0; i < resolution; i++) {
-              distList[i] = (0.5 + 0.5*size) * (40 + 70 * Math.random());
+              distList[i] = (0.5 + 0.5*size) * (60 * Math.random());
 
           }
           for (var i = 0; i < 6; i++) {
