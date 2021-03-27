@@ -140,6 +140,7 @@ var GameState = function(time, players, weapons) {
     setIfUndefined(this, 'weapons', weapons);
     setIfUndefined(this, 'weaponsSectors', []);
     this.step = function() {
+        var iterations = 0;
         this.time = Date.now();
         this.updateWeaponsSectors();
         for (var i in this.weapons)
@@ -780,7 +781,8 @@ var Gun = function(name, startX, startY, length, auto, firerate, multishot, capa
                 finalForce = finalForce.add((new Vector(0.3*stretch,0)).rotate(this.pos.angTo(weapon.pos)));
             }
         });
-        /*loopThroughObstacles(this.pos, (obstacle) => {
+        loopThroughObstacles(this.pos, (obstacle) => {
+            iterations += 1;
             if (this.pos.distanceTo(obstacle.center) > this.radius + obstacle.maxRadius || !obstacle.intersectable)
             {
                 return;
@@ -790,10 +792,10 @@ var Gun = function(name, startX, startY, length, auto, firerate, multishot, capa
             var stretch = this.radius - dist;
             if (stretch > 0)
             {
-                finalForce = finalForce.add((new Vector(0.3*stretch,0)).rotate(this.pos.angTo(closestPoint)));
+                finalForce = finalForce.add((new Vector(0.6*stretch,0)).rotate(this.pos.angTo(closestPoint)));
             }
             
-        });*/
+        });
         this.vel = this.vel.add(finalForce).multiply(0.6);
     }
     this.step = function()
