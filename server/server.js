@@ -117,6 +117,7 @@ var obstacles;
 var borderObstacles;
 var gameState;
 var controls = {};
+var iterations;
 
 function emitNewKill(killer, dead) {
     io.sockets.emit('killFeed', {
@@ -140,7 +141,7 @@ var GameState = function(time, players, weapons) {
     setIfUndefined(this, 'weapons', weapons);
     setIfUndefined(this, 'weaponsSectors', []);
     this.step = function() {
-        var iterations = 0;
+        iterations = 0;
         this.time = Date.now();
         this.updateWeaponsSectors();
         for (var i in this.weapons)
