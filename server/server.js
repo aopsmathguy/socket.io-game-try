@@ -163,7 +163,6 @@ var GameState = function(time, players, weapons) {
           this.weapons[i].setLastFireTime(this);
           this.weapons[i].pushFromAll(this);
         }
-        console.log(iterations);
         for (var i in this.weapons)
         {
           this.weapons[i].step();
