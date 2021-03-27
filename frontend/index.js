@@ -417,7 +417,13 @@ var GameState = function() {
         var weapon = this.weapons[i];
         var ctx = myGameArea.context;
         if (!weapon.hold) {
-
+            ctx.strokeStyle = "#000";
+            drawer.lineWidth(ctx, 12);
+            ctx.beginPath();
+            drawer.circle(ctx, weapon.pos, 30);
+            ctx.closePath();
+            ctx.stroke();
+            
             ctx.strokeStyle = weapon.color;
             drawer.lineWidth(ctx, 6);
             ctx.beginPath();
