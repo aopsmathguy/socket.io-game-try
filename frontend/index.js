@@ -949,8 +949,12 @@ var linearGameState = function() {
             } else {
                 bullet.tailPos = bullet.pos.add((new Vector(-bullet.trailLength, 0)).rotate(bullet.ang));
             }
+            if (bullet.hitPoint != -1 && bullet.startPos.distanceTo(bullet.pos) < bullet.startPos.distanceTo(bullet.hitPoint))
+            {
+                bullet.hitPoint = -1;
+            }
+            
             bullet.objectsIntersection(out);
-
         }
         out.weapons[i].recoil = linearPosition(new Vector(left.weapons[i].recoil, 0), new Vector(right.weapons[i].recoil, 0), displayTime, left.time, right.time).x;
     }
