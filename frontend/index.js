@@ -931,11 +931,14 @@ var linearGameState = function() {
         }
         out.weapons[i].pos = linearPosition(left.weapons[i].pos,right.weapons[i].pos, displayTime, left.time,right.time);
         var arrIdx = arrayUnique(Object.keys(right.weapons[i].bullets).concat(Object.keys(left.weapons[i].bullets)));
-        console.log(arrIdx);
         for (var j in arrIdx) {
             var rightBull;
             var leftBull;
-            if (left.weapons[i].bullets[j] == undefined) {
+            if (left.weapons[i].bullets[j] == undefined && right.weapons[i].bullets[j] == undefined)
+            {
+                console.log(arrIdx, j)
+            }
+            else if (left.weapons[i].bullets[j] == undefined) {
                 rightBull = right.weapons[i].bullets[j];
                 leftBull = JSON.parse(JSON.stringify(rightBull));
                 
