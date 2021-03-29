@@ -913,7 +913,7 @@ var linearGameState = function() {
 
     var right = gameStates[rightIdx];
     var left = gameStates[rightIdx - 1];
-    console.log(Math.floor(1000/(right.time - left.time)));
+    //console.log(Math.floor(1000/(right.time - left.time)));
     var out = JSON.parse(JSON.stringify(right));
     giveMethods(out);
     out.time = displayTime;
@@ -931,6 +931,7 @@ var linearGameState = function() {
         }
         out.weapons[i].pos = linearPosition(left.weapons[i].pos,right.weapons[i].pos, displayTime, left.time,right.time);
         var arrIdx = arrayUnique(Object.keys(right.weapons[i].bullets).concat(Object.keys(left.weapons[i].bullets)));
+        console.log(arrIdx);
         for (var j in arrIdx) {
             var rightBull;
             var leftBull;
