@@ -941,7 +941,7 @@ var linearGameState = function() {
                 giveMethods([rightBull, leftBull]);
                 
                 var add = leftBull.vel.multiply(framesPerTick);
-                rightBull.pos = leftBull.pos.subtract(add);
+                leftBull.pos = rightBull.pos.subtract(add);
             } 
             else if (right.weapons[i].bullets[j] == undefined)
             {
