@@ -980,10 +980,13 @@ var linearGameState = function() {
             {
                 bullet.hitPoint = -1;
             }
-            bullet.objectsIntersection(out);
-            if (bullet.hitPoint != -1 && bullet.startPos.distanceTo(bullet.hitPoint) <= bullet.startPos.distanceTo(bullet.tailPos) || bullet.startPos.distanceTo(rightBull.pos) < framesPerTick * bullet.vel.magnitude() * (right.time - displayTime) / (right.time - left.time))
+            else
             {
-                //delete out.weapons[i].bullets[j];
+                bullet.objectsIntersection(out);
+            }
+            if (bullet.hitPoint != -1 && bullet.startPos.distanceTo(bullet.hitPoint) > bullet.startPos.distanceTo(bullet.tailPos) || bullet.startPos.distanceTo(rightBull.pos) < framesPerTick * bullet.vel.magnitude() * (right.time - displayTime) / (right.time - left.time))
+            {
+                delete out.weapons[i].bullets[j];
             }
         }
         out.weapons[i].recoil = linearPosition(new Vector(left.weapons[i].recoil, 0), new Vector(right.weapons[i].recoil, 0), displayTime, left.time, right.time).x;
