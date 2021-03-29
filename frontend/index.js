@@ -930,20 +930,36 @@ var linearGameState = function() {
             continue;
         }
         out.weapons[i].pos = linearPosition(left.weapons[i].pos,right.weapons[i].pos, displayTime, left.time,right.time);
-        for (var j in out.weapons[i].bullets) {
+        var arrIdx = arrayUnique(Object.keys(right.weapons).concat(Object.keys(left.weapons)));
+        for (var j in arrIdx) {
+            var rightBull;
+            var leftBull;
             if (left.weapons[i].bullets[j] == undefined) {
-                var rightBull = right.weapons[i].bullets[j];
-                giveMethods([rightBull.pos, rightBull.vel, rightBull.startPos]);
-                if (rightBull.pos.distanceTo(rightBull.startPos) < framesPerTick * rightBull.vel.magnitude() * (right.time - displayTime) / (right.time - left.time)) {
-                    delete out.weapons[i].bullets[j];
-                    continue;
-                } else {
-                    out.weapons[i].bullets[j].pos = rightBull.pos.subtract(rightBull.vel.multiply(framesPerTick * (right.time - displayTime) / (right.time - left.time)));
-                }
-            } else {
-                out.weapons[i].bullets[j].pos = linearPosition(left.weapons[i].bullets[j].pos, right.weapons[i].bullets[j].pos, displayTime, left.time, right.time);
+                rightBull = right.weapons[i].bullets[j];
+                leftBull = JSON.parse(JSON.stringify(rightBull));
+                
+                giveMethods([rightBull, leftBull]);
+                
+                var add = leftBull.vel.multiply(framesPerTick);
+                rightBull.pos = leftBull.pos.subtract(add);
+            } 
+            else if (right.weapons[i].bullets[j] == undefined)
+            {
+                leftBull = left.weapons[i].bullets[j];
+                rightBull = JSON.parse(JSON.stringify(leftBull));
+                
+                giveMethods([rightBull, leftBull]);
+                
+                var add = leftBull.vel.multiply(framesPerTick);
+                rightBull.pos = leftBull.pos.add(add);
+            }
+            else
+            {
+                leftBull = left.weapons[i].bullets[j];
+                rightBull = right.weapons[i].bullets[j];
             }
             var bullet = out.weapons[i].bullets[j];
+            bullet.pos = linearPosition(leftBull.pos, rightBull.pos, displayTime, left.time, right.time);
             if (bullet.startPos.distanceTo(bullet.pos) < bullet.trailLength) {
                 bullet.tailPos = bullet.startPos;
             } else {
@@ -953,8 +969,11 @@ var linearGameState = function() {
             {
                 bullet.hitPoint = -1;
             }
-            
             bullet.objectsIntersection(out);
+            if (bullet.hitPoint != -1 && bullet.startPos.distanceTo(bullet.hitPoint) <= bullet.startPos.distanceTo(bullet.tailPos) || bullet.startPos.distanceTo(rightBull.pos) < framesPerTick * bullet.vel.magnitude() * (right.time - displayTime) / (right.time - left.time))
+            {
+                delete out.weapons[i].bullets[j];
+            }
         }
         out.weapons[i].recoil = linearPosition(new Vector(left.weapons[i].recoil, 0), new Vector(right.weapons[i].recoil, 0), displayTime, left.time, right.time).x;
     }
@@ -997,6 +1016,17 @@ function hexToRgbA(hex, alpha) {
         return 'rgba(' + [(c >> 16) & 255, (c >> 8) & 255, c & 255].join(',') + ',' + alpha + ')';
     }
     throw new Error('Bad Hex');
+}
+function arrayUnique(array) {
+    var a = array.concat();
+    for(var i=0; i<a.length; ++i) {
+        for(var j=i+1; j<a.length; ++j) {
+            if(a[i] === a[j])
+                a.splice(j--, 1);
+        }
+    }
+
+    return a;
 }
 // Version 4.0
 const pSBC = (p, c0, c1, l) => {
