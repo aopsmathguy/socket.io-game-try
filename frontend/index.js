@@ -931,6 +931,7 @@ var linearGameState = function() {
         }
         out.weapons[i].pos = linearPosition(left.weapons[i].pos,right.weapons[i].pos, displayTime, left.time,right.time);
         var arrIdx = arrayUnique(Object.keys(right.weapons).concat(Object.keys(left.weapons)));
+        console.log(arrIdx);
         for (var j in arrIdx) {
             var rightBull;
             var leftBull;
