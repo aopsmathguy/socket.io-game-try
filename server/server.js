@@ -24,8 +24,8 @@ io.on('connection', client => {
         var player = gameState.players[client.id];
         if (player != undefined)
             player.dropEverything(gameState);
-        gameState.players.splice(client.id,1);
-        controls.splice(client.id,1);
+        delete gameState.players[client.id];
+        delete controls[client.id];
     });
     client.on('reconnect', function() {
         client.sendBuffer = [];
@@ -856,7 +856,7 @@ var Gun = function(name, startX, startY, length, auto, firerate, multishot, capa
         for (var i in this.bullets) {
             this.bullets[i].step(state);
             if (this.bullets[i].delete) {
-                this.bullets.splice(i,1);
+                delete this.bullets[i];
             }
         }
 
