@@ -930,7 +930,7 @@ var linearGameState = function() {
             continue;
         }
         out.weapons[i].pos = linearPosition(left.weapons[i].pos,right.weapons[i].pos, displayTime, left.time,right.time);
-        var arrIdx = arrayUnique(Object.keys(right.weapons).concat(Object.keys(left.weapons)));
+        var arrIdx = arrayUnique(Object.keys(right.weapons[i].bullets).concat(Object.keys(left.weapons[i].bullets)));
         console.log(arrIdx);
         for (var j in arrIdx) {
             var rightBull;
@@ -973,7 +973,7 @@ var linearGameState = function() {
             bullet.objectsIntersection(out);
             if (bullet.hitPoint != -1 && bullet.startPos.distanceTo(bullet.hitPoint) <= bullet.startPos.distanceTo(bullet.tailPos) || bullet.startPos.distanceTo(rightBull.pos) < framesPerTick * bullet.vel.magnitude() * (right.time - displayTime) / (right.time - left.time))
             {
-                out.weapons[i].bullets.splice(j,1);
+                delete out.weapons[i].bullets[j];
             }
         }
         out.weapons[i].recoil = linearPosition(new Vector(left.weapons[i].recoil, 0), new Vector(right.weapons[i].recoil, 0), displayTime, left.time, right.time).x;
