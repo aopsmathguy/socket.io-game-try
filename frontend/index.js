@@ -966,7 +966,7 @@ var linearGameState = function() {
             var bullet = out.weapons[i].bullets[j];
             if (bullet == undefined)
             {
-                out.weapons[i].bullets[j] = JSON.parse(JSON.stringify(leftBull || rightBull));
+                out.weapons[i].bullets[j] = JSON.parse(JSON.stringify(leftBull));
                 giveMethods(out.weapons[i].bullets[j]);
             }
             bullet.pos = linearPosition(leftBull.pos, rightBull.pos, displayTime, left.time, right.time);
