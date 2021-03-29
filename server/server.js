@@ -58,8 +58,10 @@ io.on('connection', client => {
     });
     client.on('mouseup', () => {
         if (controls[client.id] && gameState.players[client.id])
+        {
             controls[client.id].mouseDown = false;
             gameState.players[client.id].autoShot = false;
+        }
     });
 
     function addPlayer(msg) {
