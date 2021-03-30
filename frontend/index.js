@@ -360,7 +360,7 @@ var GameState = function() {
                 this.displayPlayer(idx);
         }
         for (var idx in this.players) {
-            if (this.players[idx].alive)
+            if (this.players[idx].alive && idx != controlId)
                 this.displayName(idx);
         }
         //this.displayReloadTime();
@@ -417,15 +417,8 @@ var GameState = function() {
         var weapon = this.weapons[i];
         var ctx = myGameArea.context;
         if (!weapon.hold) {
-            ctx.strokeStyle = "#000";
-            drawer.lineWidth(ctx, 12);
-            ctx.beginPath();
-            drawer.circle(ctx, weapon.pos, 30);
-            ctx.closePath();
-            ctx.stroke();
-            
             ctx.strokeStyle = weapon.color;
-            drawer.lineWidth(ctx, 6);
+            drawer.lineWidth(ctx, 4);
             ctx.beginPath();
             drawer.circle(ctx, weapon.pos, 30);
             ctx.closePath();
