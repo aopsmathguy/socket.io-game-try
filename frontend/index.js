@@ -609,7 +609,7 @@ var Bullet = function() {
     this.type = "Bullet";
     this.display = function() {
         var ctx = myGameArea.context;
-        const g = drawer.createLinearGradient(ctx, this.pos, this.tailPos);
+        const g = drawer.createLinearGradient(ctx, this.pos, this.pos.add((new Vector(-this.trailLength, 0)).rotate(this.ang)));
         g.addColorStop(0, hexToRgbA(pSBC(0, this.color), 1)); // opaque
         g.addColorStop(0.15, hexToRgbA(pSBC(0, this.color), 1));
         g.addColorStop(0.2, hexToRgbA(pSBC(0, this.color), 0.2));
