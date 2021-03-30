@@ -908,7 +908,7 @@ var Bullet = function(weapon) {
 
     setIfUndefined(this, 'range', weapon.range);
     setIfUndefined(this, 'hitPoint', -1);
-    setIfUndefined(this, 'trailLength', this.bulletSpeed * 10);
+    setIfUndefined(this, 'trailLength', this.bulletSpeed * 20);
     setIfUndefined(this, 'color', weapon.color);
 
     setIfUndefined(this, 'bulletFiredBy', weapon.playerHolding);
