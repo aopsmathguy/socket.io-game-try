@@ -611,9 +611,10 @@ var Bullet = function() {
         var ctx = myGameArea.context;
         const g = drawer.createLinearGradient(ctx, this.pos, this.pos.add((new Vector(-this.trailLength, 0)).rotate(this.ang)));
         g.addColorStop(0, hexToRgbA(pSBC(0, this.color), 1)); // opaque
-        g.addColorStop(0.15, hexToRgbA(pSBC(0, this.color), 1));
-        g.addColorStop(0.2, hexToRgbA(pSBC(0, this.color), 0.2));
-        g.addColorStop(0.4, hexToRgbA(pSBC(0, this.color), 0.1));
+        g.addColorStop(0.05, hexToRgbA(pSBC(0, this.color), 1));
+        g.addColorStop(0.051, hexToRgbA(pSBC(0, this.color), 0.2));
+        g.addColorStop(0.4, hexToRgbA(pSBC(0, this.color), 0.2));
+        g.addColorStop(0.5, hexToRgbA(pSBC(0, this.color), 0));
         g.addColorStop(1, hexToRgbA(pSBC(0, this.color), 0)); // transparent
         ctx.strokeStyle = g;
 
