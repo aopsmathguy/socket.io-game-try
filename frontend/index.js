@@ -34,9 +34,9 @@ function joinGame() {
     myGameArea.start();
     drawer = new Drawer();
     controlsBundle.start();
-    myGameArea.interval();
-    name = gameCodeInput.value || 'player:' + String(controlId).substring(0, 4);
+    name = gameCodeInput.value || 'Guest ' + fillDigits(Math.floor(10000*Math.random()),4);
     newPlayer();
+    myGameArea.interval();
 }
 
 function newPlayer() {
@@ -93,11 +93,10 @@ var fillDigits = function(num, length) {
     if (out.length > length) {
         return out.substring(out.length - length);
     }
-    var zeroes = '';
-    for (var i = 0; i < length - out.length; i++) {
-        zeroes = zeroes + '0';
+    while(out.length < length) {
+        out = '0' + out;
     }
-    return zeroes + out;
+    return out;
 
 }
 var timeDifference = 0;
@@ -610,9 +609,9 @@ var Bullet = function() {
     this.display = function() {
         var ctx = myGameArea.context;
         const g = drawer.createLinearGradient(ctx, this.pos, this.pos.add((new Vector(-this.trailLength, 0)).rotate(this.ang)));
-        g.addColorStop(0, hexToRgbA('#ff5', 1)); // opaque
-        g.addColorStop(0.15, hexToRgbA('#ff5', 1));
-        g.addColorStop(0.25, hexToRgbA('#ccc', 0.4));
+        g.addColorStop(0, hexToRgbA('#ffa', 1)); // opaque
+        g.addColorStop(0.15, hexToRgbA('#ff3', 1));
+        g.addColorStop(0.3, hexToRgbA('#ccc', 0.5));
         g.addColorStop(0.6, hexToRgbA('#ccc', 0.3));
         g.addColorStop(1, hexToRgbA('#ccc', 0)); // transparent
         ctx.strokeStyle = g;
