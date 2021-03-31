@@ -612,7 +612,7 @@ var Bullet = function() {
         const g = drawer.createLinearGradient(ctx, this.pos, this.pos.add((new Vector(-this.trailLength, 0)).rotate(this.ang)));
         g.addColorStop(0, hexToRgbA('#ff5', 1)); // opaque
         g.addColorStop(0.15, hexToRgbA('#ff5', 1));
-        g.addColorStop(0.3, hexToRgbA('#ccc', 0.4));
+        g.addColorStop(0.25, hexToRgbA('#ccc', 0.4));
         g.addColorStop(0.6, hexToRgbA('#ccc', 0.3));
         g.addColorStop(1, hexToRgbA('#ccc', 0)); // transparent
         ctx.strokeStyle = g;
