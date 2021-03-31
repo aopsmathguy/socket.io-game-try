@@ -168,11 +168,14 @@ var GameState = function(time, players, weapons) {
         for (var i in this.weapons)
         {
           this.weapons[i].setLastFireTime(this);
-          //this.weapons[i].pushFromAll(this);
+          if (weaponPushFrameCount == 0)
+          {
+            this.weapons[i].pushFromAll(this);
+          }
         }
         for (var i in this.weapons)
         {
-          //this.weapons[i].step();
+          this.weapons[i].step();
         }
         for (var k in this.players) {
             var player = this.players[k];
@@ -800,7 +803,7 @@ var Gun = function(name, startX, startY, length, auto, firerate, multishot, capa
             var stretch = this.radius + weapon.radius - dist;
             if (stretch > 0)
             {
-                finalForce = finalForce.add((new Vector(0.004*stretch,0)).rotate(this.pos.angTo(weapon.pos)));
+                finalForce = finalForce.add((new Vector(0.04*stretch,0)).rotate(this.pos.angTo(weapon.pos)));
             }
         });
         loopThroughObstacles(this.pos, (obstacle) => {
@@ -814,11 +817,11 @@ var Gun = function(name, startX, startY, length, auto, firerate, multishot, capa
             var stretch = this.radius - dist;
             if (stretch > 0)
             {
-                finalForce = finalForce.add((new Vector(0.04*stretch,0)).rotate(this.pos.angTo(closestPoint)));
+                finalForce = finalForce.add((new Vector(0.4*stretch,0)).rotate(this.pos.angTo(closestPoint)));
             }
             
         });
-        this.vel = this.vel.add(finalForce).multiply(0.9);
+        this.vel = this.vel.add(finalForce).multiply(0.5);
     }
     this.step = function()
     {
@@ -1234,15 +1237,22 @@ var Vector = function(x, y) {
 }
 makeObstacles();
 var stage = 0;
+var weaponPushFrames = 10;
+var weaponPushFrameCount = 0;
 setInterval(updateGameArea, 1000 / 60);
 
 function updateGameArea() {
     if (Object.keys(gameState.players).length > 0) {
         gameState.step();
         stage += 1;
+        weaponPushFrameCount += 1;
         if (stage >= framesPerTick) {
             emitGameState(gameState);
             stage = 0;
+        }
+        if (weaponPushFrameCount >= weaponPushFrames)
+        {
+            weaponPushFrameCount = 0;
         }
     }
 }
