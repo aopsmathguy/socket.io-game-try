@@ -135,9 +135,9 @@ var gameState;
 var controls = {};
 var iterations;
 
-function emitNewKill(killer, dead) {
+function emitNewMessage(message) {
     io.sockets.emit('killFeed', {
-        msg: gameState.players[killer].name + " killed " + gameState.players[dead].name
+        msg: message
     });
 }
 
@@ -196,7 +196,7 @@ var GameState = function(time, players, weapons) {
             if (player.health <= 0 && player.alive) {
                 player.dropEverything(this);
                 player.alive = false;
-                emitNewKill(player.lastHitBy, k);
+                emitNewMessage(this.players[player.lastHitBy].name + ' killed ' + player.name);
             }
         }
     }
