@@ -22,9 +22,10 @@ io.on('connection', client => {
     client.on('new player', addPlayer);
     client.on('disconnect', function() {
         var player = gameState.players[client.id];
-        if (player != undefined)
+        if (player != undefined){
             player.dropEverything(gameState);
-        emitNewMessage(player.name + " left the game");
+            emitNewMessage(player.name + " left the game");
+        }
         delete gameState.players[client.id];
         delete controls[client.id];
     });
