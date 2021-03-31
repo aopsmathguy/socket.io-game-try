@@ -3,7 +3,7 @@ const gameHeight = 4000;
 const numOb = 70;
 const numHouse1 = 6;
 const numHouse2 = 6;
-const gridWidth = 150;
+const gridWidth = 250;
 const framesPerTick = 3;
 
 const io = require('socket.io')();
@@ -24,6 +24,7 @@ io.on('connection', client => {
         var player = gameState.players[client.id];
         if (player != undefined)
             player.dropEverything(gameState);
+        emitNewMessage(player.name + " left the game");
         delete gameState.players[client.id];
         delete controls[client.id];
     });
@@ -72,12 +73,15 @@ io.on('connection', client => {
             gameState.players[controlId].health = 100;
             gameState.players[controlId].alive = true;
         } else {
+            
             gameState.players[controlId] = new Player(startPos.x, startPos.y, msg.name, controlId);
             controls[controlId] = {
                 keys: [],
                 mouseDown: false
             };
+            emitNewMessage(gameState.players[controlId].name + " joined the game");
         }
+        
 
     }
 
