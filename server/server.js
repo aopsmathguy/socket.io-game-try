@@ -185,7 +185,7 @@ var GameState = function(time, players, weapons) {
 
                 this.controls(k);
                 player.playerStep(this);
-                for (var i = 0; i < 1; i++)
+                for (var i = 0; i < 2; i++)
                 {
                   loopThroughObstacles(player.pos, (obstacle) => {
                       if (obstacle.intersectable)
