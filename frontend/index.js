@@ -631,13 +631,13 @@ var Bullet = function() {
         var smallestDistance = Number.MAX_VALUE;
         var objectsPoint = -1;
         var bulletHitbox = 2;
+        var tailCheck = this.startPos.onSegment(this.pos.subtract(this.vel.multiply(bulletHitbox)),this.pos) ? this.startPos : this.pos.subtract(this.vel.multiply(bulletHitbox));
         loopThroughObstacles(this.pos, (obstacle) => {
             if (!obstacle.intersectable)
             {
               return;
             }
-            
-            var point = obstacle.intersectSegment(this.pos.subtract(this.vel.multiply(bulletHitbox)),this.pos);
+            var point = obstacle.intersectSegment(tailCheck,this.pos);
             if (point != -1) {
                 var dist = this.startPos.distanceTo(point);
                 if (dist < smallestDistance) {
@@ -647,8 +647,7 @@ var Bullet = function() {
             }
         });
         for (var key in state.players) {
-            var v1 = this.pos.distanceTo(this.startPos) > bulletHitbox * this.vel.magnitude() ? this.pos.subtract(this.vel.multiply(bulletHitbox)) : this.startPos;
-            var point = state.players[key].intersectSegment(v1, this.pos);
+            var point = state.players[key].intersectSegment(tailCheck, this.pos);
             if (point != -1) {
                 var dist = this.startPos.distanceTo(point);
                 if (dist < smallestDistance) {
