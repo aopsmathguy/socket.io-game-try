@@ -957,12 +957,13 @@ var Bullet = function(weapon) {
     this.objectsIntersection = function(state) {
         var smallestDistance = Number.MAX_VALUE;
         var objectsPoint = -1;
+        var tailCheck = this.startPos.onSegment(this.pos.subtract(this.vel.multiply(2)), this.pos) ? this.startPos : this.pos.subtract(this.vel.multiply(2));
         loopThroughObstacles(this.pos, (obstacle) => {
             if (!obstacle.intersectable)
             {
               return;
             }
-            var point = obstacle.intersectSegment(this.pos.subtract(this.vel.multiply(2)),this.pos);
+            var point = obstacle.intersectSegment(tailCheck,this.pos);
             if (point != -1) {
                 var dist = this.startPos.distanceTo(point);
                 if (dist < smallestDistance) {
@@ -973,8 +974,7 @@ var Bullet = function(weapon) {
         });
         var playerHit = -1;
         for (var key in state.players) {
-            var v1 = this.pos.distanceTo(this.startPos) > 2 * this.vel.magnitude() ? this.pos.subtract(this.vel.multiply(2)) : this.startPos;
-            var point = state.players[key].intersectSegment(v1, this.pos);
+            var point = state.players[key].intersectSegment(tailCheck, this.pos);
             if (point != -1) {
                 var dist = this.startPos.distanceTo(point);
                 if (dist < smallestDistance) {
