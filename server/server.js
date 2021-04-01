@@ -1237,7 +1237,7 @@ var Vector = function(x, y) {
 }
 makeObstacles();
 var stage = 0;
-var weaponPushFrames = 6;
+var weaponPushFrames = 12;
 var weaponPushFrameCount = 0;
 setInterval(updateGameArea, 1000 / 60);
 
