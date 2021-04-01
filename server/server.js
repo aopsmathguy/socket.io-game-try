@@ -101,19 +101,19 @@ var obstacleSector = function(point) {
 }
 var loopThroughObstacles = function(objectPos, inner) {
     var sector = obstacleSector(objectPos);
-    if (sector[0] == 0)
+    if (sector[0] < 2)
     {
         inner(borderObstacles[0]);
     }
-    else if (sector[0] == obstacles.length - 1)
+    else if (sector[0] > obstacles.length - 3)
     {
         inner(borderObstacles[1]);
     }
-    if (sector[1] == 0)
+    if (sector[1] < 2)
     {
         inner(borderObstacles[2]);
     }
-    else if (sector[1] == obstacles[0].length - 1)
+    else if (sector[1] > obstacles[0].length - 3)
     {
         inner(borderObstacles[3]);
     }
