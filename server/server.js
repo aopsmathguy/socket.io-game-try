@@ -75,7 +75,7 @@ io.on('connection', client => {
             gameState.players[controlId].alive = true;
         } else {
             
-            gameState.players[controlId] = new Player(startPos.x, startPos.y, msg.name, controlId);
+            gameState.players[controlId] = new Player(startPos.x, startPos.y, msg.name, msg.color, controlId);
             controls[controlId] = {
                 keys: [],
                 mouseDown: false
@@ -493,7 +493,7 @@ function orientation(p, q, r) {
 
     return (val > 0) ? 1 : 2; // clock or counterclock wise
 }
-var Player = function(xStart, yStart, name, id) {
+var Player = function(xStart, yStart, name, color, id) {
     this.type = "Player";
     setIfUndefined(this, 'speed', 5);
     setIfUndefined(this, 'agility', 1);
@@ -527,6 +527,7 @@ var Player = function(xStart, yStart, name, id) {
     setIfUndefined(this, 'lastHitTime', 0);
 
     setIfUndefined(this, 'name', name);
+    setIfUndefined(this, 'color', color);
     setIfUndefined(this, 'alive', true);
 
 
