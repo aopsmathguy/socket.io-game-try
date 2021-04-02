@@ -37,7 +37,9 @@ function startGame(){
     myGameArea.interval();
 }
 function joinGame() {
+    lastDeadTime = -2;
     initialScreen.style.display = "none";
+    
     name = gameCodeInput.value || 'Guest ' + fillDigits(Math.floor(10000*Math.random()),4);
     color = colorInput.value;
     newPlayer();
@@ -1017,10 +1019,9 @@ function updateGameArea() {
             lastDeadTime = -1;
         } else if (lastDeadTime == -1) {
             lastDeadTime = Date.now();
-        } else if (Date.now() - lastDeadTime > 5000) {
-            initialScreen.style.display = 'block';
+        } else if (Date.now() - lastDeadTime > 5000 && lastDeadTime != -2) {
             
-            lastDeadTime = -2;
+            initialScreen.style.display = 'block';
         }
         
         
