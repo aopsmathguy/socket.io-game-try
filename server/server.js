@@ -1243,18 +1243,16 @@ var weaponPushFrameCount = 0;
 setInterval(updateGameArea, 1000 / 60);
 
 function updateGameArea() {
-    if (Object.keys(gameState.players).length > 0) {
-        gameState.step();
-        stage += 1;
-        weaponPushFrameCount += 1;
-        if (stage >= framesPerTick) {
-            emitGameState(gameState);
-            stage = 0;
-        }
-        if (weaponPushFrameCount >= weaponPushFrames)
-        {
-            weaponPushFrameCount = 0;
-        }
+    gameState.step();
+    stage += 1;
+    weaponPushFrameCount += 1;
+    if (stage >= framesPerTick) {
+        emitGameState(gameState);
+        stage = 0;
+    }
+    if (weaponPushFrameCount >= weaponPushFrames)
+    {
+        weaponPushFrameCount = 0;
     }
 }
 io.listen(process.env.PORT || 3000);
