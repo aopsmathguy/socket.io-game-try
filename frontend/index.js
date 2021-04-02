@@ -24,24 +24,29 @@ const canvas = document.getElementById('canvas');
 
 const initialScreen = document.getElementById('initialScreen');
 const gameCodeInput = document.getElementById('gameCodeInput');
+const colorInput = document.getElementById('colorInput');
 const joinGameBtn = document.getElementById('joinGameButton');
 
 joinGameBtn.addEventListener('click', joinGame);
 var name;
-
-function joinGame() {
-    initialScreen.style.display = 'none';
+var color;
+function startGame(){
     myGameArea.start();
     drawer = new Drawer();
     controlsBundle.start();
-    name = gameCodeInput.value || 'Guest ' + fillDigits(Math.floor(10000*Math.random()),4);
-    newPlayer();
     myGameArea.interval();
+}
+function joinGame() {
+    initialScreen.style.display = "none";
+    name = gameCodeInput.value || 'Guest ' + fillDigits(Math.floor(10000*Math.random()),4);
+    color = colorInput.value;
+    newPlayer();
 }
 
 function newPlayer() {
     socket.emit('new player', {
-        name: name
+        name: name,
+        color: color
     });
 }
 
@@ -259,14 +264,11 @@ var myGameArea = {
 }
 var controlsBundle = {
     keys: [],
-    mouse: {
-        type: "Vector",
-        x: 0,
-        y: 0
-    },
+    mouse: 0,
     mouseDown: false,
     ang: 0,
     start: function() {
+        controlsBundle.mouse = new Vector(0,0);
         window.addEventListener('keydown', function(e) {
             controlsBundle.keys = (controlsBundle.keys || []);
             if (!controlsBundle.keys[e.keyCode]) {
@@ -336,7 +338,7 @@ var giveMethods = function(obj) {
 var GameState = function() {
     this.type = "GameState";
     this.render = function() {
-        loopThroughDisplayObstacles(this.players[controlId].pos, (obstacle) => {
+        loopThroughDisplayObstacles(drawer.scroll, (obstacle) => {
             if (!obstacle.intersectable) {
                 obstacle.display();
             }
@@ -349,7 +351,7 @@ var GameState = function() {
         for (var idx in this.weapons) {
             this.displayBullets(idx)
         }
-        loopThroughDisplayObstacles(this.players[controlId].pos, (obstacle) => {
+        loopThroughDisplayObstacles(drawer.scroll, (obstacle) => {
             if (obstacle.intersectable) {
                 obstacle.display();
             }
@@ -362,25 +364,26 @@ var GameState = function() {
             if (this.players[idx].alive && idx != controlId)
                 this.displayName(idx);
         }
-        //this.displayReloadTime();
-        this.displayBulletCount();
-        //myGameArea.printFps();
-        displayKillFeed();
-        displayCrosshair();
+        if (this.players[controlId])
+        {
+            //this.displayReloadTime();
+            this.displayBulletCount();
+            //myGameArea.printFps();
+            displayKillFeed();
+        }
     }
     this.displayPlayer = function(i) {
         var player = this.players[i];
 
-        var color = '#fcc976';
         var ctx = myGameArea.context;
 
-        ctx.fillStyle = pSBC(0.5, color);
+        ctx.fillStyle = pSBC(0.5, player.color);
         ctx.beginPath();
         drawer.circle(ctx, player.pos, player.radius);
         ctx.closePath();
         ctx.fill();
 
-        ctx.fillStyle = color;
+        ctx.fillStyle = player.color;
         ctx.beginPath();
         drawer.circle(ctx, player.pos, player.radius * player.health / 100);
         ctx.closePath();
@@ -695,9 +698,17 @@ var Drawer = function() {
     this.update = function(state) {
 
         character = state.players[controlId];
-
-        this.targetScale = this.zoom / 40000 * (9 * myGameArea.canvas.width + 16 * myGameArea.canvas.height);
-        this.scroll = character.pos.add((new Vector(Math.random() - 0.5, Math.random() - 0.5)).multiply(this.screenShake));
+        if (character)
+        {
+            this.scroll = character.pos.add((new Vector(Math.random() - 0.5, Math.random() - 0.5)).multiply(this.screenShake));
+            this.targetScale = this.zoom / 40000 * (9 * myGameArea.canvas.width + 16 * myGameArea.canvas.height);
+        }
+        else
+        {
+            this.scroll = (new Vector(gameWidth,gameHeight)).multiply(0.5).add((new Vector(Math.random() - 0.5, Math.random() - 0.5)).multiply(this.screenShake));
+            this.targetScale =  (Math.max(myGameArea.canvas.width,myGameArea.canvas.height))/Math.max(gameWidth,gameHeight);
+        }
+        
         this.scale *= Math.pow(this.targetScale / this.scale, 0.1);
     }
 }
@@ -858,7 +869,6 @@ var Vector = function(x, y) {
 
 }
 var displayCrosshair = function() {
-    giveMethods(controlsBundle.mouse);
     controlsBundle.mouse.add(new Vector(10, 0)).drawLine(controlsBundle.mouse.add(new Vector(-10, 0)), '#fff', 2);
     controlsBundle.mouse.add(new Vector(0, 10)).drawLine(controlsBundle.mouse.add(new Vector(0, -10)), '#fff', 2);
     controlsBundle.mouse.circle(6, '#fff', 2);
@@ -998,22 +1008,27 @@ var resetControls = function() {
 var lastDeadTime = -1;
 
 function updateGameArea() {
+    myGameArea.clear();
     if (gameStates.length > 1) {
+        emitMousePos();
         var state = linearGameState();
-        myGameArea.clear();
+        
         if (state.players[controlId] && state.players[controlId].alive) {
-            drawer.update(state);
             lastDeadTime = -1;
         } else if (lastDeadTime == -1) {
             lastDeadTime = Date.now();
         } else if (Date.now() - lastDeadTime > 5000) {
-            newPlayer();
+            initialScreen.style.display = 'block';
+            
             lastDeadTime = -2;
         }
+        
+        
+        drawer.update(state);
         state.render();
-        emitMousePos();
         
     }
+    displayCrosshair();
 }
 
 function hexToRgbA(hex, alpha) {
