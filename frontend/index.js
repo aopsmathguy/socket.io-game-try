@@ -369,7 +369,7 @@ var GameState = function() {
                 this.displayPlayer(idx);
         }
         for (var idx in this.players) {
-            if (this.players[idx].alive && idx != controlId)
+            if (this.players[idx].alive)
                 this.players[idx].drawHealthBar(idx);
         }
         for (var idx in this.players) {
