@@ -385,7 +385,7 @@ var GameState = function() {
 
         var ctx = myGameArea.context;
         ctx.save();
-        ctx.globalAlpha = 0.75+0.25*Math.cos(((this.time)/250)%(2*Math.PI));
+        ctx.globalAlpha = 0.5+0.25*Math.cos(((this.time)/125)%(2*Math.PI));
         ctx.fillStyle = pSBC(0.5,player.color);
         ctx.beginPath();
         drawer.circle(ctx, player.pos, player.radius);
