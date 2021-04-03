@@ -370,11 +370,15 @@ var GameState = function() {
         }
         for (var idx in this.players) {
             if (this.players[idx].alive && idx != controlId)
+                this.players[idx].drawHealthBar(idx);
+        }
+        for (var idx in this.players) {
+            if (this.players[idx].alive && idx != controlId)
                 this.displayName(idx);
         }
         if (this.players[controlId] && this.players[controlId].alive)
         {
-            //this.displayReloadTime();
+            // this.displayReloadTime();
             this.displayBulletCount();
             //myGameArea.printFps();
             displayKillFeed();
@@ -384,18 +388,18 @@ var GameState = function() {
         var player = this.players[i];
 
         var ctx = myGameArea.context;
-        ctx.save();
+        /*ctx.save();
         ctx.globalAlpha = 0.5+0.25*Math.cos(((this.time)/125)%(2*Math.PI));
         ctx.fillStyle = pSBC(0.5,player.color);
         ctx.beginPath();
         drawer.circle(ctx, player.pos, player.radius);
         ctx.closePath();
         ctx.fill();
-        ctx.restore();
+        ctx.restore();*/
         
         ctx.fillStyle = player.color;
         ctx.beginPath();
-        drawer.circle(ctx, player.pos, player.radius * player.health / 100);
+        drawer.circle(ctx, player.pos, player.radius);
         ctx.closePath();
         ctx.fill();
         var ang = player.ang;
@@ -541,12 +545,12 @@ var makeObstacles = function() {
 }
 var Player = function() {
     this.type = "Player";
-    /*this.drawHealthBar = function()
+    this.drawHealthBar = function()
     {
          var ctx = myGameArea.context;
          
-         var left = this.pos.add(new Vector(-this.radius,-this.radius * 2)));
-         var right = this.pos.add(new Vector(this.radius,-this.radius * 2)));
+         var left = this.pos.add(new Vector(-this.radius,this.radius * 2)));
+         var right = this.pos.add(new Vector(this.radius,this.radius * 2)));
          var mid = this.pos.add(new Vector(-this.radius+2*Math.max(0,this.health)/100*this.radius,-this.radius * 2));
          
          ctx.strokeStyle = '#f00';
@@ -563,7 +567,7 @@ var Player = function() {
          drawer.lineContext(ctx,mid);
          ctx.closePath();
          ctx.stroke();
-    }*/
+    }
     this.intersectSegment = function(v1,v2)
     {
       if (!this.alive) {
