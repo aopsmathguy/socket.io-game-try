@@ -17,8 +17,46 @@
         #gameScreen {
             position: relative;
         }
-        .h-100 {
+        #initialScreen {
             position: absolute;
+            left: 30%;
+            width: 40%;
+            top: 30%;
+            height:40%;
+        }
+        h1{
+            margin:30px;
+            color: #fff;
+            
+            font-size: 80px;
+            text-align: center;
+        }
+        .form-group{
+            margin:10px;
+            position: relative;
+            left: 20%;
+            width: 60%;
+            height:100%;
+        }
+        #gameCodeInput{
+            position: relative;
+            width:70%;
+            font-size:30px;
+            background-color: white;
+            border: 0px;
+        }
+        #colorInput{
+            position: relative;
+            width: 20%;
+            border: 0px;
+        }
+        #joinGameButton{
+            position: relative;
+            left: 30%;
+            width: 40%;
+            font-size:30px;
+            background-color: white;
+            border: 0px;
         }
         canvas {
             border:0px;
@@ -43,7 +81,7 @@
         <div class="d-flex flex-column align-items-center justify-content-center h-100">
             <h1>Shooty thing</h1>
             <div class="form-group">
-              <input type="text" placeholder="Enter Name" id="gameCodeInput"/>
+              <input type="text" placeholder="Enter Name" onkeyup = "limitInput()" id="gameCodeInput"/>
               <input type="color" value = "#fcc976"  id="colorInput"/>
             </div>
             <button

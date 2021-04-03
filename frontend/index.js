@@ -40,7 +40,7 @@ function joinGame() {
     lastDeadTime = -2;
     initialScreen.style.display = "none";
     
-    name = gameCodeInput.value || 'Guest ' + fillDigits(Math.floor(10000*Math.random()),4);
+    name = gameCodeInput.value.substring(0,18) || 'Guest ' + fillDigits(Math.floor(10000*Math.random()),4);
     color = colorInput.value;
     newPlayer();
 }
@@ -51,7 +51,13 @@ function newPlayer() {
         color: color
     });
 }
-
+function limitInput()
+{
+    if (gameCodeInput.value.length > 18)
+    {
+        gameCodeInput.value = gameCodeInput.value.substring(0,18);
+    }
+}
 var obstacleSector = function(point) {
     return [Math.floor(point.x / gridWidth), Math.floor(point.y / gridWidth)];
 }
@@ -366,7 +372,7 @@ var GameState = function() {
             if (this.players[idx].alive && idx != controlId)
                 this.displayName(idx);
         }
-        if (this.players[controlId])
+        if (this.players[controlId] && this.players[controlId].alive)
         {
             //this.displayReloadTime();
             this.displayBulletCount();
@@ -378,13 +384,15 @@ var GameState = function() {
         var player = this.players[i];
 
         var ctx = myGameArea.context;
-
-        ctx.fillStyle = pSBC(0.5, player.color);
+        ctx.save();
+        ctx.globalAlpha = 0.75+0.25*Math.cos(((this.time)/250)%(2*Math.PI));
+        ctx.fillStyle = pSBC(0.5,player.color);
         ctx.beginPath();
         drawer.circle(ctx, player.pos, player.radius);
         ctx.closePath();
         ctx.fill();
-
+        ctx.restore();
+        
         ctx.fillStyle = player.color;
         ctx.beginPath();
         drawer.circle(ctx, player.pos, player.radius * player.health / 100);
@@ -536,26 +544,23 @@ var Player = function() {
     /*this.drawHealthBar = function()
     {
          var ctx = myGameArea.context;
-       var border = 3;
-
-        ctx.strokeStyle = '#000';
-         drawer.lineWidth(ctx,8 + 2*border);
-         ctx.beginPath();
-         drawer.moveContext(ctx,this.pos.add(new Vector(-this.radius - border,-this.radius * 2)));
-         drawer.lineContext(ctx,this.pos.add(new Vector(-this.radius+2*this.radius + border,-this.radius * 2)));
-         ctx.closePath();
-         ctx.stroke();
+         
+         var left = this.pos.add(new Vector(-this.radius,-this.radius * 2)));
+         var right = this.pos.add(new Vector(this.radius,-this.radius * 2)));
+         var mid = this.pos.add(new Vector(-this.radius+2*Math.max(0,this.health)/100*this.radius,-this.radius * 2));
+         
          ctx.strokeStyle = '#f00';
          drawer.lineWidth(ctx,8);
          ctx.beginPath();
-         drawer.moveContext(ctx,this.pos.add(new Vector(-this.radius,-this.radius * 2)));
-         drawer.lineContext(ctx,this.pos.add(new Vector(-this.radius+2*this.radius,-this.radius * 2)));
+         drawer.moveContext(ctx,right);
+         drawer.lineContext(ctx,mid);
          ctx.closePath();
          ctx.stroke();
+        
          ctx.strokeStyle = '#0f0';
          ctx.beginPath();
-         drawer.moveContext(ctx,this.pos.add(new Vector(-this.radius,-this.radius * 2)));
-         drawer.lineContext(ctx,this.pos.add(new Vector(-this.radius+2*Math.max(0,this.health)/100*this.radius,-this.radius * 2)));
+         drawer.moveContext(ctx,left);
+         drawer.lineContext(ctx,mid);
          ctx.closePath();
          ctx.stroke();
     }*/
@@ -614,11 +619,8 @@ var Bullet = function() {
     this.display = function() {
         var ctx = myGameArea.context;
         const g = drawer.createLinearGradient(ctx, this.pos, this.pos.add((new Vector(-this.trailLength, 0)).rotate(this.ang)));
-        g.addColorStop(0, hexToRgbA('#ffa', 1)); // opaque
-        g.addColorStop(0.15, hexToRgbA('#ff3', 1));
-        g.addColorStop(0.3, hexToRgbA('#ccc', 0.5));
-        g.addColorStop(0.6, hexToRgbA('#ccc', 0.3));
-        g.addColorStop(1, hexToRgbA('#ccc', 0)); // transparent
+        g.addColorStop(0, hexToRgbA(this.color, 1)); // opaque
+        g.addColorStop(1, hexToRgbA(this.color, 0)); // transparent
         ctx.strokeStyle = g;
 
         drawer.lineWidth(ctx, 6);
