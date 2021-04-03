@@ -17,46 +17,68 @@
         #gameScreen {
             position: relative;
         }
-        #initialScreen {
+        #centerColumn {
             position: absolute;
-            left: 30%;
-            width: 40%;
-            top: 30%;
-            height:40%;
+            left: 35%;
+            width: 30%;
+            top: 20%;
+            height:60%;
         }
         h1{
-            margin:30px;
+            margin:20px;
             color: #fff;
             
-            font-size: 80px;
+            font-size: 60px;
             text-align: center;
         }
         .form-group{
             margin:10px;
             position: relative;
-            left: 20%;
-            width: 60%;
+            left: 10%;
+            width: 80%;
             height:100%;
         }
         #gameCodeInput{
             position: relative;
-            width:70%;
+            width:80%;
             font-size:30px;
             background-color: white;
-            border: 0px;
+            border-radius: 10px;
+            margin: 0px;
         }
         #colorInput{
             position: relative;
-            width: 20%;
-            border: 0px;
+            width: 10%;
+            border-radius: 10px;
+            margin: 0px;
         }
         #joinGameButton{
             position: relative;
-            left: 30%;
-            width: 40%;
+            left: 20%;
+            width: 60%;
             font-size:30px;
             background-color: white;
-            border: 0px;
+            border-radius: 10px;
+        }
+        #instructions{
+            position: absolute;
+            left: 5%;
+            width: 25%;
+            top: 20%;
+            height:60%;
+            
+            
+            background-color:white;
+            border-radius: 20px;
+            padding: 10px 10px;
+        }
+        h2{
+            margin:10px;
+            font-size: 40px;
+        }
+        p{
+            margin: 10px;
+            font-size: 20px;
         }
         canvas {
             border:0px;
@@ -76,24 +98,40 @@
 <body>
   <section class="vh-100">
     <div id = "gameScreen" class="container h-100">
-
-      <div id="initialScreen" class="h-100">
-        <div class="d-flex flex-column align-items-center justify-content-center h-100">
-            <h1>Shooty thing</h1>
-            <div class="form-group">
-              <input type="text" placeholder="Enter Name" onkeyup = "limitInput()" id="gameCodeInput"/>
-              <input type="color" value = "#fcc976"  id="colorInput"/>
+      <div id = "initialScreen">
+          <div id="centerColumn" class="h-100">
+            <div class="d-flex flex-column align-items-center justify-content-center h-100">
+                <h1>Shooty thing</h1>
+                <div class="form-group">
+                  <input type="text" placeholder="Enter Name" onkeyup = "limitInput()" id="gameCodeInput"/>
+                  <input type="color" value = "#fcc976"  id="colorInput"/>
+                </div>
+                <button
+                  type="submit"
+                  class="btn btn-success"
+                  id="joinGameButton"
+                >
+                  Join Game
+                </button>
             </div>
-            <button
-              type="submit"
-              class="btn btn-success"
-              id="joinGameButton"
-            >
-              Join Game
-            </button>
-        </div>
-      </div>
+          </div>
 
+          <div id = "instructions">
+              <h2>How To Play</h2>
+              <p>
+                  Kill other players to gain points!<br><br>
+                  
+                  Use WASD to move<br>
+                  Click to punch or shoot<br>
+                  Press F to pickup a weapon<br>
+                  Press G to drop your weapon<br>
+                  Press R to reload your weapon<br>
+                  Press X to cancel reload<br>
+                  Press Q to switch weapons<br>
+              </p>
+          </div>
+      </div>
+        
       <canvas id="canvas"></canvas>
         
 
