@@ -74,8 +74,15 @@ io.on('connection', client => {
             gameState.players[controlId].health = 100;
             gameState.players[controlId].alive = true;
         } else {
-            
-            gameState.players[controlId] = new Player(startPos.x, startPos.y, msg.name, msg.color, controlId);
+
+            if (/^#([A-Fa-f0-9]{3}){1,2}$/.test(msg.color))
+            {
+                gameState.players[controlId] = new Player(startPos.x, startPos.y, msg.name.substring(0,18), msg.color, controlId);
+            }
+            else
+            {
+                gameState.players[controlId] = new Player(startPos.x, startPos.y, msg.name.substring(0,18), "#fcc976", controlId);
+            }
             controls[controlId] = {
                 keys: [],
                 mouseDown: false
@@ -204,7 +211,14 @@ var GameState = function(time, players, weapons) {
             if (player.health <= 0 && player.alive) {
                 player.dropEverything(this);
                 player.alive = false;
-                emitNewMessage(this.players[player.lastHitBy].name + ' killed ' + player.name);
+                if (this.players[player.lastHitBy])
+                {
+                    emitNewMessage(this.players[player.lastHitBy].name + ' killed ' + player.name);
+                }
+                else
+                {
+                    emitNewMessage('Unknown' + ' killed ' + player.name);
+                }
             }
         }
     }
@@ -712,9 +726,12 @@ var Player = function(xStart, yStart, name, color, id) {
         }
     }
     this.takeDamage = function(damage, playerId, state) {
-        this.health -= damage;
-        this.lastHitBy = playerId;
-        this.lastHitTime = state.time;
+        if (state.players[playerId])
+        {
+            this.health -= damage;
+            this.lastHitBy = playerId;
+            this.lastHitTime = state.time;
+        }
     }
 }
 var Gun = function(name, startX, startY, length, auto, firerate, multishot, capacity, reloadTime, bulletSpeed, damage, damageDrop, damageRange, damageDropTension, range, defSpray, sprayCoef, stability, kickAnimation, animationMult, walkSpeedMult, shootWalkSpeedMult, color, handPos1x, handPos1y, handPos2x, handPos2y) {
@@ -917,7 +934,7 @@ var Bullet = function(weapon) {
 
     setIfUndefined(this, 'range', weapon.range);
     setIfUndefined(this, 'hitPoint', -1);
-    setIfUndefined(this, 'trailLength', this.bulletSpeed * 20);
+    setIfUndefined(this, 'trailLength', this.bulletSpeed * 10);
     setIfUndefined(this, 'color', weapon.color);
 
     setIfUndefined(this, 'bulletFiredBy', weapon.playerHolding);
@@ -1243,16 +1260,19 @@ var weaponPushFrameCount = 0;
 setInterval(updateGameArea, 1000 / 60);
 
 function updateGameArea() {
-    gameState.step();
+    if (Object.keys(gameState.players).length != 0)
+    {
+        weaponPushFrameCount += 1;
+        if (weaponPushFrameCount >= weaponPushFrames)
+        {
+            weaponPushFrameCount = 0;
+        }
+        gameState.step();
+    }
     stage += 1;
-    weaponPushFrameCount += 1;
     if (stage >= framesPerTick) {
         emitGameState(gameState);
         stage = 0;
-    }
-    if (weaponPushFrameCount >= weaponPushFrames)
-    {
-        weaponPushFrameCount = 0;
     }
 }
 io.listen(process.env.PORT || 3000);
