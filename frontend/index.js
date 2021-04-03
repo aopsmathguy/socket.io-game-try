@@ -549,8 +549,8 @@ var Player = function() {
     {
          var ctx = myGameArea.context;
          
-         var left = this.pos.add(new Vector(-this.radius,this.radius * 2)));
-         var right = this.pos.add(new Vector(this.radius,this.radius * 2)));
+         var left = this.pos.add(new Vector(-this.radius,this.radius * 2));
+         var right = this.pos.add(new Vector(this.radius,this.radius * 2));
          var mid = this.pos.add(new Vector(-this.radius+2*Math.max(0,this.health)/100*this.radius,-this.radius * 2));
          
          ctx.strokeStyle = '#f00';
