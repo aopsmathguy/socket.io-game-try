@@ -153,7 +153,8 @@ function emitNewMessage(message) {
 
 function emitGameState(gameState) {
     // Send this event to everyone in the room.
-    io.sockets.emit('gameState', trimObject(gameState));
+    var copy = JSON.parse(JSON.stringify(gameState));
+    io.sockets.emit('gameState', trimObject(copy));
 }
 var setIfUndefined = function(obj, field, value) {
     if (obj[field] === undefined) {
