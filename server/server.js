@@ -153,19 +153,53 @@ function emitNewMessage(message) {
 
 function emitGameState(gameState) {
     // Send this event to everyone in the room.
-    io.sockets.emit('gameState', JSON.stringify(gameState));
+    io.sockets.emit('gameState', trimObject(gameState));
 }
 var setIfUndefined = function(obj, field, value) {
     if (obj[field] === undefined) {
         obj[field] = value;
     }
 }
+var trimObject = function(obj)
+{
+    var out;
+    if (obj == null)
+    {
+        return;
+    }
+    if (typeof obj == 'object')
+    {
+        
+        if (obj.outfields)
+        {
+            out = {};
+            for (var i in obj.outfields) {
+                var field = obj.outfields[i];
+                out[field] = trimObject(obj[field]);
+            }
+        }
+        else
+        {
+            out = {};
+            for (var field in obj) {
+                out[field] = trimObject(obj[field]);
+            }
+        }
+    }
+    else
+    {
+        out = obj;
+    }
+    return out;
+    
+}
 var GameState = function(time, players, weapons) {
     this.type = "GameState";
-    setIfUndefined(this, 'time', time);
-    setIfUndefined(this, 'players', players);
-    setIfUndefined(this, 'weapons', weapons);
-    setIfUndefined(this, 'weaponsSectors', []);
+    this.outfields = ['time','players','weapons','weaponSectors'];
+    setIfUndefined(this, 'time', time);//
+    setIfUndefined(this, 'players', players);//
+    setIfUndefined(this, 'weapons', weapons);//
+    setIfUndefined(this, 'weaponsSectors', []);//
     this.step = function() {
         iterations = 0;
         this.time = Date.now();
@@ -322,10 +356,6 @@ var GameState = function(time, players, weapons) {
           weapon.spray = weapon.stability * (weapon.spray - weapon.defSpray) + weapon.defSpray;
           weapon.recoil *= weapon.animationMult;
         }
-    }
-
-    this.toString = function() {
-        return JSON.stringify(this);
     }
 }
 var inObjects = function(v) {
@@ -507,24 +537,25 @@ function orientation(p, q, r) {
 }
 var Player = function(xStart, yStart, name, color, id) {
     this.type = "Player";
+    this.outfields = ['radius','reachDist','weapon','weapons','slot','health','pos','vel','ang','punchAnimation','name','color','alive'];
     setIfUndefined(this, 'speed', 5);
     setIfUndefined(this, 'agility', 1);
-    setIfUndefined(this, 'radius', 20);
-    setIfUndefined(this, 'reachDist', 50);
+    setIfUndefined(this, 'radius', 20);//
+    setIfUndefined(this, 'reachDist', 50);//
 
-    setIfUndefined(this, 'weapon', -1);
-    setIfUndefined(this, 'weapons', [-1,-1]);
-    setIfUndefined(this, 'slot', 0);
+    setIfUndefined(this, 'weapon', -1);//
+    setIfUndefined(this, 'weapons', [-1,-1]);//
+    setIfUndefined(this, 'slot', 0);//
 
-    setIfUndefined(this, 'health', 100);
+    setIfUndefined(this, 'health', 100);//
 
-    setIfUndefined(this, 'pos', new Vector(xStart, yStart));
-    setIfUndefined(this, 'vel', new Vector(0, 0));
+    setIfUndefined(this, 'pos', new Vector(xStart, yStart));//
+    setIfUndefined(this, 'vel', new Vector(0, 0));//
 
-    setIfUndefined(this, 'ang', 0);
+    setIfUndefined(this, 'ang', 0);//
 
     setIfUndefined(this, 'punchReach', 10);
-    setIfUndefined(this, 'punchAnimation', 0);
+    setIfUndefined(this, 'punchAnimation', 0);//
     setIfUndefined(this, 'punchLastTime', 0);
     setIfUndefined(this, 'punchRate', 200);
     setIfUndefined(this, 'punchDamage', 24);
@@ -538,9 +569,9 @@ var Player = function(xStart, yStart, name, color, id) {
     setIfUndefined(this, 'healInterval', 5000);
     setIfUndefined(this, 'lastHitTime', 0);
 
-    setIfUndefined(this, 'name', name);
-    setIfUndefined(this, 'color', color);
-    setIfUndefined(this, 'alive', true);
+    setIfUndefined(this, 'name', name);//
+    setIfUndefined(this, 'color', color);//
+    setIfUndefined(this, 'alive', true);//
 
 
     setIfUndefined(this, 'lastHitBy', -1);
@@ -734,15 +765,16 @@ var Player = function(xStart, yStart, name, color, id) {
 }
 var Gun = function(name, startX, startY, length, auto, firerate, multishot, capacity, reloadTime, bulletSpeed, damage, damageDrop, damageRange, damageDropTension, range, defSpray, sprayCoef, stability, kickAnimation, animationMult, walkSpeedMult, shootWalkSpeedMult, color, handPos1x, handPos1y, handPos2x, handPos2y) {
     this.type = "Gun";
-    setIfUndefined(this, 'name', name);
-    setIfUndefined(this, 'pos', new Vector(startX, startY));
-    setIfUndefined(this, 'vel', new Vector(0, 0));
-    setIfUndefined(this, 'ang', -Math.PI/6);
-    setIfUndefined(this, 'length', length);
+    this.outfields = ['name','pos','vel','ang','length','capacity','reloadTime','color','handPos1','handPos2','hold','radius','bullets'];
+    setIfUndefined(this, 'name', name);//
+    setIfUndefined(this, 'pos', new Vector(startX, startY));//
+    setIfUndefined(this, 'vel', new Vector(0, 0));//
+    setIfUndefined(this, 'ang', -Math.PI/6);//
+    setIfUndefined(this, 'length', length);//
     setIfUndefined(this, 'auto', auto);
     setIfUndefined(this, 'multishot', multishot);
-    setIfUndefined(this, 'capacity', capacity);
-    setIfUndefined(this, 'reloadTime', reloadTime);
+    setIfUndefined(this, 'capacity', capacity);//
+    setIfUndefined(this, 'reloadTime', reloadTime);//
     setIfUndefined(this, 'firerate', firerate);
     setIfUndefined(this, 'defSpray', defSpray);
     setIfUndefined(this, 'sprayCoef', sprayCoef);
@@ -761,21 +793,21 @@ var Gun = function(name, startX, startY, length, auto, firerate, multishot, capa
     setIfUndefined(this, 'walkSpeedMult', walkSpeedMult);
     setIfUndefined(this, 'shootWalkSpeedMult', shootWalkSpeedMult);
 
-    setIfUndefined(this, 'color', color);
-    setIfUndefined(this, 'handPos1', new Vector(handPos1x, handPos1y));
-    setIfUndefined(this, 'handPos2', new Vector(handPos2x, handPos2y));
+    setIfUndefined(this, 'color', color);//
+    setIfUndefined(this, 'handPos1', new Vector(handPos1x, handPos1y));//
+    setIfUndefined(this, 'handPos2', new Vector(handPos2x, handPos2y));//
 
-    setIfUndefined(this, 'bulletsRemaining', 0);
-    setIfUndefined(this, 'reloadStartTime', -1);
+    setIfUndefined(this, 'bulletsRemaining', 0);//
+    setIfUndefined(this, 'reloadStartTime', -1);//
 
     setIfUndefined(this, 'spray', 0);
     setIfUndefined(this, 'recoil', 0);
     setIfUndefined(this, 'lastFireTime', 0);
 
-    setIfUndefined(this, 'hold', false);
-    setIfUndefined(this, 'radius', 30);
+    setIfUndefined(this, 'hold', false);//
+    setIfUndefined(this, 'radius', 30);//
 
-    setIfUndefined(this, 'bullets', {});
+    setIfUndefined(this, 'bullets', {});//
     setIfUndefined(this, 'bulletsArrLength', 0);
 
 
@@ -917,12 +949,13 @@ var Bullet = function(weapon) {
     if (weapon === undefined) {
         weapon = new Gun(0, 0, 0, false, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '#000');
     }
-    setIfUndefined(this, 'startPos', weapon.pos.add((new Vector(weapon.length / 2, 0)).rotate(weapon.ang)));
-    setIfUndefined(this, 'tailPos', this.startPos.copy());
-    setIfUndefined(this, 'pos', this.startPos.copy());
-    setIfUndefined(this, 'vel', (new Vector(weapon.bulletSpeed, 0)).rotate(weapon.ang + weapon.spray * (Math.random() - 0.5)).add(weapon.vel));
-    setIfUndefined(this, 'ang', this.vel.ang());
-    setIfUndefined(this, 'bulletSpeed', weapon.bulletSpeed);
+    this.outfields = ['startPos','tailPos','pos','vel','ang','bulletSpeed','range','hitPoint','trailLength','color'];
+    setIfUndefined(this, 'startPos', weapon.pos.add((new Vector(weapon.length / 2, 0)).rotate(weapon.ang)));//
+    setIfUndefined(this, 'tailPos', this.startPos.copy());//
+    setIfUndefined(this, 'pos', this.startPos.copy());//
+    setIfUndefined(this, 'vel', (new Vector(weapon.bulletSpeed, 0)).rotate(weapon.ang + weapon.spray * (Math.random() - 0.5)).add(weapon.vel));//
+    setIfUndefined(this, 'ang', this.vel.ang());//
+    setIfUndefined(this, 'bulletSpeed', weapon.bulletSpeed);//
 
     setIfUndefined(this, 'damage', weapon.damage);
     setIfUndefined(this, 'damageDrop', weapon.damageDrop);
@@ -930,10 +963,10 @@ var Bullet = function(weapon) {
     setIfUndefined(this, 'damageDropTension', weapon.damageDropTension);
 
 
-    setIfUndefined(this, 'range', weapon.range);
-    setIfUndefined(this, 'hitPoint', -1);
-    setIfUndefined(this, 'trailLength', this.bulletSpeed * 10);
-    setIfUndefined(this, 'color', weapon.color);
+    setIfUndefined(this, 'range', weapon.range);//
+    setIfUndefined(this, 'hitPoint', -1);//
+    setIfUndefined(this, 'trailLength', this.bulletSpeed * 10);//
+    setIfUndefined(this, 'color', weapon.color);//
 
     setIfUndefined(this, 'bulletFiredBy', weapon.playerHolding);
     setIfUndefined(this, 'delete', false);
@@ -1038,10 +1071,10 @@ var House2 = function(x,y,ang)
 }
 var Obstacle = function(vs, color, intersectable) {
     this.type = "Obstacle";
-    setIfUndefined(this, 'color', color);
+    setIfUndefined(this, 'color', color);//
 
-    setIfUndefined(this, 'vs', vs);
-    setIfUndefined(this, 'intersectable', intersectable);
+    setIfUndefined(this, 'vs', vs);//
+    setIfUndefined(this, 'intersectable', intersectable);//
     if (this.center == undefined) {
         this.center = new Vector(0, 0);
         for (var i = 0; i < this.vs.length; i++) {
@@ -1179,8 +1212,8 @@ var Obstacle = function(vs, color, intersectable) {
 }
 var Vector = function(x, y) {
     this.type = "Vector";
-    setIfUndefined(this, 'x', x);
-    setIfUndefined(this, 'y', y);
+    setIfUndefined(this, 'x', x);//
+    setIfUndefined(this, 'y', y);//
     this.rotate = function(theta) {
         return new Vector(x * Math.cos(theta) - y * Math.sin(theta), y * Math.cos(theta) + x * Math.sin(theta));
     }
@@ -1269,6 +1302,7 @@ function updateGameArea() {
     }
     stage += 1;
     if (stage >= framesPerTick) {
+        
         emitGameState(gameState);
         stage = 0;
     }
