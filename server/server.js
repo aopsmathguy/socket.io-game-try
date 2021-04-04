@@ -196,7 +196,7 @@ var trimObject = function(obj)
 }
 var GameState = function(time, players, weapons) {
     this.type = "GameState";
-    this.outfields = ['type','time','players','weapons','weaponSectors'];
+    this.outfields = ['type','time','players','weapons','weaponsSectors'];
     setIfUndefined(this, 'time', time);//
     setIfUndefined(this, 'players', players);//
     setIfUndefined(this, 'weapons', weapons);//
