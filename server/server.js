@@ -42,7 +42,7 @@ io.on('connection', client => {
     });
     client.on('keyup', (keycode) => {
         if (typeof keycode !== 'undefined') {
-        
+
             if (controls[client.id] && gameState.players[client.id])
                 controls[client.id].keys[keycode] = false;
         }
@@ -78,7 +78,7 @@ io.on('connection', client => {
             player.alive = true;
             player.color = color;
             player.name = name;
-            
+
         } else {
             gameState.players[controlId] = new Player(startPos.x, startPos.y, name, color, controlId);
             controls[controlId] = {
@@ -87,7 +87,7 @@ io.on('connection', client => {
             };
             emitNewMessage(gameState.players[controlId].name + " joined the game");
         }
-        
+
 
     }
 
@@ -122,7 +122,7 @@ var loopThroughObstacles = function(objectPos, inner) {
     {
         inner(borderObstacles[3]);
     }
-    
+
     for (var i = sector[0] - 1; i < sector[0] + 2; i++) {
         if (i < 0 || i >= obstacles.length) {
             continue;
@@ -170,7 +170,7 @@ var trimObject = function(obj)
     }
     if (typeof obj == 'object')
     {
-        
+
         if (obj.outfields)
         {
             out = {};
@@ -192,7 +192,7 @@ var trimObject = function(obj)
         out = obj;
     }
     return out;
-    
+
 }
 var GameState = function(time, players, weapons) {
     this.type = "GameState";
@@ -643,9 +643,9 @@ var Player = function(xStart, yStart, name, color, id) {
 
             weapon.pos = this.pos;
             weapon.vel = (new Vector(-2, 0)).rotate(this.ang);
-            
+
             weapon.ang = -Math.PI/6;
-            
+
             weapon.hold = false;
             weapon.cancelReload();
             weapon.playerHolding = -1;
@@ -712,10 +712,10 @@ var Player = function(xStart, yStart, name, color, id) {
       var point2 = closestPoint.add(closestPoint.subtract(this.pos).normalize().rotate(Math.PI/2).multiply(-x));
       var point1On = point1.onSegment(v1,v2);
       var point2On = point2.onSegment(v1,v2);
-      
+
       var point1Dist = v1.distanceTo(point1);
       var point2Dist = v1.distanceTo(point2);
-      
+
       if (point1On)
       {
         if (point2On)
@@ -766,7 +766,7 @@ var Player = function(xStart, yStart, name, color, id) {
 }
 var Gun = function(name, startX, startY, length, auto, firerate, multishot, capacity, reloadTime, bulletSpeed, damage, damageDrop, damageRange, damageDropTension, range, defSpray, sprayCoef, stability, kickAnimation, animationMult, walkSpeedMult, shootWalkSpeedMult, color, handPos1x, handPos1y, handPos2x, handPos2y) {
     this.type = "Gun";
-    this.outfields = ['type','name','pos','vel','ang','length','capacity','reloadTime','color','handPos1','handPos2','bulletsRemaining','reloadStartTime','hold','radius','bullets'];
+    this.outfields = ['type','name','pos','vel','ang','length','capacity','reloadTime','color','handPos1','handPos2','bulletsRemaining','reloadStartTime','recoil','hold','radius','bullets'];
     setIfUndefined(this, 'name', name);//
     setIfUndefined(this, 'pos', new Vector(startX, startY));//
     setIfUndefined(this, 'vel', new Vector(0, 0));//
@@ -820,11 +820,11 @@ var Gun = function(name, startX, startY, length, auto, firerate, multishot, capa
     {
       if (this.lastFireTime == 0)
       {
-         
+
       }
       else if (this.lastFireTime == -1)
       {
-        
+
       }
       else if (state.time - this.lastFireTime >= 60000 / this.firerate) {
          this.lastFireTime = 0;
@@ -868,7 +868,7 @@ var Gun = function(name, startX, startY, length, auto, firerate, multishot, capa
             {
                 finalForce = finalForce.add((new Vector(0.24*stretch,0)).rotate(this.pos.angTo(closestPoint)));
             }
-            
+
         });
         this.vel = this.vel.add(finalForce).multiply(0.6);
     }
@@ -887,7 +887,7 @@ var Gun = function(name, startX, startY, length, auto, firerate, multishot, capa
     }
     this.cancelReload = function() {
         this.reloadStartTime = -1;
-        
+
     }
     this.fireBullets = function(timeNow) {
         if (this.lastFireTime == 0 && this.reloadStartTime == -1) {
@@ -971,8 +971,8 @@ var Bullet = function(weapon) {
 
     setIfUndefined(this, 'bulletFiredBy', weapon.playerHolding);
     setIfUndefined(this, 'delete', false);
-  
-  
+
+
     this.step = function(state) {
         this.pos = this.pos.add(this.vel);
         if (this.tailPos.distanceTo(this.pos) > this.trailLength) {
@@ -1166,7 +1166,7 @@ var Obstacle = function(vs, color, intersectable) {
         {
             var v3 = this.vs[i];
             var v4 = this.vs[(i + 1) % this.vs.length];
-            
+
             var a1 = v2.y - v1.y;
             var b1 = v1.x - v2.x;
             var c1 = a1 * v1.x + b1 * v1.y;
@@ -1176,7 +1176,7 @@ var Obstacle = function(vs, color, intersectable) {
             var c2 = a2 * v3.x + b2 * v3.y;
 
             var determinant = a1 * b2 - a2 * b1;
-            
+
             var lineInter;
             if (determinant == 0) {
                 continue;
@@ -1303,7 +1303,7 @@ function updateGameArea() {
     }
     stage += 1;
     if (stage >= framesPerTick) {
-        
+
         emitGameState(gameState);
         stage = 0;
     }
