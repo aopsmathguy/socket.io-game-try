@@ -853,7 +853,7 @@ var Gun = function(name, startX, startY, length, auto, firerate, multishot, capa
             var stretch = this.radius + weapon.radius - dist;
             if (stretch > 0)
             {
-                finalForce = finalForce.add((new Vector(0.024*stretch,0)).rotate(this.pos.angTo(weapon.pos)));
+                finalForce = finalForce.add((new Vector(0.24*stretch,0)).rotate(this.pos.angTo(weapon.pos)));
             }
         });
         loopThroughObstacles(this.pos, (obstacle) => {
@@ -867,7 +867,7 @@ var Gun = function(name, startX, startY, length, auto, firerate, multishot, capa
             var stretch = this.radius - dist;
             if (stretch > 0)
             {
-                finalForce = finalForce.add((new Vector(0.24*stretch,0)).rotate(this.pos.angTo(closestPoint)));
+                finalForce = finalForce.add((new Vector(2.4*stretch,0)).rotate(this.pos.angTo(closestPoint)));
             }
 
         });
