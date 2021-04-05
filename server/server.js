@@ -210,12 +210,12 @@ var GameState = function(time, players, weapons) {
           this.weapons[i].setLastFireTime(this);
           if (weaponPushFrameCount == 0)
           {
-            this.weapons[i].pushFromAll(this);
+            //this.weapons[i].pushFromAll(this);
           }
         }
         for (var i in this.weapons)
         {
-          this.weapons[i].step();
+          //this.weapons[i].step();
         }
         for (var k in this.players) {
             var player = this.players[k];
