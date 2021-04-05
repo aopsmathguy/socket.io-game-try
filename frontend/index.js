@@ -8,7 +8,6 @@ const socket = io('https://limitless-everglades-60126.herokuapp.com/');
 
 socket.on('init', handleInit);
 socket.on('gameState', (msg) => {
-    console.log(msg);
     gameStates.push(msg);
 });
 socket.on('killFeed', (msg) => {
