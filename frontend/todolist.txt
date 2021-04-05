@@ -1,0 +1,4 @@
+1. Add scoreboard with kills/streaks/deaths etc..
+2. make your healthbar be at bottom
+3. add perks and stances and customization or something
+4. add objectives and different game modes
