@@ -1,8 +1,8 @@
-const gameWidth = 4000;
-const gameHeight = 4000;
-const numOb = 70;
-const numHouse1 = 6;
-const numHouse2 = 6;
+const gameWidth = 40000;
+const gameHeight = 40000;
+const numOb = 7000;
+const numHouse1 = 600;
+const numHouse2 = 600;
 const gridWidth = 250;
 const framesPerTick = 3;
 
@@ -508,7 +508,7 @@ var makeObstacles = function() {
     var numEach = [6, 1, 4, 3, 2, 1, 1, 1, 1, 1, 1];
     var weapons = [];
     for (var i = 0; i < viableWeapons.length; i++) {
-        for (var j = 0; j < numEach[i]; j++) {
+        for (var j = 0; j < 100*numEach[i]; j++) {
             var weapon = viableWeapons[i].copy();
             weapon.pos = findSpawnPosition();
             weapons.push(weapon);
