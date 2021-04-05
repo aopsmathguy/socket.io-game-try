@@ -1,5 +1,5 @@
-const gameWidth = 3000;
-const gameHeight = 3000;
+const gameWidth = 4000;
+const gameHeight = 4000;
 const numOb = 30;
 const numHouse1 = 10;
 const numHouse2 = 10;
