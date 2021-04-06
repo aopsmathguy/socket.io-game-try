@@ -203,7 +203,6 @@ var GameState = function(time, players, weapons) {
     setIfUndefined(this, 'weaponsSectors', []);//
     this.step = function() {
         iterations = 0;
-        this.time = Date.now();
         this.updateWeaponsSectors();
         for (var i in this.weapons)
         {
@@ -213,7 +212,6 @@ var GameState = function(time, players, weapons) {
             this.weapons[i].pushFromAll(this);
           }
         }
-        
         for (var i in this.weapons)
         {
           this.weapons[i].step();
@@ -853,7 +851,7 @@ var Gun = function(name, startX, startY, length, auto, firerate, multishot, capa
             var stretch = this.radius + weapon.radius - dist;
             if (stretch > 0)
             {
-                finalForce = finalForce.add((new Vector(0.24*stretch,0)).rotate(this.pos.angTo(weapon.pos)));
+                finalForce = finalForce.add((new Vector(0.024*stretch,0)).rotate(this.pos.angTo(weapon.pos)));
             }
         });
         loopThroughObstacles(this.pos, (obstacle) => {
@@ -867,7 +865,7 @@ var Gun = function(name, startX, startY, length, auto, firerate, multishot, capa
             var stretch = this.radius - dist;
             if (stretch > 0)
             {
-                finalForce = finalForce.add((new Vector(2.4*stretch,0)).rotate(this.pos.angTo(closestPoint)));
+                finalForce = finalForce.add((new Vector(0.24*stretch,0)).rotate(this.pos.angTo(closestPoint)));
             }
 
         });
@@ -879,7 +877,7 @@ var Gun = function(name, startX, startY, length, auto, firerate, multishot, capa
         {
             return;
         }
-        this.pos = this.pos.add(this.vel.multiply(1/weaponPushFrames));
+        this.pos = this.pos.add(this.vel);
     }
     this.reload = function(timeNow) {
         if (this.bulletsRemaining < this.capacity && this.reloadStartTime == -1 && this.lastFireTime == 0) {
@@ -1288,11 +1286,12 @@ var Vector = function(x, y) {
 }
 makeObstacles();
 var stage = 0;
-var weaponPushFrames = 60;
+var weaponPushFrames = 12;
 var weaponPushFrameCount = 0;
 setInterval(updateGameArea, 1000 / 60);
 
 function updateGameArea() {
+    gameState.time = Date.now();
     if (Object.keys(gameState.players).length != 0)
     {
         weaponPushFrameCount += 1;
