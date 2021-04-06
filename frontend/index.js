@@ -283,13 +283,13 @@ var controlsBundle = {
                 controlsBundle.keys[e.keyCode] = true;
                 socket.emit('keydown', e.keyCode);
             }
-        })
+        });
         window.addEventListener('keyup', function(e) {
             if (controlsBundle.keys[e.keyCode]) {
                 controlsBundle.keys[e.keyCode] = false;
                 socket.emit('keyup', e.keyCode);
             }
-        })
+        });
 
         const rect = myGameArea.canvas.getBoundingClientRect();
         window.addEventListener('mousemove', function(e) {
@@ -302,20 +302,13 @@ var controlsBundle = {
                 controlsBundle.mouseDown = true;
                 socket.emit('mousedown');
             }
-        })
+        });
         window.addEventListener('mouseup', function(e) {
             if (e.button == 0) {
                 controlsBundle.mouseDown = false;
                 socket.emit('mouseup');
             }
-        })
-
-        window.addEventListener("keydown", function(e) {
-            // space, page up, page down and arrow keys:
-            if ([32, 33, 34, 37, 38, 39, 40].indexOf(e.keyCode) > -1) {
-                e.preventDefault();
-            }
-        }, false);
+        });
     }
 }
 var emitMousePos = function() {
@@ -921,6 +914,7 @@ var linearGameState = function() {
     if (gameStates.length > 2) {
         buffer -= 2;
     } else if (gameStates.length < 3) {
+        
         buffer += 2;
     }
 
@@ -1027,7 +1021,7 @@ function updateGameArea() {
             lastDeadTime = -1;
         } else if (lastDeadTime == -1) {
             lastDeadTime = Date.now();
-        } else if (Date.now() - lastDeadTime > 5000 && lastDeadTime != -2) {
+        } else if (Date.now() - lastDeadTime > 3000 && lastDeadTime != -2) {
             
             initialScreen.style.display = 'block';
         }
