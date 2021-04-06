@@ -78,6 +78,8 @@ io.on('connection', client => {
             player.alive = true;
             player.color = color;
             player.name = name;
+            player.killstreak = 0;
+            player.points = 0;
 
         } else {
             gameState.players[controlId] = new Player(startPos.x, startPos.y, name, color, controlId);
@@ -245,6 +247,7 @@ var GameState = function(time, players, weapons) {
                 player.alive = false;
                 if (this.players[player.lastHitBy])
                 {
+                    this.players[player.lastHitBy].killstreak += 1;
                     emitNewMessage(this.players[player.lastHitBy].name + ' killed ' + player.name);
                 }
                 else
@@ -537,7 +540,7 @@ function orientation(p, q, r) {
 }
 var Player = function(xStart, yStart, name, color, id) {
     this.type = "Player";
-    this.outfields = ['type','radius','reachDist','weapon','weapons','slot','health','pos','vel','ang','punchAnimation','name','color','alive'];
+    this.outfields = ['type','radius','reachDist','weapon','weapons','slot','health','pos','vel','ang','punchAnimation','name','killstreak','points','color','alive'];
     setIfUndefined(this, 'speed', 5);
     setIfUndefined(this, 'agility', 1);
     setIfUndefined(this, 'radius', 20);//
@@ -570,6 +573,8 @@ var Player = function(xStart, yStart, name, color, id) {
     setIfUndefined(this, 'lastHitTime', 0);
 
     setIfUndefined(this, 'name', name);//
+    setIfUndefined(this, 'killstreak', 0);//
+    setIfUndefined(this, 'points', 0);//
     setIfUndefined(this, 'color', color);//
     setIfUndefined(this, 'alive', true);//
 
@@ -757,6 +762,7 @@ var Player = function(xStart, yStart, name, color, id) {
     this.takeDamage = function(damage, playerId, state) {
         if (state.players[playerId])
         {
+            state.players[playerId].points += damage;
             this.health -= damage;
             this.lastHitBy = playerId;
             this.lastHitTime = state.time;
