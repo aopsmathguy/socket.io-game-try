@@ -398,12 +398,12 @@ var GameState = function() {
         
         var margin = 10;
         var height = 20;
-        var totalHeight = displayObj.length*(margin + height) + margin;
+        var maxLength = 10;
+        var totalHeight = Math.min(displayObj.length,maxLength)*(margin + height) + margin;
         var totalWidth = 280;
         var startX = myGameArea.canvas.width - 300;
         var startY = 20;
         var split1 = 160;
-        
         
         var ctx = myGameArea.context;
         ctx.save();
@@ -413,7 +413,7 @@ var GameState = function() {
         ctx.restore();
         
         var y = startY + margin;
-        for (var i = 0; i < displayObj.length; i++)
+        for (var i = 0; i < Math.min(displayObj.length,maxLength); i++)
         {
             var playerStats = displayObj[i];
             ctx.font = "bold " + height + "px Courier New";
