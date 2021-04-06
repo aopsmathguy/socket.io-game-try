@@ -369,12 +369,63 @@ var GameState = function() {
             if (this.players[idx].alive && idx != controlId)
                 this.displayName(idx);
         }
-        if (this.players[controlId] && this.players[controlId].alive)
+        if (this.players[controlId] && initialScreen.style.display == "none")
         {
             // this.displayReloadTime();
             this.displayBulletCount();
             //myGameArea.printFps();
             displayKillFeed();
+            this.displayScoreBoard();
+        }
+    }
+    this.displayScoreBoard = function()
+    {
+        var displayObj = [];
+        for (var i in this.players)
+        {
+            var player = this.players[i];
+            if (!player.alive)
+            {
+                continue;
+            }
+            displayObj.push({
+                name: player.name,
+                killstreak: player.killstreak,
+                points: player.points
+            });
+        }
+        displayObj.sort((a,b) => (b.points - a.points));
+        
+        var margin = 10;
+        var height = 20;
+        var totalHeight = displayObj.length*(margin + height) + margin;
+        var totalWidth = 280;
+        var startX = myGameArea.canvas.width - 300;
+        var startY = 20;
+        var split1 = 160;
+        
+        
+        var ctx = myGameArea.context;
+        ctx.save();
+        ctx.globalAlpha = 0.3;
+        ctx.fillStyle = "#000";
+        ctx.fillRect(startX, startY, totalWidth, totalHeight);
+        ctx.restore();
+        
+        var y = startY + margin;
+        for (var i = 0; i < displayObj.length; i++)
+        {
+            var playerStats = displayObj[i];
+            ctx.font = "bold " + height + "px Courier New";
+            ctx.fillStyle = "#fff";
+            ctx.textAlign = "left";
+            var name = (playerStats.name.length > 11 ? playerStats.name.substring(0,10) + "\u2026" : playerStats.name);
+            ctx.fillText(name + ":", startX + margin, y + 3/4 * height);
+            ctx.fillText(playerStats.killstreak, startX + split1, y + 3/4 * height);
+            ctx.textAlign = "right";
+            ctx.fillText(Math.floor(playerStats.points), startX + totalWidth - margin, y + 3/4 * height);
+            
+            y += margin + height;
         }
     }
     this.displayPlayer = function(i) {
@@ -617,9 +668,9 @@ var Bullet = function() {
         var ctx = myGameArea.context;
         const g = drawer.createLinearGradient(ctx, this.pos, this.pos.add((new Vector(-this.trailLength, 0)).rotate(this.ang)));
         g.addColorStop(0, hexToRgbA('#ff0', 1)); // opaque
-        g.addColorStop(0.1, hexToRgbA('#ff0', 1)); // opaque
-        g.addColorStop(0.2, hexToRgbA('#ccc', 0.5)); // opaque
-        g.addColorStop(1, hexToRgbA('#ccc', 0)); // transparent
+        g.addColorStop(0.1/3, hexToRgbA('#ff0', 1)); // opaque
+        g.addColorStop(0.2/3, hexToRgbA('#ccc', 0.5)); // opaque
+        g.addColorStop(1/3, hexToRgbA('#ccc', 0)); // transparent
         ctx.strokeStyle = g;
 
         drawer.lineWidth(ctx, 6);
