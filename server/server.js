@@ -4,7 +4,7 @@ const numOb = 30;
 const numHouse1 = 10;
 const numHouse2 = 10;
 const gridWidth = 250;
-const framesPerTick = 6;
+const framesPerTick = 4;
 
 const io = require('socket.io')();
 
