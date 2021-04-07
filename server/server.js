@@ -557,7 +557,7 @@ var Player = function(xStart, yStart, name, color, id) {
 
     setIfUndefined(this, 'ang', 0);//
 
-    setIfUndefined(this, 'punchReach', 10);
+    setIfUndefined(this, 'punchReach', 20);
     setIfUndefined(this, 'punchAnimation', 0);//
     setIfUndefined(this, 'punchLastTime', 0);
     setIfUndefined(this, 'punchRate', 200);
