@@ -928,7 +928,9 @@ var displayCrosshair = function() {
     controlsBundle.mouse.circle(6, '#fff', 2);
 }
 var linearPosition = function(v1, v2, t, t1, t2) {
-    return new Vector(v1.x * (t2 - t) / (t2 - t1) + v2.x * (t - t1) / (t2 - t1), v1.y * (t2 - t) / (t2 - t1) + v2.y * (t - t1) / (t2 - t1));
+    var timescale = Math.max((t2 - t) / (t2 - t1),-2);
+    
+    return new Vector(v1.x * timescale + v2.x * (1 - timescale), v1.y * timescale + v2.y * (1 - timescale));
 }
 var linearAng = function(a1, a2, t, t1, t2) {
     if (t < t1) {
