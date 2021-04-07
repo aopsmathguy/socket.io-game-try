@@ -928,7 +928,7 @@ var displayCrosshair = function() {
     controlsBundle.mouse.circle(6, '#fff', 2);
 }
 var linearPosition = function(v1, v2, t, t1, t2) {
-    var timescale = Math.max((t2 - t) / (t2 - t1),-1);
+    var timescale = (t2 - t) / (t2 - t1);
     
     return new Vector(v1.x * timescale + v2.x * (1 - timescale), v1.y * timescale + v2.y * (1 - timescale));
 }
