@@ -403,7 +403,7 @@ var GameState = function() {
         var totalWidth = 280;
         var startX = myGameArea.canvas.width - 300;
         var startY = 20;
-        var split1 = 160;
+        var split1 = 200;
         
         var ctx = myGameArea.context;
         ctx.save();
@@ -667,8 +667,8 @@ var Bullet = function() {
     this.display = function() {
         var ctx = myGameArea.context;
         const g = drawer.createLinearGradient(ctx, this.pos, this.pos.add((new Vector(-this.trailLength, 0)).rotate(this.ang)));
-        g.addColorStop(0, hexToRgbA('#ff0', 1)); // opaque
-        g.addColorStop(0.1/3, hexToRgbA('#ff0', 1)); // opaque
+        g.addColorStop(0, hexToRgbA(this.color, 1)); // opaque
+        g.addColorStop(0.1/3, hexToRgbA(this.color, 1)); // opaque
         g.addColorStop(0.2/3, hexToRgbA('#ccc', 0.5)); // opaque
         g.addColorStop(1/3, hexToRgbA('#ccc', 0)); // transparent
         ctx.strokeStyle = g;
@@ -928,9 +928,7 @@ var displayCrosshair = function() {
     controlsBundle.mouse.circle(6, '#fff', 2);
 }
 var linearPosition = function(v1, v2, t, t1, t2) {
-    var timescale = (t2 - t) / (t2 - t1);
-    
-    return new Vector(v1.x * timescale + v2.x * (1 - timescale), v1.y * timescale + v2.y * (1 - timescale));
+    return new Vector(v1.x * (t2 - t) / (t2 - t1) + v2.x * (t - t1) / (t2 - t1), v1.y * (t2 - t) / (t2 - t1) + v2.y * (t - t1) / (t2 - t1));
 }
 var linearAng = function(a1, a2, t, t1, t2) {
     if (t < t1) {
@@ -966,7 +964,7 @@ var linearGameState = function() {
     }
     if (gameStates.length > 2) {
         buffer -= 2;
-    } else if (gameStates.length < 4) {
+    } else if (gameStates.length < 3) {
         
         buffer += 2;
     }
