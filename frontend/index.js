@@ -1065,7 +1065,10 @@ var lastDeadTime = -1;
 function updateGameArea() {
     myGameArea.clear();
     if (gameStates.length > 1) {
-        emitMousePos();
+        if (gameStates[gameStates.length - 1].players[controlId] && gameStates[gameStates.length - 1].players[controlId].alive)
+        {
+            emitMousePos();
+        }
         var state = linearGameState();
         
         if (state.players[controlId] && state.players[controlId].alive) {
