@@ -403,7 +403,7 @@ var GameState = function() {
         var totalWidth = 280;
         var startX = myGameArea.canvas.width - 300;
         var startY = 20;
-        var split1 = 200;
+        var split1 = 180;
         
         var ctx = myGameArea.context;
         ctx.save();
