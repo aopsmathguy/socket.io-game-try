@@ -198,7 +198,7 @@ var trimObject = function(obj)
 }
 var GameState = function(time, players, weapons) {
     this.type = "GameState";
-    this.outfields = ['type','time','players','weapons','weaponsSectors'];
+    this.outfields = ['type','time','players','weapons'];
     setIfUndefined(this, 'time', time);//
     setIfUndefined(this, 'players', players);//
     setIfUndefined(this, 'weapons', weapons);//
@@ -541,7 +541,7 @@ function orientation(p, q, r) {
 }
 var Player = function(xStart, yStart, name, color, id) {
     this.type = "Player";
-    this.outfields = ['type','radius','reachDist','weapon','weapons','slot','health','pos','vel','ang','punchAnimation','name','killstreak','points','color','alive'];
+    this.outfields = ['type','radius','reachDist','weapon','weapons','slot','health','pos','ang','punchAnimation','name','killstreak','points','color','alive'];
     setIfUndefined(this, 'speed', 5);
     setIfUndefined(this, 'agility', 1);
     setIfUndefined(this, 'radius', 20);//
