@@ -671,7 +671,7 @@ var Player = function(xStart, yStart, name, color, id) {
     {
         if (this.weapon != -1) {
             var weapon = state.weapons[this.weapon];
-            weapon.pos = this.pos.add((new Vector(this.radius + weapon.length / 2 - weapon.recoil, 0)).rotate(this.ang));
+            weapon.pos = this.pos.add((new Vector(weapon.buttPosition + weapon.length / 2 - weapon.recoil, 0)).rotate(this.ang));
             weapon.vel = this.vel;
             weapon.ang = this.ang;
 
