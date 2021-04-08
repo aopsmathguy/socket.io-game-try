@@ -823,7 +823,7 @@ var Gun = function(name, startX, startY, length, auto, firerate, multishot, capa
 
     setIfUndefined(this, 'playerHolding', -1);
     this.copy = function() {
-        return new Gun(this.name, this.pos.x, this.pos.y, this.length, this.auto, this.firerate, this.multishot, this.capacity, this.reloadTime, this.reloadType, this.bulletSpeed, this.damage, this.damageDrop, this.damageRange, this.damageDropTension, this.range, this.defSpray, this.sprayCoef, this.stability, this.kickAnimation, this.animationMult, this.walkSpeedMult, this.shootWalkSpeedMult, this.color, this.handPos1.x, this.handPos1.y, this.handPos2.x, this.handPos2.y);
+        return new Gun(this.name, this.pos.x, this.pos.y, this.length, this.auto, this.firerate, this.multishot, this.capacity, this.reloadTime, this.reloadType, this.bulletSpeed, this.damage, this.damageDrop, this.damageRange, this.damageDropTension, this.range, this.defSpray, this.sprayCoef, this.stability, this.kickAnimation, this.animationMult, this.walkSpeedMult, this.shootWalkSpeedMult, this.color, this.buttPosition, this.handPos1.x, this.handPos1.y, this.handPos2.x, this.handPos2.y);
     }
     this.setLastFireTime = function(state)
     {
