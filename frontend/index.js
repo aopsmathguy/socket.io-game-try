@@ -575,9 +575,10 @@ var GameState = function() {
                 continue;
             }
             var player = this.players[i];
+            var weapon = this.weapons[player.weapon];
             var ang = player.ang;
-            this.weapons[player.weapon].pos = player.pos.add((new Vector(player.radius + this.weapons[player.weapon].length / 2 - this.weapons[player.weapon].recoil, 0)).rotate(ang));
-            this.weapons[player.weapon].ang = ang;
+            weapon.pos = player.pos.add((new Vector(weapon.buttPosition + weapon.length / 2 - weapon.recoil, 0)).rotate(ang));
+            weapon.ang = ang;
         }
     }
     this.toString = function() {
