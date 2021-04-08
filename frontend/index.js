@@ -430,17 +430,7 @@ var GameState = function() {
     }
     this.displayPlayer = function(i) {
         var player = this.players[i];
-        var firstHand;
-        var secondHand;
-        if (player.weapon != -1) {
-            firstHand = this.weapons[player.weapon].handPos1.add(new Vector(-this.weapons[player.weapon].recoil, 0));
-            secondHand = this.weapons[player.weapon].handPos2.add(new Vector(-this.weapons[player.weapon].recoil, 0));
-            this.displayWeapon(player.weapon);
-        } else {
-            firstHand = (new Vector(player.radius * 0.75, player.radius * 0.8)).add((new Vector(player.punchAnimation, 0)).rotate(-Math.PI / 6));
-            secondHand = new Vector(player.radius * 0.75, -player.radius * 0.8);
-
-        }
+        
         var ctx = myGameArea.context;
         /*ctx.save();
         ctx.globalAlpha = 0.5+0.25*Math.cos(((this.time)/125)%(2*Math.PI));
@@ -458,6 +448,17 @@ var GameState = function() {
         ctx.fill();
         var ang = player.ang;
 
+        var firstHand;
+        var secondHand;
+        if (player.weapon != -1) {
+            firstHand = this.weapons[player.weapon].handPos1.add(new Vector(-this.weapons[player.weapon].recoil, 0));
+            secondHand = this.weapons[player.weapon].handPos2.add(new Vector(-this.weapons[player.weapon].recoil, 0));
+            this.displayWeapon(player.weapon);
+        } else {
+            firstHand = (new Vector(player.radius * 0.75, player.radius * 0.8)).add((new Vector(player.punchAnimation, 0)).rotate(-Math.PI / 6));
+            secondHand = new Vector(player.radius * 0.75, -player.radius * 0.8);
+
+        }
         
         ctx.strokeStyle = '#000';
         drawer.lineWidth(ctx, 3);
