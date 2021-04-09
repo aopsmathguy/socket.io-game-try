@@ -491,22 +491,22 @@ var makeObstacles = function() {
         addTo[addTo.length] = ob;
     }
     var viableWeapons = [
-        new Gun('M9',100, 50, 30, false, 780, 1, 15, 1000, true, 40, 17, 4, 500, 150, 1000, 0.1, 0.12, 0.9, 7, 0.9, 0.95, 1, '#80f', 20, 20, 0, 20, 0),
-        new Gun('Redhawk',100, 50, 35, false, 300, 1, 6, 1300, true, 50, 33, 8, 750, 200, 1500, 0, 0.2, 0.9, 10, 0.9, 0.95, 0.6, '#ff0', 20, 20, 3, 20, 3),
+        new Gun('M9',100, 50, 30, false, 780, 1, 15, 1000, true, 40, 17, 4, 500, 150, 1000, 0.1, 0.12, 0.9, 7, 0.9, 0.95, 1, '#80f', 30, 30, 0, 30, 0),
+        new Gun('Redhawk',100, 50, 35, false, 300, 1, 6, 1300, true, 50, 33, 8, 750, 200, 1500, 0, 0.2, 0.9, 10, 0.9, 0.95, 0.6, '#ff0', 30, 30, 3, 30, 3),
 
-        new Gun('MAC-10',100, 50, 40, true, 900, 1, 32, 1200, true, 45, 12, 6, 500, 150, 1000, 0, 0.10, 0.9, 3, 0.9, 0.97, 0.8, '#f00', 20,20, 3, 35, 6),
-        new Gun('MP5',200, 350, 70, true, 720, 1, 30, 1300, true, 45, 11, 3, 550, 270, 1250, 0, 0.06, 0.91, 4, 0.9, 0.95, 0.65, '#f80', 0,20, 3, 40, 6),
-        new Gun('AK-47',200, 350, 90, true, 600, 1, 30, 1600, true, 55, 13, 2, 600, 400, 1500, 0, 0.13, 0.85, 6, 0.9, 0.93, 0.5, 'img/weapons/AK-47.svg', 0, 20, 2, 40, 0),
-        new Gun('MK11',200, 50, 90, false, 550, 1, 15, 1800, true, 70, 26, 7, 710, 200, 2000, 0, 0.3, 0.83, 8, 0.84, 0.92, 0.5, '#f08', 0, 0, 3, 20, 6),
+        new Gun('MAC-10',100, 50, 30, true, 900, 1, 32, 1200, true, 45, 12, 6, 500, 150, 1000, 0, 0.10, 0.9, 3, 0.9, 0.97, 0.8, '#f00', 20,20, 3, 37, 6),
+        new Gun('MP5',200, 350, 50, true, 720, 1, 30, 1300, true, 45, 11, 3, 550, 270, 1250, 0, 0.06, 0.91, 4, 0.9, 0.95, 0.65, '#f80', 20,20, 3, 40, 6),
+        new Gun('AK-47',200, 350, 60, true, 600, 1, 30, 1600, true, 55, 13, 2, 600, 400, 1500, 0, 0.13, 0.85, 6, 0.9, 0.93, 0.5, 'img/weapons/AK-47.svg', 20, 20, 3, 45, 6),
+        new Gun('MK11',200, 50, 65, false, 550, 1, 15, 1800, true, 70, 26, 7, 710, 200, 2000, 0, 0.3, 0.83, 8, 0.84, 0.92, 0.5, '#f08', 20,20, 3, 45, 6),
 
-        new Gun('QBB-97',200, 350, 90, true, 550, 1, 75, 3000, true, 55, 15, 5, 550, 270, 1500, 0, 0.04, 0.96, 5, 0.9, 0.85, 0.5, '#fff', 0,20, 3, 43, 6),
-        new Gun('Railgun',200, 350, 110, true, 1500, 1, 100, 2000, true, 100, 7, 0, 550, 270, 2000, 0, 0, 0.91, 2, 0.9, 0.85, 0.4, '#08f', 0,20, 3, 45, 6),
+        new Gun('QBB-97',200, 350, 70, true, 550, 1, 75, 3000, true, 55, 15, 5, 550, 270, 1500, 0, 0.04, 0.96, 5, 0.9, 0.85, 0.5, '#fff', 20,20, 3,45, 6),
+        new Gun('Railgun',200, 350, 90, true, 1500, 1, 100, 2000, true, 100, 7, 0, 550, 270, 2000, 0, 0, 0.91, 2, 0.9, 0.85, 0.4, '#08f', 20,20, 3, 45, 6),
 
-        new Gun('Mosin Nagant',200, 50, 90, false, 60, 1, 5, 1000, false, 70, 70, 20, 830, 240, 3000, 0, 0.3, 0.83, 14, 0.9, 0.9, 0.6, '#8f0', 0,20, 3, 45, 6),
-        new Gun('Crossbow',200, 50, 60, false, 60, 1, 1, 1000, false, 25, 100, 0, 830, 240, 1500, 0, 0.3, 0.83, 17, 0.9, 0.9, 0.8, '#000', 0,20, 3, 40, 6),
+        new Gun('Mosin Nagant',200, 50, 70, false, 60, 1, 5, 1000, false, 70, 70, 20, 830, 240, 3000, 0, 0.3, 0.83, 14, 0.9, 0.9, 0.6, '#8f0', 20,20, 3, 45, 6),
+        new Gun('Crossbow',200, 50, 40, false, 60, 1, 1, 1000, false, 25, 100, 0, 830, 240, 1500, 0, 0.3, 0.83, 17, 0.9, 0.9, 0.8, '#000', 20,20, 3, 45, 6),
 
-        new Gun('Stevens DB',200, 220, 55, false, 450, 8, 2, 1600, true, 35, 15, 9, 350, 56, 700, 0.15, 0, 0.83, 10, 0.9, 1, 0.7, '#f0f', 0,20, 3, 40, 6),
-        new Gun('SPAS-12',200, 220, 70, false, 100, 8, 9, 800, false, 40, 8, 1, 650, 100, 1100, 0.1, 0, 0.83, 10, 0.9, 1, 0.5, '#0ff', 0,20, 3, 40, 6)
+        new Gun('Stevens DB',200, 220, 35, false, 450, 8, 2, 1600, true, 35, 15, 9, 350, 56, 700, 0.15, 0, 0.83, 10, 0.9, 1, 0.7, '#f0f', 20,20, 3, 45, 6),
+        new Gun('SPAS-12',200, 220, 50, false, 100, 8, 9, 800, false, 40, 8, 1, 650, 100, 1100, 0.1, 0, 0.83, 10, 0.9, 1, 0.5, '#0ff', 20,20, 3, 45, 6)
     ];
     var numEach = [3, 1, 2, 2, 1,1, 1, 1, 1, 1, 1, 1];
     var weapons = [];
@@ -671,7 +671,7 @@ var Player = function(xStart, yStart, name, color, id) {
     {
         if (this.weapon != -1) {
             var weapon = state.weapons[this.weapon];
-            weapon.pos = this.pos.add((new Vector(this.radius + weapon.buttPosition + weapon.length / 2 - weapon.recoil, 0)).rotate(this.ang));
+            weapon.pos = this.pos.add((new Vector(weapon.buttPosition + weapon.length / 2 - weapon.recoil, 0)).rotate(this.ang));
             weapon.vel = this.vel;
             weapon.ang = this.ang;
 
@@ -898,7 +898,7 @@ var Gun = function(name, startX, startY, length, auto, firerate, multishot, capa
         this.reloadStartTime = -1;
 
     }
-    this.fireBullets = function(timeNow) {
+    this.fireBullets = function(state) {
         if (this.lastFireTime == 0 && (this.reloadStartTime == -1 || !this.reloadType)) {
             if (this.bulletsRemaining > 0) {
                 if (!this.reloadType)
@@ -906,17 +906,17 @@ var Gun = function(name, startX, startY, length, auto, firerate, multishot, capa
                     this.cancelReload();
                 }
                 for (var i = 0; i < this.multishot; i++) {
-                    if (!this.stickingThroughWall()) {
+                    if (!this.stickingThroughWall(state)) {
                         this.bullets[this.bulletsArrLength] = new Bullet(this);
                     }
                     this.bulletsArrLength += 1;
                 }
                 this.spray += this.sprayCoef;
                 this.recoil += this.kickAnimation;
-                this.lastFireTime = timeNow;
+                this.lastFireTime = state.time;
                 this.bulletsRemaining -= 1;
             } else {
-                this.reload(timeNow);
+                this.reload(state.time);
             }
         }
     }
@@ -949,10 +949,9 @@ var Gun = function(name, startX, startY, length, auto, firerate, multishot, capa
 
 
     }
-    this.intersectOb = function(ob) {
+    this.intersectOb = function(ob, state) {
         var v1 = this.pos.add((new Vector(this.length / 2, 0)).rotate(this.ang));
-        var v2 = this.pos.add((new Vector(-this.length / 2, 0)).rotate(this.ang));
-
+        var v2 = (this.hold : state.players[this.playerHolding].pos ? this.pos.add((new Vector(-this.length / 2, 0)).rotate(this.ang)));
         if (ob.intersectSegment(v1,v2) == -1)
         {
           return false;
@@ -962,10 +961,10 @@ var Gun = function(name, startX, startY, length, auto, firerate, multishot, capa
           return true;
         }
     }
-    this.stickingThroughWall = function() {
+    this.stickingThroughWall = function(state) {
         var out = false;
         loopThroughObstacles(this.pos, (obstacle) => {
-            if (obstacle.intersectable && this.intersectOb(obstacle)) {
+            if (obstacle.intersectable && this.intersectOb(obstacle,state)) {
                 out = true;
                 return;
             }
