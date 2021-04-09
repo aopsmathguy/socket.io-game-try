@@ -951,7 +951,7 @@ var Gun = function(name, startX, startY, length, auto, firerate, multishot, capa
     }
     this.intersectOb = function(ob, state) {
         var v1 = this.pos.add((new Vector(this.length / 2, 0)).rotate(this.ang));
-        var v2 = (this.hold : state.players[this.playerHolding].pos ? this.pos.add((new Vector(-this.length / 2, 0)).rotate(this.ang)));
+        var v2 = (this.hold ? state.players[this.playerHolding].pos : this.pos.add((new Vector(-this.length / 2, 0)).rotate(this.ang)));
         if (ob.intersectSegment(v1,v2) == -1)
         {
           return false;
