@@ -30,6 +30,12 @@ const joinGameBtn = document.getElementById('joinGameButton');
 joinGameBtn.addEventListener('click', joinGame);
 var name;
 var color;
+var path = "img/weapons/"
+var weaponImages = {"AK-47" : new Image()};
+for (var i in weaponImages)
+{
+  weaponImages[i].src = path + i + ".svg";
+}
 function startGame(){
     myGameArea.start();
     drawer = new Drawer();
@@ -39,7 +45,7 @@ function startGame(){
 function joinGame() {
     lastDeadTime = -2;
     initialScreen.style.display = "none";
-    
+
     name = gameCodeInput.value.substring(0,18) || 'Guest ' + fillDigits(Math.floor(10000*Math.random()),4);
     color = colorInput.value;
     newPlayer();
@@ -395,7 +401,7 @@ var GameState = function() {
             });
         }
         displayObj.sort((a,b) => (b.points - a.points));
-        
+
         var margin = 10;
         var height = 20;
         var maxLength = 10;
@@ -404,14 +410,14 @@ var GameState = function() {
         var startX = myGameArea.canvas.width - 300;
         var startY = 20;
         var split1 = 200;
-        
+
         var ctx = myGameArea.context;
         ctx.save();
         ctx.globalAlpha = 0.3;
         ctx.fillStyle = "#000";
         ctx.fillRect(startX, startY, totalWidth, totalHeight);
         ctx.restore();
-        
+
         var y = startY + margin;
         for (var i = 0; i < Math.min(displayObj.length,maxLength); i++)
         {
@@ -424,7 +430,7 @@ var GameState = function() {
             ctx.fillText(playerStats.killstreak, startX + split1, y + 3/4 * height);
             ctx.textAlign = "right";
             ctx.fillText(Math.floor(playerStats.points), startX + totalWidth - margin, y + 3/4 * height);
-            
+
             y += margin + height;
         }
     }
@@ -440,27 +446,24 @@ var GameState = function() {
         ctx.closePath();
         ctx.fill();
         ctx.restore();*/
+
         
-        ctx.fillStyle = player.color;
-        ctx.beginPath();
-        drawer.circle(ctx, player.pos, player.radius);
-        ctx.closePath();
-        ctx.fill();
         var ang = player.ang;
-        var rotAng = Math.PI/5;
-        
+        var rotAng1 = Math.PI/8;
+        var rotAng2 = Math.PI/4;
+
         var firstShoulder;
         var secondShoulder;
         var firstHand;
         var secondHand;
-        
+
         if (player.weapon != -1) {
             var weapon = this.weapons[player.weapon];
-            firstShoulder = (new Vector(0, player.radius)).rotate(0);
-            secondShoulder = (new Vector(0, -player.radius)).rotate(rotAng);
+            firstShoulder = (new Vector(0, player.radius)).rotate(rotAng1);
+            secondShoulder = (new Vector(0, -player.radius)).rotate(rotAng2);
             firstHand = weapon.handPos1.add(new Vector(weapon.buttPosition -this.weapons[player.weapon].recoil, 0));
             secondHand = weapon.handPos2.add(new Vector(weapon.buttPosition-this.weapons[player.weapon].recoil, 0));
-            
+
         } else {
             firstShoulder = (new Vector(0, player.radius)).rotate(0);
             secondShoulder = (new Vector(0, -player.radius)).rotate(0);
@@ -468,8 +471,9 @@ var GameState = function() {
             secondHand = new Vector(player.radius * 0.75, -player.radius * 0.8);
 
         }
-        ctx.strokeStyle = player.color;
-        drawer.lineWidth(ctx, 6);
+        ctx.fillStyle = player.color;
+        ctx.strokeStyle = "#000";
+        drawer.lineWidth(ctx, 9);
         ctx.beginPath();
         drawer.moveContext(ctx, player.pos.add(firstShoulder.rotate(ang)));
         drawer.lineContext(ctx, player.pos.add(firstHand.rotate(ang)));
@@ -482,27 +486,50 @@ var GameState = function() {
         ctx.closePath();
         ctx.stroke();
         
+        ctx.strokeStyle = player.color;
+        drawer.lineWidth(ctx, 6);
+        ctx.beginPath();
+        drawer.moveContext(ctx, player.pos.add(firstShoulder.rotate(ang)));
+        drawer.lineContext(ctx, player.pos.add(firstHand.rotate(ang)));
+        ctx.closePath();
+        ctx.stroke();
+
+        ctx.beginPath();
+        drawer.moveContext(ctx, player.pos.add(secondShoulder.rotate(ang)));
+        drawer.lineContext(ctx, player.pos.add(secondHand.rotate(ang)));
+        ctx.closePath();
+        ctx.stroke();
+
         ctx.strokeStyle = '#000';
-        drawer.lineWidth(ctx, 3);
+        drawer.lineWidth(ctx, 1.5);
         ctx.beginPath();
         drawer.circle(ctx, player.pos.add(firstHand.rotate(ang)), 6);
         ctx.closePath();
-        ctx.stroke();
         ctx.fill();
+        ctx.stroke();
 
         ctx.beginPath();
         drawer.circle(ctx, player.pos.add(secondHand.rotate(ang)), 6);
         ctx.closePath();
-        ctx.stroke();
         ctx.fill();
+        ctx.stroke();
         if (player.weapon != -1)
         {
             this.displayWeapon(player.weapon);
         }
+        
+        ctx.strokeStyle = '#000';
+        drawer.lineWidth(ctx, 1.5);
+        ctx.fillStyle = player.color;
+        ctx.beginPath();
+        drawer.circle(ctx, player.pos, player.radius);
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
     }
     this.displayWeapon = function(i) {
         var weapon = this.weapons[i];
-        
+
         var ctx = myGameArea.context;
         if (!weapon.hold) {
             ctx.strokeStyle = weapon.color;
@@ -514,14 +541,13 @@ var GameState = function() {
         }
         if (!(/^#([A-Fa-f0-9]{3}){1,2}$/.test(weapon.color)))
         {
-            ctx.save();
-            var img = new Image();
-            img.src = weapon.color;
             var pos = drawer.transform(weapon.pos);
             var newLength = drawer.scaled(weapon.length);
+            ctx.save();
             ctx.translate(pos.x, pos.y);
             ctx.rotate(weapon.ang);
             var fat = 2;
+            var img = weaponImages[weapon.name];
             ctx.drawImage(img, newLength/-2, fat*newLength * img.naturalHeight/img.naturalWidth / -2, newLength, fat*newLength * img.naturalHeight/img.naturalWidth);
             ctx.restore();
         }
@@ -636,11 +662,11 @@ var Player = function() {
     this.drawHealthBar = function()
     {
          var ctx = myGameArea.context;
-         
+
          var left = this.pos.add(new Vector(-1.5*this.radius,-this.radius * 2));
          var right = this.pos.add(new Vector(1.5*this.radius,-this.radius * 2));
          var mid = this.pos.add(new Vector(-1.5*this.radius+3*Math.max(0,this.health)/100*this.radius,-this.radius * 2));
-         
+
          ctx.strokeStyle = '#f00';
          drawer.lineWidth(ctx,8);
          ctx.beginPath();
@@ -648,7 +674,7 @@ var Player = function() {
          drawer.lineContext(ctx,mid);
          ctx.closePath();
          ctx.stroke();
-        
+
          ctx.strokeStyle = '#0f0';
          ctx.beginPath();
          drawer.moveContext(ctx,left);
@@ -672,10 +698,10 @@ var Player = function() {
       var point2 = closestPoint.add(closestPoint.subtract(this.pos).normalize().rotate(Math.PI/2).multiply(-x));
       var point1On = point1.onSegment(v1,v2);
       var point2On = point2.onSegment(v1,v2);
-      
+
       var point1Dist = v1.distanceTo(point1);
       var point2Dist = v1.distanceTo(point2);
-      
+
       if (point1On)
       {
         if (point2On)
@@ -810,7 +836,7 @@ var Drawer = function() {
             this.scroll = (new Vector(gameWidth,gameHeight)).multiply(0.5).add((new Vector(Math.random() - 0.5, Math.random() - 0.5)).multiply(this.screenShake));
             this.targetScale =  (Math.max(myGameArea.canvas.width,myGameArea.canvas.height))/Math.max(gameWidth,gameHeight);
         }
-        
+
         this.scale *= Math.pow(this.targetScale / this.scale, 0.1);
     }
 }
@@ -1013,7 +1039,7 @@ var linearGameState = function() {
     if (gameStates.length > 2) {
         buffer -= 2;
     } else if (gameStates.length < 3) {
-        
+
         buffer += 2;
     }
 
@@ -1049,19 +1075,19 @@ var linearGameState = function() {
             else if (left.weapons[i].bullets[j] == undefined) {
                 rightBull = right.weapons[i].bullets[j];
                 leftBull = JSON.parse(JSON.stringify(rightBull));
-                
+
                 giveMethods([rightBull, leftBull]);
-                
+
                 var add = rightBull.vel.multiply(framesPerTick);
                 leftBull.pos = rightBull.pos.subtract(add);
-            } 
+            }
             else if (right.weapons[i].bullets[j] == undefined)
             {
                 leftBull = left.weapons[i].bullets[j];
                 rightBull = JSON.parse(JSON.stringify(leftBull));
-                
+
                 giveMethods([rightBull, leftBull]);
-                
+
                 var add = leftBull.vel.multiply(framesPerTick);
                 rightBull.pos = leftBull.pos.add(add);
             }
@@ -1118,20 +1144,20 @@ function updateGameArea() {
             emitMousePos();
         }
         var state = linearGameState();
-        
+
         if (state.players[controlId] && state.players[controlId].alive) {
             lastDeadTime = -1;
         } else if (lastDeadTime == -1) {
             lastDeadTime = Date.now();
         } else if (Date.now() - lastDeadTime > 3000 && lastDeadTime != -2) {
-            
+
             initialScreen.style.display = 'block';
         }
-        
-        
+
+
         drawer.update(state);
         state.render();
-        
+
     }
     displayCrosshair();
 }
