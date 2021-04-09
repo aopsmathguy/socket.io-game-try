@@ -554,7 +554,7 @@ var GameState = function() {
         else
         {
             ctx.strokeStyle = "#000";
-            drawer.lineWidth(ctx, 12);
+            drawer.lineWidth(ctx, 8);
             ctx.beginPath();
             drawer.moveContext(ctx, weapon.pos.add((new Vector(-weapon.length / 2, 0)).rotate(weapon.ang)));
             drawer.lineContext(ctx, weapon.pos.add((new Vector(weapon.length / 2, 0)).rotate(weapon.ang)));
@@ -563,7 +563,7 @@ var GameState = function() {
 
 
             ctx.strokeStyle = weapon.color;
-            drawer.lineWidth(ctx, 6);
+            drawer.lineWidth(ctx, 5);
             ctx.beginPath();
             drawer.moveContext(ctx, weapon.pos.add((new Vector(-weapon.length / 2 + 3, 0)).rotate(weapon.ang)));
             drawer.lineContext(ctx, weapon.pos.add((new Vector(weapon.length / 2 - 3, 0)).rotate(weapon.ang)));
