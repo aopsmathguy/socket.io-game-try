@@ -496,7 +496,7 @@ var makeObstacles = function() {
 
         new Gun('MAC-10',100, 60, 50, true, 900, 1, 32, 1200, true, 45, 12, 6, 500, 150, 1000, 0, 0.10, 0.9, 3, 0.9, 0.97, 0.8, '#f00', 20,10, 3, 27, 6),
         new Gun('MP5',200, 350, 60, true, 720, 1, 30, 1300, true, 45, 11, 3, 550, 270, 1250, 0, 0.06, 0.91, 4, 0.9, 0.95, 0.65, '#f80', 20,20, 3, 40, 6),
-        new Gun('AK-47',200, 350, 90, true, 600, 1, 30, 1600, true, 55, 13, 2, 600, 400, 1500, 0, 0.13, 0.85, 6, 0.9, 0.93, 0.5, 'img/weapons/AK-47.svg', 20, 20, 3, 45, 0),
+        new Gun('AK-47',200, 350, 90, true, 600, 1, 30, 1600, true, 55, 13, 2, 600, 400, 1500, 0, 0.13, 0.85, 6, 0.9, 0.93, 0.5, 'image', 20, 20, 3, 45, 0),
         new Gun('MK11',200, 50, 90, false, 550, 1, 15, 1800, true, 70, 26, 7, 710, 200, 2000, 0, 0.3, 0.83, 8, 0.84, 0.92, 0.5, '#f08', 20,20, 3, 45, 6),
 
         new Gun('QBB-97',200, 350, 100, true, 550, 1, 75, 3000, true, 55, 15, 5, 550, 270, 1500, 0, 0.04, 0.96, 5, 0.9, 0.85, 0.5, '#fff', 20,20, 3,45, 6),
@@ -803,7 +803,7 @@ var Gun = function(name, startX, startY, length, auto, firerate, multishot, capa
 
     setIfUndefined(this, 'color', color);//
     setIfUndefined(this, 'buttPosition', buttPosition);//
-    
+
     setIfUndefined(this, 'handPos1', new Vector(handPos1x, handPos1y));//
     setIfUndefined(this, 'handPos2', new Vector(handPos2x, handPos2y));//
 
