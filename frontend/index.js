@@ -403,7 +403,7 @@ var GameState = function() {
         var totalWidth = 280;
         var startX = myGameArea.canvas.width - 300;
         var startY = 20;
-        var split1 = 180;
+        var split1 = 200;
         
         var ctx = myGameArea.context;
         ctx.save();
@@ -430,7 +430,7 @@ var GameState = function() {
     }
     this.displayPlayer = function(i) {
         var player = this.players[i];
-        
+
         var ctx = myGameArea.context;
         /*ctx.save();
         ctx.globalAlpha = 0.5+0.25*Math.cos(((this.time)/125)%(2*Math.PI));
@@ -447,18 +447,40 @@ var GameState = function() {
         ctx.closePath();
         ctx.fill();
         var ang = player.ang;
-
+        var rotAng = Math.PI/5;
+        
+        var firstShoulder;
+        var secondShoulder;
         var firstHand;
         var secondHand;
+        
         if (player.weapon != -1) {
-            firstHand = this.weapons[player.weapon].handPos1.add(new Vector(-this.weapons[player.weapon].recoil, 0));
-            secondHand = this.weapons[player.weapon].handPos2.add(new Vector(-this.weapons[player.weapon].recoil, 0));
-            this.displayWeapon(player.weapon);
+            var weapon = this.weapons[player.weapon];
+            firstShoulder = (new Vector(0, player.radius)).rotate(rotAng);
+            secondShoulder = (new Vector(0, -player.radius)).rotate(rotAng);
+            firstHand = weapon.handPos1.add(new Vector(weapon.buttPosition -this.weapons[player.weapon].recoil, 0));
+            secondHand = weapon.handPos2.add(new Vector(weapon.buttPosition-this.weapons[player.weapon].recoil, 0));
+            
         } else {
+            firstShoulder = (new Vector(0, player.radius)).rotate(0);
+            secondShoulder = (new Vector(0, -player.radius)).rotate(0);
             firstHand = (new Vector(player.radius * 0.75, player.radius * 0.8)).add((new Vector(player.punchAnimation, 0)).rotate(-Math.PI / 6));
             secondHand = new Vector(player.radius * 0.75, -player.radius * 0.8);
 
         }
+        ctx.strokeStyle = player.color;
+        drawer.lineWidth(ctx, 6);
+        ctx.beginPath();
+        drawer.moveContext(ctx, player.pos.add(firstShoulder.rotate(ang)));
+        drawer.lineContext(ctx, player.pos.add(firstHand.rotate(ang)));
+        ctx.closePath();
+        ctx.stroke();
+        
+        ctx.beginPath();
+        drawer.moveContext(ctx, player.pos.add(secondShoulder.rotate(ang)));
+        drawer.lineContext(ctx, player.pos.add(secondHand.rotate(ang)));
+        ctx.closePath();
+        ctx.stroke();
         
         ctx.strokeStyle = '#000';
         drawer.lineWidth(ctx, 3);
@@ -473,9 +495,14 @@ var GameState = function() {
         ctx.closePath();
         ctx.stroke();
         ctx.fill();
+        if (player.weapon != -1)
+        {
+            this.displayWeapon(player.weapon);
+        }
     }
     this.displayWeapon = function(i) {
         var weapon = this.weapons[i];
+        
         var ctx = myGameArea.context;
         if (!weapon.hold) {
             ctx.strokeStyle = weapon.color;
@@ -485,23 +512,38 @@ var GameState = function() {
             ctx.closePath();
             ctx.stroke();
         }
+        if (!(/^#([A-Fa-f0-9]{3}){1,2}$/.test(weapon.color)))
+        {
+            ctx.save();
+            var img = new Image();
+            img.src = weapon.color;
+            var pos = drawer.transform(weapon.pos);
+            var newLength = drawer.scaled(weapon.length);
+            ctx.translate(pos.x, pos.y);
+            ctx.rotate(weapon.ang);
+            var fat = 2;
+            ctx.drawImage(img, newLength/-2, fat*newLength * img.naturalHeight/img.naturalWidth / -2, newLength, fat*newLength * img.naturalHeight/img.naturalWidth);
+            ctx.restore();
+        }
+        else
+        {
+            ctx.strokeStyle = "#000";
+            drawer.lineWidth(ctx, 12);
+            ctx.beginPath();
+            drawer.moveContext(ctx, weapon.pos.add((new Vector(-weapon.length / 2, 0)).rotate(weapon.ang)));
+            drawer.lineContext(ctx, weapon.pos.add((new Vector(weapon.length / 2, 0)).rotate(weapon.ang)));
+            ctx.closePath();
+            ctx.stroke();
 
-        ctx.strokeStyle = "#000";
-        drawer.lineWidth(ctx, 12);
-        ctx.beginPath();
-        drawer.moveContext(ctx, weapon.pos.add((new Vector(-weapon.length / 2, 0)).rotate(weapon.ang)));
-        drawer.lineContext(ctx, weapon.pos.add((new Vector(weapon.length / 2, 0)).rotate(weapon.ang)));
-        ctx.closePath();
-        ctx.stroke();
 
-
-        ctx.strokeStyle = weapon.color;
-        drawer.lineWidth(ctx, 6);
-        ctx.beginPath();
-        drawer.moveContext(ctx, weapon.pos.add((new Vector(-weapon.length / 2 + 3, 0)).rotate(weapon.ang)));
-        drawer.lineContext(ctx, weapon.pos.add((new Vector(weapon.length / 2 - 3, 0)).rotate(weapon.ang)));
-        ctx.closePath();
-        ctx.stroke();
+            ctx.strokeStyle = weapon.color;
+            drawer.lineWidth(ctx, 6);
+            ctx.beginPath();
+            drawer.moveContext(ctx, weapon.pos.add((new Vector(-weapon.length / 2 + 3, 0)).rotate(weapon.ang)));
+            drawer.lineContext(ctx, weapon.pos.add((new Vector(weapon.length / 2 - 3, 0)).rotate(weapon.ang)));
+            ctx.closePath();
+            ctx.stroke();
+        }
     }
     this.displayBullets = function(i) {
         var weapon = this.weapons[i];
@@ -669,8 +711,8 @@ var Bullet = function() {
     this.display = function() {
         var ctx = myGameArea.context;
         const g = drawer.createLinearGradient(ctx, this.pos, this.pos.add((new Vector(-this.trailLength, 0)).rotate(this.ang)));
-        g.addColorStop(0, hexToRgbA(this.color, 1)); // opaque
-        g.addColorStop(0.1/3, hexToRgbA(this.color, 1)); // opaque
+        g.addColorStop(0, hexToRgbA("#ff0", 1)); // opaque
+        g.addColorStop(0.1/3, hexToRgbA("#ff0", 1)); // opaque
         g.addColorStop(0.2/3, hexToRgbA('#ccc', 0.5)); // opaque
         g.addColorStop(1/3, hexToRgbA('#ccc', 0)); // transparent
         ctx.strokeStyle = g;
@@ -730,6 +772,10 @@ var Drawer = function() {
     }
     this.transform = function(point) {
         return point.subtract(this.scroll).multiply(this.scale).add((new Vector(myGameArea.canvas.width, myGameArea.canvas.height)).multiply(0.5));
+    }
+    this.scaled = function(x)
+    {
+        return x * this.scale;
     }
     this.lineWidth = function(ctx, width) {
         ctx.lineWidth = width * this.scale;
