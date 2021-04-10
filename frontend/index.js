@@ -1158,7 +1158,7 @@ setInterval(() => {
     {
         emitMousePos();
     }
-},30);
+},20);
 var lastDeadTime = -1;
 
 function updateGameArea() {
