@@ -405,11 +405,11 @@ var GameState = function() {
         var margin = 10;
         var height = 20;
         var maxLength = 10;
-        var totalHeight = Math.min(displayObj.length,maxLength)*(margin + height) + margin;
+        var totalHeight = (Math.min(displayObj.length,maxLength) + 1)*(margin + height) + margin;
         var totalWidth = 280;
         var startX = myGameArea.canvas.width - 300;
         var startY = 20;
-        var split1 = 200;
+        var split1 = 180;
 
         var ctx = myGameArea.context;
         ctx.save();
@@ -419,11 +419,15 @@ var GameState = function() {
         ctx.restore();
 
         var y = startY + margin;
+        ctx.font = "bold " + height + "px Courier New";
+        ctx.fillStyle = "#fff";
+        ctx.textAlign = "center";
+        ctx.fillText("Leaderboard",  startX + totalWidth/2, y + 3/4 * height);
+        y += margin + height;
         for (var i = 0; i < Math.min(displayObj.length,maxLength); i++)
         {
             var playerStats = displayObj[i];
-            ctx.font = "bold " + height + "px Courier New";
-            ctx.fillStyle = "#fff";
+            
             ctx.textAlign = "left";
             var name = (playerStats.name.length > 11 ? playerStats.name.substring(0,10) + "\u2026" : playerStats.name);
             ctx.fillText(name + ":", startX + margin, y + 3/4 * height);
@@ -465,8 +469,8 @@ var GameState = function() {
             secondHand = weapon.handPos2.add(new Vector(weapon.buttPosition-this.weapons[player.weapon].recoil, 0));
 
         } else {
-            firstShoulder = (new Vector(0, player.radius)).rotate(0);
-            secondShoulder = (new Vector(0, -player.radius)).rotate(0);
+            firstShoulder = (new Vector(0, player.radius + 3)).rotate(0);
+            secondShoulder = (new Vector(0, -player.radius - 3)).rotate(0);
             firstHand = (new Vector(player.radius * 0.75, player.radius * 0.8)).add((new Vector(player.punchAnimation, 0)).rotate(-Math.PI / 6));
             secondHand = new Vector(player.radius * 0.75, -player.radius * 0.8);
 
