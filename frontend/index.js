@@ -431,7 +431,7 @@ var GameState = function() {
             
             ctx.textAlign = "left";
             var name = (playerStats.name.length > 11 ? playerStats.name.substring(0,10) + "\u2026" : playerStats.name);
-            ctx.fillText(name + ":", startX + margin, y + 3/4 * height);
+            ctx.fillText(i + 1 + ". " + name + ":", startX + margin, y + 3/4 * height);
             ctx.fillText(playerStats.killstreak, startX + split1, y + 3/4 * height);
             ctx.textAlign = "right";
             ctx.fillText(Math.floor(playerStats.points), startX + totalWidth - margin, y + 3/4 * height);
