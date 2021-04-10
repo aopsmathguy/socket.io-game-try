@@ -449,8 +449,8 @@ var GameState = function() {
 
         
         var ang = player.ang;
-        var rotAng1 = Math.PI/8;
-        var rotAng2 = Math.PI/4;
+        var rotAng1 = 0;
+        var rotAng2 = 0.25*Math.PI;
 
         var firstShoulder;
         var secondShoulder;
@@ -459,8 +459,8 @@ var GameState = function() {
 
         if (player.weapon != -1) {
             var weapon = this.weapons[player.weapon];
-            firstShoulder = (new Vector(0, player.radius)).rotate(rotAng1);
-            secondShoulder = (new Vector(0, -player.radius)).rotate(rotAng2);
+            firstShoulder = (new Vector(0, player.radius + 3)).rotate(rotAng1);
+            secondShoulder = (new Vector(0, -player.radius-3)).rotate(rotAng2);
             firstHand = weapon.handPos1.add(new Vector(weapon.buttPosition -this.weapons[player.weapon].recoil, 0));
             secondHand = weapon.handPos2.add(new Vector(weapon.buttPosition-this.weapons[player.weapon].recoil, 0));
 
@@ -471,8 +471,22 @@ var GameState = function() {
             secondHand = new Vector(player.radius * 0.75, -player.radius * 0.8);
 
         }
+        ctx.strokeStyle = '#000';
         ctx.fillStyle = player.color;
-        ctx.strokeStyle = "#000";
+        drawer.lineWidth(ctx, 1.5);
+        ctx.beginPath();
+        drawer.circle(ctx, player.pos.add(firstShoulder.rotate(ang)), 15/4);
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
+        
+        drawer.lineWidth(ctx, 1.5);
+        ctx.beginPath();
+        drawer.circle(ctx, player.pos.add(secondShoulder.rotate(ang)), 15/4);
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
+        
         drawer.lineWidth(ctx, 9);
         ctx.beginPath();
         drawer.moveContext(ctx, player.pos.add(firstShoulder.rotate(ang)));
