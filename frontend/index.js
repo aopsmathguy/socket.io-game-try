@@ -31,7 +31,8 @@ joinGameBtn.addEventListener('click', joinGame);
 var name;
 var color;
 var path = "img/weapons/"
-var weaponImages = {"AK-47" : new Image()};
+var weaponImages = {"AK-47" : new Image(),
+"MP5" : new Image()};
 for (var i in weaponImages)
 {
   weaponImages[i].src = path + i + ".svg";
