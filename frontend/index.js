@@ -403,8 +403,8 @@ var GameState = function() {
         }
         displayObj.sort((a,b) => (b.points - a.points));
 
-        var margin = 10;
-        var height = 20;
+        var margin = 8;
+        var height = 16;
         var maxLength = 10;
         var totalHeight = (Math.min(displayObj.length,maxLength) + 1)*(margin + height) + margin;
         var totalWidth = 280;
