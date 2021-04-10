@@ -472,8 +472,8 @@ var GameState = function() {
         } else {
             firstShoulder = (new Vector(0, player.radius + 3)).rotate(0);
             secondShoulder = (new Vector(0, -player.radius - 3)).rotate(0);
-            firstHand = (new Vector(player.radius * 0.75, player.radius * 0.8)).add((new Vector(player.punchAnimation, 0)).rotate(-Math.PI / 6));
-            secondHand = new Vector(player.radius * 0.75, -player.radius * 0.8);
+            firstHand = (new Vector(player.radius * 0.85, player.radius * 0.8)).add((new Vector(player.punchAnimation, 0)).rotate(-Math.PI / 6));
+            secondHand = new Vector(player.radius * 0.85, -player.radius * 0.8);
 
         }
         ctx.strokeStyle = '#000';
