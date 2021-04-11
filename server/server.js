@@ -1314,7 +1314,7 @@ setInterval(updateGameArea, 1000 / 60);
 setInterval(() => {
     for (var i in gameState.weapons)
     {
-      gameState.weapons[i].pushFromAll(this);
+      gameState.weapons[i].pushFromAll(gameState);
     }},1000);
 function updateGameArea() {
     gameState.time = Date.now();
