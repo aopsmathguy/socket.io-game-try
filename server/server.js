@@ -537,7 +537,7 @@ function orientation(p, q, r) {
 }
 var Player = function(xStart, yStart, name, color, id) {
     this.type = "Player";
-    this.outfields = ['type','radius','reachDist','weapon','weapons','slot','health','pos','ang','punchAnimation','name','killstreak','points','color','alive'];
+    this.outfields = ['type','radius','reachDist','weapon','weapons','slot','health','pos','ang','punchLastTime','name','killstreak','points','color','alive'];
     setIfUndefined(this, 'speed', 5);
     setIfUndefined(this, 'agility', 1);
     setIfUndefined(this, 'radius', 20);//
@@ -555,8 +555,7 @@ var Player = function(xStart, yStart, name, color, id) {
     setIfUndefined(this, 'ang', 0);//
 
     setIfUndefined(this, 'punchReach', 10);
-    setIfUndefined(this, 'punchAnimation', 0);//
-    setIfUndefined(this, 'punchLastTime', 0);
+    setIfUndefined(this, 'punchLastTime', 0);//
     setIfUndefined(this, 'punchRate', 200);
     setIfUndefined(this, 'punchDamage', 24);
 
@@ -675,7 +674,6 @@ var Player = function(xStart, yStart, name, color, id) {
     }
     this.playerStep = function(state) {
         this.pos = this.pos.add(this.vel);
-        this.punchAnimation *= 0.9;
 
         if (state.time - this.lastHitTime > this.healInterval) {
             this.health = Math.min(100, this.health + 0.1);
@@ -744,7 +742,6 @@ var Player = function(xStart, yStart, name, color, id) {
         if (gameState.time - this.punchLastTime < 60000 / this.punchRate) {
             return;
         }
-        this.punchAnimation = 30;
         this.punchLastTime = gameState.time;
         for (var i in gameState.players) {
             var player = gameState.players[i];
