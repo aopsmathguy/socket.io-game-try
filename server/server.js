@@ -765,7 +765,7 @@ var Player = function(xStart, yStart, name, color, id) {
 }
 var Gun = function(name, startX, startY, length, auto, firerate, multishot, capacity, reloadTime, reloadType, bulletSpeed, damage, damageDrop, damageRange, damageDropTension, range, defSpray, sprayCoef, stability, kickAnimation, animationMult, walkSpeedMult, shootWalkSpeedMult, color, buttPosition, handPos1x, handPos1y, handPos2x, handPos2y) {
     this.type = "Gun";
-    this.outfields = ['type','name','pos','vel','ang','length','capacity','reloadTime','color','buttPosition','handPos1','handPos2','bulletsRemaining','reloadStartTime','lastFireTime','hold','radius','bullets'];
+    this.outfields = ['type','name','pos','vel','ang','length','capacity','reloadTime','kickAnimation', 'animationMult','color','buttPosition','handPos1','handPos2','bulletsRemaining','reloadStartTime','lastFireTime','hold','radius','bullets'];
     setIfUndefined(this, 'name', name);//
     setIfUndefined(this, 'pos', new Vector(startX, startY));//
     setIfUndefined(this, 'vel', new Vector(0, 0));//
