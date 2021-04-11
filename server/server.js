@@ -209,10 +209,6 @@ var GameState = function(time, players, weapons) {
         for (var i in this.weapons)
         {
           this.weapons[i].setLastFireTime(this);
-          if (weaponPushFrameCount == 0)
-          {
-            this.weapons[i].pushFromAll(this);
-          }
         }
         for (var i in this.weapons)
         {
@@ -887,7 +883,7 @@ var Gun = function(name, startX, startY, length, auto, firerate, multishot, capa
         {
             return;
         }
-        this.pos = this.pos.add(this.vel.multiply(1/weaponPushFrames));
+        this.pos = this.pos.add(this.vel.multiply(1/60));
     }
     this.reload = function(timeNow) {
         if (this.bulletsRemaining < this.capacity && this.reloadStartTime == -1 && this.lastFireTime == 0) {
@@ -1314,19 +1310,12 @@ var Vector = function(x, y) {
 }
 makeObstacles();
 var stage = 0;
-var weaponPushFrames = 60;
-var weaponPushFrameCount = 0;
 setInterval(updateGameArea, 1000 / 60);
-
+setInterval(() => {this.weapons[i].pushFromAll(this);},1000);
 function updateGameArea() {
     gameState.time = Date.now();
     if (Object.keys(gameState.players).length != 0)
     {
-        weaponPushFrameCount += 1;
-        if (weaponPushFrameCount >= weaponPushFrames)
-        {
-            weaponPushFrameCount = 0;
-        }
         gameState.step();
     }
     stage += 1;
