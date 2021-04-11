@@ -561,7 +561,7 @@ var GameState = function() {
             ctx.closePath();
             ctx.stroke();
         }
-        if (!(/^#([A-Fa-f0-9]{3}){1,2}$/.test(weapon.color)))
+        if (weaponImages[weapon.name])
         {
             var pos = drawer.transform(weapon.pos);
             var newLength = drawer.scaled(weapon.length);
