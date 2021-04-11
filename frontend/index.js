@@ -568,7 +568,7 @@ var GameState = function() {
             ctx.save();
             ctx.translate(pos.x, pos.y);
             ctx.rotate(weapon.ang);
-            var fat = 2;
+            var fat = 1;
             var img = weaponImages[weapon.name];
             ctx.drawImage(img, newLength/-2, fat*newLength * img.naturalHeight/img.naturalWidth / -2, newLength, fat*newLength * img.naturalHeight/img.naturalWidth);
             ctx.restore();
