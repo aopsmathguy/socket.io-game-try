@@ -1311,7 +1311,11 @@ var Vector = function(x, y) {
 makeObstacles();
 var stage = 0;
 setInterval(updateGameArea, 1000 / 60);
-setInterval(() => {this.weapons[i].pushFromAll(this);},1000);
+setInterval(() => {
+    for (var i in gameState.weapons)
+    {
+      gameState.weapons[i].setLastFireTime(this);
+    }},1000);
 function updateGameArea() {
     gameState.time = Date.now();
     if (Object.keys(gameState.players).length != 0)
