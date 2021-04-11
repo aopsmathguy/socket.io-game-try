@@ -1160,7 +1160,7 @@ var resetControls = function() {
     controlsBundle.justDowned = false;
 }
 setInterval(() => {
-    if (gameStates[gameStates.length - 1].players[controlId] && gameStates[gameStates.length - 1].players[controlId].alive)
+    if (gameStates && gameStates[gameStates.length - 1] && gameStates[gameStates.length - 1].players[controlId] && gameStates[gameStates.length - 1].players[controlId].alive)
     {
         emitMousePos();
     }
