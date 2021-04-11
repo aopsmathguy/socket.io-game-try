@@ -1150,7 +1150,10 @@ var linearGameState = function() {
                 }
             }
         }
-        out.weapons[i].recoil = linearPosition(new Vector(left.weapons[i].recoil, 0), new Vector(right.weapons[i].recoil, 0), displayTime, left.time, right.time).x;
+        if (displayTime > right.weapons[i].lastFireTime)
+            out.weapons[i].recoil = right.weapons[i].kickAnimation*Math.pow(right.weapons[i].animationMult,(displayTime - right.weapons[i].lastFireTime)/60);
+        else
+            out.weapons[i].recoil = left.weapons[i].kickAnimation*Math.pow(left.weapons[i].animationMult,(displayTime - left.weapons[i].lastFireTime)/60);
     }
     out.snapWeapons();
     return out;
