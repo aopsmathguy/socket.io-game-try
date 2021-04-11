@@ -1076,7 +1076,10 @@ var linearGameState = function() {
             continue;
         }
         out.players[i].pos = linearPosition(left.players[i].pos, right.players[i].pos, displayTime, left.time, right.time);
-        out.players[i].punchAnimation = 30*Math.pow(0.9,(displayTime - right.players[i].punchLastTime)/20)
+        if (displayTime > right.players[i].punchLastTime)
+            out.players[i].punchAnimation = 30*Math.pow(0.9,(displayTime - right.players[i].punchLastTime)/20);
+        else
+            out.players[i].punchAnimation = 30*Math.pow(0.9,(displayTime - left.players[i].punchLastTime)/20);
         out.players[i].ang = linearAng(left.players[i].ang, right.players[i].ang, displayTime, left.time, right.time);
     }
     for (var i in out.weapons) {
