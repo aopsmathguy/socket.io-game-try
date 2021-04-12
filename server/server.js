@@ -1320,7 +1320,7 @@ setInterval(() => {
       gameState.weapons[i].pushFromAll(gameState);
     }},1000);
 function updateGameArea() {
-    logTime("updateGameArea", () => {
+    //logTime("updateGameArea", () => {
         gameState.time = Date.now();
         if (Object.keys(gameState.players).length != 0)
         {
@@ -1332,6 +1332,6 @@ function updateGameArea() {
             emitGameState(gameState);
             stage = 0;
         }
-    });
+    //});
 }
 io.listen(process.env.PORT || 3000);
