@@ -9,7 +9,7 @@ const framesPerTick = 3;
 const io = require('socket.io')();
 
 io.on('connection', client => {
-    client.on('connection', function(socket) {
+    client.on('connect', function() {
         makeId();
         client.emit('init', {
             data: Date.now(),
