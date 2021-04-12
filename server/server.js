@@ -4,7 +4,7 @@ const numOb = 30;
 const numHouse1 = 10;
 const numHouse2 = 10;
 const gridWidth = 250;
-const framesPerTick = 3;
+const framesPerTick = 30;
 
 const io = require('socket.io')();
 
@@ -188,12 +188,12 @@ function emitNewMessage(message) {
 function emitGameState(gameState) {
     // Send this event to everyone in the room.
     var copy = JSON.parse(JSON.stringify(gameState));
-    //logTime("copy",()=>{
+    logTime("copy",()=>{
         copy = trimObject(copy);
-    //});
-    //logTime("emitcopy",()=>{
+    });
+    logTime("emitcopy",()=>{
         io.sockets.emit('gameState', copy);
-    //});
+    });
 }
 var setIfUndefined = function(obj, field, value) {
     if (obj[field] === undefined) {
