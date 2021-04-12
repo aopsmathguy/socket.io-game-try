@@ -1346,12 +1346,12 @@ makeObstacles();
 var stage = 0;
 setInterval(updateGameArea, 1000 / 60);
 setInterval(() => {
-    //logTime("push",()=>{
+    logTime("push",()=>{
         for (var i in gameState.weapons)
         {
           gameState.weapons[i].pushFromAll(gameState);
         }
-    //});
+    });
 },1000);
 function updateGameArea() {
     //logTime("updateGameArea", () => {
