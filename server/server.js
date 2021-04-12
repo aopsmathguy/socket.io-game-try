@@ -1325,7 +1325,7 @@ setInterval(() => {
         {
           gameState.weapons[i].pushFromAll(gameState);
         }
-    }
+    });
 },1000);
 function updateGameArea() {
     //logTime("updateGameArea", () => {
