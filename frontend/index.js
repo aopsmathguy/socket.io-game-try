@@ -34,7 +34,8 @@ var path = "img/weapons/"
 var weaponImages = {
     "AK-47" : new Image(),
     "MP5" : new Image(),
-    "Stevens DB" : new Image()
+    "Stevens DB" : new Image(),
+    "Crossbow" : new Image()
 };
 for (var i in weaponImages)
 {
