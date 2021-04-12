@@ -95,6 +95,12 @@ io.on('connection', client => {
 
 
 });
+var logTime = function(name, func)
+{
+    var time = Date.now();
+    func();
+    console.log(name + ": " + (Date.now() - time));
+}
 var findSpawnPosition = function(objects) {
     var startPos;
     do {
@@ -1314,16 +1320,18 @@ setInterval(() => {
       gameState.weapons[i].pushFromAll(gameState);
     }},1000);
 function updateGameArea() {
-    gameState.time = Date.now();
-    if (Object.keys(gameState.players).length != 0)
-    {
-        gameState.step();
-    }
-    stage += 1;
-    if (stage >= framesPerTick) {
+    logTime("updateGameArea", () => {
+        gameState.time = Date.now();
+        if (Object.keys(gameState.players).length != 0)
+        {
+            gameState.step();
+        }
+        stage += 1;
+        if (stage >= framesPerTick) {
 
-        emitGameState(gameState);
-        stage = 0;
-    }
+            emitGameState(gameState);
+            stage = 0;
+        }
+    });
 }
 io.listen(process.env.PORT || 3000);
