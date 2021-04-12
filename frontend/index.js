@@ -1061,7 +1061,7 @@ var linearGameState = function() {
     }
     if (gameStates.length > 2) {
         buffer -= 2;
-    } else if (gameStates.length < 3) {
+    } else if (gameStates.length < 4) {
 
         buffer += 2;
     }
