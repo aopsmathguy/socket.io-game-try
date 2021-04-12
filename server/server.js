@@ -1328,9 +1328,10 @@ function updateGameArea() {
         }
         stage += 1;
         if (stage >= framesPerTick) {
-
-            emitGameState(gameState);
-            stage = 0;
+            logTime("emit",()=>{
+                emitGameState(gameState);
+                stage = 0;
+            });
         }
     //});
 }
