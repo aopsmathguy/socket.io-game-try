@@ -9,9 +9,10 @@ const framesPerTick = 3;
 const io = require('socket.io')();
 
 io.on('connection', client => {
+    makeId();
     client.emit('init', {
         data: Date.now(),
-        id: client.id,
+        id: client.inGameId,
         obstacles: obstacles,
         borderObstacles: borderObstacles,
         gameWidth: gameWidth,
@@ -21,53 +22,77 @@ io.on('connection', client => {
     });
     client.on('new player', addPlayer);
     client.on('disconnect', function() {
-        var player = gameState.players[client.id];
+        var player = gameState.players[client.inGameId];
         if (player != undefined){
             player.dropEverything(gameState);
             emitNewMessage(player.name + " left the game");
         }
-        delete gameState.players[client.id];
-        delete controls[client.id];
+        delete gameState.players[client.inGameId];
+        delete controls[client.inGameId];
     });
     client.on('reconnect', function() {
         client.sendBuffer = [];
     });
     client.on('keydown', (keycode) => {
         if (typeof keycode !== 'undefined') {
-            if (controls[client.id] && gameState.players[client.id]) {
-                controls[client.id].keys[keycode] = true;
-                gameState.players[client.id].justKeyDowned[keycode] = true;
+            if (controls[client.inGameId] && gameState.players[client.inGameId]) {
+                controls[client.inGameId].keys[keycode] = true;
+                gameState.players[client.inGameId].justKeyDowned[keycode] = true;
             }
         }
     });
     client.on('keyup', (keycode) => {
         if (typeof keycode !== 'undefined') {
 
-            if (controls[client.id] && gameState.players[client.id])
-                controls[client.id].keys[keycode] = false;
+            if (controls[client.inGameId] && gameState.players[client.inGameId])
+                controls[client.inGameId].keys[keycode] = false;
         }
     });
     client.on('mousemove', (ang) => {
-        if (typeof ang !== 'undefined' && controls[client.id] && gameState.players[client.id])
-            controls[client.id].ang = ang;
+        if (typeof ang !== 'undefined' && controls[client.inGameId] && gameState.players[client.inGameId])
+            controls[client.inGameId].ang = ang;
     });
     client.on('mousedown', () => {
-        if (controls[client.id] && gameState.players[client.id]) {
-            controls[client.id].mouseDown = true;
-            gameState.players[client.id].justMouseDowned = true;
-            gameState.players[client.id].autoShot = true;
+        if (controls[client.inGameId] && gameState.players[client.inGameId]) {
+            controls[client.inGameId].mouseDown = true;
+            gameState.players[client.inGameId].justMouseDowned = true;
+            gameState.players[client.inGameId].autoShot = true;
         }
     });
     client.on('mouseup', () => {
-        if (controls[client.id] && gameState.players[client.id])
+        if (controls[client.inGameId] && gameState.players[client.inGameId])
         {
-            controls[client.id].mouseDown = false;
-            gameState.players[client.id].autoShot = false;
+            controls[client.inGameId].mouseDown = false;
+            gameState.players[client.inGameId].autoShot = false;
         }
     });
-
+    function makeId(){
+        var sockets = io.sockets.sockets;
+        var done = false;
+        var possible = "abcdefghijklmnopqrstuvwxyz1234567890";
+        var length = 30;
+        var string;
+        while(!done)
+        {
+            string = "";
+            for (var i = 0; i < length; i++)
+            {
+                var rand = Math.floor(Math.random() * possible.length);
+                string = string + possible.charAt(rand);
+            }
+            done = true;
+            for(var socketId in sockets) {
+                var s = sockets[socketId]; 
+                if(s.inGameId == string)
+                {
+                    done = false;
+                }
+            }
+        }
+        client.inGameId = string;
+    }
     function addPlayer(msg) {
-        controlId = client.id;
+        controlId = client.inGameId;
         var player = gameState.players[controlId];
         var startPos = findSpawnPosition();
         var color = (/^#([A-Fa-f0-9]{3}){1,2}$/.test(msg.color) ? msg.color : "#fcc976");
@@ -95,6 +120,7 @@ io.on('connection', client => {
 
 
 });
+
 var logTime = function(name, func)
 {
     var time = Date.now();
@@ -776,7 +802,7 @@ var Player = function(xStart, yStart, name, color, id) {
 }
 var Gun = function(name, startX, startY, length, auto, firerate, multishot, capacity, reloadTime, reloadType, bulletSpeed, damage, damageDrop, damageRange, damageDropTension, range, defSpray, sprayCoef, stability, kickAnimation, animationMult, walkSpeedMult, shootWalkSpeedMult, color, buttPosition, handPos1x, handPos1y, handPos2x, handPos2y) {
     this.type = "Gun";
-    this.outfields = ['type','name','pos','vel','ang','length','capacity','reloadTime','color','buttPosition','handPos1','handPos2','bulletsRemaining','reloadStartTime','recoil','hold','radius','bullets'];
+    this.outfields = ['type','name','pos','vel','ang','length','capacity','reloadTime','bulletSpeed','color','buttPosition','handPos1','handPos2','bulletsRemaining','reloadStartTime','recoil','hold','radius','bullets'];
     setIfUndefined(this, 'name', name);//
     setIfUndefined(this, 'pos', new Vector(startX, startY));//
     setIfUndefined(this, 'vel', new Vector(0, 0));//
