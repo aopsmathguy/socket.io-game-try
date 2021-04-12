@@ -194,7 +194,7 @@ var trimObject = function(obj)
         }
         else
         {
-            out = Array.isArray(obj) ? [] : {};
+            out = {};
             for (var field in obj) {
                 out[field] = trimObject(obj[field]);
             }
