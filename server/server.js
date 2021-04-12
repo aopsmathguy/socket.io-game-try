@@ -9,18 +9,16 @@ const framesPerTick = 3;
 const io = require('socket.io')();
 
 io.on('connection', client => {
-    client.on('connect', function() {
-        makeId();
-        client.emit('init', {
-            data: Date.now(),
-            id: client.inGameId,
-            obstacles: obstacles,
-            borderObstacles: borderObstacles,
-            gameWidth: gameWidth,
-            gameHeight: gameHeight,
-            gridWidth: gridWidth,
-            framesPerTick: framesPerTick
-        });
+    makeId();
+    client.emit('init', {
+        data: Date.now(),
+        id: client.inGameId,
+        obstacles: obstacles,
+        borderObstacles: borderObstacles,
+        gameWidth: gameWidth,
+        gameHeight: gameHeight,
+        gridWidth: gridWidth,
+        framesPerTick: framesPerTick
     });
     client.on('new player', addPlayer);
     client.on('disconnect', function() {
