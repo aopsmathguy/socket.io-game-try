@@ -373,7 +373,7 @@ var GameState = function() {
                 this.displayPlayer(idx);
         }
         for (var idx in this.players) {
-            if (this.players[idx].alive)
+            if (this.players[idx].alive && idx != controlId)
                 this.players[idx].drawHealthBar(idx);
         }
         for (var idx in this.players) {
@@ -388,6 +388,23 @@ var GameState = function() {
             displayKillFeed();
             this.displayScoreBoard();
         }
+    }
+    this.displayHealthMeter = function()
+    {
+        var startX = 1/3 * myGameArea.canvas.width;
+        var length = 1/3 * myGameArea.canvas.width;
+        var startY = myGameArea.canvas.height -75;
+        var height = 50
+        var margin = 6;
+        ctx = myGameArea.context;
+        ctx.save();
+        ctx.globalAlpha = 0.3;
+        ctx.fillStyle = "#000";
+        ctx.fillRect(startX, startY, length, height);
+        ctx.restore();
+        ctx.fillStyle = "#fff";
+        ctx.fillRect(startX + margin, startY + margin, length - 2*margin, height- 2*margin);
+        
     }
     this.displayScoreBoard = function()
     {
