@@ -382,6 +382,7 @@ var GameState = function() {
         }
         if (this.players[controlId] && initialScreen.style.display == "none")
         {
+            this.displayHealthMeter();
             // this.displayReloadTime();
             this.displayBulletCount();
             //myGameArea.printFps();
@@ -391,10 +392,10 @@ var GameState = function() {
     }
     this.displayHealthMeter = function()
     {
-        var startX = 1/3 * myGameArea.canvas.width;
-        var length = 1/3 * myGameArea.canvas.width;
+        var length = 300;
+        var startX = 1/2 * myGameArea.canvas.width-length/2;
         var startY = myGameArea.canvas.height -75;
-        var height = 50
+        var height = 40;
         var margin = 6;
         ctx = myGameArea.context;
         ctx.save();
@@ -402,9 +403,17 @@ var GameState = function() {
         ctx.fillStyle = "#000";
         ctx.fillRect(startX, startY, length, height);
         ctx.restore();
-        ctx.fillStyle = "#fff";
-        ctx.fillRect(startX + margin, startY + margin, length - 2*margin, height- 2*margin);
-        
+        var health = this.players[controlId].health;
+        if (health > 60)
+            ctx.fillStyle = "#fff";
+        else if (health > 30)
+            ctx.fillStyle = "#f88";
+        else if (health > 0)
+            ctx.fillStyle = pSBC(-0.5*(Math.sin(this.time/250) + 1)/2, "#f00")
+        if (health > 0)
+        {
+            ctx.fillRect(startX + margin, startY + margin, this.players[controlId].health/100 * (length - 2*margin), height- 2*margin);
+        }
     }
     this.displayScoreBoard = function()
     {
