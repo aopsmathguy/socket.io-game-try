@@ -18,7 +18,8 @@ io.on('connection', client => {
         gameWidth: gameWidth,
         gameHeight: gameHeight,
         gridWidth: gridWidth,
-        framesPerTick: framesPerTick
+        framesPerTick: framesPerTick,
+        viableWeapons: viableWeapons
     });
     client.on('new player', addPlayer);
     client.on('disconnect', function() {
@@ -404,6 +405,24 @@ var inObjects = function(v) {
     });
     return out;
 }
+var viableWeapons = [
+    new GunStats('M9', 30, false, 780, 1, 15, 1000, true, 40, 17, 4, 500, 150, 1000, 0.1, 0.12, 0.9, 7, 0.9, 0.95, 1, '#80f', 40, 0, 0, 0, 0),
+    new GunStats('Redhawk', 35, false, 300, 1, 6, 1300, true, 50, 33, 8, 750, 200, 1500, 0, 0.2, 0.9, 10, 0.9, 0.95, 0.6, '#ff0', 40, 0, 0, 0, 0),
+
+    new GunStats('MAC-10', 50, true, 900, 1, 32, 1200, true, 45, 13, 6, 500, 150, 1000, 0, 0.12, 0.9, 3, 0.9, 0.97, 0.8, '#f00', 20,10, 3, 27, 0),
+    new GunStats('MP5', 72, true, 720, 1, 30, 1300, true, 45, 12, 3, 550, 270, 1250, 0, 0.07, 0.91, 4, 0.9, 0.95, 0.65, '#f80', 14,26, 3, 46, 0),
+    new GunStats('AK-47', 90, true, 600, 1, 30, 1600, true, 55, 13, 2, 600, 400, 1500, 0, 0.13, 0.85, 6, 0.9, 0.93, 0.5, '#bb7554', 16, 24, 3, 44, 0),
+    new GunStats('MK11', 90, false, 550, 1, 15, 1800, true, 70, 26, 7, 710, 200, 2000, 0, 0.3, 0.83, 8, 0.84, 0.92, 0.5, '#f08', 20,20, 3, 45, 0),
+
+    new GunStats('QBB-97', 100, true, 550, 1, 75, 3000, true, 55, 15, 5, 550, 270, 1500, 0, 0.04, 0.96, 5, 0.9, 0.85, 0.5, '#fff', 20,20, 3,45, 0),
+    new GunStats('Railgun', 110, true, 1500, 1, 100, 2000, true, 100, 7, 0, 550, 270, 2000, 0, 0, 0.91, 2, 0.9, 0.85, 0.4, '#08f', 20,20, 3, 45, 0),
+
+    new GunStats('Mosin Nagant', 110, false, 60, 1, 5, 1000, false, 70, 70, 20, 830, 240, 3000, 0, 0.3, 0.83, 14, 0.9, 0.9, 0.6, '#8f0', 20,20, 3, 45, 0),
+    new GunStats('Crossbow', 70, false, 90, 1, 1, 1000, false, 25, 100, 0, 830, 240, 1500, 0, 0.3, 0.83, 17, 0.9, 0.9, 1, '#000', 20,20, 3, 40, 0),
+
+    new GunStats('Stevens DB', 90, false, 450, 8, 2, 1600, true, 35, 15, 9, 350, 56, 700, 0.15, 0, 0.83, 10, 0.9, 1, 0.7, '#f0f', 10,30, 3, 53, 0),
+    new GunStats('SPAS-12', 70, false, 100, 8, 9, 800, false, 40, 8, 1, 650, 100, 1100, 0.1, 0, 0.83, 10, 0.9, 1, 0.5, '#0ff', 20,20, 3, 40, 0)
+];
 var makeObstacles = function() {
     var players = {};
     var wallThick = -40;
@@ -523,29 +542,11 @@ var makeObstacles = function() {
         }
         addTo[addTo.length] = ob;
     }
-    var viableWeapons = [
-        new Gun('M9',100, 50, 30, false, 780, 1, 15, 1000, true, 40, 17, 4, 500, 150, 1000, 0.1, 0.12, 0.9, 7, 0.9, 0.95, 1, '#80f', 40, 0, 0, 0, 0),
-        new Gun('Redhawk',100, 50, 35, false, 300, 1, 6, 1300, true, 50, 33, 8, 750, 200, 1500, 0, 0.2, 0.9, 10, 0.9, 0.95, 0.6, '#ff0', 40, 0, 0, 0, 0),
-
-        new Gun('MAC-10',100, 60, 50, true, 900, 1, 32, 1200, true, 45, 13, 6, 500, 150, 1000, 0, 0.12, 0.9, 3, 0.9, 0.97, 0.8, '#f00', 20,10, 3, 27, 0),
-        new Gun('MP5',200, 350, 72, true, 720, 1, 30, 1300, true, 45, 12, 3, 550, 270, 1250, 0, 0.07, 0.91, 4, 0.9, 0.95, 0.65, '#f80', 14,26, 3, 46, 0),
-        new Gun('AK-47',200, 350, 90, true, 600, 1, 30, 1600, true, 55, 13, 2, 600, 400, 1500, 0, 0.13, 0.85, 6, 0.9, 0.93, 0.5, '#bb7554', 16, 24, 3, 44, 0),
-        new Gun('MK11',200, 50, 90, false, 550, 1, 15, 1800, true, 70, 26, 7, 710, 200, 2000, 0, 0.3, 0.83, 8, 0.84, 0.92, 0.5, '#f08', 20,20, 3, 45, 0),
-
-        new Gun('QBB-97',200, 350, 100, true, 550, 1, 75, 3000, true, 55, 15, 5, 550, 270, 1500, 0, 0.04, 0.96, 5, 0.9, 0.85, 0.5, '#fff', 20,20, 3,45, 0),
-        new Gun('Railgun',200, 350, 110, true, 1500, 1, 100, 2000, true, 100, 7, 0, 550, 270, 2000, 0, 0, 0.91, 2, 0.9, 0.85, 0.4, '#08f', 20,20, 3, 45, 0),
-
-        new Gun('Mosin Nagant',200, 50, 110, false, 60, 1, 5, 1000, false, 70, 70, 20, 830, 240, 3000, 0, 0.3, 0.83, 14, 0.9, 0.9, 0.6, '#8f0', 20,20, 3, 45, 0),
-        new Gun('Crossbow',200, 50, 70, false, 90, 1, 1, 1000, false, 25, 100, 0, 830, 240, 1500, 0, 0.3, 0.83, 17, 0.9, 0.9, 1, '#000', 20,20, 3, 40, 0),
-
-        new Gun('Stevens DB',200, 220, 90, false, 450, 8, 2, 1600, true, 35, 15, 9, 350, 56, 700, 0.15, 0, 0.83, 10, 0.9, 1, 0.7, '#f0f', 10,30, 3, 53, 0),
-        new Gun('SPAS-12',200, 220, 70, false, 100, 8, 9, 800, false, 40, 8, 1, 650, 100, 1100, 0.1, 0, 0.83, 10, 0.9, 1, 0.5, '#0ff', 20,20, 3, 40, 0)
-    ];
     var numEach = [3, 1, 2, 2, 1,1, 1, 1, 1, 1, 1, 1];
     var weapons = [];
     for (var i = 0; i < viableWeapons.length; i++) {
         for (var j = 0; j < numEach[i]; j++) {
-            var weapon = viableWeapons[i].copy();
+            var weapon = new Gun(0,0,i);
             weapon.pos = findSpawnPosition();
             weapons.push(weapon);
         }
@@ -800,13 +801,9 @@ var Player = function(xStart, yStart, name, color, id) {
         }
     }
 }
-var Gun = function(name, startX, startY, length, auto, firerate, multishot, capacity, reloadTime, reloadType, bulletSpeed, damage, damageDrop, damageRange, damageDropTension, range, defSpray, sprayCoef, stability, kickAnimation, animationMult, walkSpeedMult, shootWalkSpeedMult, color, buttPosition, handPos1x, handPos1y, handPos2x, handPos2y) {
-    this.type = "Gun";
-    this.outfields = ['type','name','pos','vel','ang','length','capacity','reloadTime','bulletSpeed','color','buttPosition','handPos1','handPos2','bulletsRemaining','reloadStartTime','recoil','hold','radius','bullets'];
+var GunStats = function(name, length, auto, firerate, multishot, capacity, reloadTime, reloadType, bulletSpeed, damage, damageDrop, damageRange, damageDropTension, range, defSpray, sprayCoef, stability, kickAnimation, animationMult, walkSpeedMult, shootWalkSpeedMult, color, buttPosition, handPos1x, handPos1y, handPos2x, handPos2y)
+{
     setIfUndefined(this, 'name', name);//
-    setIfUndefined(this, 'pos', new Vector(startX, startY));//
-    setIfUndefined(this, 'vel', new Vector(0, 0));//
-    setIfUndefined(this, 'ang', -Math.PI/6);//
     setIfUndefined(this, 'length', length);//
     setIfUndefined(this, 'auto', auto);
     setIfUndefined(this, 'multishot', multishot);
@@ -836,6 +833,15 @@ var Gun = function(name, startX, startY, length, auto, firerate, multishot, capa
 
     setIfUndefined(this, 'handPos1', new Vector(handPos1x, handPos1y));//
     setIfUndefined(this, 'handPos2', new Vector(handPos2x, handPos2y));//
+    setIfUndefined(this, 'radius', 30);//
+}
+var Gun = function(startX, startY, stats) {
+    this.outfields = ['type','gunStats','pos','vel','ang','bulletsRemaining','reloadStartTime','recoil','hold','bullets'];
+    
+    setIfUndefined(this, 'gunStats', stats);//
+    setIfUndefined(this, 'pos', new Vector(startX, startY));//
+    setIfUndefined(this, 'vel', new Vector(0, 0));//
+    setIfUndefined(this, 'ang', -Math.PI/6);//
 
     setIfUndefined(this, 'bulletsRemaining', 0);//
     setIfUndefined(this, 'reloadStartTime', -1);//
@@ -852,9 +858,9 @@ var Gun = function(name, startX, startY, length, auto, firerate, multishot, capa
 
 
     setIfUndefined(this, 'playerHolding', -1);
-    this.copy = function() {
-        return new Gun(this.name, this.pos.x, this.pos.y, this.length, this.auto, this.firerate, this.multishot, this.capacity, this.reloadTime, this.reloadType, this.bulletSpeed, this.damage, this.damageDrop, this.damageRange, this.damageDropTension, this.range, this.defSpray, this.sprayCoef, this.stability, this.kickAnimation, this.animationMult, this.walkSpeedMult, this.shootWalkSpeedMult, this.color, this.buttPosition, this.handPos1.x, this.handPos1.y, this.handPos2.x, this.handPos2.y);
-    }
+    
+    Object.assign(this, viableWeapons[this.gunStats]);
+    this.type = "Gun";
     this.setLastFireTime = function(state)
     {
       if (this.lastFireTime == 0)
