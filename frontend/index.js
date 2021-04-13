@@ -8,6 +8,12 @@ const socket = io('https://limitless-everglades-60126.herokuapp.com/');
 
 socket.on('init', handleInit);
 socket.on('gameState', (msg) => {
+    for(var i in msg.weapons)
+    {
+        var weapon = msg.weapons[i];
+        Object.assign(weapon, viableWeapons[weapon.gunStats]);
+        weapon.type = "Gun";
+    }
     gameStates.push(msg);
 });
 socket.on('killFeed', (msg) => {
@@ -41,6 +47,7 @@ for (var i in weaponImages)
 {
   weaponImages[i].src = path + i + ".svg";
 }
+var viableWeapons;
 function startGame(){
     myGameArea.start();
     drawer = new Drawer();
@@ -142,6 +149,7 @@ function handleInit(msg) {
     gridWidth = msg.gridWidth;
 
     framesPerTick = msg.framesPerTick;
+    viableWeapons = msg.viableWeapons;
 }
 
 function displayKillFeed() {
