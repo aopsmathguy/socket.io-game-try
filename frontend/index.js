@@ -413,7 +413,7 @@ var GameState = function() {
         ctx.restore();
         var health = this.players[controlId].health;
         if (health > 99)
-            ctx.fillStyle = "#888";
+            ctx.fillStyle = "#b3b3b3";
         else if (health > 60)
             ctx.fillStyle = "#fff";
         else if (health > 30)
