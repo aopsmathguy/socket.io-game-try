@@ -716,7 +716,7 @@ var Player = function(xStart, yStart, name, color, id) {
         this.pos = this.pos.add(this.vel);
 
         if (state.time - this.lastHitTime > this.healInterval) {
-            this.health = Math.min(100, this.health + 0.1);
+            this.health = Math.min(100, this.health + 0.05);
         }
     }
     this.intersect = function(obstacle) {
@@ -901,6 +901,7 @@ var Gun = function(startX, startY, stats) {
                 finalForce = finalForce.add((new Vector(0.2*stretch,0)).rotate(this.pos.angTo(weapon.pos)));
             }
         });
+        this.vel = this.vel.add(finalForce).multiply(0.6);
         loopThroughObstacles(this.pos, (obstacle) => {
             iterations += 1;
             if (this.pos.distanceTo(obstacle.center) > this.radius + obstacle.maxRadius || !obstacle.intersectable)
@@ -909,14 +910,17 @@ var Gun = function(startX, startY, stats) {
             }
             var closestPoint = obstacle.closestPoint(this.pos);
             var dist = this.pos.distanceTo(closestPoint);
-            var stretch = this.radius - dist;
-            if (stretch > 0)
-            {
-                finalForce = finalForce.add((new Vector(0.5*stretch,0)).rotate(this.pos.angTo(closestPoint)));
+            if (dist < this.radius) {
+                if (dist == 0) {
+                    return;
+                }
+                this.pos = closestPoint.add(this.pos.subtract(closestPoint).multiply(this.radius / dist));
+                var ang = this.pos.angTo(closestPoint);
+                var velMag = this.vel.rotate(-ang).y;
+                this.vel = (new Vector(0, velMag)).rotate(ang);
             }
 
         });
-        this.vel = this.vel.add(finalForce).multiply(0.6);
     }
     this.step = function()
     {
