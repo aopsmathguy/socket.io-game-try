@@ -530,9 +530,9 @@ var makeObstacles = function() {
         new GunStats('M9', 30, false, 780, 1, 15, 1000, true, 40, 17, 4, 500, 150, 1000, 0.1, 0.12, 0.9, 7, 0.9, 0.95, 1, '#80f', 40, 0, 0, 0, 0),
         new GunStats('Redhawk', 35, false, 300, 1, 6, 1300, true, 50, 33, 8, 750, 200, 1500, 0, 0.2, 0.9, 10, 0.9, 0.95, 0.6, '#ff0', 40, 0, 0, 0, 0),
 
-        new GunStats('MAC-10', 50, true, 900, 1, 32, 1200, true, 45, 13, 6, 500, 150, 1000, 0, 0.12, 0.9, 3, 0.9, 0.97, 0.8, '#f00', 20,10, 3, 27, 0),
-        new GunStats('MP5', 72, true, 720, 1, 30, 1300, true, 45, 12, 3, 550, 270, 1250, 0, 0.07, 0.91, 4, 0.9, 0.95, 0.65, '#f80', 14,26, 3, 46, 0),
-        new GunStats('AK-47', 90, true, 600, 1, 30, 1600, true, 55, 13, 2, 600, 400, 1500, 0, 0.13, 0.85, 6, 0.9, 0.93, 0.5, '#bb7554', 16, 24, 3, 44, 0),
+        new GunStats('MAC-10', 50, true, 900, 1, 32, 1200, true, 45, 10, 5, 400, 150, 1000, 0, 0.12, 0.9, 3, 0.9, 0.97, 0.8, '#f00', 20,10, 3, 27, 0),
+        new GunStats('MP5', 72, true, 750, 1, 30, 1300, true, 45, 11, 4, 550, 270, 1250, 0, 0.07, 0.91, 4, 0.9, 0.95, 0.65, '#f80', 14,26, 3, 46, 0),
+        new GunStats('AK-47', 90, true, 600, 1, 30, 1600, true, 55, 12, 1, 600, 400, 1500, 0, 0.13, 0.85, 6, 0.9, 0.93, 0.5, '#bb7554', 16, 24, 3, 44, 0),
         new GunStats('MK11', 90, false, 550, 1, 15, 1800, true, 70, 26, 7, 710, 200, 2000, 0, 0.3, 0.83, 8, 0.84, 0.92, 0.5, '#f08', 20,20, 3, 45, 0),
 
         new GunStats('QBB-97', 100, true, 550, 1, 75, 3000, true, 55, 15, 5, 550, 270, 1500, 0, 0.04, 0.96, 5, 0.9, 0.85, 0.5, '#fff', 20,20, 3,45, 0),
@@ -796,10 +796,22 @@ var Player = function(xStart, yStart, name, color, id) {
     this.takeDamage = function(damage, playerId, state) {
         if (state.players[playerId])
         {
-            state.players[playerId].points += damage;
-            this.health -= damage;
-            this.lastHitBy = playerId;
-            this.lastHitTime = state.time;
+            var actualdmg;
+            if (this.health > 0)
+            {
+                if (this.health >= damage)
+                {
+                    actualdmg = damage;
+                }
+                else
+                {
+                    actualdmg = this.health;
+                }
+                state.players[playerId].points += actualdmg;
+                this.health -= actualdmg;
+                this.lastHitBy = playerId;
+                this.lastHitTime = state.time;
+            }
         }
     }
 }
