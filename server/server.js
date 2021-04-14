@@ -898,7 +898,7 @@ var Gun = function(startX, startY, stats) {
             var stretch = this.radius + weapon.radius - dist;
             if (stretch > 0)
             {
-                finalForce = finalForce.add((new Vector(0.2*stretch,0)).rotate(this.pos.angTo(weapon.pos)));
+                finalForce = finalForce.add((new Vector(0.02*stretch,0)).rotate(this.pos.angTo(weapon.pos)));
             }
         });
         this.vel = this.vel.add(finalForce).multiply(0.6);
@@ -1363,7 +1363,7 @@ setInterval(() => {
           gameState.weapons[i].pushFromAll(gameState);
         }
     //});
-},1000);
+},100);
 function updateGameArea() {
     //logTime("updateGameArea", () => {
         gameState.time = Date.now();
