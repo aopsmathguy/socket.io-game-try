@@ -472,7 +472,7 @@ var GameState = function() {
             ctx.fillText(i + 1 + ". " + name + ":", startX + margin, y + 3/4 * height);
             ctx.fillText(playerStats.killstreak, startX + split1, y + 3/4 * height);
             ctx.textAlign = "right";
-            ctx.fillText(Math.floor(playerStats.points + 0.5), startX + totalWidth - margin, y + 3/4 * height);
+            ctx.fillText(Math.floor(playerStats.points + 0.0000001), startX + totalWidth - margin, y + 3/4 * height);
 
             y += margin + height;
         }
