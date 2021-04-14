@@ -3,7 +3,7 @@ const gameHeight = 4000;
 const numOb = 30;
 const numHouse1 = 10;
 const numHouse2 = 10;
-const gridWidth = 250;
+const gridWidth = 500;
 const framesPerTick = 3;
 
 const io = require('socket.io')();
