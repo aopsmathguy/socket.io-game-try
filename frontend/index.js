@@ -46,9 +46,9 @@ var weaponImages = {
 };
 for (var i in weaponImages)
 {
-  weaponImages[i] = [new Image(), new Image()];
-  weaponImages[i][0].src = path1 + i + ".svg";
-  weaponImages[i][1].src = path2 + i + ".svg";
+  weaponImages[i] = {true : new Image(), false : new Image()};
+  weaponImages[i][true].src = path1 + i + ".svg";
+  weaponImages[i][false].src = path2 + i + ".svg";
 }
 var viableWeapons;
 function startGame(){
@@ -609,7 +609,7 @@ var GameState = function() {
             ctx.translate(pos.x, pos.y);
             ctx.rotate(weapon.ang);
             var fat = 1;
-            var img = weaponImages[weapon.name];
+            var img = weaponImages[weapon.name][weapon.hold];
             ctx.drawImage(img, newLength/-2, fat*newLength * img.naturalHeight/img.naturalWidth / -2, newLength, fat*newLength * img.naturalHeight/img.naturalWidth);
             ctx.restore();
         }
