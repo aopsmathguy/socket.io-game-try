@@ -842,6 +842,14 @@ var Bullet = function() {
                 }
             }
         }
+        if (this.pos.distanceTo(this.startPos) > this.range)
+        {
+            if (objectsPoint == -1 || objectsPoint != -1 && objectsPoint.distanceTo(this.startPos) > this.range)
+            {
+                objectsPoint = this.startPos.add(this.vel.normalize().multiply(this.range));
+                playerHit = -1;
+            }
+        }
         this.hitPoint = objectsPoint;
     }
 }
