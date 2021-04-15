@@ -624,7 +624,7 @@ var GameState = function() {
             ctx.closePath();
             ctx.stroke();
         }
-        if (weaponImages[weapon.name][weapon.hold])
+        if (weaponImages[weapon.name] && weaponImages[weapon.name][weapon.hold])
         {
             var pos = drawer.transform(weapon.pos);
             var newLength = drawer.scaled(weapon.length);
