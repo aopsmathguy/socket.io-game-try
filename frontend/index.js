@@ -36,16 +36,19 @@ const joinGameBtn = document.getElementById('joinGameButton');
 joinGameBtn.addEventListener('click', joinGame);
 var name;
 var color;
-var path = "img/weapons/"
+var path1 = "img/weapons/";
+var path2 = "img/ground weapons/";
 var weaponImages = {
-    "AK-47" : new Image(),
-    "MP5" : new Image(),
-    "Stevens DB" : new Image(),
-    "Crossbow" : new Image()
+    "AK-47" : 0,
+    "MP5" : 0,
+    "Stevens DB" : 0,
+    "Crossbow" : 0
 };
 for (var i in weaponImages)
 {
-  weaponImages[i].src = path + i + ".svg";
+  weaponImages[i] = [new Image(), new Image()];
+  weaponImages[i][0].src = path1 + i + ".svg";
+  weaponImages[i][1].src = path2 + i + ".svg";
 }
 var viableWeapons;
 function startGame(){
