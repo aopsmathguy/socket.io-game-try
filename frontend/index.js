@@ -38,6 +38,16 @@ var name;
 var color;
 var path1 = "img/weapons/";
 var path2 = "img/ground weapons/";
+function imageExists(image_url){
+
+    var http = new XMLHttpRequest();
+
+    http.open('HEAD', image_url, false);
+    http.send();
+
+    return http.status != 404;
+
+}
 var weaponImages = {
     "AK-47" : 0,
     "MP5" : 0,
@@ -46,9 +56,22 @@ var weaponImages = {
 };
 for (var i in weaponImages)
 {
-  weaponImages[i] = {true : new Image(), false : new Image()};
-  weaponImages[i][true].src = path1 + i + ".svg";
-  weaponImages[i][false].src = path2 + i + ".svg";
+    weaponImages[i] = {true : new Image(), false : new Image()};
+    if (imageExists(path1 + i + ".svg"))
+    {
+        weaponImages[i][true].src = path1 + i + ".svg";
+    }
+    else
+    {
+        weaponImages[i][true] = false;
+    }
+    if (imageExists(path2 + i + ".svg")){
+        weaponImages[i][false].src = path2 + i + ".svg";
+    }
+    else
+    {
+        weaponImages[i][false] = false;
+    }
 }
 var viableWeapons;
 function startGame(){
@@ -601,7 +624,7 @@ var GameState = function() {
             ctx.closePath();
             ctx.stroke();
         }
-        if (weaponImages[weapon.name])
+        if (weaponImages[weapon.name][weapon.hold])
         {
             var pos = drawer.transform(weapon.pos);
             var newLength = drawer.scaled(weapon.length);
