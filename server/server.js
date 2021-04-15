@@ -1066,9 +1066,6 @@ var Bullet = function(weapon) {
 
                 state.players[intersect[1]].takeDamage(this.calculateDamage(), this.bulletFiredBy, state);
             }
-            if (this.hitPoint == -1 && this.pos.distanceTo(this.startPos) > this.range) {
-                this.hitPoint = this.pos.copy();
-            }
         }
         else
         {
@@ -1112,6 +1109,14 @@ var Bullet = function(weapon) {
                     objectsPoint = point;
                     playerHit = key;
                 }
+            }
+        }
+        if (this.pos.distanceTo(this.startPos) > this.range)
+        {
+            if (objectsPoint == -1 || objectsPoint != -1 && objectsPoint.distanceTo(this.startPos) > this.range)
+            {
+                objectsPoint = this.startPos.add(this.vel.normalize().multiply(this.range));
+                playerHit = -1;
             }
         }
         return [objectsPoint, playerHit];
