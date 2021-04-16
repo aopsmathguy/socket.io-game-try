@@ -527,22 +527,22 @@ var makeObstacles = function() {
         addTo[addTo.length] = ob;
     }
     viableWeapons = [
-        new GunStats('M9', 30, false, 780, 1, 15, 1000, true, 40, 17, 4, 500, 150, 1000, 0.1, 0.12, 0.9, 7, 0.9, 0.95, 1, '#80f', 40, 0, 0, 0, 0),
-        new GunStats('Redhawk', 35, false, 300, 1, 6, 1300, true, 50, 33, 8, 750, 200, 1500, 0, 0.2, 0.9, 10, 0.9, 0.95, 0.6, '#ff0', 40, 0, 0, 0, 0),
+        new GunStats('M9', 30, false, 780, 1, 15, 1000, true,true, 40, 17, 4, 500, 150, 1000, 0.1, 0.12, 0.9, 7, 0.9, 0.95, 1, '#80f', 40, 0, 0, 0, 0),
+        new GunStats('Redhawk', 35, false, 300, 1, 6, 1300, true,true, 50, 33, 8, 750, 200, 1500, 0, 0.2, 0.9, 10, 0.9, 0.95, 0.6, '#ff0', 40, 0, 0, 0, 0),
 
-        new GunStats('MAC-10', 50, true, 900, 1, 32, 1200, true, 45, 10, 5, 400, 150, 1000, 0, 0.12, 0.9, 3, 0.9, 0.97, 0.8, '#f00', 20,10, 3, 27, 0),
-        new GunStats('MP5', 72, true, 750, 1, 30, 1300, true, 45, 11, 4, 550, 270, 1250, 0, 0.07, 0.91, 4, 0.9, 0.95, 0.65, '#f80', 14,26, 3, 46, 0),
-        new GunStats('AK-47', 90, true, 600, 1, 30, 1600, true, 55, 12, 1, 600, 400, 1500, 0, 0.13, 0.85, 6, 0.9, 0.93, 0.5, '#bb7554', 16, 24, 3, 44, 0),
-        new GunStats('MK11', 90, false, 550, 1, 15, 1800, true, 70, 26, 7, 710, 200, 2000, 0, 0.3, 0.83, 8, 0.84, 0.92, 0.5, '#f08', 20,20, 3, 45, 0),
+        new GunStats('MAC-10', 50, true, 900, 1, 32, 1200, true,true, 45, 10, 5, 400, 150, 1000, 0, 0.12, 0.9, 3, 0.9, 0.97, 0.8, '#f00', 20,10, 3, 27, 0),
+        new GunStats('MP5', 72, true, 750, 1, 30, 1300, true,true, 45, 11, 4, 550, 270, 1250, 0, 0.07, 0.91, 4, 0.9, 0.95, 0.65, '#f80', 14,26, 3, 46, 0),
+        new GunStats('AK-47', 90, true, 600, 1, 30, 1600, true,true, 55, 12, 1, 600, 400, 1500, 0, 0.13, 0.85, 6, 0.9, 0.93, 0.5, '#bb7554', 16, 24, 3, 44, 0),
+        new GunStats('MK11', 90, false, 550, 1, 15, 1800, true,true, 70, 26, 7, 710, 200, 2000, 0, 0.3, 0.83, 8, 0.84, 0.92, 0.5, '#f08', 20,20, 3, 45, 0),
 
-        new GunStats('M1A1', 100, true, 700, 1, 50, 2000, true, 55, 11, 3, 550, 270, 1250, 0, 0.04, 0.96, 5, 0.9, 0.9, 0.5, '#fff', 10,30, 3,60, 0),
-        new GunStats('Railgun', 110, true, 100000000, 1, 60, 75, false, 200, 2.5, 0, 550, 270, 2000, 0, 0, 0.91, 2, 0.9, 0.9, 0.4, '#08f', 20,20, 3, 45, 0),
+        new GunStats('M1A1', 100, true, 700, 1, 50, 2000, true,true, 55, 11, 3, 550, 270, 1250, 0, 0.04, 0.96, 5, 0.9, 0.9, 0.5, '#fff', 10,30, 3,60, 0),
+        new GunStats('Railgun', 110, true, 100000000, 1, 60, 75, false, false,200, 2.5, 0, 550, 270, 2000, 0, 0, 0.91, 2, 0.9, 0.9, 0.4, '#08f', 20,20, 3, 45, 0),
 
-        new GunStats('Mosin Nagant', 110, false, 60, 1, 5, 1000, false, 70, 70, 20, 830, 240, 3000, 0, 0.3, 0.83, 14, 0.9, 0.9, 0.6, '#8f0', 20,20, 3, 45, 0),
-        new GunStats('Crossbow', 70, false, 90, 1, 1, 1000, false, 25, 100, 0, 830, 240, 1500, 0, 0.3, 0.83, 17, 0.9, 0.9, 1, '#000', 20,20, 3, 40, 0),
+        new GunStats('Mosin Nagant', 110, false, 60, 1, 5, 1000, false,true, 70, 70, 20, 830, 240, 3000, 0, 0.3, 0.83, 14, 0.9, 0.9, 0.6, '#8f0', 20,20, 3, 45, 0),
+        new GunStats('Crossbow', 70, false, 90, 1, 1, 1000, false, true,25, 100, 0, 830, 240, 1500, 0, 0.3, 0.83, 17, 0.9, 0.9, 1, '#000', 20,20, 3, 40, 0),
 
-        new GunStats('Stevens DB', 90, false, 450, 8, 2, 1600, true, 35, 15, 9, 350, 56, 700, 0.15, 0, 0.83, 10, 0.9, 1, 0.7, '#f0f', 10,30, 3, 53, 0),
-        new GunStats('SPAS-12', 70, false, 100, 8, 9, 800, false, 40, 8, 1, 650, 100, 1100, 0.1, 0, 0.83, 10, 0.9, 1, 0.5, '#0ff', 20,20, 3, 40, 0)
+        new GunStats('Stevens DB', 90, false, 450, 8, 2, 1600, true,true, 35, 15, 9, 350, 56, 700, 0.15, 0, 0.83, 10, 0.9, 1, 0.7, '#f0f', 10,30, 3, 53, 0),
+        new GunStats('SPAS-12', 70, false, 100, 8, 9, 800, false,true, 40, 8, 1, 650, 100, 1100, 0.1, 0, 0.83, 10, 0.9, 1, 0.5, '#0ff', 20,20, 3, 40, 0)
     ];
     var numEach = [3, 1, 2, 2, 1,1, 1, 1, 1, 1, 1, 1];
     var weapons = [];
@@ -815,7 +815,7 @@ var Player = function(xStart, yStart, name, color, id) {
         }
     }
 }
-var GunStats = function(name, length, auto, firerate, multishot, capacity, reloadTime, reloadType, bulletSpeed, damage, damageDrop, damageRange, damageDropTension, range, defSpray, sprayCoef, stability, kickAnimation, animationMult, walkSpeedMult, shootWalkSpeedMult, color, buttPosition, handPos1x, handPos1y, handPos2x, handPos2y){
+var GunStats = function(name, length, auto, firerate, multishot, capacity, reloadTime, reloadType, reloadDisplay, bulletSpeed, damage, damageDrop, damageRange, damageDropTension, range, defSpray, sprayCoef, stability, kickAnimation, animationMult, walkSpeedMult, shootWalkSpeedMult, color, buttPosition, handPos1x, handPos1y, handPos2x, handPos2y){
     setIfUndefined(this, 'name', name);//
     setIfUndefined(this, 'length', length);//
     setIfUndefined(this, 'auto', auto);
@@ -823,6 +823,7 @@ var GunStats = function(name, length, auto, firerate, multishot, capacity, reloa
     setIfUndefined(this, 'capacity', capacity);//
     setIfUndefined(this, 'reloadTime', reloadTime);//
     setIfUndefined(this, 'reloadType', reloadType);//
+    setIfUndefined(this, 'reloadDisplay', reloadDisplay);//
     setIfUndefined(this, 'firerate', firerate);
     setIfUndefined(this, 'defSpray', defSpray);
     setIfUndefined(this, 'sprayCoef', sprayCoef);
