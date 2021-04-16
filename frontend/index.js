@@ -682,7 +682,7 @@ var GameState = function() {
                 myGameArea.canvas.width / 2, myGameArea.canvas.height - 100,
                 buffer, 1, "center");
             if (weapon.reloadStartTime != -1) {
-                var frac = (weapon.reloadDisplay ? (this.time - weapon.reloadStartTime) / weapon.reloadTime : weapon.bulletsRemaining/weapon.capacity);
+                var frac = (weapon.reloadDisplay ? (this.time - weapon.reloadStartTime) / weapon.reloadTime : 1 - weapon.bulletsRemaining/weapon.capacity);
                 var ctx = myGameArea.context;
                 ctx.save();
 
