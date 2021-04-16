@@ -682,6 +682,7 @@ var GameState = function() {
                 myGameArea.canvas.width / 2, myGameArea.canvas.height - 100,
                 buffer, 1, "center");
             if (weapon.reloadStartTime != -1) {
+                var frac = (weapon.reloadDisplay ? (this.time - weapon.reloadStartTime) / weapon.reloadTime : weapon.bulletsRemaining/weapon.capacity);
                 var ctx = myGameArea.context;
                 ctx.save();
 
@@ -689,7 +690,7 @@ var GameState = function() {
                 ctx.lineWidth = 6;
                 ctx.beginPath();
                 ctx.moveTo(myGameArea.canvas.width / 2 - width / 2 - buffer, myGameArea.canvas.height - 100 - 3 / 4 * size - buffer);
-                ctx.lineTo(myGameArea.canvas.width / 2 + width / 2 + buffer - (width + 20) * (this.time - weapon.reloadStartTime) / weapon.reloadTime, myGameArea.canvas.height - 100 - 3 / 4 * size - buffer);
+                ctx.lineTo(myGameArea.canvas.width / 2 + width / 2 + buffer - (width + 20) * , myGameArea.canvas.height - 100 - 3 / 4 * size - buffer);
                 ctx.closePath();
                 ctx.stroke();
                 ctx.restore();
