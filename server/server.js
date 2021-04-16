@@ -818,7 +818,7 @@ var Player = function(xStart, yStart, name, color, id) {
         }
     }
 }
-var GunStats = function(name, length, auto, firerate, multishot, capacity, reloadTime, reloadType, reloadDisplay, bulletSpeed, damage, damageDrop, damageRange, damageDropTension, range, defSpray, sprayCoef, stability, kickAnimation, animationMult, walkSpeedMult, shootWalkSpeedMult, color, buttPosition, handPos1x, handPos1y, handPos2x, handPos2y){
+var GunStats = function(name, length, auto, firerate, multishot, capacity, reloadTime, reloadType, reloadDisplay, bulletSpeed, damage, damageDrop, damageRange, damageDropTension, range, defSpray, sprayCoef, stability, kickAnimation, animationMult, walkSpeedMult, shootWalkSpeedMult, color, ammoType, ammoColor, buttPosition, handPos1x, handPos1y, handPos2x, handPos2y){
     setIfUndefined(this, 'name', name);//
     setIfUndefined(this, 'length', length);//
     setIfUndefined(this, 'auto', auto);
@@ -846,6 +846,8 @@ var GunStats = function(name, length, auto, firerate, multishot, capacity, reloa
     setIfUndefined(this, 'shootWalkSpeedMult', shootWalkSpeedMult);
 
     setIfUndefined(this, 'color', color);//
+    setIfUndefined(this, 'ammoType', ammoType);//
+    setIfUndefined(this, 'ammoColor', ammoColor);//
     setIfUndefined(this, 'buttPosition', buttPosition);//
 
     setIfUndefined(this, 'handPos1', new Vector(handPos1x, handPos1y));//
@@ -1034,7 +1036,7 @@ var Bullet = function(weapon) {
     if (weapon === undefined) {
         weapon = new Gun(0, 0, 0, false, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '#000');
     }
-    this.outfields = ['type','startPos','tailPos','pos','vel','ang','bulletSpeed','range','hitPoint','trailLength','color'];
+    this.outfields = ['type','startPos','tailPos','pos','vel','ang','bulletSpeed','range','hitPoint','trailLength','color', 'ammoType'];
     setIfUndefined(this, 'startPos', weapon.pos.add((new Vector(weapon.length / 2, 0)).rotate(weapon.ang)));//
     setIfUndefined(this, 'tailPos', this.startPos.copy());//
     setIfUndefined(this, 'pos', this.startPos.copy());//
@@ -1051,7 +1053,8 @@ var Bullet = function(weapon) {
     setIfUndefined(this, 'range', weapon.range);//
     setIfUndefined(this, 'hitPoint', -1);//
     setIfUndefined(this, 'trailLength', this.bulletSpeed * 60);//
-    setIfUndefined(this, 'color', weapon.color);//
+    setIfUndefined(this, 'color', weapon.ammoColor);//
+    setIfUndefined(this, 'ammoType', weapon.ammoType);//
 
     setIfUndefined(this, 'bulletFiredBy', weapon.playerHolding);
     setIfUndefined(this, 'delete', false);
