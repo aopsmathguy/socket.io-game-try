@@ -824,11 +824,19 @@ var Bullet = function() {
     this.display = function() {
         var ctx = myGameArea.context;
         const g = drawer.createLinearGradient(ctx, this.pos, this.pos.add((new Vector(-this.trailLength, 0)).rotate(this.ang)));
-        
-        g.addColorStop(0, hexToRgbA(this.color, 1)); // opaque
-        g.addColorStop(0.07/3, hexToRgbA(this.color, 1)); // opaque
-        g.addColorStop(0.14/3, hexToRgbA('#ccc', 0.25)); // opaque
-        g.addColorStop(1/3, hexToRgbA('#ccc', 0)); // transparent
+        if (this.ammoType == 'bullet')
+        {
+            g.addColorStop(0, hexToRgbA(this.color, 1)); // opaque
+            g.addColorStop(0.07/3, hexToRgbA(this.color, 1)); // opaque
+            g.addColorStop(0.14/3, hexToRgbA('#ccc', 0.25)); // opaque
+            g.addColorStop(1/3, hexToRgbA('#ccc', 0)); // transparent
+        }
+        else if (this.ammoType == 'laser')
+        {
+            g.addColorStop(0, hexToRgbA(this.color, 1)); // opaque
+            g.addColorStop(0.5, hexToRgbA(this.color, 1)); // opaque
+            g.addColorStop(1, hexToRgbA(this.color, 0)); // transparent
+        }
         ctx.strokeStyle = g;
 
         drawer.lineWidth(ctx, 6);
