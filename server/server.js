@@ -1054,7 +1054,7 @@ var Bullet = function(weapon) {
 
     setIfUndefined(this, 'range', weapon.range);//
     setIfUndefined(this, 'hitPoint', -1);//
-    setIfUndefined(this, 'trailLength', this.bulletSpeed * weapon.);//
+    setIfUndefined(this, 'trailLength', this.bulletSpeed * weapon.fadeTime);//
     setIfUndefined(this, 'color', weapon.ammoColor);//
     setIfUndefined(this, 'ammoType', weapon.ammoType);//
 
