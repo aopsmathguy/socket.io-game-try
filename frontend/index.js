@@ -833,8 +833,8 @@ var Bullet = function() {
         }
         else if (this.ammoType == 'laser')
         {
-            g.addColorStop(0, hexToRgbA(this.color, 1)); // opaque
-            g.addColorStop(0.5, hexToRgbA(this.color, 1)); // opaque
+            g.addColorStop(0, hexToRgbA(this.color, 0.5)); // opaque
+            g.addColorStop(0.5, hexToRgbA(this.color, 0.5)); // opaque
             g.addColorStop(1, hexToRgbA(this.color, 0)); // transparent
         }
         ctx.strokeStyle = g;
