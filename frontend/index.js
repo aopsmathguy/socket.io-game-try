@@ -52,7 +52,8 @@ var weaponImages = {
     "AK-47" : 0,
     "MP5" : 0,
     "Stevens DB" : 0,
-    "Crossbow" : 0
+    "Crossbow" : 0,
+    "M1A1" : 0
 };
 for (var i in weaponImages)
 {
