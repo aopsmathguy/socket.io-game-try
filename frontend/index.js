@@ -690,7 +690,7 @@ var GameState = function() {
                 ctx.lineWidth = 6;
                 ctx.beginPath();
                 ctx.moveTo(myGameArea.canvas.width / 2 - width / 2 - buffer, myGameArea.canvas.height - 100 - 3 / 4 * size - buffer);
-                ctx.lineTo(myGameArea.canvas.width / 2 + width / 2 + buffer - (width + 20) * , myGameArea.canvas.height - 100 - 3 / 4 * size - buffer);
+                ctx.lineTo(myGameArea.canvas.width / 2 + width / 2 + buffer - (width + 20) * frac, myGameArea.canvas.height - 100 - 3 / 4 * size - buffer);
                 ctx.closePath();
                 ctx.stroke();
                 ctx.restore();
