@@ -359,6 +359,9 @@ var GameState = function(time, players, weapons) {
             this.players[k].dropWeapon(this);
             this.players[k].justKeyDowned[71] = false;
         }
+        if (this.players[k].weapon != -1 && !this.players[k].weapon.reloadDisplay){
+          this.weapons[this.players[k].weapon].reload(this.time);
+        }
         if (this.players[k].justKeyDowned[82]) {
             if (this.players[k].weapon != -1){
               this.weapons[this.players[k].weapon].reload(this.time);
