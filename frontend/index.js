@@ -837,6 +837,11 @@ var Bullet = function() {
             g.addColorStop(0.5, hexToRgbA(this.color, 0.5)); // opaque
             g.addColorStop(1, hexToRgbA(this.color, 0)); // transparent
         }
+        else if (this.ammoType == 'arrow')
+        {
+            g.addColorStop(0, hexToRgbA(this.color, 1)); // opaque
+            g.addColorStop(1, hexToRgbA(this.color, 1)); // transparent
+        }
         ctx.strokeStyle = g;
 
         drawer.lineWidth(ctx, 6);
