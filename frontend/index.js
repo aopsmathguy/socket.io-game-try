@@ -403,17 +403,19 @@ var GameState = function() {
                 obstacle.display();
             }
         });
+        
+        for (var idx in this.players) {
+            if (this.players[idx].alive && idx != controlId)
+                this.displayName(idx);
+        }
         for (var idx in this.players) {
             if (this.players[idx].alive)
                 this.displayPlayer(idx);
         }
+        
         for (var idx in this.players) {
             if (this.players[idx].alive && idx != controlId)
                 this.players[idx].drawHealthBar(idx);
-        }
-        for (var idx in this.players) {
-            if (this.players[idx].alive && idx != controlId)
-                this.displayName(idx);
         }
         if (this.players[controlId] && initialScreen.style.display == "none")
         {
@@ -422,8 +424,8 @@ var GameState = function() {
             this.displayBulletCount();
             //myGameArea.printFps();
             displayKillFeed();
-            this.displayScoreBoard();
         }
+        this.displayScoreBoard();
     }
     this.displayHealthMeter = function()
     {
@@ -1265,7 +1267,7 @@ function updateGameArea() {
             lastDeadTime = -1;
         } else if (lastDeadTime == -1) {
             lastDeadTime = Date.now();
-        } else if (Date.now() - lastDeadTime > 3000 && lastDeadTime != -2) {
+        } else if (Date.now() - lastDeadTime > 3000 && lastDeadTime != -2 || controlsBundle.keys[32]) {
 
             initialScreen.style.display = 'block';
         }
