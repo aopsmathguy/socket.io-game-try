@@ -361,9 +361,7 @@ var emitMousePos = function() {
     socket.emit('mousemove', controlsBundle.ang);
 }
 var setIfUndefined = function(obj, field, value) {
-    if (obj[field] === undefined) {
-        obj[field] = value;
-    }
+    obj[field] = value;
 }
 var giveMethods = function(obj) {
     if (obj == null) {
