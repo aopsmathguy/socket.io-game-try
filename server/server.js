@@ -359,9 +359,6 @@ var GameState = function(time, players, weapons) {
             this.players[k].dropWeapon(this);
             this.players[k].justKeyDowned[71] = false;
         }
-        if (this.players[k].weapon != -1 && !this.weapons[this.players[k].weapon].reloadDisplay){
-          this.weapons[this.players[k].weapon].reload(this.time);
-        }
         if (this.players[k].justKeyDowned[82]) {
             if (this.players[k].weapon != -1){
               this.weapons[this.players[k].weapon].reload(this.time);
@@ -818,7 +815,7 @@ var Player = function(xStart, yStart, name, color, id) {
         }
     }
 }
-var GunStats = function(name, length, auto, firerate, multishot, capacity, reloadTime, reloadType, reloadDisplay, bulletSpeed, damage, damageDrop, damageRange, damageDropTension, range, defSpray, sprayCoef, stability, kickAnimation, animationMult, walkSpeedMult, shootWalkSpeedMult, color, ammoType, ammoColor, fadeTime, buttPosition, handPos1x, handPos1y, handPos2x, handPos2y){
+var GunStats = function(name, length, auto, firerate, multishot, capacity, reloadTime, reloadType, bulletSpeed, damage, damageDrop, damageRange, damageDropTension, range, defSpray, sprayCoef, stability, kickAnimation, animationMult, walkSpeedMult, shootWalkSpeedMult, color, ammoType, ammoColor, fadeTime, buttPosition, handPos1x, handPos1y, handPos2x, handPos2y){
     setIfUndefined(this, 'name', name);//
     setIfUndefined(this, 'length', length);//
     setIfUndefined(this, 'auto', auto);
@@ -826,7 +823,6 @@ var GunStats = function(name, length, auto, firerate, multishot, capacity, reloa
     setIfUndefined(this, 'capacity', capacity);//
     setIfUndefined(this, 'reloadTime', reloadTime);//
     setIfUndefined(this, 'reloadType', reloadType);//
-    setIfUndefined(this, 'reloadDisplay', reloadDisplay);//
     setIfUndefined(this, 'firerate', firerate);
     setIfUndefined(this, 'defSpray', defSpray);
     setIfUndefined(this, 'sprayCoef', sprayCoef);
