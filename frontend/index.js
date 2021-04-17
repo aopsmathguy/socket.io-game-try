@@ -842,6 +842,7 @@ var Bullet = function() {
             g.addColorStop(0.01, hexToRgbA("#000", 1)); // opaque
             g.addColorStop(0.011, hexToRgbA(this.color, 1)); // opaque
             g.addColorStop(0.2, hexToRgbA(this.color, 1)); // transparent
+            g.addColorStop(0.25, hexToRgbA(this.color, 0)); // transparent
         }
         ctx.strokeStyle = g;
 
