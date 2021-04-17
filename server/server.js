@@ -71,7 +71,7 @@ io.on('connection', client => {
         var sockets = io.sockets.sockets;
         var done = false;
         var possible = "abcdefghijklmnopqrstuvwxyz1234567890";
-        var length = 30;
+        var length = 60;
         var string;
         while(!done)
         {
@@ -197,9 +197,7 @@ function emitGameState(gameState) {
     //});
 }
 var setIfUndefined = function(obj, field, value) {
-    if (obj[field] === undefined) {
-        obj[field] = value;
-    }
+    obj[field] = value;
 }
 var trimObject = function(obj)
 {
