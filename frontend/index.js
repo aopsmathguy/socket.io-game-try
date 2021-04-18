@@ -83,6 +83,8 @@ function startGame(){
 }
 function joinGame() {
     lastDeadTime = -2;
+    
+    killFeedScroll = 0;
     initialScreen.style.display = "none";
 
     name = gameCodeInput.value.substring(0,18) || 'Guest ' + fillDigits(Math.floor(10000*Math.random()),4);
