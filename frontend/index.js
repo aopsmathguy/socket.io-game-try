@@ -23,7 +23,8 @@ socket.on('gameState', (msg) => {
     gameStates.push(msg);
 });
 socket.on('killFeed', (msg) => {
-    var message = msg.msg;
+    var plyrs = gameStates[gameStates.length - 1].players;
+    var message = (plyrs[msg.shooter].name || "unknown") + " killed " + (plyrs[msg.dead].name || "unknown");
     killFeed.splice(0, 0, {
         msg: message,
         time: Date.now()
