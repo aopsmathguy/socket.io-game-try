@@ -267,7 +267,7 @@ var myGameArea = {
         this.time = Date.now();
         this.fpsUpdate = 60;
         this.frameTimes = [];
-        this.printFps = function() {
+        this.updateFps = function() {
 
             var elapsed = Date.now() - this.time;
             this.time = Date.now();
@@ -282,14 +282,7 @@ var myGameArea = {
             this.fps = this.frameTimes.length * 1000 / this.totalElapsed;
 
 
-            var ctx = myGameArea.context;
-            ctx.save();
-            ctx.font = "bold 45px Courier New";
-            ctx.fillStyle = "black";
-            ctx.textAlign = "left";
-            var displayNum = Math.floor(this.fps + 0.5);
-            ctx.fillText(displayNum, 10, 45);
-            ctx.restore();
+            return this.fps;
         }
         this.fpsInterval = 1000 / 60;
         this.animate = function() {
@@ -297,6 +290,7 @@ var myGameArea = {
             now = Date.now();
             elapsed = now - then;
             if (elapsed > this.fpsInterval) {
+                this.updateFps();
                 then = now - elapsed % this.fpsInterval;
                 updateGameArea();
             }
@@ -493,6 +487,9 @@ var GameState = function() {
         var y = startY + margin;
         ctx.font = "bold " + height + "px Courier New";
         ctx.fillStyle = "#fff";
+        
+        ctx.textAlign = "left";
+        ctx.fillText(Math.floor(myGameArea.fps + 0.5),  startX + margin, y + 3/4 * height);
         ctx.textAlign = "center";
         ctx.fillText("Leaderboard",  startX + totalWidth/2, y + 3/4 * height);
         y += margin + height;
