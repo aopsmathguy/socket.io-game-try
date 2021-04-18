@@ -960,13 +960,11 @@ var Drawer = function() {
         {
             this.scroll = character.pos.add((new Vector(Math.random() - 0.5, Math.random() - 0.5)).multiply(this.screenShake));
             this.targetScale = this.zoom / 40000 * (9 * myGameArea.canvas.width + 16 * myGameArea.canvas.height);
-            myGameArea.canvas.filter = 'blur(4px)';
         }
         else
         {
             this.scroll = (new Vector(gameWidth,gameHeight)).multiply(0.5).add((new Vector(Math.random() - 0.5, Math.random() - 0.5)).multiply(this.screenShake));
             this.targetScale =  (Math.max(myGameArea.canvas.width,myGameArea.canvas.height))/Math.max(gameWidth,gameHeight);
-            myGameArea.canvas.filter = 'none';
         }
 
         this.scale *= Math.pow(this.targetScale / this.scale, 0.1);
