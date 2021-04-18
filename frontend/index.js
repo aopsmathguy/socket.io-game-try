@@ -15,7 +15,7 @@ socket.on('gameState', (msg) => {
         weapon.type = "Gun";
     }
     tickIntervals.push(msg.time);
-    if (tickIntervals.length > 60)
+    if (tickIntervals.length > 10)
     {
         tickIntervals.shift();
     }
