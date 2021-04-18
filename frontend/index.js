@@ -14,6 +14,12 @@ socket.on('gameState', (msg) => {
         Object.assign(weapon, viableWeapons[weapon.gunStats]);
         weapon.type = "Gun";
     }
+    tickIntervals.push(msg.time);
+    if (tickIntervals.length > 60)
+    {
+        tickIntervals.shift();
+    }
+    tickInterval = (tickIntervals[tickIntervals.length - 1] - tickIntervals[0])/tickIntervals.length;
     gameStates.push(msg);
 });
 socket.on('killFeed', (msg) => {
@@ -26,6 +32,9 @@ socket.on('killFeed', (msg) => {
 });
 var killFeedScroll = 0;
 var killFeed = [];
+
+var tickIntervals = [];
+var tickInterval;
 const canvas = document.getElementById('canvas');
 
 const initialScreen = document.getElementById('initialScreen');
@@ -489,7 +498,10 @@ var GameState = function() {
         ctx.fillStyle = "#fff";
         
         ctx.textAlign = "left";
-        ctx.fillText(Math.floor(myGameArea.fps + 0.5) + " fps",  startX + margin, y + 3/4 * height);
+        ctx.fillText("fps: " + Math.floor(myGameArea.fps + 0.5),  startX + margin, y + 3/4 * height);
+        
+        ctx.textAlign = "center";
+        ctx.fillText("tickspd: " + Math.floor(1000/tickInterval + 0.5),  startX + totalWidth/2, y + 3/4 * height);
         
         ctx.textAlign = "right";
         ctx.fillText(Object.keys(this.players).length + " Plyrs",  startX + totalWidth - margin, y + 3/4 * height);
