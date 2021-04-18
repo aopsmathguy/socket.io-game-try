@@ -471,7 +471,7 @@ var GameState = function() {
         var margin = 8;
         var height = 16;
         var maxLength = 10;
-        var totalHeight = (Math.min(displayObj.length,maxLength) + 1)*(margin + height) + margin;
+        var totalHeight = (Math.min(displayObj.length,maxLength) + 2)*(margin + height) + margin;
         var totalWidth = 280;
         var startX = myGameArea.canvas.width - 300;
         var startY = 20;
@@ -485,7 +485,7 @@ var GameState = function() {
         ctx.restore();
 
         var y = startY + margin;
-        ctx.font = "bold " + height/2 + "px Courier New";
+        ctx.font = "bold " + height + "px Courier New";
         ctx.fillStyle = "#fff";
         
         ctx.textAlign = "left";
@@ -494,12 +494,11 @@ var GameState = function() {
         ctx.textAlign = "right";
         ctx.fillText(Object.keys(this.players).length + " Plyrs",  startX + totalWidth - margin, y + 3/4 * height);
         
-        ctx.font = "bold " + height + "px Courier New";
+        y += margin + height;
         ctx.textAlign = "center";
         ctx.fillText("Leaderboard",  startX + totalWidth/2, y + 3/4 * height);
         
         
-        y += margin + height;
         for (var i = 0; i < Math.min(displayObj.length,maxLength); i++)
         {
             var playerStats = displayObj[i];
