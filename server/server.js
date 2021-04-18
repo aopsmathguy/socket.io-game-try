@@ -26,7 +26,7 @@ io.on('connection', client => {
         var player = gameState.players[client.inGameId];
         if (player != undefined){
             player.dropEverything(gameState);
-            emitNewActivity(player.id, "leave");
+            emitNewLeave(player.name, "leave");
         }
         delete gameState.players[client.inGameId];
         delete controls[client.inGameId];
@@ -189,6 +189,12 @@ function emitNewKill(shooter,dead) {
 function emitNewActivity(player, action) {
     io.sockets.emit('playerActivity', {
         shooter: player,
+        action: action
+    });
+}
+function emitNewLeave(name, action) {
+    io.sockets.emit('playerLeft', {
+        name: name,
         action: action
     });
 }
