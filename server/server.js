@@ -26,7 +26,7 @@ io.on('connection', client => {
         var player = gameState.players[client.inGameId];
         if (player != undefined){
             player.dropEverything(gameState);
-            emitNewMessage(player.name + " left the game");
+            emitNewActivity(player.id, "leave");
         }
         delete gameState.players[client.inGameId];
         delete controls[client.inGameId];
@@ -113,7 +113,7 @@ io.on('connection', client => {
                 keys: [],
                 mouseDown: false
             };
-            emitNewMessage(gameState.players[controlId].name + " joined the game");
+            emitNewActivity(controlId, "join");
         }
 
 
@@ -180,12 +180,18 @@ var gameState;
 var controls = {};
 var iterations;
 
-function emitNewMessage(message) {
+function emitNewKill(shooter,dead) {
     io.sockets.emit('killFeed', {
-        msg: message
+        shooter: shooter,
+        dead: dead
     });
 }
-
+function emitNewActivity(player, action) {
+    io.sockets.emit('playerActivity', {
+        shooter: player,
+        action: action
+    });
+}
 function emitGameState(gameState) {
     // Send this event to everyone in the room.
     var copy = JSON.parse(JSON.stringify(gameState));
@@ -280,12 +286,8 @@ var GameState = function(time, players, weapons) {
                 if (this.players[player.lastHitBy])
                 {
                     this.players[player.lastHitBy].killstreak += 1;
-                    emitNewMessage(this.players[player.lastHitBy].name + ' killed ' + player.name);
                 }
-                else
-                {
-                    emitNewMessage('Unknown' + ' killed ' + player.name);
-                }
+                emitNewKill(player.lastHitBy, player.id);
             }
         }
     }
