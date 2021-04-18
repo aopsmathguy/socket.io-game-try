@@ -489,9 +489,14 @@ var GameState = function() {
         ctx.fillStyle = "#fff";
         
         ctx.textAlign = "left";
-        ctx.fillText(Math.floor(myGameArea.fps + 0.5),  startX + margin, y + 3/4 * height);
+        ctx.fillText(Math.floor(myGameArea.fps + 0.5) + " fps",  startX + margin, y + 3/4 * height);
+        
         ctx.textAlign = "center";
         ctx.fillText("Leaderboard",  startX + totalWidth/2, y + 3/4 * height);
+        
+        ctx.textAlign = "right";
+        ctx.fillText(this.players.length + " online",  startX + totalWidth - margin, y + 3/4 * height);
+        
         y += margin + height;
         for (var i = 0; i < Math.min(displayObj.length,maxLength); i++)
         {
