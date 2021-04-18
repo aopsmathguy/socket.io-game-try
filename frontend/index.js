@@ -499,6 +499,7 @@ var GameState = function() {
         ctx.fillText("Leaderboard",  startX + totalWidth/2, y + 3/4 * height);
         
         
+        y += margin + height;
         for (var i = 0; i < Math.min(displayObj.length,maxLength); i++)
         {
             var playerStats = displayObj[i];
