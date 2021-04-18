@@ -495,7 +495,7 @@ var GameState = function() {
         ctx.fillText("Leaderboard",  startX + totalWidth/2, y + 3/4 * height);
         
         ctx.textAlign = "right";
-        ctx.fillText(this.players.length + " online",  startX + totalWidth - margin, y + 3/4 * height);
+        ctx.fillText(Object.keys(this.players).length + " Plyrs",  startX + totalWidth - margin, y + 3/4 * height);
         
         y += margin + height;
         for (var i = 0; i < Math.min(displayObj.length,maxLength); i++)
