@@ -485,17 +485,19 @@ var GameState = function() {
         ctx.restore();
 
         var y = startY + margin;
-        ctx.font = "bold " + height + "px Courier New";
+        ctx.font = "bold " + height/2 + "px Courier New";
         ctx.fillStyle = "#fff";
         
         ctx.textAlign = "left";
         ctx.fillText(Math.floor(myGameArea.fps + 0.5) + " fps",  startX + margin, y + 3/4 * height);
         
+        ctx.textAlign = "right";
+        ctx.fillText(Object.keys(this.players).length + " Plyrs",  startX + totalWidth - margin, y + 3/4 * height);
+        
+        ctx.font = "bold " + height + "px Courier New";
         ctx.textAlign = "center";
         ctx.fillText("Leaderboard",  startX + totalWidth/2, y + 3/4 * height);
         
-        ctx.textAlign = "right";
-        ctx.fillText(Object.keys(this.players).length + " Plyrs",  startX + totalWidth - margin, y + 3/4 * height);
         
         y += margin + height;
         for (var i = 0; i < Math.min(displayObj.length,maxLength); i++)
