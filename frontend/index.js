@@ -32,6 +32,7 @@ socket.on('killFeed', (msg) => {
     killFeedScroll += 1;
 });
 socket.on('playerActivity', (msg) => {
+    console.log(msg);
     var plyrs = gameStates[gameStates.length - 1].players;
     if (msg.action == "join")
     {
