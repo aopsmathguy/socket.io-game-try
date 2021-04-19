@@ -32,22 +32,14 @@ socket.on('killFeed', (msg) => {
     killFeedScroll += 1;
 });
 socket.on('playerActivity', (msg) => {
-    console.log(msg);
-    var plyrs = gameStates[gameStates.length - 1].players;
+    var message;
     if (msg.action == "join")
     {
-        var message = (plyrs[msg.shooter].name || "unknown") + " joined";
+        message = (msg.name || "unknown") + " joined";
     }
-    killFeed.splice(0, 0, {
-        msg: message,
-        time: Date.now()
-    });
-});
-socket.on('playerLeft', (msg) => {
-    var plyrs = gameStates[gameStates.length - 1].players;
-    if (msg.action == "leave")
+    else if (msg.action == "leave")
     {
-        var message = (plyrs[msg.player].name || "unknown") + " left";
+        message = (msg.name || "unknown") + " left";
     }
     killFeed.splice(0, 0, {
         msg: message,
