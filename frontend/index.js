@@ -501,6 +501,7 @@ var GameState = function() {
             this.displayBulletCount();
             //myGameArea.printFps();
             displayKillFeed();
+            displayYourKillFeed();
         }
         this.displayScoreBoard();
     }
