@@ -10,7 +10,6 @@ const io = require('socket.io')();
 
 io.on('connection', client => {
     makeId();
-    client.
     client.emit('init', {
         data: Date.now(),
         id: client.inGameId,
