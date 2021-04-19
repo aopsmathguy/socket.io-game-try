@@ -917,7 +917,7 @@ var Gun = function(startX, startY, stats) {
                 finalForce = finalForce.add((new Vector(0.2*stretch,0)).rotate(this.pos.angTo(weapon.pos)));
             }
         });
-        this.vel = this.vel.add(finalForce).multiply(0.6);
+        this.vel = this.vel.add(finalForce).multiply(0.9);
         loopThroughObstacles(this.pos, (obstacle) => {
             iterations += 1;
             if (this.pos.distanceTo(obstacle.center) > this.radius + obstacle.maxRadius || !obstacle.intersectable)
