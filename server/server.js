@@ -26,7 +26,7 @@ io.on('connection', client => {
         var player = gameState.players[client.inGameId];
         if (player != undefined){
             player.dropEverything(gameState);
-            emitNewLeave(player.name, "leave");
+            emitNewActivity(player.name, "leave");
         }
         delete gameState.players[client.inGameId];
         delete controls[client.inGameId];
@@ -113,7 +113,7 @@ io.on('connection', client => {
                 keys: [],
                 mouseDown: false
             };
-            emitNewActivity(controlId, "join");
+            emitNewActivity(name, "join");
         }
 
 
@@ -186,14 +186,8 @@ function emitNewKill(shooter,dead) {
         dead: dead
     });
 }
-function emitNewActivity(player, action) {
+function emitNewActivity(name, action) {
     io.sockets.emit('playerActivity', {
-        shooter: player,
-        action: action
-    });
-}
-function emitNewLeave(name, action) {
-    io.sockets.emit('playerLeft', {
         name: name,
         action: action
     });
