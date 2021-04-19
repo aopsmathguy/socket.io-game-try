@@ -273,10 +273,10 @@ function displayYourKillFeed() {
         idx -= 1;
     }
 
-    if (yourKillFeedScroll > 0)
-        yourKillFeedScroll -= 1 / speed;
+    if (yourKillsScroll > 0)
+        yourKillsScroll -= 1 / speed;
     else
-        yourKillFeedScroll = 0;
+        yourKillsScroll = 0;
 
     while (yourKillFeed.length > 0 && Date.now() - yourKillFeed[yourKillFeed.length - 1].time > upTime) {
         yourKillFeed.splice(yourKillFeed.length - 1, 1);
