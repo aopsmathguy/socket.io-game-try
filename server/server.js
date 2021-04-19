@@ -10,6 +10,7 @@ const io = require('socket.io')();
 
 io.on('connection', client => {
     makeId();
+    client.
     client.emit('init', {
         data: Date.now(),
         id: client.inGameId,
@@ -93,8 +94,9 @@ io.on('connection', client => {
         client.inGameId = string;
     }
     function addPlayer(msg) {
-        controlId = client.inGameId;
-        var player = gameState.players[controlId];
+        if (!gameState.players[client.inGameId] || gameState.players[client.inGameId].alive)
+        client.inGameId = client.inGameId;
+        var player = gameState.players[client.inGameId];
         var startPos = findSpawnPosition();
         var color = (/^#([A-Fa-f0-9]{3}){1,2}$/.test(msg.color) ? msg.color : "#fcc976");
         var name = msg.name.substring(0,18);
@@ -108,8 +110,8 @@ io.on('connection', client => {
             player.points = 0;
 
         } else {
-            gameState.players[controlId] = new Player(startPos.x, startPos.y, name, color, controlId);
-            controls[controlId] = {
+            gameState.players[client.inGameId] = new Player(startPos.x, startPos.y, name, color, client.inGameId);
+            controls[client.inGameId] = {
                 keys: [],
                 mouseDown: false
             };
