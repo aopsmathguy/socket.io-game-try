@@ -968,7 +968,7 @@ var Gun = function(startX, startY, stats) {
                     }
                     this.bulletsArrLength += 1;
                 }
-                this.spray += this.sprayCoef * (Math.random() - 0.5);
+                this.spray += this.sprayCoef;
                 this.recoil += this.kickAnimation;
                 this.lastFireTime = state.time;
                 this.bulletsRemaining -= 1;
@@ -1038,7 +1038,7 @@ var Bullet = function(weapon) {
     setIfUndefined(this, 'startPos', weapon.pos.add((new Vector(weapon.length / 2, 0)).rotate(weapon.ang)));//
     setIfUndefined(this, 'tailPos', this.startPos.copy());//
     setIfUndefined(this, 'pos', this.startPos.copy());//
-    setIfUndefined(this, 'vel', (new Vector(weapon.bulletSpeed, 0)).rotate(weapon.ang + weapon.spray).add(weapon.vel));//
+    setIfUndefined(this, 'vel', (new Vector(weapon.bulletSpeed, 0)).rotate(weapon.ang + weapon.spray * (Math.random() - 0.5)).add(weapon.vel));//
     setIfUndefined(this, 'ang', this.vel.ang());//
     setIfUndefined(this, 'bulletSpeed', weapon.bulletSpeed);//
 
