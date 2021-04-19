@@ -45,6 +45,7 @@ socket.on('playerActivity', (msg) => {
         msg: message,
         time: Date.now()
     });
+    killFeedScroll += 1;
 });
 var killFeedScroll = 0;
 var killFeed = [];
