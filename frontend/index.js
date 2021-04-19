@@ -266,7 +266,7 @@ function displayYourKillFeed() {
 
     var speed = 25;
     var fadeTime = 667;
-    var upTime = 10000;
+    var upTime = 5000;
     var idx = yourKillFeed.length - 1;
     while (idx > 2) {
         yourKillFeed[idx].time = Math.min(Date.now() - upTime + fadeTime, yourKillFeed[idx].time);
@@ -288,11 +288,11 @@ function displayYourKillFeed() {
         var txtAlpha = Math.min(1, timeDiff / fadeTime, (upTime - timeDiff) / fadeTime);
 
         var textPosX = myGameArea.canvas.width/2;
-        var textPosY = myGameArea.canvas.height/2 + 200;
+        var textPosY = myGameArea.canvas.height - 200;
 
         var buffer = 4;
 
-        blackBoxedText(txt, "bold 16px Courier New", 16, textPosX, textPosY, buffer, txtAlpha, "center");
+        blackBoxedText(txt, "bold 16px Courier New", 20, textPosX, textPosY, buffer, txtAlpha, "center");
     }
     
 }
