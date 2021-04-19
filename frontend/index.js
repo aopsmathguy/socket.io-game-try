@@ -24,12 +24,30 @@ socket.on('gameState', (msg) => {
 });
 socket.on('killFeed', (msg) => {
     var plyrs = gameStates[gameStates.length - 1].players;
-    var message = (plyrs[msg.shooter].name || "unknown") + " killed " + (plyrs[msg.dead].name || "unknown");
+    var shooterName = (plyrs[msg.shooter] ? plyrs[msg.shooter].name : "unknown");
+    var deadName = (plyrs[msg.dead] ? plyrs[msg.dead].name : "unknown");
+    if (plyrs[msg.shooter])
+    {
+        var message = shooterName + " killed " + deadName;
+    }
     killFeed.splice(0, 0, {
         msg: message,
         time: Date.now()
     });
     killFeedScroll += 1;
+    
+    if (msg.shooter == controlId)
+    {
+        yourKillFeed.splice(0, 0, {
+            msg: "You killed " + deadName,
+            time: Date.now()
+        });
+        yourKillsScroll += 1;
+    }
+    else if (msg.dead == controlId)
+    {
+        msg.shooter;
+    }
 });
 socket.on('playerActivity', (msg) => {
     var message;
@@ -49,6 +67,9 @@ socket.on('playerActivity', (msg) => {
 });
 var killFeedScroll = 0;
 var killFeed = [];
+
+var yourKillsScroll = 0;
+var yourKillFeed = [];
 
 var tickIntervals = [];
 var tickInterval;
@@ -238,10 +259,44 @@ function displayKillFeed() {
         var buffer = 4;
 
         blackBoxedText(txt, "bold 16px Courier New", 16, textPosX, textPosY, buffer, txtAlpha);
-
-
     }
+    
 }
+function displayYourKillFeed() {
+
+    var speed = 25;
+    var fadeTime = 667;
+    var upTime = 10000;
+    var idx = yourKillFeed.length - 1;
+    while (idx > 2) {
+        yourKillFeed[idx].time = Math.min(Date.now() - upTime + fadeTime, yourKillFeed[idx].time);
+        idx -= 1;
+    }
+
+    if (yourKillFeedScroll > 0)
+        yourKillFeedScroll -= 1 / speed;
+    else
+        yourKillFeedScroll = 0;
+
+    while (yourKillFeed.length > 0 && Date.now() - yourKillFeed[yourKillFeed.length - 1].time > upTime) {
+        yourKillFeed.splice(yourKillFeed.length - 1, 1);
+    }
+    for (var idx in yourKillFeed) {
+        var txt = yourKillFeed[idx].msg;
+        var ctx = myGameArea.context;
+        var timeDiff = Date.now() - yourKillFeed[idx].time;
+        var txtAlpha = Math.min(1, timeDiff / fadeTime, (upTime - timeDiff) / fadeTime);
+
+        var textPosX = myGameArea.canvas.width/2;
+        var textPosY = myGameArea.canvas.height/2 + 200;
+
+        var buffer = 4;
+
+        blackBoxedText(txt, "bold 16px Courier New", 16, textPosX, textPosY, buffer, txtAlpha, "center");
+    }
+    
+}
+
 
 function blackBoxedText(txt, font, size, posx, posy, buffer, txtAlpha, align) {
     ctx = myGameArea.context;
