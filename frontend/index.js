@@ -288,7 +288,7 @@ function displayYourKillFeed() {
         var txtAlpha = Math.min(1, timeDiff / fadeTime, (upTime - timeDiff) / fadeTime);
 
         var textPosX = myGameArea.canvas.width/2;
-        var textPosY = myGameArea.canvas.height - 200;
+        var textPosY = myGameArea.canvas.height - 200 + idx * 30;;
 
         var buffer = 4;
 
