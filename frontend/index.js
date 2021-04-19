@@ -36,7 +36,7 @@ socket.on('playerActivity', (msg) => {
     var plyrs = gameStates[gameStates.length - 1].players;
     if (msg.action == "join")
     {
-        var message = (plyrs[msg.player].name || "unknown") + " joined";
+        var message = (plyrs[msg.shooter].name || "unknown") + " joined";
     }
     killFeed.splice(0, 0, {
         msg: message,
