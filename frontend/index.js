@@ -86,14 +86,14 @@ var killFeed = {
         while (this.list.length > 0 && Date.now() - this.list[this.list.length - 1].time > upTime) {
             this.list.splice(this.list.length - 1, 1);
         }
-        for (var idx in this.list) {
+        for (var idx = 0, l = this.list.length; idx < l ; idx ++) {
             var txt = this.list[idx].msg;
             var ctx = myGameArea.context;
             var timeDiff = Date.now() - this.list[idx].time;
             var txtAlpha = Math.min(1, timeDiff / fadeTime, (upTime - timeDiff) / fadeTime);
 
             var textPosX = 30;
-            var textPosY = 30 + idx * 30 + (1 - this.scroll) * 30;
+            var textPosY = 30 + (idx + 1 - this.scroll) * 30;
 
             var buffer = 4;
 
@@ -123,7 +123,7 @@ var yourKillFeed = {
         while (this.list.length > 0 && Date.now() - this.list[this.list.length - 1].time > upTime) {
             this.list.splice(this.list.length - 1, 1);
         }
-        for (var idx in this.list) {
+        for (var idx = 0, l = this.list.length; idx < l ; idx ++) {
             var txt = this.list[idx].msg;
             var ctx = myGameArea.context;
             var timeDiff = Date.now() - this.list[idx].time;
@@ -131,7 +131,7 @@ var yourKillFeed = {
 
             
             var textPosX = myGameArea.canvas.width/2;
-            var textPosY = myGameArea.canvas.height - 200 + idx * 30 + (1 - this.scroll) * 30;
+            var textPosY = myGameArea.canvas.height - 250 + (idx + 1 - this.scroll) * 30;
 
             var buffer = 4;
 
