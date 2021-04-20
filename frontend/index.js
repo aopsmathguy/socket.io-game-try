@@ -134,12 +134,16 @@ var yourKillFeed = {
             var textPosY = myGameArea.canvas.height - 250 + (idx + 1 - this.scroll) * 30;
 
             var ctx = myGameArea.context;
+            ctx.save();
+            ctx.globalAlpha = txtAlpha;
             ctx.font = "bold 20px Courier New";
-            ctx.fillStyle = "rgba(255,255,255," +  txtAlpha + ")";
-            ctx.strokeStyle = "rgba(0,0,0, " +  txtAlpha + ")";
+            ctx.fillStyle = "white";
+            ctx.strokeStyle = "black";
             ctx.strokeWidth = 2;
             ctx.align = "center";
             ctx.fillText(txt, textPosX,textPosY);
+            ctx.strokeText(txt, textPosX,textPosY);
+            ctx.restore();
         }
 
     }
