@@ -138,11 +138,8 @@ var yourKillFeed = {
             ctx.globalAlpha = txtAlpha;
             ctx.font = "bold 20px Courier New";
             ctx.fillStyle = "white";
-            ctx.strokeStyle = "black";
-            ctx.strokeWidth = 2;
-            ctx.align = "center";
+            ctx.textAlign = "center";
             ctx.fillText(txt, textPosX,textPosY);
-            ctx.strokeText(txt, textPosX,textPosY);
             ctx.restore();
         }
 
