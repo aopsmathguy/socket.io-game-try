@@ -118,7 +118,7 @@ io.on('connection', client => {
                 keys: [],
                 mouseDown: false
             };
-            emitNewActivity(name, "join");
+            emitNewActivity(gameState.players[client.inGameId].name, "join");
         }
 
 
