@@ -131,7 +131,7 @@ var yourKillFeed = {
 
             
             var textPosX = myGameArea.canvas.width/2;
-            var textPosY = myGameArea.canvas.height - 200 + (idx + 1 - yourKillsScroll) * 30;
+            var textPosY = myGameArea.canvas.height - 200 + (idx + 1 - this.scroll) * 30;
 
             var buffer = 4;
 
