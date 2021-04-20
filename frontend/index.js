@@ -108,7 +108,7 @@ var yourKillFeed = {
     display : function () {
         var speed = 25;
         var fadeTime = 667;
-        var upTime = 30000;
+        var upTime = 5000;
         var idx = this.list.length - 1;
         while (idx > 2) {
             this.list[idx].time = Math.min(Date.now() - upTime + fadeTime, this.list[idx].time);
@@ -135,7 +135,7 @@ var yourKillFeed = {
 
             var buffer = 4;
 
-            blackBoxedText(txt, "bold 16px Courier New", 16, textPosX, textPosY, buffer, txtAlpha);
+            blackBoxedText(txt, "bold 20px Courier New", 20, textPosX, textPosY, buffer, txtAlpha,"center");
         }
 
     }
