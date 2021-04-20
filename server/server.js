@@ -97,7 +97,10 @@ io.on('connection', client => {
         {
             return;
         }
-        if (!gameState.players[client.inGameId] || gameState.players[client.inGameId].alive)
+        if (gameState.players[client.inGameId] && gameState.players[client.inGameId].alive)
+        {
+            return;
+        }
         client.inGameId = client.inGameId;
         var player = gameState.players[client.inGameId];
         var startPos = findSpawnPosition();
