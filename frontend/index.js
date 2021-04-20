@@ -19,7 +19,7 @@ socket.on('gameState', (msg) => {
     {
         tickIntervals.shift();
     }
-    tickInterval = (tickIntervals[tickIntervals.length - 1] - tickIntervals[0])/tickIntervals.length;
+    tickInterval = (tickIntervals[tickIntervals.length - 1] - tickIntervals[0])/(tickIntervals.length - 1);
     gameStates.push(msg);
 });
 socket.on('killFeed', (msg) => {
