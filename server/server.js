@@ -108,12 +108,12 @@ io.on('connection', client => {
             player.health = 100;
             player.alive = true;
             player.color = color;
-            player.name = name;
+            player.name = (name ? name : player.name);
             player.killstreak = 0;
             player.points = 0;
 
         } else {
-            gameState.players[client.inGameId] = new Player(startPos.x, startPos.y, name, color, client.inGameId);
+            gameState.players[client.inGameId] = new Player(startPos.x, startPos.y, (name ? name : "Guest " + Math.floor(10000*Math.random())), color, client.inGameId);
             controls[client.inGameId] = {
                 keys: [],
                 mouseDown: false
