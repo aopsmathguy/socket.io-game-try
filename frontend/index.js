@@ -137,7 +137,7 @@ var yourKillFeed = {
             ctx.save();
             ctx.globalAlpha = txtAlpha;
             ctx.font = "bold 20px Courier New";
-            ctx.strokeWidth = 6;
+            ctx.lineWidth = 6;
             ctx.strokeStyle = "black";
             ctx.fillStyle = "white";
             ctx.textAlign = "center";
