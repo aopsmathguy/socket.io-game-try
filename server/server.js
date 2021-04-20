@@ -93,7 +93,7 @@ io.on('connection', client => {
         client.inGameId = string;
     }
     function addPlayer(msg) {
-        if (!(msg && msg.name && msg.color))
+        if (!(msg && typeof msg.name != 'undefined' && msg.color))
         {
             return;
         }
