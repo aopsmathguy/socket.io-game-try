@@ -214,12 +214,12 @@ function joinGame() {
     killFeed.scroll = 0;
     initialScreen.style.display = "none";
 
-    name = gameCodeInput.value.substring(0,18) || 'Guest ' + fillDigits(Math.floor(10000*Math.random()),4);
+    name = gameCodeInput.value.substring(0,18);
     color = colorInput.value;
-    newPlayer();
+    newPlayer(name, color);
 }
 
-function newPlayer() {
+function newPlayer(name, color) {
     socket.emit('new player', {
         name: name,
         color: color
