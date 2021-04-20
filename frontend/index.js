@@ -136,8 +136,8 @@ var yourKillFeed = {
             var ctx = myGameArea.context;
             ctx.save();
             ctx.globalAlpha = txtAlpha;
-            ctx.font = "bold 30px Courier New";
-            ctx.strokeWidth = 1;
+            ctx.font = "bold 20px Courier New";
+            ctx.strokeWidth = 4;
             ctx.fillStyle = "white";
             ctx.textAlign = "center";
             ctx.fillText(txt, textPosX,textPosY);
