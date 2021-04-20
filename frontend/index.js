@@ -38,11 +38,11 @@ socket.on('killFeed', (msg) => {
     
     if (msg.shooter == controlId)
     {
-        yourKillFeed.splice(0, 0, {
+        yourKillFeed.list.splice(0, 0, {
             msg: "You killed " + deadName,
             time: Date.now()
         });
-        yourKillsScroll += 1;
+        yourKillFeed.scroll += 1;
     }
     else if (msg.dead == controlId)
     {
@@ -102,9 +102,46 @@ var killFeed = {
 
     }
 };
+var yourKillFeed = {
+    list : [],
+    scroll : 0,
+    display : function () {
+        var speed = 25;
+        var fadeTime = 667;
+        var upTime = 30000;
+        var idx = this.list.length - 1;
+        while (idx > 2) {
+            this.list[idx].time = Math.min(Date.now() - upTime + fadeTime, this.list[idx].time);
+            idx -= 1;
+        }
 
-var yourKillsScroll = 0;
-var yourKillFeed = [];
+        if (this.scroll > 0)
+            this.scroll -= 1 / speed;
+        else
+            this.scroll = 0;
+
+        while (this.list.length > 0 && Date.now() - this.list[this.list.length - 1].time > upTime) {
+            this.list.splice(this.list.length - 1, 1);
+        }
+        for (var idx in this.list) {
+            var txt = this.list[idx].msg;
+            var ctx = myGameArea.context;
+            var timeDiff = Date.now() - this.list[idx].time;
+            var txtAlpha = Math.min(1, timeDiff / fadeTime, (upTime - timeDiff) / fadeTime);
+
+            
+            var textPosX = myGameArea.canvas.width/2;
+            var textPosY = myGameArea.canvas.height - 200 + (idx + 1 - yourKillsScroll) * 30;
+
+            var buffer = 4;
+
+            blackBoxedText(txt, "bold 16px Courier New", 16, textPosX, textPosY, buffer, txtAlpha);
+        }
+
+    }
+};
+
+
 
 var tickIntervals = [];
 var tickInterval;
@@ -262,44 +299,6 @@ function handleInit(msg) {
     framesPerTick = msg.framesPerTick;
     viableWeapons = msg.viableWeapons;
 }
-
-
-function displayYourKillFeed() {
-
-    var speed = 25;
-    var fadeTime = 667;
-    var upTime = 10000;
-    var idx = yourKillFeed.length - 1;
-    while (idx > 2) {
-        yourKillFeed[idx].time = Math.min(Date.now() - upTime + fadeTime, yourKillFeed[idx].time);
-        idx -= 1;
-    }
-
-    if (yourKillsScroll > 0)
-        yourKillsScroll -= 1 / speed;
-    else
-        yourKillsScroll = 0;
-
-    while (yourKillFeed.length > 0 && Date.now() - yourKillFeed[yourKillFeed.length - 1].time > upTime) {
-        yourKillFeed.splice(yourKillFeed.length - 1, 1);
-    }
-    for (var idx in yourKillFeed) {
-        var txt = yourKillFeed[idx].msg;
-        var ctx = myGameArea.context;
-        var timeDiff = Date.now() - yourKillFeed[idx].time;
-        var txtAlpha = Math.min(1, timeDiff / fadeTime, (upTime - timeDiff) / fadeTime);
-
-        var textPosX = myGameArea.canvas.width/2;
-        var textPosY = myGameArea.canvas.height - 200 + (idx + 1 - yourKillsScroll) * 30;;
-
-        var buffer = 4;
-
-        blackBoxedText(txt, "bold 16px Courier New", 20, textPosX, textPosY, buffer, txtAlpha, "center");
-    }
-    
-}
-
-
 function blackBoxedText(txt, font, size, posx, posy, buffer, txtAlpha, align) {
     ctx = myGameArea.context;
     ctx.save();
@@ -503,7 +502,7 @@ var GameState = function() {
             this.displayBulletCount();
             //myGameArea.printFps();
             killFeed.display();
-            displayYourKillFeed();
+            yourKillFeed.display();
         }
         this.displayScoreBoard();
     }
