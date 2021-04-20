@@ -535,7 +535,7 @@ var makeObstacles = function() {
         addTo[addTo.length] = ob;
     }
     viableWeapons = [
-        new GunStats('Glock 17', 25, false, 780, 1, 15, 1100, true, 40, 17, 4, 500, 150, 1000, 0.1, 0.12, 0.9, 7, 0.9, 0.95, 1, '#80f','bullet','#ff0', 60, 40, 0, 0, 0, 0),
+        new GunStats('Glock 17', 35, false, 780, 1, 15, 1100, true, 40, 17, 4, 500, 150, 1000, 0.1, 0.12, 0.9, 7, 0.9, 0.95, 1, '#80f','bullet','#ff0', 60, 40, 0, 0, 0, 0),
         new GunStats('Redhawk', 35, false, 300, 1, 6, 1400,true, 50, 33, 8, 750, 200, 1500, 0, 0.2, 0.9, 10, 0.9, 0.95, 0.6, '#ff0','bullet','#ff0', 60,40, 0, 0, 0, 0),
 
         new GunStats('MAC-10', 50, true, 1080, 1, 32, 1300, true, 45, 10, 5, 400, 150, 1000, 0.1, 0.08, 0.9, 3, 0.9, 0.97, 0.8, '#08f','bullet', '#ff0',60,20,10, 3, 27, 0),
