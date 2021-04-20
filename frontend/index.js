@@ -180,7 +180,8 @@ var weaponImages = {
     "MP5" : 0,
     "Stevens DB" : 0,
     "Crossbow" : 0,
-    "M1A1" : 0
+    "M1A1" : 0,
+    "Laser" : 0
 };
 for (var i in weaponImages)
 {
