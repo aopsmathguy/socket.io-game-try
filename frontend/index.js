@@ -93,7 +93,7 @@ var killFeed = {
             var txtAlpha = Math.min(1, timeDiff / fadeTime, (upTime - timeDiff) / fadeTime);
 
             var textPosX = 30;
-            var textPosY = 30 + (idx + 1 - this.scroll) * 30;
+            var textPosY = 30 + idx * 30 + (1 - this.scroll) * 30;
 
             var buffer = 4;
 
@@ -131,7 +131,7 @@ var yourKillFeed = {
 
             
             var textPosX = myGameArea.canvas.width/2;
-            var textPosY = myGameArea.canvas.height - 200 + (idx + 1 - this.scroll) * 30;
+            var textPosY = myGameArea.canvas.height - 200 + idx * 30 + (1 - this.scroll) * 30;
 
             var buffer = 4;
 
