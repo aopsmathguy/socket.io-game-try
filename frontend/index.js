@@ -133,11 +133,11 @@ var yourKillFeed = {
             var textPosX = myGameArea.canvas.width/2;
             var textPosY = myGameArea.canvas.height - 250 + (idx + 1 - this.scroll) * 30;
 
-            var buffer = 4;
             var ctx = myGameArea.context;
             ctx.font = "bold 20px Courier New";
             ctx.fillStyle = "rgba(255,255,255, txtAlpha)";
             ctx.strokeStyle = "rgba(0,0,0, txtAlpha)";
+            ctx.strokeWidth = 2;
             ctx.align = "center";
             ctx.fillText(txt, textPosX,textPosY);
         }
