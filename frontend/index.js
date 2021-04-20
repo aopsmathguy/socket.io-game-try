@@ -1249,7 +1249,7 @@ var linearGameState = function() {
         rightIdx = gameStates.length - 1;
     }
     if (gameStates.length > 2) {
-        buffer -= 2;
+        buffer -= Math.max((gameStates.length - 3)*1000/60*framesPerTick,2);
     } else if (gameStates.length < 3) {
 
         buffer += 2;
