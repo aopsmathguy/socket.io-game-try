@@ -30,7 +30,7 @@ socket.on('killFeed', (msg) => {
     {
         var message = shooterName + " killed " + deadName;
     }
-    killFeed.splice(0, 0, {
+    killFeed.list.splice(0, 0, {
         msg: message,
         time: Date.now()
     });
@@ -59,7 +59,7 @@ socket.on('playerActivity', (msg) => {
     {
         message = (msg.name || "unknown") + " left";
     }
-    killFeed.splice(0, 0, {
+    killFeed.list.splice(0, 0, {
         msg: message,
         time: Date.now()
     });
