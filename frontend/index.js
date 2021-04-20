@@ -34,7 +34,7 @@ socket.on('killFeed', (msg) => {
         msg: message,
         time: Date.now()
     });
-    killFeedScroll += 1;
+    killFeed.scroll += 1;
     
     if (msg.shooter == controlId)
     {
@@ -63,10 +63,45 @@ socket.on('playerActivity', (msg) => {
         msg: message,
         time: Date.now()
     });
-    killFeedScroll += 1;
+    killFeed.scroll += 1;
 });
-var killFeedScroll = 0;
-var killFeed = [];
+var killFeed = {
+    list : [],
+    scroll : 0,
+    display : function () {
+        var speed = 25;
+        var fadeTime = 667;
+        var upTime = 30000;
+        var idx = this.list.length - 1;
+        while (idx > 2) {
+            this.list[idx].time = Math.min(Date.now() - upTime + fadeTime, this.list[idx].time);
+            idx -= 1;
+        }
+
+        if (this.scroll > 0)
+            this.scroll -= 1 / speed;
+        else
+            this.scroll = 0;
+
+        while (this.list.length > 0 && Date.now() - this.list[this.list.length - 1].time > upTime) {
+            this.list.splice(this.list.length - 1, 1);
+        }
+        for (var idx in this.list) {
+            var txt = this.list[idx].msg;
+            var ctx = myGameArea.context;
+            var timeDiff = Date.now() - this.list[idx].time;
+            var txtAlpha = Math.min(1, timeDiff / fadeTime, (upTime - timeDiff) / fadeTime);
+
+            var textPosX = 30;
+            var textPosY = 30 + 30 * (1 - this.scroll) + idx * 30;
+
+            var buffer = 4;
+
+            blackBoxedText(txt, "bold 16px Courier New", 16, textPosX, textPosY, buffer, txtAlpha);
+        }
+
+    }
+};
 
 var yourKillsScroll = 0;
 var yourKillFeed = [];
@@ -131,7 +166,7 @@ function startGame(){
 function joinGame() {
     lastDeadTime = -2;
     
-    killFeedScroll = 0;
+    killFeed.scroll = 0;
     initialScreen.style.display = "none";
 
     name = gameCodeInput.value.substring(0,18) || 'Guest ' + fillDigits(Math.floor(10000*Math.random()),4);
@@ -228,40 +263,7 @@ function handleInit(msg) {
     viableWeapons = msg.viableWeapons;
 }
 
-function displayKillFeed() {
 
-    var speed = 25;
-    var fadeTime = 667;
-    var upTime = 30000;
-    var idx = killFeed.length - 1;
-    while (idx > 2) {
-        killFeed[idx].time = Math.min(Date.now() - upTime + fadeTime, killFeed[idx].time);
-        idx -= 1;
-    }
-
-    if (killFeedScroll > 0)
-        killFeedScroll -= 1 / speed;
-    else
-        killFeedScroll = 0;
-
-    while (killFeed.length > 0 && Date.now() - killFeed[killFeed.length - 1].time > upTime) {
-        killFeed.splice(killFeed.length - 1, 1);
-    }
-    for (var idx in killFeed) {
-        var txt = killFeed[idx].msg;
-        var ctx = myGameArea.context;
-        var timeDiff = Date.now() - killFeed[idx].time;
-        var txtAlpha = Math.min(1, timeDiff / fadeTime, (upTime - timeDiff) / fadeTime);
-
-        var textPosX = 30;
-        var textPosY = 30 + 30 * (1 - killFeedScroll) + idx * 30;
-
-        var buffer = 4;
-
-        blackBoxedText(txt, "bold 16px Courier New", 16, textPosX, textPosY, buffer, txtAlpha);
-    }
-    
-}
 function displayYourKillFeed() {
 
     var speed = 25;
@@ -500,7 +502,7 @@ var GameState = function() {
             // this.displayReloadTime();
             this.displayBulletCount();
             //myGameArea.printFps();
-            displayKillFeed();
+            killFeed.display();
             displayYourKillFeed();
         }
         this.displayScoreBoard();
