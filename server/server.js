@@ -35,7 +35,7 @@ io.on('connection', client => {
         client.sendBuffer = [];
     });
     client.on('keydown', (keycode) => {
-        if (typeof keycode !== 'undefined') {
+        if (keycode || typeof keycode !== 'undefined') {
             if (controls[client.inGameId] && gameState.players[client.inGameId]) {
                 controls[client.inGameId].keys[keycode] = true;
                 gameState.players[client.inGameId].justKeyDowned[keycode] = true;
@@ -43,14 +43,14 @@ io.on('connection', client => {
         }
     });
     client.on('keyup', (keycode) => {
-        if (typeof keycode !== 'undefined') {
+        if (keycode || typeof keycode !== 'undefined') {
 
             if (controls[client.inGameId] && gameState.players[client.inGameId])
                 controls[client.inGameId].keys[keycode] = false;
         }
     });
     client.on('mousemove', (ang) => {
-        if (typeof ang !== 'undefined' && controls[client.inGameId] && gameState.players[client.inGameId])
+        if (typeof ang !== 'undefined' && !isNaN(ang) && controls[client.inGameId] && gameState.players[client.inGameId])
             controls[client.inGameId].ang = ang;
     });
     client.on('mousedown', () => {
@@ -93,6 +93,10 @@ io.on('connection', client => {
         client.inGameId = string;
     }
     function addPlayer(msg) {
+        if (!(msg && msg.name && msg.color))
+        {
+            return;
+        }
         if (!gameState.players[client.inGameId] || gameState.players[client.inGameId].alive)
         client.inGameId = client.inGameId;
         var player = gameState.players[client.inGameId];
