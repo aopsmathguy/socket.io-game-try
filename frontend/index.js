@@ -108,7 +108,7 @@ var yourKillFeed = {
     display : function () {
         var speed = 25;
         var fadeTime = 667;
-        var upTime = 5000;
+        var upTime = 10000;
         var idx = this.list.length - 1;
         while (idx > 2) {
             this.list[idx].time = Math.min(Date.now() - upTime + fadeTime, this.list[idx].time);
