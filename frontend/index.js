@@ -1216,10 +1216,13 @@ var displayCrosshair = function() {
     controlsBundle.mouse.circle(6, '#fff', 2);
 }
 var linearInterpolator = {
+    lagLimit : 50,
+    linearValue : function(v1, v2, t, t1, t2) {
+        var ratio = Math.max(-this.lagLimit, t2 - t) / (t2 - t1);
+        return v1 * ratio + v2 * (1-ratio);
+    },
     linearPosition : function(v1, v2, t, t1, t2) {
-        var lagLimit = 100;
-        var ratio = Math.max(-lagLimit, t2 - t) / (t2 - t1);
-        return new Vector(v1.x * ratio + v2.x * (1-ratio), v1.y * ratio + v2.y * (1-ratio));
+        return new Vector(this.linearValue(v1.x,v2.x,t,t1,t2), this.linearValue(v1.y,v2.y,t,t1,t2));
     },
     linearAng : function(a1, a2, t, t1, t2) {
         if (t < t1) {
@@ -1345,7 +1348,7 @@ var linearInterpolator = {
                     }
                 }
             }
-            out.weapons[i].recoil = this.linearPosition(new Vector(left.weapons[i].recoil, 0), new Vector(right.weapons[i].recoil, 0), displayTime, left.time, right.time).x;
+            out.weapons[i].recoil = this.linearValue(left.weapons[i].recoil, right.weapons[i].recoil, displayTime, left.time, right.time);
         }
         out.snapWeapons();
         return out;
