@@ -1215,140 +1215,142 @@ var displayCrosshair = function() {
     controlsBundle.mouse.add(new Vector(0, 10)).drawLine(controlsBundle.mouse.add(new Vector(0, -10)), '#fff', 2);
     controlsBundle.mouse.circle(6, '#fff', 2);
 }
-var linearPosition = function(v1, v2, t, t1, t2) {
-    var lagLimit = 150;
-    var ratio = Math.max(-lagLimit, t2 - t) / (t2 - t1);
-    return new Vector(v1.x * ratio + v2.x * (1-ratio), v1.y * ratio + v2.y * (1-ratio));
-}
-var linearAng = function(a1, a2, t, t1, t2) {
-    if (t < t1) {
-        return a1;
-    } else if (t > t2) {
-        return a2;
-    } else {
-        var dir1 = (a1 % (2 * Math.PI) + 2 * Math.PI) % (2 * Math.PI);
-        var dir2 = (a2 % (2 * Math.PI) + 2 * Math.PI) % (2 * Math.PI);
-        var difference = dir2 - dir1;
-        var difference = (difference % (2 * Math.PI) + 3 * Math.PI) % (2 * Math.PI) - Math.PI;
-        return dir1 + difference * (t - t1) / (t2 - t1);
-    }
-}
-var linearGameState = function() {
-    var displayTime = serverTime() - buffer;
-    var rightIdx = 1;
-    var time = 0;
-    while (rightIdx < gameStates.length && gameStates[rightIdx].time < displayTime) {
-        if (rightIdx > 1) {
-            gameStates.splice(rightIdx - 2, 1);
+var linearInterpolator = {
+    linearPosition : function(v1, v2, t, t1, t2) {
+        var lagLimit = 150;
+        var ratio = Math.max(-lagLimit, t2 - t) / (t2 - t1);
+        return new Vector(v1.x * ratio + v2.x * (1-ratio), v1.y * ratio + v2.y * (1-ratio));
+    },
+    linearAng : function(a1, a2, t, t1, t2) {
+        if (t < t1) {
+            return a1;
+        } else if (t > t2) {
+            return a2;
         } else {
-            rightIdx += 1;
+            var dir1 = (a1 % (2 * Math.PI) + 2 * Math.PI) % (2 * Math.PI);
+            var dir2 = (a2 % (2 * Math.PI) + 2 * Math.PI) % (2 * Math.PI);
+            var difference = dir2 - dir1;
+            var difference = (difference % (2 * Math.PI) + 3 * Math.PI) % (2 * Math.PI) - Math.PI;
+            return dir1 + difference * (t - t1) / (t2 - t1);
         }
-
-    }
-    if (rightIdx >= gameStates.length) {
-        /*var out = JSON.parse(JSON.stringify(gameStates[gameStates.length - 1]));
-    giveMethods(out);
-     out.snapWeapons();
-    return out;*/
-        rightIdx = gameStates.length - 1;
-    }
-    if (gameStates.length > 2) {
-        buffer -= Math.max((gameStates.length - 3)*1000/60*framesPerTick,2);
-    } else if (gameStates.length < 3) {
-
-        buffer += 2;
-    }
-
-    var right = gameStates[rightIdx];
-    var left = gameStates[rightIdx - 1];
-    //console.log(Math.floor(1000/(right.time - left.time)));
-    var out = JSON.parse(JSON.stringify(right));
-    giveMethods(out);
-    out.time = displayTime;
-    for (var i in out.players) {
-        if (left.players[i] == undefined || right.players[i] == undefined) {
-            continue;
-        }
-        out.players[i].pos = linearPosition(left.players[i].pos, right.players[i].pos, displayTime, left.time, right.time);
-        if (displayTime > right.players[i].punchLastTime)
-            out.players[i].punchAnimation = 30*Math.pow(0.9,(displayTime - right.players[i].punchLastTime)/20);
-        else
-            out.players[i].punchAnimation = 30*Math.pow(0.9,(displayTime - left.players[i].punchLastTime)/20);
-        out.players[i].ang = linearAng(left.players[i].ang, right.players[i].ang, displayTime, left.time, right.time);
-    }
-    for (var i in out.weapons) {
-        if (left.weapons[i] == undefined || right.weapons[i] == undefined) {
-            continue;
-        }
-        out.weapons[i].pos = linearPosition(left.weapons[i].pos,right.weapons[i].pos, displayTime, left.time,right.time);
-        //var arrIdx = arrayUnique(Object.keys(right.weapons[i].bullets).concat(Object.keys(left.weapons[i].bullets)));
-        var arrIdx = Object.keys(right.weapons[i].bullets);
-        for (var thing in arrIdx) {
-            var j = arrIdx[thing];
-            var rightBull;
-            var leftBull;
-            if (left.weapons[i].bullets[j] == undefined && right.weapons[i].bullets[j] == undefined)
-            {
-                console.log(arrIdx, j)
-            }
-            else if (left.weapons[i].bullets[j] == undefined) {
-                rightBull = right.weapons[i].bullets[j];
-                leftBull = JSON.parse(JSON.stringify(rightBull));
-
-                giveMethods([rightBull, leftBull]);
-
-                var add = rightBull.vel.multiply(framesPerTick);
-                leftBull.pos = rightBull.pos.subtract(add);
-            }
-            else if (right.weapons[i].bullets[j] == undefined)
-            {
-                leftBull = left.weapons[i].bullets[j];
-                rightBull = JSON.parse(JSON.stringify(leftBull));
-
-                giveMethods([rightBull, leftBull]);
-
-                var add = leftBull.vel.multiply(framesPerTick);
-                rightBull.pos = leftBull.pos.add(add);
-            }
-            else
-            {
-                leftBull = left.weapons[i].bullets[j];
-                rightBull = right.weapons[i].bullets[j];
-            }
-            var bullet = out.weapons[i].bullets[j];
-            if (bullet == undefined)
-            {
-                out.weapons[i].bullets[j] = JSON.parse(JSON.stringify(leftBull));
-                giveMethods(out.weapons[i].bullets[j]);
-                bullet = out.weapons[i].bullets[j];
-            }
-            bullet.pos = linearPosition(leftBull.pos, rightBull.pos, displayTime, left.time, right.time);
-            if (bullet.startPos.distanceTo(bullet.pos) < bullet.trailLength) {
-                bullet.tailPos = bullet.startPos;
+    },
+    linearGameState : function() {
+        var displayTime = serverTime() - buffer;
+        var rightIdx = 1;
+        var time = 0;
+        while (rightIdx < gameStates.length && gameStates[rightIdx].time < displayTime) {
+            if (rightIdx > 1) {
+                gameStates.splice(rightIdx - 2, 1);
             } else {
-                bullet.tailPos = bullet.pos.add((new Vector(-bullet.trailLength, 0)).rotate(bullet.ang));
+                rightIdx += 1;
             }
-            if (bullet.hitPoint != -1 && bullet.startPos.distanceTo(bullet.pos) < bullet.startPos.distanceTo(bullet.hitPoint))
-            {
-                bullet.hitPoint = -1;
+
+        }
+        if (rightIdx >= gameStates.length) {
+            /*var out = JSON.parse(JSON.stringify(gameStates[gameStates.length - 1]));
+        giveMethods(out);
+         out.snapWeapons();
+        return out;*/
+            rightIdx = gameStates.length - 1;
+        }
+        if (gameStates.length > 2) {
+            buffer -= Math.max((gameStates.length - 3)*1000/60*framesPerTick,2);
+        } else if (gameStates.length < 3) {
+
+            buffer += 2;
+        }
+
+        var right = gameStates[rightIdx];
+        var left = gameStates[rightIdx - 1];
+        //console.log(Math.floor(1000/(right.time - left.time)));
+        var out = JSON.parse(JSON.stringify(right));
+        giveMethods(out);
+        out.time = displayTime;
+        for (var i in out.players) {
+            if (left.players[i] == undefined || right.players[i] == undefined) {
+                continue;
             }
+            out.players[i].pos = this.linearPosition(left.players[i].pos, right.players[i].pos, displayTime, left.time, right.time);
+            if (displayTime > right.players[i].punchLastTime)
+                out.players[i].punchAnimation = 30*Math.pow(0.9,(displayTime - right.players[i].punchLastTime)/20);
             else
-            {
-                if (bullet.hitPoint != -1 && bullet.startPos.distanceTo(bullet.hitPoint) < bullet.startPos.distanceTo(bullet.tailPos) || bullet.startPos.distanceTo(rightBull.pos) < framesPerTick * bullet.vel.magnitude() * (right.time - displayTime) / (right.time - left.time))
+                out.players[i].punchAnimation = 30*Math.pow(0.9,(displayTime - left.players[i].punchLastTime)/20);
+            out.players[i].ang = this.linearAng(left.players[i].ang, right.players[i].ang, displayTime, left.time, right.time);
+        }
+        for (var i in out.weapons) {
+            if (left.weapons[i] == undefined || right.weapons[i] == undefined) {
+                continue;
+            }
+            out.weapons[i].pos = this.linearPosition(left.weapons[i].pos,right.weapons[i].pos, displayTime, left.time,right.time);
+            //var arrIdx = arrayUnique(Object.keys(right.weapons[i].bullets).concat(Object.keys(left.weapons[i].bullets)));
+            var arrIdx = Object.keys(right.weapons[i].bullets);
+            for (var thing in arrIdx) {
+                var j = arrIdx[thing];
+                var rightBull;
+                var leftBull;
+                if (left.weapons[i].bullets[j] == undefined && right.weapons[i].bullets[j] == undefined)
                 {
-                    delete out.weapons[i].bullets[j];
+                    console.log(arrIdx, j)
+                }
+                else if (left.weapons[i].bullets[j] == undefined) {
+                    rightBull = right.weapons[i].bullets[j];
+                    leftBull = JSON.parse(JSON.stringify(rightBull));
+
+                    giveMethods([rightBull, leftBull]);
+
+                    var add = rightBull.vel.multiply(framesPerTick);
+                    leftBull.pos = rightBull.pos.subtract(add);
+                }
+                else if (right.weapons[i].bullets[j] == undefined)
+                {
+                    leftBull = left.weapons[i].bullets[j];
+                    rightBull = JSON.parse(JSON.stringify(leftBull));
+
+                    giveMethods([rightBull, leftBull]);
+
+                    var add = leftBull.vel.multiply(framesPerTick);
+                    rightBull.pos = leftBull.pos.add(add);
                 }
                 else
                 {
-                    bullet.objectsIntersection(out);
+                    leftBull = left.weapons[i].bullets[j];
+                    rightBull = right.weapons[i].bullets[j];
+                }
+                var bullet = out.weapons[i].bullets[j];
+                if (bullet == undefined)
+                {
+                    out.weapons[i].bullets[j] = JSON.parse(JSON.stringify(leftBull));
+                    giveMethods(out.weapons[i].bullets[j]);
+                    bullet = out.weapons[i].bullets[j];
+                }
+                bullet.pos = this.linearPosition(leftBull.pos, rightBull.pos, displayTime, left.time, right.time);
+                if (bullet.startPos.distanceTo(bullet.pos) < bullet.trailLength) {
+                    bullet.tailPos = bullet.startPos;
+                } else {
+                    bullet.tailPos = bullet.pos.add((new Vector(-bullet.trailLength, 0)).rotate(bullet.ang));
+                }
+                if (bullet.hitPoint != -1 && bullet.startPos.distanceTo(bullet.pos) < bullet.startPos.distanceTo(bullet.hitPoint))
+                {
+                    bullet.hitPoint = -1;
+                }
+                else
+                {
+                    if (bullet.hitPoint != -1 && bullet.startPos.distanceTo(bullet.hitPoint) < bullet.startPos.distanceTo(bullet.tailPos) || bullet.startPos.distanceTo(rightBull.pos) < framesPerTick * bullet.vel.magnitude() * (right.time - displayTime) / (right.time - left.time))
+                    {
+                        delete out.weapons[i].bullets[j];
+                    }
+                    else
+                    {
+                        bullet.objectsIntersection(out);
+                    }
                 }
             }
+            out.weapons[i].recoil = this.linearPosition(new Vector(left.weapons[i].recoil, 0), new Vector(right.weapons[i].recoil, 0), displayTime, left.time, right.time).x;
         }
-        out.weapons[i].recoil = linearPosition(new Vector(left.weapons[i].recoil, 0), new Vector(right.weapons[i].recoil, 0), displayTime, left.time, right.time).x;
+        out.snapWeapons();
+        return out;
     }
-    out.snapWeapons();
-    return out;
-}
+};
 var resetControls = function() {
     controlsBundle.justKeyDown = {};
     controlsBundle.justDowned = false;
@@ -1365,7 +1367,7 @@ function updateGameArea() {
     myGameArea.clear();
     if (gameStates.length > 1) {
         
-        var state = linearGameState();
+        var state = linearInterpolator.linearGameState();
 
         if (state.players[controlId] && state.players[controlId].alive) {
             lastDeadTime = -1;
