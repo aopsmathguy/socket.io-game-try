@@ -1268,7 +1268,7 @@ var linearInterpolator = {
         //console.log(Math.floor(1000/(right.time - left.time)));
         var out = JSON.parse(JSON.stringify(right));
         giveMethods(out);
-        out.time = displayTime;
+        out.time = this.linearValue(left.time,right.time,displayTime,left.time,right.time);
         for (var i in out.players) {
             if (left.players[i] == undefined || right.players[i] == undefined) {
                 continue;
