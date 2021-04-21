@@ -1216,7 +1216,7 @@ var displayCrosshair = function() {
     controlsBundle.mouse.circle(6, '#fff', 2);
 }
 var linearInterpolator = {
-    lagLimit : 50,
+    lagLimit : 150,
     linearValue : function(v1, v2, t, t1, t2) {
         var ratio = Math.max(-this.lagLimit, t2 - t) / (t2 - t1);
         return v1 * ratio + v2 * (1-ratio);
