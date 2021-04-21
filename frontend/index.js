@@ -1217,7 +1217,7 @@ var displayCrosshair = function() {
 }
 var linearPosition = function(v1, v2, t, t1, t2) {
     var lagLimit = 150;
-    var ratio = Math.min(lagLimit, t2 - t) / (t2 - t1);
+    var ratio = Math.max(-lagLimit, t2 - t) / (t2 - t1);
     return new Vector(v1.x * ratio + v2.x * (1-ratio), v1.y * ratio + v2.y * (1-ratio));
 }
 var linearAng = function(a1, a2, t, t1, t2) {
