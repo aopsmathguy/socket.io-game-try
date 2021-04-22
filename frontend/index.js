@@ -1389,10 +1389,6 @@ function updateGameArea() {
             }
             for (var j in state.weapons[i].bullets)
             {
-                if (!state.weapons[i].bullets[j])
-                {
-                    delete weaponBulletHitPoints[j];
-                }
                 else
                 {
                     var bullet = state.weapons[i].bullets[j];
@@ -1400,6 +1396,13 @@ function updateGameArea() {
                     {
                         weaponBulletHitPoints[i][j] = bullet.hitPoint;
                     }
+                }
+            }
+            for (var j in weaponBulletHitPoints[i])
+            {
+                if (!state.weapons[i].bullets[j])
+                {
+                    delete weaponBulletHitPoints[j];
                 }
             }
         }
