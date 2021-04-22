@@ -1239,7 +1239,7 @@ var linearInterpolator = {
             return dir1 + difference * (t - t1) / (t2 - t1);
         }
     },
-    linearGameState : function(lastRenderedState) {
+    linearGameState : function(weaponBulletHitPoints) {
         var displayTime = serverTime() - buffer;
         var rightIdx = 1;
         var time = 0;
@@ -1334,9 +1334,9 @@ var linearInterpolator = {
                 } else {
                     bullet.tailPos = bullet.pos.add((new Vector(-bullet.trailLength, 0)).rotate(bullet.ang));
                 }
-                if (bullet.hitPoint == -1 && lastRenderedState && lastRenderedState.weapons[i].bullets[j] && lastRenderedState.weapons[i].bullets[j].hitPoint)
+                if (bullet.hitPoint == -1 && weaponBulletHitPoints && weaponBulletHitPoints[i][j])
                 {
-                    var newHitPoint = lastRenderedState.weapons[i].bullets[j].hitPoint;
+                    var newHitPoint = weaponBulletHitPoints[i][j];
                     if (bullet.startPos.distanceTo(bullet.pos) > bullet.startPos.distanceTo(newHitPoint))
                     {
                         bullet.hitPoint = new Vector(newHitPoint.x,newHitPoint.y);
@@ -1375,14 +1375,18 @@ setInterval(() => {
     }
 },20);
 var lastDeadTime = -1;
-var lastRenderedState = new GameState();
+var weaponBulletHitPoints = {};
 function updateGameArea() {
     myGameArea.clear();
     if (gameStates.length > 1) {
         
-        var state = linearInterpolator.linearGameState(lastRenderedState);
+        var state = linearInterpolator.linearGameState(weaponBulletHitPoints);
         for (var i in state.weapons)
         {
+            if (!state.weapons[i])
+            {
+                state.weapons[i] = {};
+            }
             for (var j in state.weapons[i].bullets)
             {
                 if (!state.weapons[i].bullets[j])
@@ -1392,7 +1396,7 @@ function updateGameArea() {
                 else
                 {
                     var bullet = state.weapons[i].bullets[j];
-                    lastRenderedState.weapons[i].bullets[j].hitPoint = lastRenderedState.weapons[i].bullets[j].hitPoint || bullet.hitPoint;
+                    weaponBulletHitPoints[i][j] = weaponBulletHitPoints[i][j] || bullet.hitPoint;
                 }
             }
         }
