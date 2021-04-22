@@ -600,7 +600,7 @@ var GameState = function() {
         for (var i = 0; i < Math.min(displayObj.length,maxLength); i++)
         {
             var playerStats = displayObj[i];
-            ctx.fillStyle = (playerStats.id == controlId ? "#ccf" : "#fff");
+            ctx.fillStyle = (playerStats.id == controlId ? "#8f8" : "#fff");
             
             ctx.textAlign = "left";
             var name = (playerStats.name.length > 11 ? playerStats.name.substring(0,10) + "\u2026" : playerStats.name);
