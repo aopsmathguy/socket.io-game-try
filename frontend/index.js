@@ -788,7 +788,7 @@ var GameState = function() {
                 myGameArea.canvas.width / 2, myGameArea.canvas.height - 100,
                 buffer, 1, "center");
             if (weapon.reloadStartTime != -1) {
-                var frac = (this.time - weapon.reloadStartTime) / weapon.reloadTime;
+                var frac = Math.min(Math.max((this.time - weapon.reloadStartTime) / weapon.reloadTime,0),1);
                 var ctx = myGameArea.context;
                 ctx.save();
 
