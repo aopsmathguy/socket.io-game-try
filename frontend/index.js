@@ -1385,11 +1385,17 @@ function updateGameArea() {
         {
             for (var j in state.weapons[i].bullets)
             {
-                var bullet = state.weapons[i].bullets[j];
-                lastRenderedState.weapons[i].bullets[j].hitPoint = lastRenderedState.weapons[i].bullets[j].hitPoint || bullet.hitPoint;
+                if (!state.weapons[i].bullets[j])
+                {
+                    delete state.weapons[i].bullets[j];
+                }
+                else
+                {
+                    var bullet = state.weapons[i].bullets[j];
+                    lastRenderedState.weapons[i].bullets[j].hitPoint = lastRenderedState.weapons[i].bullets[j].hitPoint || bullet.hitPoint;
+                }
             }
         }
-        lastRenderedState = state;
         if (state.players[controlId] && state.players[controlId].alive) {
             lastDeadTime = -1;
         } else if (lastDeadTime == -1) {
