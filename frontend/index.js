@@ -1342,7 +1342,8 @@ var linearInterpolator = {
                 {
                     if (bullet.hitPoint == -1 && lastRenderedState && lastRenderedState.weapons[i].bullets[j] && lastRenderedState.weapons[i].bullets[j].hitPoint)
                     {
-                        bullet.hitPoint = lastRenderedState.weapons[i].bullets[j].hitPoint.copy();
+                        var newHitPoint = lastRenderedState.weapons[i].bullets[j].hitPoint;
+                        bullet.hitPoint = new Vector(newHitPoint.x,newHitPoint.y);
                     }
                     else
                     {
