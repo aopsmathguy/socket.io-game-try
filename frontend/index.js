@@ -30,9 +30,23 @@ socket.on('killFeed', (msg) => {
     {
         var message = shooterName + " killed " + deadName;
     }
+    var killColor;
+    if (msg.shooter == controlId)
+    {
+        killColor = "#8f8";
+    } 
+    else if (msg.dead == controlId)
+    {
+        killColor = "#f00";
+    }
+    else
+    {
+        killColor = "#fff";
+    }
     killFeed.list.splice(0, 0, {
         msg: message,
-        time: Date.now()
+        time: Date.now(),
+        color : killColor
     });
     killFeed.scroll += 1;
     
@@ -97,7 +111,7 @@ var killFeed = {
 
             var buffer = 4;
 
-            blackBoxedText(txt, "bold 16px Courier New", 16, textPosX, textPosY, buffer, txtAlpha);
+            blackBoxedText(txt, "bold 16px Courier New", this.list[idx].color, 16, textPosX, textPosY, buffer, txtAlpha);
         }
 
     }
@@ -309,7 +323,7 @@ function handleInit(msg) {
     framesPerTick = msg.framesPerTick;
     viableWeapons = msg.viableWeapons;
 }
-function blackBoxedText(txt, font, size, posx, posy, buffer, txtAlpha, align) {
+function blackBoxedText(txt, font, color, size, posx, posy, buffer, txtAlpha, align) {
     ctx = myGameArea.context;
     ctx.save();
     ctx.globalAlpha = txtAlpha * 0.3;
@@ -327,7 +341,7 @@ function blackBoxedText(txt, font, size, posx, posy, buffer, txtAlpha, align) {
     ctx.save();
     ctx.globalAlpha = txtAlpha;
     ctx.font = font;
-    ctx.fillStyle = "#fff";
+    ctx.fillStyle = color;
     ctx.textAlign = align || "left";
     ctx.fillText(txt, posx, posy);
     ctx.restore();
@@ -784,6 +798,7 @@ var GameState = function() {
             var buffer = 10;
             var width = blackBoxedText(fillDigits(weapon.bulletsRemaining, length) + '|' + fillDigits(weapon.capacity, length),
                 "bold " + size + "px Courier New",
+                "#fff",
                 size,
                 myGameArea.canvas.width / 2, myGameArea.canvas.height - 100,
                 buffer, 1, "center");
@@ -829,7 +844,7 @@ var GameState = function() {
         var player = this.players[i];
         var pos = player.pos.add(new Vector(0, 50));
         var disPos = drawer.transform(pos);
-        blackBoxedText(player.name, "bold 12px Courier New", 12, disPos.x, disPos.y, 3, 1, 'center');
+        blackBoxedText(player.name, "bold 12px Courier New", "#fff",12, disPos.x, disPos.y, 3, 1, 'center');
     }
     this.snapWeapons = function() {
         for (var i in this.players) {
