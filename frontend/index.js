@@ -1334,7 +1334,7 @@ var linearInterpolator = {
                 } else {
                     bullet.tailPos = bullet.pos.add((new Vector(-bullet.trailLength, 0)).rotate(bullet.ang));
                 }
-                if (bullet.hitPoint == -1 && weaponBulletHitPoints && weaponBulletHitPoints[i][j])
+                if (bullet.hitPoint == -1 && weaponBulletHitPoints && weaponBulletHitPoints[i] && weaponBulletHitPoints[i][j])
                 {
                     var newHitPoint = weaponBulletHitPoints[i][j];
                     if (bullet.startPos.distanceTo(bullet.pos) > bullet.startPos.distanceTo(newHitPoint))
