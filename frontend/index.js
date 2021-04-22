@@ -1350,7 +1350,7 @@ var linearInterpolator = {
                 {
                     if (bullet.hitPoint != -1 && bullet.startPos.distanceTo(bullet.hitPoint) < bullet.startPos.distanceTo(bullet.tailPos) || bullet.startPos.distanceTo(rightBull.pos) < framesPerTick * bullet.vel.magnitude() * (right.time - displayTime) / (right.time - left.time))
                     {
-                        //delete out.weapons[i].bullets[j];
+                        delete out.weapons[i].bullets[j];
                     }
                     else
                     {
@@ -1381,6 +1381,14 @@ function updateGameArea() {
     if (gameStates.length > 1) {
         
         var state = linearInterpolator.linearGameState(lastRenderedState);
+        for (var i in state.weapons)
+        {
+            for (var j in state.weapons[i].bullets)
+            {
+                var bullet = state.weapons[i].bullets[j];
+                lastRenderedState.weapons[i].bullets[j].hitPoint = lastRenderedState.weapons[i].bullets[j].hitPoint || bullet.hitPoint;
+            }
+        }
         lastRenderedState = state;
         if (state.players[controlId] && state.players[controlId].alive) {
             lastDeadTime = -1;
