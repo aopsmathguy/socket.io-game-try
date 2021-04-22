@@ -1239,7 +1239,7 @@ var linearInterpolator = {
             return dir1 + difference * (t - t1) / (t2 - t1);
         }
     },
-    linearGameState : function() {
+    linearGameState : function(lastRenderedState) {
         var displayTime = serverTime() - buffer;
         var rightIdx = 1;
         var time = 0;
@@ -1340,13 +1340,17 @@ var linearInterpolator = {
                 }
                 else
                 {
-                    if (bullet.hitPoint != -1 && bullet.startPos.distanceTo(bullet.hitPoint) < bullet.startPos.distanceTo(bullet.tailPos) || bullet.startPos.distanceTo(rightBull.pos) < framesPerTick * bullet.vel.magnitude() * (right.time - displayTime) / (right.time - left.time))
+                    if (bullet.hitPoint == -1 && lastRenderedState && lastRenderedState.weapons[i].bullets[j] && lastRenderedState.weapons[i].bullets[j].hitPoint)
                     {
-                        delete out.weapons[i].bullets[j];
+                        bullet.hitPoint = lastRenderedState.weapons[i].bullets[j].hitPoint.copy();
                     }
                     else
                     {
                         bullet.objectsIntersection(out);
+                    }
+                    if (bullet.hitPoint != -1 && bullet.startPos.distanceTo(bullet.hitPoint) < bullet.startPos.distanceTo(bullet.tailPos) || bullet.startPos.distanceTo(rightBull.pos) < framesPerTick * bullet.vel.magnitude() * (right.time - displayTime) / (right.time - left.time))
+                    {
+                        delete out.weapons[i].bullets[j];
                     }
                 }
             }
@@ -1367,13 +1371,13 @@ setInterval(() => {
     }
 },20);
 var lastDeadTime = -1;
-
+var lastRenderedState;
 function updateGameArea() {
     myGameArea.clear();
     if (gameStates.length > 1) {
         
-        var state = linearInterpolator.linearGameState();
-
+        var state = linearInterpolator.linearGameState(lastRenderedState);
+        lastRenderedState = state;
         if (state.players[controlId] && state.players[controlId].alive) {
             lastDeadTime = -1;
         } else if (lastDeadTime == -1) {
