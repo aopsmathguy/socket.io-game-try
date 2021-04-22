@@ -1383,9 +1383,9 @@ function updateGameArea() {
         var state = linearInterpolator.linearGameState(weaponBulletHitPoints);
         for (var i in state.weapons)
         {
-            if (!state.weapons[i])
+            if (!weaponBulletHitPoints[i])
             {
-                state.weapons[i] = {};
+                weaponBulletHitPoints[i] = {};
             }
             for (var j in state.weapons[i].bullets)
             {
