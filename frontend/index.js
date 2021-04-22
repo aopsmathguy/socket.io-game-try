@@ -75,7 +75,8 @@ socket.on('playerActivity', (msg) => {
     }
     killFeed.list.splice(0, 0, {
         msg: message,
-        time: Date.now()
+        time: Date.now(),
+        color : "#888"
     });
     killFeed.scroll += 1;
 });
