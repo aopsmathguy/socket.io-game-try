@@ -1391,7 +1391,7 @@ function updateGameArea() {
             {
                 if (!state.weapons[i].bullets[j])
                 {
-                    delete state.weapons[i].bullets[j];
+                    delete weaponBulletHitPoints[j];
                 }
                 else
                 {
