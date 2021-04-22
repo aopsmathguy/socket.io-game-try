@@ -1375,7 +1375,7 @@ setInterval(() => {
     }
 },20);
 var lastDeadTime = -1;
-var lastRenderedState;
+var lastRenderedState = new GameState();
 function updateGameArea() {
     myGameArea.clear();
     if (gameStates.length > 1) {
