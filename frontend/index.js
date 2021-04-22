@@ -1337,7 +1337,10 @@ var linearInterpolator = {
                 if (bullet.hitPoint == -1 && lastRenderedState && lastRenderedState.weapons[i].bullets[j] && lastRenderedState.weapons[i].bullets[j].hitPoint)
                 {
                     var newHitPoint = lastRenderedState.weapons[i].bullets[j].hitPoint;
-                    bullet.hitPoint = new Vector(newHitPoint.x,newHitPoint.y);
+                    if (bullet.startPos.distanceTo(bullet.pos) > bullet.startPos.distanceTo(newHitPoint))
+                    {
+                        bullet.hitPoint = new Vector(newHitPoint.x,newHitPoint.y);
+                    }
                 }
                 if (bullet.hitPoint != -1 && bullet.startPos.distanceTo(bullet.pos) < bullet.startPos.distanceTo(bullet.hitPoint))
                 {
