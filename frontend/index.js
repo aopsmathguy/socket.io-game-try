@@ -1334,24 +1334,24 @@ var linearInterpolator = {
                 } else {
                     bullet.tailPos = bullet.pos.add((new Vector(-bullet.trailLength, 0)).rotate(bullet.ang));
                 }
+                if (bullet.hitPoint == -1 && lastRenderedState && lastRenderedState.weapons[i].bullets[j] && lastRenderedState.weapons[i].bullets[j].hitPoint)
+                {
+                    var newHitPoint = lastRenderedState.weapons[i].bullets[j].hitPoint;
+                    bullet.hitPoint = new Vector(newHitPoint.x,newHitPoint.y);
+                }
                 if (bullet.hitPoint != -1 && bullet.startPos.distanceTo(bullet.pos) < bullet.startPos.distanceTo(bullet.hitPoint))
                 {
                     bullet.hitPoint = -1;
                 }
                 else
                 {
-                    if (bullet.hitPoint == -1 && lastRenderedState && lastRenderedState.weapons[i].bullets[j] && lastRenderedState.weapons[i].bullets[j].hitPoint)
+                    if (bullet.hitPoint != -1 && bullet.startPos.distanceTo(bullet.hitPoint) < bullet.startPos.distanceTo(bullet.tailPos) || bullet.startPos.distanceTo(rightBull.pos) < framesPerTick * bullet.vel.magnitude() * (right.time - displayTime) / (right.time - left.time))
                     {
-                        var newHitPoint = lastRenderedState.weapons[i].bullets[j].hitPoint;
-                        bullet.hitPoint = new Vector(newHitPoint.x,newHitPoint.y);
+                        delete out.weapons[i].bullets[j];
                     }
                     else
                     {
                         bullet.objectsIntersection(out);
-                    }
-                    if (bullet.hitPoint != -1 && bullet.startPos.distanceTo(bullet.hitPoint) < bullet.startPos.distanceTo(bullet.tailPos) || bullet.startPos.distanceTo(rightBull.pos) < framesPerTick * bullet.vel.magnitude() * (right.time - displayTime) / (right.time - left.time))
-                    {
-                        delete out.weapons[i].bullets[j];
                     }
                 }
             }
