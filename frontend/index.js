@@ -1350,7 +1350,7 @@ var linearInterpolator = {
                 } else {
                     bullet.tailPos = bullet.pos.add((new Vector(-bullet.trailLength, 0)).rotate(bullet.ang));
                 }
-                if (bullet.hitPoint == -1 && weaponBulletHitPoints && weaponBulletHitPoints[i] && weaponBulletHitPoints[i][j])
+                if (weaponBulletHitPoints && weaponBulletHitPoints[i] && weaponBulletHitPoints[i][j])
                 {
                     var newHitPoint = weaponBulletHitPoints[i][j];
                     if (bullet.startPos.distanceTo(bullet.pos) > bullet.startPos.distanceTo(newHitPoint))
@@ -1358,19 +1358,22 @@ var linearInterpolator = {
                         bullet.hitPoint = new Vector(newHitPoint.x,newHitPoint.y);
                     }
                 }
-                if (bullet.hitPoint != -1 && bullet.startPos.distanceTo(bullet.pos) < bullet.startPos.distanceTo(bullet.hitPoint))
-                {
-                    bullet.hitPoint = -1;
-                }
-                else
-                {
-                    if (bullet.hitPoint != -1 && bullet.startPos.distanceTo(bullet.hitPoint) < bullet.startPos.distanceTo(bullet.tailPos) || bullet.startPos.distanceTo(rightBull.pos) < framesPerTick * bullet.vel.magnitude() * (right.time - displayTime) / (right.time - left.time))
+                else{
+                    if (bullet.hitPoint != -1 && bullet.startPos.distanceTo(bullet.pos) < bullet.startPos.distanceTo(bullet.hitPoint))
                     {
-                        delete out.weapons[i].bullets[j];
+                        bullet.hitPoint = -1;
+
                     }
                     else
                     {
-                        bullet.objectsIntersection(out);
+                        if (bullet.hitPoint != -1 && bullet.startPos.distanceTo(bullet.hitPoint) < bullet.startPos.distanceTo(bullet.tailPos) || bullet.startPos.distanceTo(rightBull.pos) < framesPerTick * bullet.vel.magnitude() * (right.time - displayTime) / (right.time - left.time))
+                        {
+                            delete out.weapons[i].bullets[j];
+                        }
+                        else
+                        {
+                            bullet.objectsIntersection(out);
+                        }
                     }
                 }
             }
