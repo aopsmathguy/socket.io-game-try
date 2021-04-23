@@ -1383,12 +1383,12 @@ var linearInterpolator = {
                     }
                     else{
                         bullet.objectsIntersection(out);
-                        if (bullet.hitPoint != -1 && bullet.startPos.distanceTo(bullet.pos) < bullet.startPos.distanceTo(bullet.hitPoint))
+                        if ( bullet.startPos.distanceTo(bullet.pos) < bullet.startPos.distanceTo(bullet.hitPoint))
                         {
                             bullet.hitPoint = -1;
 
                         }
-                        else if (bullet.hitPoint != -1 && bullet.startPos.distanceTo(bullet.hitPoint) < bullet.startPos.distanceTo(bullet.tailPos) || bullet.startPos.distanceTo(rightBull.pos) < framesPerTick * bullet.vel.magnitude() * (right.time - displayTime) / (right.time - left.time))
+                        else if (bullet.startPos.distanceTo(bullet.hitPoint) < bullet.startPos.distanceTo(bullet.tailPos) || bullet.startPos.distanceTo(rightBull.pos) < framesPerTick * bullet.vel.magnitude() * (right.time - displayTime) / (right.time - left.time))
                         {
                             delete out.weapons[i].bullets[j];
                         }
