@@ -21,6 +21,23 @@ socket.on('gameState', (msg) => {
     }
     tickInterval = (tickIntervals[tickIntervals.length - 1] - tickIntervals[0])/(tickIntervals.length - 1);
     gameStates.push(msg);
+    
+    for (var i in msg.weapons)
+    {
+        var gun = msg.weapons[i]
+        for (var j in gun.bullets)
+        {
+            var bullet = gun.bullets[j];
+            if (bullet.hitPoint == -1)
+            {
+                delete weaponBulletHitPoints[i][j];
+            }
+            else
+            {
+                weaponBulletHitPoints[i][j] = bullet.hitPoint;
+            }
+        }
+    }
 });
 socket.on('killFeed', (msg) => {
     var plyrs = gameStates[gameStates.length - 1].players;
