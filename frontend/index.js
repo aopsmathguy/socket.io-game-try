@@ -1390,7 +1390,7 @@ var linearInterpolator = {
                         }
                         else if (bullet.startPos.distanceTo(bullet.hitPoint) < bullet.startPos.distanceTo(bullet.tailPos) || bullet.startPos.distanceTo(rightBull.pos) < framesPerTick * bullet.vel.magnitude() * (right.time - displayTime) / (right.time - left.time))
                         {
-                            delete out.weapons[i].bullets[j];
+                            //delete out.weapons[i].bullets[j];
                         }
                     }
                 }
