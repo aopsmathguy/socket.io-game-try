@@ -1371,29 +1371,26 @@ var linearInterpolator = {
                 } else {
                     bullet.tailPos = bullet.pos.add((new Vector(-bullet.trailLength, 0)).rotate(bullet.ang));
                 }
-                if (weaponBulletHitPoints && weaponBulletHitPoints[i] && weaponBulletHitPoints[i][j])
+                if (bullet.hitPoint == -1)
                 {
-                    var newHitPoint = weaponBulletHitPoints[i][j];
-                    if (bullet.startPos.distanceTo(bullet.pos) > bullet.startPos.distanceTo(newHitPoint))
+                    if (weaponBulletHitPoints && weaponBulletHitPoints[i] && weaponBulletHitPoints[i][j])
                     {
-                        bullet.hitPoint = new Vector(newHitPoint.x,newHitPoint.y);
+                        var newHitPoint = weaponBulletHitPoints[i][j];
+                        if (bullet.startPos.distanceTo(bullet.pos) > bullet.startPos.distanceTo(newHitPoint))
+                        {
+                            bullet.hitPoint = new Vector(newHitPoint.x,newHitPoint.y);
+                        }
                     }
-                }
-                else{
-                    if (bullet.hitPoint != -1 && bullet.startPos.distanceTo(bullet.pos) < bullet.startPos.distanceTo(bullet.hitPoint))
-                    {
-                        bullet.hitPoint = -1;
+                    else{
+                        bullet.objectsIntersection(out);
+                        if (bullet.hitPoint != -1 && bullet.startPos.distanceTo(bullet.pos) < bullet.startPos.distanceTo(bullet.hitPoint))
+                        {
+                            bullet.hitPoint = -1;
 
-                    }
-                    else
-                    {
-                        if (bullet.hitPoint != -1 && bullet.startPos.distanceTo(bullet.hitPoint) < bullet.startPos.distanceTo(bullet.tailPos) || bullet.startPos.distanceTo(rightBull.pos) < framesPerTick * bullet.vel.magnitude() * (right.time - displayTime) / (right.time - left.time))
+                        }
+                        else if (bullet.hitPoint != -1 && bullet.startPos.distanceTo(bullet.hitPoint) < bullet.startPos.distanceTo(bullet.tailPos) || bullet.startPos.distanceTo(rightBull.pos) < framesPerTick * bullet.vel.magnitude() * (right.time - displayTime) / (right.time - left.time))
                         {
                             delete out.weapons[i].bullets[j];
-                        }
-                        else
-                        {
-                            bullet.objectsIntersection(out);
                         }
                     }
                 }
