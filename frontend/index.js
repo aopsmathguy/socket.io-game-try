@@ -1003,7 +1003,7 @@ var Bullet = function() {
         loopThroughObstacles(this.pos, (obstacle) => {
             if (!obstacle.intersectable)
             {
-              //return;
+                return;
             }
             var point = obstacle.intersectSegment(tailCheck,this.pos);
             if (point != -1) {
