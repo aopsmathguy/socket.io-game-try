@@ -30,7 +30,7 @@ socket.on('gameState', (msg) => {
             var bullet = gun.bullets[j];
             if (bullet.hitPoint == -1)
             {
-                //delete weaponBulletHitPoints[i][j];
+                delete weaponBulletHitPoints[i][j];
             }
             else
             {
@@ -1435,7 +1435,7 @@ function updateGameArea() {
             {
                 if (!state.weapons[i].bullets[j])
                 {
-                    //delete weaponBulletHitPoints[i][j];
+                    delete weaponBulletHitPoints[i][j];
                 }
             }
         }
