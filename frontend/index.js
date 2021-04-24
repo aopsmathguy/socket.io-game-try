@@ -58,7 +58,7 @@ socket.on('killFeed', (msg) => {
     } 
     else if (msg.dead == controlId)
     {
-        killColor = "#f44";
+        killColor = "#f66";
     }
     else
     {
