@@ -435,7 +435,7 @@ var myGameArea = {
         this.canvas.width = window.innerWidth;
         this.canvas.height = window.innerHeight;
 
-        this.context.fillStyle = "#83b04a";
+        this.context.fillStyle = "#7cfc00";
         this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
     }
