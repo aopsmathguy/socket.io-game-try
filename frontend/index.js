@@ -673,14 +673,14 @@ var GameState = function() {
 
         if (player.weapon != -1) {
             var weapon = this.weapons[player.weapon];
-            firstShoulder = (new Vector(0, player.radius + 3)).rotate(rotAng1);
-            secondShoulder = (new Vector(0, -player.radius-3)).rotate(rotAng2);
+            firstShoulder = (new Vector(0, player.radius + 2)).rotate(rotAng1);
+            secondShoulder = (new Vector(0, -player.radius-2)).rotate(rotAng2);
             firstHand = weapon.handPos1.add(new Vector(weapon.buttPosition -this.weapons[player.weapon].recoil, 0));
             secondHand = weapon.handPos2.add(new Vector(weapon.buttPosition-this.weapons[player.weapon].recoil, 0));
 
         } else {
-            firstShoulder = (new Vector(0, player.radius + 3)).rotate(0);
-            secondShoulder = (new Vector(0, -player.radius - 3)).rotate(0);
+            firstShoulder = (new Vector(0, player.radius + 2)).rotate(0);
+            secondShoulder = (new Vector(0, -player.radius - 2)).rotate(0);
             firstHand = (new Vector(player.radius * 0.85, player.radius * 0.8)).add((new Vector(player.punchAnimation, 0)).rotate(-Math.PI / 6));
             secondHand = new Vector(player.radius * 0.85, -player.radius * 0.8);
 
