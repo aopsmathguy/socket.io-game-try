@@ -1394,6 +1394,10 @@ setInterval(() => {
         {
           gameState.weapons[i].pushFromAll(gameState);
         }
+        for (var i in gameState.weapons)
+        {
+          gameState.weapons[i].pushFromAll(gameState);
+        }
     //});
 },100);
 function updateGameArea() {
