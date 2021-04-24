@@ -1409,7 +1409,7 @@ setInterval(() => {
     {
         emitMousePos();
     }
-},20);
+},10);
 var lastDeadTime = -1;
 var weaponBulletHitPoints = {};
 function updateGameArea() {
