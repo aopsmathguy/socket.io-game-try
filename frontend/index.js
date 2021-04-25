@@ -571,7 +571,7 @@ var GameState = function() {
             var scale = weapon.length/img.naturalWidth;
            
             ctx.save();
-            ctx.translate(startX  + length /2, startY + height * i + height/2, length, height);
+            ctx.translate(startX  + length /2, startY + height * i + height/2);
             if (img)
                 ctx.drawImage(img, scale * img.naturalWidth/-2, scale * img.naturalHeight / -2, scale * img.naturalWidth, scale * img.naturalHeight);
             else
