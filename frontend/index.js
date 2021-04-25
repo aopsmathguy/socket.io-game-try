@@ -30,7 +30,10 @@ socket.on('gameState', (msg) => {
             var bullet = gun.bullets[j];
             if (bullet.hitPoint == -1)
             {
-                delete weaponBulletHitPoints[i][j];
+                try{
+                    delete weaponBulletHitPoints[i][j];
+                }
+                catch{}
             }
             else
             {
@@ -201,15 +204,11 @@ var name;
 var color;
 var path1 = "img/weapons/";
 var path2 = "img/ground weapons/";
-function imageExists(image_url){
-
-    var http = new XMLHttpRequest();
-
-    http.open('HEAD', image_url, false);
-    http.send();
-
-    return http.status != 404;
-
+function imageExists(weapon, imageSrc, good, bad) {
+    var img = new Image();
+    img.onload = (() => {good(weapon,img); console.log("shit");}); 
+    img.onerror = (() => {bad();});
+    img.src = imageSrc;
 }
 var weaponImages = {
     "AK-47" : 0,
@@ -222,22 +221,17 @@ var weaponImages = {
 };
 for (var i in weaponImages)
 {
-    weaponImages[i] = {true : new Image(), false : new Image()};
-    if (imageExists(path1 + i + ".svg"))
-    {
-        weaponImages[i][true].src = path1 + i + ".svg";
-    }
-    else
-    {
+    weaponImages[i] = {};
+    imageExists(i,path1 + i + ".svg",(i,img) => {
+        weaponImages[i][true] = img;
+    },()=>{
         weaponImages[i][true] = false;
-    }
-    if (imageExists(path2 + i + ".svg")){
-        weaponImages[i][false].src = path2 + i + ".svg";
-    }
-    else
-    {
+    });
+    imageExists(i,path2 + i + ".svg",(i,img) => {
+        weaponImages[i][false] = img;
+    },()=>{
         weaponImages[i][false] = false;
-    }
+    });
 }
 var viableWeapons;
 function startGame(){
@@ -547,10 +541,50 @@ var GameState = function() {
             // this.displayReloadTime();
             this.displayBulletCount();
             //myGameArea.printFps();
+            this.displayLoadout();
             killFeed.display();
             yourKillFeed.display();
         }
         this.displayScoreBoard();
+    }
+    this.displayLoadout = function()
+    {
+        var player = this.players[controlId];
+        var length = 180;
+        var height = 60;
+        var startX = myGameArea.canvas.width - 30 - length;
+        var startY = myGameArea.canvas.height - 35 - 2 * height;
+        ctx = myGameArea.context;
+        ctx.save();
+        ctx.globalAlpha = 0.3;
+        ctx.fillStyle = "#000";
+        ctx.fillRect(startX, startY + height * player.slot, length, height);
+        ctx.restore();
+        for (var i in  player.weapons)
+        {
+            console.log(i,player.weapons[i]);
+            if (player.weapons[i] == -1)
+            {
+                continue;
+            }
+            var weapon = this.weapons[player.weapons[i]];
+             var img = (weapon && weaponImages[weapon.name] && weaponImages[weapon.name][false] ? weaponImages[weapon.name][false] : false);
+            var scale = weapon.length/img.naturalWidth;
+           
+            ctx.save();
+            ctx.translate(startX  + length /2, startY + height * i + height/2, length, height);
+            if (img)
+                ctx.drawImage(img, scale * img.naturalWidth/-2, scale * img.naturalHeight / -2, scale * img.naturalWidth, scale * img.naturalHeight);
+            else
+            {
+                ctx.fillStyle = "#000";
+                ctx.fillRect(weapon.length/-2, 8/-2,weapon.length,8);
+                ctx.fillStyle = weapon.color;
+                ctx.fillRect(weapon.length/-2 +3/2, 5/-2,weapon.length - 3,5)
+            }
+            ctx.restore();
+        }
+        
     }
     this.displayHealthMeter = function()
     {
@@ -1435,7 +1469,10 @@ function updateGameArea() {
             {
                 if (!state.weapons[i].bullets[j])
                 {
-                    delete weaponBulletHitPoints[i][j];
+                    try{
+                        delete weaponBulletHitPoints[i][j];
+                    }
+                    catch{}
                 }
             }
         }
