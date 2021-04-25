@@ -89,7 +89,7 @@
         }
         canvas {
             border:0px;
-            background-color: #f1f1f1;
+            background-color: #4fb021;
             cursor: none;
         }
 
@@ -101,6 +101,12 @@
             padding: 0;
         }
     </style>
+    <script>
+        function setBackroundToBlackBrightness(alpha)
+        {
+            this.style.backgroundColor = 'rgba(0, 0, 0, ' + alpha + ')';
+        }
+    </scipt>
 </head>
 <body>
   <section class="vh-100">
@@ -110,14 +116,14 @@
             <div class="d-flex flex-column align-items-center justify-content-center h-100">
                 <h1>Shooty thing</h1>
                 <div class="form-group">
-                  <input type="text" onmouseover="this.style.backgroundColor = 'rgba(0, 0, 0, 0.6)';" onmouseout = "this.style.backgroundColor = 'rgba(0, 0, 0, 0.3)';" placeholder="Enter Name" maxlength="18" onkeydown="if (event.keyCode == 13) document.getElementById('joinGameButton').click()"  id="gameCodeInput"/>
+                  <input type="text" onmouseover="setBackroundToBlackBrightness(0.6);" onmouseout = "setBackroundToBlackBrightness(0.3);" placeholder="Enter Name" maxlength="18" onkeydown="if (event.keyCode == 13) document.getElementById('joinGameButton').click()"  id="gameCodeInput"/>
                   <input type="color" value = "#fcc976"  id="colorInput"/>
                 </div>
                 <button
                   type="submit"
                   class="btn btn-success"
                   id="joinGameButton"
-                  onmouseover="this.style.backgroundColor = 'rgba(0, 0, 0, 0.6)';" onmouseout = "this.style.backgroundColor = 'rgba(0, 0, 0, 0.3)';" 
+                  onmouseover="setBackroundToBlackBrightness(0.6);" onmouseout = "setBackroundToBlackBrightness(0.3);" 
                 >
                   Join Game
                 </button>
