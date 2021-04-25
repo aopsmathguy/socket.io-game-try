@@ -206,7 +206,7 @@ var path1 = "img/weapons/";
 var path2 = "img/ground weapons/";
 function imageExists(weapon, imageSrc, good, bad) {
     var img = new Image();
-    img.onload = (() => {good(weapon,img); console.log("shit");}); 
+    img.onload = (() => {good(weapon,img);}); 
     img.onerror = (() => {bad();});
     img.src = imageSrc;
 }
@@ -561,7 +561,6 @@ var GameState = function() {
         ctx.restore();
         for (var i in  player.weapons)
         {
-            console.log(i,player.weapons[i]);
             if (player.weapons[i] == -1)
             {
                 continue;
