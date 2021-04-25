@@ -102,9 +102,9 @@
         }
     </style>
     <script>
-        function setBackroundToBlackBrightness(alpha)
+        function setBackroundToBlackBrightness(elem,alpha)
         {
-            this.style.backgroundColor = 'rgba(0, 0, 0, ' + alpha + ')';
+            elem.style.backgroundColor = 'rgba(0, 0, 0, ' + alpha + ')';
         }
     </script>
 </head>
@@ -116,14 +116,14 @@
             <div class="d-flex flex-column align-items-center justify-content-center h-100">
                 <h1>Shooty thing</h1>
                 <div class="form-group">
-                  <input type="text" onmouseover="setBackroundToBlackBrightness(0.6);" onmouseout = "setBackroundToBlackBrightness(0.3);" placeholder="Enter Name" maxlength="18" onkeydown="if (event.keyCode == 13) document.getElementById('joinGameButton').click()"  id="gameCodeInput"/>
+                  <input type="text" onmouseover="setBackroundToBlackBrightness(this,0.6);" onmouseout = "setBackroundToBlackBrightness(this,0.3);" placeholder="Enter Name" maxlength="18" onkeydown="if (event.keyCode == 13) document.getElementById('joinGameButton').click()"  id="gameCodeInput"/>
                   <input type="color" value = "#fcc976"  id="colorInput"/>
                 </div>
                 <button
                   type="submit"
                   class="btn btn-success"
                   id="joinGameButton"
-                  onmouseover="setBackroundToBlackBrightness(0.6);" onmouseout = "setBackroundToBlackBrightness(0.3);" 
+                  onmouseover="setBackroundToBlackBrightness(this,0.6);" onmouseout = "setBackroundToBlackBrightness(this,0.3);" 
                 >
                   Join Game
                 </button>
