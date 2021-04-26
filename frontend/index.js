@@ -760,19 +760,28 @@ var GameState = function() {
         ctx.closePath();
         ctx.stroke();
 
-        ctx.strokeStyle = '#000';
-        drawer.lineWidth(ctx, 1.5);
+        var handRadius = 6
+        ctx.fillStyle = "#000";
         ctx.beginPath();
-        drawer.circle(ctx, player.pos.add(firstHand.rotate(ang)), 6);
+        drawer.circle(ctx, player.pos.add(firstHand.rotate(ang)), handRadius + 1.5);
         ctx.closePath();
         ctx.fill();
-        ctx.stroke();
 
         ctx.beginPath();
-        drawer.circle(ctx, player.pos.add(secondHand.rotate(ang)), 6);
+        drawer.circle(ctx, player.pos.add(secondHand.rotate(ang)), handRadius + 1.5);
         ctx.closePath();
         ctx.fill();
-        ctx.stroke();
+        
+        ctx.fillStyle = player.color;
+        ctx.beginPath();
+        drawer.circle(ctx, player.pos.add(firstHand.rotate(ang)), handRadius);
+        ctx.closePath();
+        ctx.fill();
+
+        ctx.beginPath();
+        drawer.circle(ctx, player.pos.add(secondHand.rotate(ang)), handRadius);
+        ctx.closePath();
+        ctx.fill();
         if (player.weapon != -1)
         {
             this.displayWeapon(player.weapon);
