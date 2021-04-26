@@ -43,7 +43,7 @@
             width:80%;
             font-size:30px;
             color: #fff;
-            background-color: rgba(0, 0, 0, 0.3);
+            background-color: rgba(0, 0, 0, 0.2);
             border-radius: 10px;
             margin: 0px;
         }
@@ -59,7 +59,7 @@
             width: 60%;
             font-size:30px;
             color: #fff;
-            background-color: rgba(0, 0, 0, 0.3);
+            background-color: rgba(0, 0, 0, 0.2);
             border-radius: 10px;
         }
         ::placeholder{
@@ -73,7 +73,7 @@
             height:60%;
             
             
-            background-color:rgba(0, 0, 0, 0.3);
+            background-color:rgba(0, 0, 0, 0.2);
             border-radius: 20px;
             padding: 10px 10px;
         }
@@ -116,14 +116,14 @@
             <div class="d-flex flex-column align-items-center justify-content-center h-100">
                 <h1>Shooty thing</h1>
                 <div class="form-group">
-                  <input type="text" onmouseover="setBackroundToBlackBrightness(this,0.6);" onmouseout = "setBackroundToBlackBrightness(this,0.3);" placeholder="Enter Name" maxlength="18" onkeydown="if (event.keyCode == 13) document.getElementById('joinGameButton').click()"  id="gameCodeInput"/>
+                  <input type="text" onmouseover="setBackroundToBlackBrightness(this,0.6);" onmouseout = "setBackroundToBlackBrightness(this,0.2);" placeholder="Enter Name" maxlength="18" onkeydown="if (event.keyCode == 13) document.getElementById('joinGameButton').click()"  id="gameCodeInput"/>
                   <input type="color" value = "#fcc976"  id="colorInput"/>
                 </div>
                 <button
                   type="submit"
                   class="btn btn-success"
                   id="joinGameButton"
-                  onmouseover="setBackroundToBlackBrightness(this,0.6);" onmouseout = "setBackroundToBlackBrightness(this,0.3);" 
+                  onmouseover="setBackroundToBlackBrightness(this,0.6);" onmouseout = "setBackroundToBlackBrightness(this,0.2);" 
                 >
                   Join Game
                 </button>
