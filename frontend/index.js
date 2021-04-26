@@ -342,7 +342,7 @@ function handleInit(msg) {
 function blackBoxedText(txt, font, color, size, posx, posy, buffer, txtAlpha, align) {
     ctx = myGameArea.context;
     ctx.save();
-    ctx.globalAlpha = txtAlpha * 0.3;
+    ctx.globalAlpha = txtAlpha * 0.2;
     ctx.font = font;
     ctx.fillStyle = "#000";
     var width = ctx.measureText(txt).width;
@@ -555,7 +555,7 @@ var GameState = function() {
         var startY = myGameArea.canvas.height - 35 - 2 * height;
         ctx = myGameArea.context;
         ctx.save();
-        ctx.globalAlpha = 0.3;
+        ctx.globalAlpha = 0.2;
         ctx.fillStyle = "#000";
         ctx.fillRect(startX, startY + height * player.slot, length, height);
         ctx.restore();
@@ -593,7 +593,7 @@ var GameState = function() {
         var margin = 6;
         ctx = myGameArea.context;
         ctx.save();
-        ctx.globalAlpha = 0.3;
+        ctx.globalAlpha = 0.2;
         ctx.fillStyle = "#000";
         ctx.fillRect(startX, startY, length, height);
         ctx.restore();
@@ -641,7 +641,7 @@ var GameState = function() {
 
         var ctx = myGameArea.context;
         ctx.save();
-        ctx.globalAlpha = 0.3;
+        ctx.globalAlpha = 0.2;
         ctx.fillStyle = "#000";
         ctx.fillRect(startX, startY, totalWidth, totalHeight);
         ctx.restore();
