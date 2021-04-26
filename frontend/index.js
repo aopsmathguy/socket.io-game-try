@@ -720,25 +720,17 @@ var GameState = function() {
         ctx.strokeStyle = '#000';
         ctx.fillStyle = '#000';
         ctx.beginPath();
-        drawer.circle(ctx, player.pos.add(firstShoulder.rotate(ang)), 13/2);
-        ctx.closePath();
-        ctx.fill();
-        ctx.fillStyle = player.color;
-        ctx.beginPath();
-        drawer.circle(ctx, player.pos.add(firstShoulder.rotate(ang)), 10/2);
+        drawer.circle(ctx, player.pos.add(firstShoulder.rotate(ang)), 15/2);
         ctx.closePath();
         ctx.fill();
         
+        
         ctx.fillStyle = '#000';
         ctx.beginPath();
-        drawer.circle(ctx, player.pos.add(firstShoulder.rotate(ang)), 13/2);
+        drawer.circle(ctx, player.pos.add(secondShoulder.rotate(ang)), 15/2);
         ctx.closePath();
         ctx.fill();
-        ctx.fillStyle = player.color;
-        ctx.beginPath();
-        drawer.circle(ctx, player.pos.add(firstShoulder.rotate(ang)), 10/2);
-        ctx.closePath();
-        ctx.fill();
+        
         
         
         drawer.lineWidth(ctx, 13);
@@ -753,6 +745,17 @@ var GameState = function() {
         drawer.lineContext(ctx, player.pos.add(secondHand.rotate(ang)));
         ctx.closePath();
         ctx.stroke();
+        
+        ctx.fillStyle = player.color;
+        ctx.beginPath();
+        drawer.circle(ctx, player.pos.add(firstShoulder.rotate(ang)), 12/2);
+        ctx.closePath();
+        ctx.fill();
+        ctx.fillStyle = player.color;
+        ctx.beginPath();
+        drawer.circle(ctx, player.pos.add(secondShoulder.rotate(ang)), 12/2);
+        ctx.closePath();
+        ctx.fill();
         
         ctx.strokeStyle = player.color;
         drawer.lineWidth(ctx, 10);
