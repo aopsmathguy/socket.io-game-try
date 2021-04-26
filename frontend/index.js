@@ -15,7 +15,7 @@ socket.on('gameState', (msg) => {
         weapon.type = "Gun";
     }
     tickIntervals.push(msg.time);
-    if (tickIntervals.length > 10)
+    if (tickIntervals.length > 6)
     {
         tickIntervals.shift();
     }
@@ -387,7 +387,7 @@ var myGameArea = {
             return false; // cancel default menu
         }
         this.time = Date.now();
-        this.fpsUpdate = 60;
+        this.fpsUpdate = 10;
         this.frameTimes = [];
         this.updateFps = function() {
 
