@@ -695,14 +695,13 @@ var GameState = function() {
 
         
         var ang = player.ang;
-        /*var rotAng1 = 0;
+        var rotAng1 = 0;
         var rotAng2 = 0.25*Math.PI;
 
         var firstShoulder;
         var secondShoulder;
         var firstHand;
         var secondHand;
-
         if (player.weapon != -1) {
             var weapon = this.weapons[player.weapon];
             firstShoulder = (new Vector(0, player.radius + 2)).rotate(rotAng1);
@@ -717,7 +716,7 @@ var GameState = function() {
             secondHand = new Vector(player.radius * 0.85, -player.radius * 0.8);
 
         }
-        ctx.strokeStyle = '#000';
+        /*ctx.strokeStyle = '#000';
         ctx.fillStyle = '#000';
         ctx.beginPath();
         drawer.circle(ctx, player.pos.add(firstShoulder.rotate(ang)), 14/2);
