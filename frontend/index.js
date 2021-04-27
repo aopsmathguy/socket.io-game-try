@@ -695,7 +695,7 @@ var GameState = function() {
 
         
         var ang = player.ang;
-        var rotAng1 = 0;
+        /*var rotAng1 = 0;
         var rotAng2 = 0.25*Math.PI;
 
         var firstShoulder;
@@ -770,7 +770,7 @@ var GameState = function() {
         drawer.lineContext(ctx, player.pos.add(secondHand.rotate(ang)));
         ctx.closePath();
         ctx.stroke();
-
+*/
         var handRadius = 6
         ctx.fillStyle = "#000";
         ctx.beginPath();
