@@ -902,8 +902,7 @@ var GameState = function() {
 
         var player = this.players[i];
         var pos = player.pos.add(new Vector(0, 50));
-        var disPos = drawer.transform(pos);
-        blackBoxedText(player.name, "bold 12px Courier New", "#fff",12, disPos.x, disPos.y, 3, 1, 'center');
+        blackBoxedText(player.name, "bold 12px Courier New", "#fff",12, pos.x, pos.y, 3, 1, 'center');
     }
     this.snapWeapons = function() {
         for (var i in this.players) {
@@ -926,6 +925,29 @@ var makeObstacles = function() {
 }
 var Player = function() {
     this.type = "Player";
+    this.drawHealthBar = function()
+    {
+         var ctx = myGameArea.context;
+
+         var left = this.pos.add(new Vector(-1.5*this.radius,-this.radius * 2));
+         var right = this.pos.add(new Vector(1.5*this.radius,-this.radius * 2));
+         var mid = this.pos.add(new Vector(-1.5*this.radius+3*Math.max(0,this.health)/100*this.radius,-this.radius * 2));
+
+         ctx.strokeStyle = '#f00';
+         ctx.lineWidth = 8;
+         ctx.beginPath();
+         ctx.moveTo(right.x,right.y);
+         ctx.lineTo(mid.x,mid.y);
+         ctx.closePath();
+         ctx.stroke();
+
+         ctx.strokeStyle = '#0f0';
+         ctx.beginPath();
+         ctx.moveTo(left.x,left.y);
+         ctx.lineTo(mid.x,mid.y);
+         ctx.closePath();
+         ctx.stroke();
+    }
     this.intersectSegment = function(v1,v2)
     {
       if (!this.alive) {
