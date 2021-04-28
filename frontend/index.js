@@ -431,6 +431,15 @@ var myGameArea = {
 
         this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
+    },
+    transform : function(x,y, dir,scl, func)
+    {
+        this.context.save();
+        this.context.translate(x,y);
+        this.context.rotate(dir);
+        this.context.scale(scl,scl);
+        func();
+        this.context.restore();
     }
 }
 var controlsBundle = {
@@ -502,38 +511,41 @@ var giveMethods = function(obj) {
 var GameState = function() {
     this.type = "GameState";
     this.render = function() {
-        loopThroughDisplayObstacles(drawer.scroll, (obstacle) => {
-            if (!obstacle.intersectable) {
-                obstacle.display();
+        drawer.transformPoint(() => {
+            loopThroughDisplayObstacles(drawer.scroll, (obstacle) => {
+                if (!obstacle.intersectable) {
+                    obstacle.display();
+                }
+            });
+            for (var idx in this.weapons) {
+                if (!this.weapons[idx].hold) {
+                    this.displayWeapon(idx)
+                }
             }
-        });
-        for (var idx in this.weapons) {
-            if (!this.weapons[idx].hold) {
-                this.displayWeapon(idx)
+            for (var idx in this.weapons) {
+                this.displayBullets(idx)
             }
-        }
-        for (var idx in this.weapons) {
-            this.displayBullets(idx)
-        }
-        loopThroughDisplayObstacles(drawer.scroll, (obstacle) => {
-            if (obstacle.intersectable) {
-                obstacle.display();
+            loopThroughDisplayObstacles(drawer.scroll, (obstacle) => {
+                if (obstacle.intersectable) {
+                    obstacle.display();
+                }
+            });
+
+            for (var idx in this.players) {
+                if (this.players[idx].alive && idx != controlId)
+                    this.displayName(idx);
+            }
+            for (var idx in this.players) {
+                if (this.players[idx].alive)
+                    this.displayPlayer(idx);
+            }
+
+            for (var idx in this.players) {
+                if (this.players[idx].alive && idx != controlId)
+                    this.players[idx].drawHealthBar(idx);
             }
         });
         
-        for (var idx in this.players) {
-            if (this.players[idx].alive && idx != controlId)
-                this.displayName(idx);
-        }
-        for (var idx in this.players) {
-            if (this.players[idx].alive)
-                this.displayPlayer(idx);
-        }
-        
-        for (var idx in this.players) {
-            if (this.players[idx].alive && idx != controlId)
-                this.players[idx].drawHealthBar(idx);
-        }
         if (this.players[controlId] && initialScreen.style.display == "none")
         {
             this.displayHealthMeter();
@@ -716,139 +728,133 @@ var GameState = function() {
             secondHand = new Vector(player.radius * 0.85, -player.radius * 0.8);
 
         }
-        ctx.strokeStyle = '#000';
-        ctx.fillStyle = '#000';
-        ctx.beginPath();
-        drawer.circle(ctx, player.pos.add(firstShoulder.rotate(ang)), 13/2);
-        ctx.closePath();
-        ctx.fill();
-        
-        
-        ctx.fillStyle = '#000';
-        ctx.beginPath();
-        drawer.circle(ctx, player.pos.add(secondShoulder.rotate(ang)), 13/2);
-        ctx.closePath();
-        ctx.fill();
-        
-        
-        
-        drawer.lineWidth(ctx, 13);
-        ctx.beginPath();
-        drawer.moveContext(ctx, player.pos.add(firstShoulder.rotate(ang)));
-        drawer.lineContext(ctx, player.pos.add(firstHand.rotate(ang)));
-        ctx.closePath();
-        ctx.stroke();
-        
-        ctx.beginPath();
-        drawer.moveContext(ctx, player.pos.add(secondShoulder.rotate(ang)));
-        drawer.lineContext(ctx, player.pos.add(secondHand.rotate(ang)));
-        ctx.closePath();
-        ctx.stroke();
-        
-        ctx.fillStyle = player.color;
-        ctx.beginPath();
-        drawer.circle(ctx, player.pos.add(firstShoulder.rotate(ang)), 10/2);
-        ctx.closePath();
-        ctx.fill();
-        ctx.fillStyle = player.color;
-        ctx.beginPath();
-        drawer.circle(ctx, player.pos.add(secondShoulder.rotate(ang)), 10/2);
-        ctx.closePath();
-        ctx.fill();
-        
-        ctx.strokeStyle = player.color;
-        drawer.lineWidth(ctx, 10);
-        ctx.beginPath();
-        drawer.moveContext(ctx, player.pos.add(firstShoulder.rotate(ang)));
-        drawer.lineContext(ctx, player.pos.add(firstHand.rotate(ang)));
-        ctx.closePath();
-        ctx.stroke();
+        myGameArea.transform(player.pos.x,player.pos.y,player.ang,1,()=>{
+            ctx.fillStyle = '#000';
+            ctx.strokeStyle = '#000';
+            
+            ctx.beginPath();
+            ctx.arc(firstShoulder.x, firstShoulder.y, 13/2, 0, 2 * Math.PI);
+            ctx.closePath();
+            ctx.fill();
+            ctx.beginPath();
+            ctx.arc(secondShoulder.x, secondShoulder.y, 13/2, 0, 2 * Math.PI);
+            ctx.closePath();
+            ctx.fill();
 
-        ctx.beginPath();
-        drawer.moveContext(ctx, player.pos.add(secondShoulder.rotate(ang)));
-        drawer.lineContext(ctx, player.pos.add(secondHand.rotate(ang)));
-        ctx.closePath();
-        ctx.stroke();
+            ctx.lineWidth = 11;
+            ctx.beginPath();
+            ctx.moveTo(firstShoulder.x, firstShoulder.y);
+            ctx.lineTo(firstHand.x,firstHand.y);
+            ctx.closePath();
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(secondShoulder.x, secondShoulder.y);
+            ctx.lineTo(secondHand.x,secondHand.y);
+            ctx.closePath();
+            ctx.stroke();
 
-        var handRadius = 6
-        ctx.fillStyle = "#000";
-        ctx.beginPath();
-        drawer.circle(ctx, player.pos.add(firstHand.rotate(ang)), handRadius + 1.5);
-        ctx.closePath();
-        ctx.fill();
+            ctx.fillStyle = player.color;
+            ctx.strokeStyle = player.color;
+            
+            ctx.beginPath();
+            ctx.arc(firstShoulder.x, firstShoulder.y, 10/2, 0, 2 * Math.PI);
+            ctx.closePath();
+            ctx.fill();
+            ctx.beginPath();
+            ctx.arc(secondShoulder.x, secondShoulder.y, 10/2, 0, 2 * Math.PI);
+            ctx.closePath();
+            ctx.fill();
+            
+            ctx.lineWidth = 8;
+            ctx.beginPath();
+            ctx.moveTo(firstShoulder.x, firstShoulder.y);
+            ctx.lineTo(firstHand.x,firstHand.y);
+            ctx.closePath();
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(secondShoulder.x, secondShoulder.y);
+            ctx.lineTo(secondHand.x,secondHand.y);
+            ctx.closePath();
+            ctx.stroke();
 
-        ctx.beginPath();
-        drawer.circle(ctx, player.pos.add(secondHand.rotate(ang)), handRadius + 1.5);
-        ctx.closePath();
-        ctx.fill();
+            ctx.fillStyle = "#000";
+            ctx.beginPath();
+            ctx.arc(firstHand.x, firstHand.y, 15/2,0,2*Math.PI);
+            ctx.closePath();
+            ctx.fill();
+            ctx.beginPath();
+            ctx.arc(secondHand.x, secondHand.y, 15/2,0,2*Math.PI);
+            ctx.closePath();
+            ctx.fill();
+
+            ctx.fillStyle = player.color;
+            ctx.beginPath();
+            ctx.arc(firstHand.x, firstHand.y, 12/2,0,2*Math.PI);
+            ctx.closePath();
+            ctx.fill();
+            ctx.beginPath();
+            ctx.arc(secondHand.x, secondHand.y, 12/2,0,2*Math.PI);
+            ctx.closePath();
+            ctx.fill();
+        });
         
-        ctx.fillStyle = player.color;
-        ctx.beginPath();
-        drawer.circle(ctx, player.pos.add(firstHand.rotate(ang)), handRadius);
-        ctx.closePath();
-        ctx.fill();
-
-        ctx.beginPath();
-        drawer.circle(ctx, player.pos.add(secondHand.rotate(ang)), handRadius);
-        ctx.closePath();
-        ctx.fill();
         if (player.weapon != -1)
         {
             this.displayWeapon(player.weapon);
         }
         
-        ctx.strokeStyle = '#000';
-        drawer.lineWidth(ctx, 1.5);
-        ctx.fillStyle = player.color;
-        ctx.beginPath();
-        drawer.circle(ctx, player.pos, player.radius);
-        ctx.closePath();
-        ctx.fill();
-        ctx.stroke();
+        myGameArea.transform(player.pos.x,player.pos.y,player.ang,1,()=>{
+            ctx.strokeStyle = '#000';
+            ctx.lineWidth =  1.5;
+            ctx.fillStyle = player.color;
+            ctx.beginPath();
+            ctx.arc(0, 0, player.radius,0,2*Math.PI);
+            ctx.closePath();
+            ctx.fill();
+            ctx.stroke();
+        });
     }
     this.displayWeapon = function(i) {
         var weapon = this.weapons[i];
-
+        
         var ctx = myGameArea.context;
-        if (!weapon.hold) {
-            ctx.strokeStyle = weapon.color;
-            drawer.lineWidth(ctx, 4);
-            ctx.beginPath();
-            drawer.circle(ctx, weapon.pos, 30);
-            ctx.closePath();
-            ctx.stroke();
-        }
-        if (weaponImages[weapon.name] && weaponImages[weapon.name][weapon.hold])
-        {
-            var pos = drawer.transform(weapon.pos);
-            var newLength = drawer.scaled(weapon.length);
-            ctx.save();
-            ctx.translate(pos.x, pos.y);
-            ctx.rotate(weapon.ang);
-            var fat = 1;
-            var img = weaponImages[weapon.name][weapon.hold];
-            ctx.drawImage(img, newLength/-2, fat*newLength * img.naturalHeight/img.naturalWidth / -2, newLength, fat*newLength * img.naturalHeight/img.naturalWidth);
-            ctx.restore();
-        }
-        else
-        {
-            ctx.strokeStyle = "#000";
-            drawer.lineWidth(ctx, 8);
-            ctx.beginPath();
-            drawer.moveContext(ctx, weapon.pos.add((new Vector(-weapon.length / 2, 0)).rotate(weapon.ang)));
-            drawer.lineContext(ctx, weapon.pos.add((new Vector(weapon.length / 2, 0)).rotate(weapon.ang)));
-            ctx.closePath();
-            ctx.stroke();
+        
+        myGameArea.transform(weapon.pos.x,weapon.pos.y,weapon.ang,1,()=>{
+            if (!weapon.hold) {
+                ctx.strokeStyle = weapon.color;
+                ctx.lineWidth = 4;
+                ctx.beginPath();
+                ctx.arc(0,0, 30, 0, 2*Math.PI);
+                ctx.closePath();
+                ctx.stroke();
+            }
+            if (weaponImages[weapon.name] && weaponImages[weapon.name][weapon.hold])
+            {
+                var fat = 1;
+                var img = weaponImages[weapon.name][weapon.hold];
+                ctx.drawImage(img, weapon.length/-2, fat*weapon.length * img.naturalHeight/img.naturalWidth / -2, weapon.length, fat*weapon.length * img.naturalHeight/img.naturalWidth);
+            }
+            else
+            {
+                ctx.strokeStyle = "#000";
+                ctx.lineWidth = 8;
+                ctx.beginPath();
+                ctx.moveTo(-weapon.length / 2, 0);
+                ctx.lineTo(weapon.length / 2, 0);
+                ctx.closePath();
+                ctx.stroke();
 
 
-            ctx.strokeStyle = weapon.color;
-            drawer.lineWidth(ctx, 5);
-            ctx.beginPath();
-            drawer.moveContext(ctx, weapon.pos.add((new Vector(-weapon.length / 2 + 1.5, 0)).rotate(weapon.ang)));
-            drawer.lineContext(ctx, weapon.pos.add((new Vector(weapon.length / 2 - 1.5, 0)).rotate(weapon.ang)));
-            ctx.closePath();
-            ctx.stroke();
-        }
+                ctx.strokeStyle = weapon.color;
+                ctx.lineWidth = 5;
+                ctx.beginPath();
+                ctx.moveTo(-weapon.length / 2 + 1.5, 0);
+                ctx.lineTo(weapon.length / 2 - 1.5, 0);
+                ctx.closePath();
+                ctx.stroke();
+            }
+        })
+        
     }
     this.displayBullets = function(i) {
         var weapon = this.weapons[i];
@@ -1017,34 +1023,45 @@ var Bullet = function() {
     this.type = "Bullet";
     this.display = function() {
         var ctx = myGameArea.context;
-        const g = drawer.createLinearGradient(ctx, this.pos, this.pos.add((new Vector(-this.trailLength, 0)).rotate(this.ang)));
-        if (this.ammoType == 'bullet')
-        {
-            g.addColorStop(0, hexToRgbA(this.color, 1)); // opaque
-            g.addColorStop(0.07/3, hexToRgbA(this.color, 1)); // opaque
-            g.addColorStop(0.14/3, hexToRgbA('#ccc', 0.25)); // opaque
-            g.addColorStop(1/3, hexToRgbA('#ccc', 0)); // transparent
-        }
-        else if (this.ammoType == 'laser')
-        {
-            g.addColorStop(0, hexToRgbA(this.color, 0.5)); // opaque
-            g.addColorStop(0.5, hexToRgbA(this.color, 0.5)); // opaque
-            g.addColorStop(1, hexToRgbA(this.color, 0)); // transparent
-        }
-        else if (this.ammoType == 'arrow')
-        {
-            g.addColorStop(0, hexToRgbA(this.color, 1)); // opaque
-            g.addColorStop(0.1, hexToRgbA(this.color, 1)); // transparent
-            g.addColorStop(0.12, hexToRgbA(this.color, 0)); // transparent
-        }
-        ctx.strokeStyle = g;
+        
+        myGameArea.transform(this.pos.x,this.pos.y,this.ang, 1, ()=>{
+            const g = ctx.createLinearGradient(0,0, -this.trailLength, 0);
+            if (this.ammoType == 'bullet')
+            {
+                g.addColorStop(0, hexToRgbA(this.color, 1)); // opaque
+                g.addColorStop(0.07/3, hexToRgbA(this.color, 1)); // opaque
+                g.addColorStop(0.14/3, hexToRgbA('#ccc', 0.25)); // opaque
+                g.addColorStop(1/3, hexToRgbA('#ccc', 0)); // transparent
+            }
+            else if (this.ammoType == 'laser')
+            {
+                g.addColorStop(0, hexToRgbA(this.color, 0.5)); // opaque
+                g.addColorStop(0.5, hexToRgbA(this.color, 0.5)); // opaque
+                g.addColorStop(1, hexToRgbA(this.color, 0)); // transparent
+            }
+            else if (this.ammoType == 'arrow')
+            {
+                g.addColorStop(0, hexToRgbA(this.color, 1)); // opaque
+                g.addColorStop(0.1, hexToRgbA(this.color, 1)); // transparent
+                g.addColorStop(0.12, hexToRgbA(this.color, 0)); // transparent
+            }
+            ctx.strokeStyle = g;
+            ctx.lineWidth = 4;
+            ctx.beginPath();
+            if (this.hitPoint != -1)
+            {
+                ctx.moveTo(-this.hitPoint.distanceTo(this.pos), 0);
+            }
+            else
+            {
+                ctx.moveTo(0,0);
+            }
 
-        drawer.lineWidth(ctx, 6);
-        ctx.beginPath();
-        drawer.moveContext(ctx, this.hitPoint != -1 ? this.hitPoint : this.pos);
-        drawer.lineContext(ctx, this.tailPos);
-        ctx.closePath();
-        ctx.stroke();
+            ctx.lineTo(-Math.min(this.trailLength,this.startPos.distanceTo(this.pos)),0);
+            ctx.closePath();
+            ctx.stroke();
+        });
+        
     }
     this.objectsIntersection = function(state) {
         if (this.hitPoint != -1)
@@ -1096,37 +1113,17 @@ var Drawer = function() {
     this.zoom = 1;
     this.targetScale;
     this.screenShake = this.screenShake || 0;
-    this.moveContext = function(ctx, point) {
-        var displayPoint = this.transform(point);
-        ctx.moveTo(displayPoint.x, displayPoint.y);
-    }
+    
     this.transform = function(point) {
         return point.subtract(this.scroll).multiply(this.scale).add((new Vector(myGameArea.canvas.width, myGameArea.canvas.height)).multiply(0.5));
     }
-    this.scaled = function(x)
+    this.transformPoint = function(func)
     {
-        return x * this.scale;
+        myGameArea.transform(myGameArea.canvas.width/2,myGameArea.canvas.height/2,0,this.scale,()=>{
+            myGameArea.transform(-this.scroll.x,-this.scroll.y,0,1, func);
+        });
     }
-    this.lineWidth = function(ctx, width) {
-        ctx.lineWidth = width * this.scale;
-    }
-    this.lineContext = function(ctx, point) {
-        var displayPoint = this.transform(point);
-        ctx.lineTo(displayPoint.x, displayPoint.y);
-    }
-    this.circle = function(ctx, point, radius) {
-        var displayPoint = this.transform(point);
-        ctx.arc(displayPoint.x, displayPoint.y, radius * this.scale, 0, 2 * Math.PI, false);
-    }
-    this.createLinearGradient = function(ctx, start, end) {
-        var newStart = this.transform(start);
-        var newEnd = this.transform(end);
-        return ctx.createLinearGradient(newStart.x, newStart.y, newEnd.x, newEnd.y);
-    }
-    this.fillText = function(ctx, point, txt) {
-        var displayPoint = this.transform(point);
-        ctx.fillText(txt, displayPoint.x, displayPoint.y);
-    }
+    
     this.update = function(state) {
 
         character = state.players[controlId];
@@ -1151,11 +1148,11 @@ var Obstacle = function() {
 
         ctx.fillStyle = this.color;
         ctx.strokeStyle = "#000";
-        drawer.lineWidth(ctx, 3);
+        ctx.lineWidth = 3;
         ctx.beginPath();
-        drawer.moveContext(ctx, this.vs[0]);
+        ctx.moveTo(this.vs[0].x,this.vs[0].y);
         for (var i = 1; i < this.vs.length; i++) {
-            drawer.lineContext(ctx, this.vs[i]);
+            ctx.lineTo(this.vs[i].x,this.vs[i].y);
         }
         ctx.closePath();
         ctx.fill();
