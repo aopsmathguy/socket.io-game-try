@@ -897,27 +897,7 @@ var GameState = function() {
             }
         }
     }
-    this.displayReloadTime = function() {
-        if (!this.players[controlId].alive) {
-            return;
-        }
-        var player = this.players[controlId];
-        if (player && player.weapon != -1 && this.weapons[player.weapon].reloadStartTime != -1) {
-            var ctx = myGameArea.context;
-            ctx.save();
-            ctx.globalAlpha = 0.8;
-
-            ctx.strokeStyle = '#fff';
-            drawer.lineWidth(ctx, 6);
-            ctx.beginPath();
-            drawer.moveContext(ctx, player.pos.add(new Vector(-player.radius, player.radius * 3)));
-            drawer.lineContext(ctx, player.pos.add(new Vector(player.radius - 2 * player.radius * (this.time - this.weapons[player.weapon].reloadStartTime) / this.weapons[player.weapon].reloadTime, player.radius * 3)));
-            ctx.closePath();
-            ctx.stroke();
-            ctx.restore();
-        }
-
-    }
+    
     this.displayName = function(i) {
 
         var player = this.players[i];
@@ -946,29 +926,6 @@ var makeObstacles = function() {
 }
 var Player = function() {
     this.type = "Player";
-    this.drawHealthBar = function()
-    {
-         var ctx = myGameArea.context;
-
-         var left = this.pos.add(new Vector(-1.5*this.radius,-this.radius * 2));
-         var right = this.pos.add(new Vector(1.5*this.radius,-this.radius * 2));
-         var mid = this.pos.add(new Vector(-1.5*this.radius+3*Math.max(0,this.health)/100*this.radius,-this.radius * 2));
-
-         ctx.strokeStyle = '#f00';
-         drawer.lineWidth(ctx,8);
-         ctx.beginPath();
-         drawer.moveContext(ctx,right);
-         drawer.lineContext(ctx,mid);
-         ctx.closePath();
-         ctx.stroke();
-
-         ctx.strokeStyle = '#0f0';
-         ctx.beginPath();
-         drawer.moveContext(ctx,left);
-         drawer.lineContext(ctx,mid);
-         ctx.closePath();
-         ctx.stroke();
-    }
     this.intersectSegment = function(v1,v2)
     {
       if (!this.alive) {
