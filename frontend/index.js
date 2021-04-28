@@ -902,7 +902,7 @@ var GameState = function() {
 
         var player = this.players[i];
         var pos = player.pos.add(new Vector(0, 50));
-        blackBoxedText(player.name, "bold 12px Courier New", "#fff",12, pos.x, pos.y, 3, 1, 'center');
+        blackBoxedText(player.name, "bold 20px Courier New", "#fff",20, pos.x, pos.y, 5, 1, 'center');
     }
     this.snapWeapons = function() {
         for (var i in this.players) {
