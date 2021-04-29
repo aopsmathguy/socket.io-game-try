@@ -434,6 +434,7 @@ var viableWeapons = [
     new GunStats('Stevens DB', 90, false, 450, 8, 2, 2000, true, 35, 15, 9, 350, 56, 700, 0.15, 0, 0.83, 10, 0.9, 1, 0.7, '#f0f', 'bullet','#ff0',60,2,30, 3, 53, -2),
     new GunStats('SPAS-12', 70, false, 100, 8, 9, 1000, false, 40, 8, 1, 650, 100, 1100, 0.1, 0, 0.83, 10, 0.9, 1, 0.5, '#0ff', 'bullet','#ff0',60,12,20, 3, 40, -2)
 ];
+var numEach = [3, 1, 1, 2, 2, 1,1, 1, 1, 1, 1, 1, 1, 1];
 
 var makeObstacles = function() {
     var players = {};
@@ -555,7 +556,6 @@ var makeObstacles = function() {
         addTo[addTo.length] = ob;
     }
     
-    var numEach = [3, 1, 2, 2, 1,1, 1, 1, 1, 1, 1, 1, 1];
     var weapons = [];
     for (var i = 0; i < viableWeapons.length; i++) {
         for (var j = 0; j < numEach[i]; j++) {
