@@ -443,6 +443,7 @@ var viableWeapons = {
 };
 
 var makeObstacles = function() {
+    viableWeapons.start();
     var players = {};
     var wallThick = -40;
 
