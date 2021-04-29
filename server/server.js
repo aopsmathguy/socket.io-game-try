@@ -19,7 +19,7 @@ io.on('connection', client => {
         gameHeight: gameHeight,
         gridWidth: gridWidth,
         framesPerTick: framesPerTick,
-        viableWeapons: viableWeapons
+        viableWeapons: viableWeapons.weapons
     });
     client.on('new player', addPlayer);
     client.on('disconnect', function() {
