@@ -1025,7 +1025,7 @@ var Bullet = function() {
                 g.addColorStop(0.12, hexToRgbA(this.color, 0)); // transparent
             }
             ctx.strokeStyle = g;
-            ctx.lineWidth = this.bulletWidth;
+            ctx.lineWidth = this.width;
             ctx.beginPath();
             if (this.hitPoint != -1)
             {
