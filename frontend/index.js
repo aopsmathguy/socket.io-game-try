@@ -765,8 +765,8 @@ var GameState = function() {
             ctx.closePath();
             ctx.stroke();
 
-            ctx.fillStyle = pSBC(-0.2,player.color);
-            ctx.strokeStyle = pSBC(-0.2,player.color);
+            ctx.fillStyle = pSBC(-0.4,player.color);
+            ctx.strokeStyle = pSBC(-0.4,player.color);
             
             ctx.beginPath();
             ctx.arc(firstShoulder.x, firstShoulder.y, 10/2, 0, 2 * Math.PI);
