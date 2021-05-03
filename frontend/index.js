@@ -169,8 +169,8 @@ var yourKillFeed = {
             var txtAlpha = Math.min(1, timeDiff / fadeTime, (upTime - timeDiff) / fadeTime);
 
             
-            var textPosX = myGameArea.canvas.width/2;
-            var textPosY = myGameArea.canvas.height - 250 + (idx + 1 - this.scroll) * 30;
+            var textPosX = myGameArea.uiWidth/2;
+            var textPosY = myGameArea.uiHeight - 250 + (idx + 1 - this.scroll) * 30;
 
             var ctx = myGameArea.context;
             ctx.save();
@@ -272,11 +272,11 @@ var loopThroughDisplayObstacles = function(objectPos, inner) {
         inner(borderObstacles[i]);
     }
     var sector = obstacleSector(objectPos);
-    for (var i = sector[0] - Math.floor(myGameArea.canvas.width / (2 * drawer.scale * gridWidth)) - 2; i < sector[0] + Math.floor(myGameArea.canvas.width / (2 * drawer.scale * gridWidth)) + 3; i++) {
+    for (var i = sector[0] - Math.floor(myGameArea.uiWidth / (2 * drawer.scale * gridWidth)) - 2; i < sector[0] + Math.floor(myGameArea.uiWidth / (2 * drawer.scale * gridWidth)) + 3; i++) {
         if (i < 0 || i >= obstacles.length) {
             continue;
         }
-        for (var j = sector[1] - Math.floor(myGameArea.canvas.height / (2 * drawer.scale * gridWidth)) - 2; j < sector[1] + Math.floor(myGameArea.canvas.height / (2 * drawer.scale * gridWidth)) + 3; j++) {
+        for (var j = sector[1] - Math.floor(myGameArea.uiHeight / (2 * drawer.scale * gridWidth)) - 2; j < sector[1] + Math.floor(myGameArea.uiHeight / (2 * drawer.scale * gridWidth)) + 3; j++) {
             if (j < 0 || j >= obstacles[i].length) {
                 continue;
             }
@@ -428,9 +428,18 @@ var myGameArea = {
     clear: function() {
         this.canvas.width = window.innerWidth;
         this.canvas.height = window.innerHeight;
-
+        
+        this.uiScale = (this.canvas.width + this.canvas.height)/2000;
+        this.uiWidth = this.canvas.width/this.uiScale;
+        this.uiHeight = this.canvas.height/this.uiScale;
+        
         this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
+    },
+    transformUi : function(func){
+        this.transform(0,0,0,this.uiScale){
+            func();
+        }
     },
     transform : function(x,y, dir,scl, func)
     {
@@ -511,40 +520,43 @@ var giveMethods = function(obj) {
 var GameState = function() {
     this.type = "GameState";
     this.render = function() {
-        drawer.transformPoint(() => {
-            loopThroughDisplayObstacles(drawer.scroll, (obstacle) => {
-                if (!obstacle.intersectable) {
-                    obstacle.display();
+        myGameArea.transformUi(() => {
+            drawer.transformPoint(() => {
+                loopThroughDisplayObstacles(drawer.scroll, (obstacle) => {
+                    if (!obstacle.intersectable) {
+                        obstacle.display();
+                    }
+                });
+                for (var idx in this.weapons) {
+                    if (!this.weapons[idx].hold) {
+                        this.displayWeapon(idx)
+                    }
+                }
+                for (var idx in this.weapons) {
+                    this.displayBullets(idx)
+                }
+                loopThroughDisplayObstacles(drawer.scroll, (obstacle) => {
+                    if (obstacle.intersectable) {
+                        obstacle.display();
+                    }
+                });
+
+                for (var idx in this.players) {
+                    if (this.players[idx].alive && idx != controlId)
+                        this.displayName(idx);
+                }
+                for (var idx in this.players) {
+                    if (this.players[idx].alive)
+                        this.displayPlayer(idx);
+                }
+
+                for (var idx in this.players) {
+                    if (this.players[idx].alive && idx != controlId)
+                        this.players[idx].drawHealthBar(idx);
                 }
             });
-            for (var idx in this.weapons) {
-                if (!this.weapons[idx].hold) {
-                    this.displayWeapon(idx)
-                }
-            }
-            for (var idx in this.weapons) {
-                this.displayBullets(idx)
-            }
-            loopThroughDisplayObstacles(drawer.scroll, (obstacle) => {
-                if (obstacle.intersectable) {
-                    obstacle.display();
-                }
-            });
-
-            for (var idx in this.players) {
-                if (this.players[idx].alive && idx != controlId)
-                    this.displayName(idx);
-            }
-            for (var idx in this.players) {
-                if (this.players[idx].alive)
-                    this.displayPlayer(idx);
-            }
-
-            for (var idx in this.players) {
-                if (this.players[idx].alive && idx != controlId)
-                    this.players[idx].drawHealthBar(idx);
-            }
         });
+        
         
         if (this.players[controlId] && initialScreen.style.display == "none")
         {
@@ -563,8 +575,8 @@ var GameState = function() {
         var player = this.players[controlId];
         var length = 180;
         var height = 60;
-        var startX = myGameArea.canvas.width - 30 - length;
-        var startY = myGameArea.canvas.height - 35 - 2 * height;
+        var startX = myGameArea.uiWidth - 30 - length;
+        var startY = myGameArea.uiHeight - 35 - 2 * height;
         ctx = myGameArea.context;
         ctx.save();
         ctx.globalAlpha = 0.2;
@@ -599,8 +611,8 @@ var GameState = function() {
     this.displayHealthMeter = function()
     {
         var length = 300;
-        var startX = 1/2 * myGameArea.canvas.width-length/2;
-        var startY = myGameArea.canvas.height -75;
+        var startX = 1/2 * myGameArea.uiWidth-length/2;
+        var startY = myGameArea.uiHeight -75;
         var height = 40;
         var margin = 6;
         ctx = myGameArea.context;
@@ -647,7 +659,7 @@ var GameState = function() {
         var maxLength = 10;
         var totalHeight = (Math.min(displayObj.length,maxLength) + 2)*(margin + height) + margin;
         var totalWidth = 280;
-        var startX = myGameArea.canvas.width - 300;
+        var startX = myGameArea.uiWidth - 300;
         var startY = 20;
         var split1 = 180;
 
@@ -879,7 +891,7 @@ var GameState = function() {
                 "bold " + size + "px Courier New",
                 "#fff",
                 size,
-                myGameArea.canvas.width / 2, myGameArea.canvas.height - 100,
+                myGameArea.uiWidth / 2, myGameArea.uiHeight - 100,
                 buffer, 1, "center");
             if (weapon.reloadStartTime != -1) {
                 var frac = Math.min(Math.max((this.time - weapon.reloadStartTime) / weapon.reloadTime,0),1);
@@ -889,8 +901,8 @@ var GameState = function() {
                 ctx.strokeStyle = '#fff';
                 ctx.lineWidth = 6;
                 ctx.beginPath();
-                ctx.moveTo(myGameArea.canvas.width / 2 - width / 2 - buffer, myGameArea.canvas.height - 100 - 3 / 4 * size - buffer);
-                ctx.lineTo(myGameArea.canvas.width / 2 + width / 2 + buffer - (width + 20) * frac, myGameArea.canvas.height - 100 - 3 / 4 * size - buffer);
+                ctx.moveTo(myGameArea.uiWidth / 2 - width / 2 - buffer, myGameArea.uiHeight - 100 - 3 / 4 * size - buffer);
+                ctx.lineTo(myGameArea.uiWidth / 2 + width / 2 + buffer - (width + 20) * frac, myGameArea.uiHeight - 100 - 3 / 4 * size - buffer);
                 ctx.closePath();
                 ctx.stroke();
                 ctx.restore();
@@ -1094,11 +1106,11 @@ var Drawer = function() {
     this.screenShake = this.screenShake || 0;
     
     this.transform = function(point) {
-        return point.subtract(this.scroll).multiply(this.scale).add((new Vector(myGameArea.canvas.width, myGameArea.canvas.height)).multiply(0.5));
+        return point.subtract(this.scroll).multiply(this.scale).add((new Vector(myGameArea.uiWidth, myGameArea.uiHeight)).multiply(0.5));
     }
     this.transformPoint = function(func)
     {
-        myGameArea.transform(myGameArea.canvas.width/2,myGameArea.canvas.height/2,0,this.scale,()=>{
+        myGameArea.transform(myGameArea.uiWidth/2,myGameArea.uiHeight/2,0,this.scale,()=>{
             myGameArea.transform(-this.scroll.x,-this.scroll.y,0,1, func);
         });
     }
@@ -1109,12 +1121,12 @@ var Drawer = function() {
         if (character)
         {
             this.scroll = character.pos.add((new Vector(Math.random() - 0.5, Math.random() - 0.5)).multiply(this.screenShake));
-            this.targetScale = this.zoom / 40000 * (9 * myGameArea.canvas.width + 16 * myGameArea.canvas.height);
+            this.targetScale = this.zoom / 40000 * (9 * myGameArea.uiWidth + 16 * myGameArea.uiHeight);
         }
         else
         {
             this.scroll = (new Vector(gameWidth,gameHeight)).multiply(0.5).add((new Vector(Math.random() - 0.5, Math.random() - 0.5)).multiply(this.screenShake));
-            this.targetScale =  (Math.max(myGameArea.canvas.width,myGameArea.canvas.height))/Math.max(gameWidth,gameHeight);
+            this.targetScale =  (Math.max(myGameArea.uiWidth,myGameArea.uiHeight))/Math.max(gameWidth,gameHeight);
         }
 
         this.scale *= Math.pow(this.targetScale / this.scale, 0.1);
