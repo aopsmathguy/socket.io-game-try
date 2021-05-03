@@ -437,9 +437,9 @@ var myGameArea = {
 
     },
     transformUi : function(func){
-        this.transform(0,0,0,this.uiScale){
+        this.transform(0,0,0,this.uiScale,()=>{
             func();
-        }
+        });
     },
     transform : function(x,y, dir,scl, func)
     {
@@ -555,20 +555,20 @@ var GameState = function() {
                         this.players[idx].drawHealthBar(idx);
                 }
             });
+        
+        
+            if (this.players[controlId] && initialScreen.style.display == "none")
+            {
+                this.displayHealthMeter();
+                // this.displayReloadTime();
+                this.displayBulletCount();
+                //myGameArea.printFps();
+                this.displayLoadout();
+                killFeed.display();
+                yourKillFeed.display();
+            }
+            this.displayScoreBoard();
         });
-        
-        
-        if (this.players[controlId] && initialScreen.style.display == "none")
-        {
-            this.displayHealthMeter();
-            // this.displayReloadTime();
-            this.displayBulletCount();
-            //myGameArea.printFps();
-            this.displayLoadout();
-            killFeed.display();
-            yourKillFeed.display();
-        }
-        this.displayScoreBoard();
     }
     this.displayLoadout = function()
     {
