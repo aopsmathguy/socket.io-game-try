@@ -765,8 +765,8 @@ var GameState = function() {
             ctx.closePath();
             ctx.stroke();
 
-            ctx.fillStyle = "#00f";
-            ctx.strokeStyle = "#00f";
+            ctx.fillStyle = player.color;
+            ctx.strokeStyle = player.color;
             
             ctx.beginPath();
             ctx.arc(firstShoulder.x, firstShoulder.y, 10/2, 0, 2 * Math.PI);
