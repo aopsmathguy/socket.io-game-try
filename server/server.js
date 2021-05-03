@@ -597,11 +597,10 @@ function orientation(p, q, r) {
 }
 var Player = function(xStart, yStart, name, color, id) {
     this.type = "Player";
-    this.outfields = ['type','radius','headRadius','reachDist','weapon','weapons','slot','health','pos','ang','punchLastTime','id','name','killstreak','points','color','alive'];
+    this.outfields = ['type','radius','reachDist','weapon','weapons','slot','health','pos','ang','punchLastTime','id','name','killstreak','points','color','alive'];
     setIfUndefined(this, 'speed', 5);
     setIfUndefined(this, 'agility', 0.1);
     setIfUndefined(this, 'radius', 20);//
-    setIfUndefined(this, 'headRadius', 13);//
     setIfUndefined(this, 'reachDist', 50);//
 
     setIfUndefined(this, 'weapon', -1);//
