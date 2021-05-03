@@ -753,7 +753,7 @@ var GameState = function() {
             ctx.closePath();
             ctx.fill();
 
-            ctx.lineWidth = 11;
+            ctx.lineWidth = 12;
             ctx.beginPath();
             ctx.moveTo(firstShoulder.x, firstShoulder.y);
             ctx.lineTo(firstHand.x,firstHand.y);
@@ -765,8 +765,8 @@ var GameState = function() {
             ctx.closePath();
             ctx.stroke();
 
-            ctx.fillStyle = pSBC(-0.4,player.color);
-            ctx.strokeStyle = pSBC(-0.4,player.color);
+            ctx.fillStyle = "#00f";
+            ctx.strokeStyle = "#00f";
             
             ctx.beginPath();
             ctx.arc(firstShoulder.x, firstShoulder.y, 10/2, 0, 2 * Math.PI);
@@ -777,7 +777,7 @@ var GameState = function() {
             ctx.closePath();
             ctx.fill();
             
-            ctx.lineWidth = 8;
+            ctx.lineWidth = 9;
             ctx.beginPath();
             ctx.moveTo(firstShoulder.x, firstShoulder.y);
             ctx.lineTo(firstHand.x,firstHand.y);
