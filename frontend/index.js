@@ -426,12 +426,10 @@ var myGameArea = {
 
 
     },
+    scale : 2,
     clear: function() {
-        var scale = 2;
-        
-        
-        this.canvas.width = window.innerWidth * scale;
-        this.canvas.height = window.innerHeight * scale;
+        this.canvas.width = window.innerWidth * this.scale;
+        this.canvas.height = window.innerHeight * this.scale;
         
         this.canvas.style.width = window.innerWidth;
         this.canvas.style.height = window.innerHeight;
@@ -481,7 +479,7 @@ var controlsBundle = {
 
         const rect = myGameArea.canvas.getBoundingClientRect();
         window.addEventListener('mousemove', function(e) {
-            controlsBundle.mouse = new Vector(e.clientX - rect.left, e.clientY - rect.top);
+            controlsBundle.mouse = (new Vector(e.clientX - rect.left, e.clientY - rect.top)).multiply(myGameArea.scale);
             controlsBundle.ang = controlsBundle.mouse.subtract(new Vector(myGameArea.canvas.style.width, myGameArea.canvas.style.height).multiply(0.5)).ang();
             //socket.emit('mousemove', controlsBundle.ang);
         });
