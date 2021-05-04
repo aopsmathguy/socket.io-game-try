@@ -480,7 +480,7 @@ var controlsBundle = {
         const rect = myGameArea.canvas.getBoundingClientRect();
         window.addEventListener('mousemove', function(e) {
             controlsBundle.mouse = (new Vector(e.clientX - rect.left, e.clientY - rect.top)).multiply(myGameArea.scale);
-            controlsBundle.ang = controlsBundle.mouse.subtract(new Vector(myGameArea.canvas.style.width, myGameArea.canvas.style.height).multiply(0.5)).ang();
+            controlsBundle.ang = controlsBundle.mouse.subtract(new Vector(myGameArea.canvas.width, myGameArea.canvas.height).multiply(0.5)).ang();
             //socket.emit('mousemove', controlsBundle.ang);
         });
         window.addEventListener('mousedown', function(e) {
