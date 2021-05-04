@@ -370,6 +370,22 @@ function serverTime() {
 var gameStates = [];
 var controlId;
 var drawer;
+function setupCanvas(canvas) {
+  // Get the device pixel ratio, falling back to 1.
+  var dpr = window.devicePixelRatio || 1;
+  // Get the size of the canvas in CSS pixels.
+  var rect = canvas.getBoundingClientRect();
+  // Give the canvas pixel dimensions of their CSS
+  // size * the device pixel ratio.
+  canvas.width = rect.width * dpr;
+  canvas.height = rect.height * dpr;
+  var ctx = canvas.getContext('2d');
+  // Scale all drawing operations by the dpr, so you
+  // don't have to worry about the difference.
+  ctx.scale(dpr, dpr);
+  return ctx;
+}
+
 var myGameArea = {
     canvas: document.createElement("canvas"),
     start: function() {
@@ -382,7 +398,7 @@ var myGameArea = {
 
         this.canvas.width = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0);
         this.canvas.height = Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0);
-        this.context = this.canvas.getContext("2d");
+        this.context = setupCanvas(this.canvas);
         window.oncontextmenu = function() {
             return false; // cancel default menu
         }
