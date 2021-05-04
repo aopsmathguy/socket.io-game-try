@@ -373,7 +373,7 @@ var drawer;
 function setupCanvas(canvas) {
   // Get the device pixel ratio, falling back to 1.
   var dpr = window.devicePixelRatio || 1;
-  dpr *= 2;
+  dpr *= 10;
   // Get the size of the canvas in CSS pixels.
   var rect = canvas.getBoundingClientRect();
   // Give the canvas pixel dimensions of their CSS
