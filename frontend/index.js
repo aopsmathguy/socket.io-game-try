@@ -427,8 +427,12 @@ var myGameArea = {
 
     },
     clear: function() {
-        this.canvas.width = window.innerWidth;
-        this.canvas.height = window.innerHeight;
+        var scale = 2;
+        this.canvas.style.width = window.innerWidth;
+        this.canvas.style.height = window.innerHeight;
+        
+        this.canvas.width = this.canvas.style.width * scale;
+        this.canvas.height = this.canvas.style.height * scale;
         
         this.uiScale = (this.canvas.width + this.canvas.height)/2000;
         this.uiWidth = this.canvas.width/this.uiScale;
