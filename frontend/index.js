@@ -426,7 +426,7 @@ var myGameArea = {
 
 
     },
-    scale : 2,
+    scale : window.devicePixelRatio,
     clear: function() {
         this.canvas.width = window.innerWidth * this.scale;
         this.canvas.height = window.innerHeight * this.scale;
