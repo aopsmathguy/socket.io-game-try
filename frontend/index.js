@@ -383,7 +383,6 @@ var myGameArea = {
         this.canvas.width = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0);
         this.canvas.height = Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0);
         this.context = this.canvas.getContext("2d");
-        window.devicePixelRatio=2; 
         window.oncontextmenu = function() {
             return false; // cancel default menu
         }
