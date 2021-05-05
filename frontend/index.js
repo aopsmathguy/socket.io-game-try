@@ -222,13 +222,13 @@ var weaponImages = {
 for (var i in weaponImages)
 {
     weaponImages[i] = {};
-    imageExists(i,path1 + i + ".svg",(i,img) => {
-        weaponImages[i][true] = img;
+    imageExists(i,path1 + i + ".svg",(j,img) => {
+        weaponImages[j][true] = img;
     },()=>{
         weaponImages[i][true] = false;
     });
-    imageExists(i,path2 + i + ".svg",(i,img) => {
-        weaponImages[i][false] = img;
+    imageExists(i,path2 + i + ".svg",(j,img) => {
+        weaponImages[j][false] = img;
     },()=>{
         weaponImages[i][false] = false;
     });
