@@ -580,11 +580,11 @@ var GameState = function() {
     {
         var width = myGameArea.uiWidth/drawer.scale;
         var height = myGameArea.uiHeight/drawer.scale;
-        var startX = delta*Math.floor((drawer.scroll.x - width/2)/delta);
-        var startY = delta*Math.floor((drawer.scroll.y - height/2)/delta);
+        var startX = Math.max(delta*Math.floor((drawer.scroll.x - width/2)/delta),0);
+        var startY = Math.max(delta*Math.floor((drawer.scroll.y - height/2)/delta),0);
         
-        var endX = delta*(Math.floor((drawer.scroll.x + width/2)/delta)+1);
-        var endY = delta*(Math.floor((drawer.scroll.y + height/2)/delta) + 1);
+        var endX = Math.min(delta*(Math.floor((drawer.scroll.x + width/2)/delta)+1),gameWidth);
+        var endY = Math.min(delta*(Math.floor((drawer.scroll.y + height/2)/delta) + 1),gameWidth);
         var ctx = myGameArea.context;
         ctx.lineWidth = 2;
         ctx.strokeStyle = "rgba(0,0,0,0.3)";
