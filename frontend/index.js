@@ -1480,7 +1480,7 @@ setInterval(() => {
 },20);
 var lastDeadTime = -1;
 var weaponBulletHitPoints = {};
-function manageHitPoints(){
+function manageHitPoints(state){
     for (var i in state.weapons)
     {
         if (!weaponBulletHitPoints[i])
@@ -1512,7 +1512,7 @@ function updateGameArea() {
     if (gameStates.length > 1) {
         
         var state = linearInterpolator.linearGameState(weaponBulletHitPoints);
-        manageHitPoints();
+        manageHitPoints(state);
         if (state.players[controlId] && state.players[controlId].alive) {
             lastDeadTime = -1;
         } else if (lastDeadTime == -1) {
