@@ -527,7 +527,7 @@ var GameState = function() {
     this.render = function() {
         myGameArea.transformUi(() => {
             drawer.transformPoint(() => {
-                this.displayGrid();
+                this.displayGrid(30);
                 loopThroughDisplayObstacles(drawer.scroll, (obstacle) => {
                     if (!obstacle.intersectable) {
                         obstacle.display();
