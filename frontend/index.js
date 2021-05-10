@@ -1456,36 +1456,39 @@ setInterval(() => {
 },20);
 var lastDeadTime = -1;
 var weaponBulletHitPoints = {};
+function manageHitPoints(){
+    for (var i in state.weapons)
+    {
+        if (!weaponBulletHitPoints[i])
+        {
+            weaponBulletHitPoints[i] = {};
+        }
+        for (var j in state.weapons[i].bullets)
+        {
+            var bullet = state.weapons[i].bullets[j];
+            if (bullet.hitPoint != -1 && !weaponBulletHitPoints[i][j])
+            {
+                weaponBulletHitPoints[i][j] = bullet.hitPoint;
+            }
+        }
+        for (var j in weaponBulletHitPoints[i])
+        {
+            if (!state.weapons[i].bullets[j])
+            {
+                try{
+                    delete weaponBulletHitPoints[i][j];
+                }
+                catch{}
+            }
+        }
+    }
+}
 function updateGameArea() {
     myGameArea.clear();
     if (gameStates.length > 1) {
         
         var state = linearInterpolator.linearGameState(weaponBulletHitPoints);
-        for (var i in state.weapons)
-        {
-            if (!weaponBulletHitPoints[i])
-            {
-                weaponBulletHitPoints[i] = {};
-            }
-            for (var j in state.weapons[i].bullets)
-            {
-                var bullet = state.weapons[i].bullets[j];
-                if (bullet.hitPoint != -1 && !weaponBulletHitPoints[i][j])
-                {
-                    weaponBulletHitPoints[i][j] = bullet.hitPoint;
-                }
-            }
-            for (var j in weaponBulletHitPoints[i])
-            {
-                if (!state.weapons[i].bullets[j])
-                {
-                    try{
-                        delete weaponBulletHitPoints[i][j];
-                    }
-                    catch{}
-                }
-            }
-        }
+        manageHitPoints();
         if (state.players[controlId] && state.players[controlId].alive) {
             lastDeadTime = -1;
         } else if (lastDeadTime == -1) {
