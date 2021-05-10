@@ -588,6 +588,7 @@ var GameState = function() {
         var ctx = myGameArea.context;
         ctx.lineWidth = 2;
         ctx.strokeStyle = "rgba(0,0,0,0.2)";
+        ctx.beginPath();
         for (var x = startX; x <= endX; x += delta)
         {
             ctx.moveTo(x,startY);
