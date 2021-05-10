@@ -527,7 +527,7 @@ var GameState = function() {
     this.render = function() {
         myGameArea.transformUi(() => {
             drawer.transformPoint(() => {
-                this.displayGrid(30);
+                this.displayGrid(100);
                 loopThroughDisplayObstacles(drawer.scroll, (obstacle) => {
                     if (!obstacle.intersectable) {
                         obstacle.display();
@@ -578,8 +578,8 @@ var GameState = function() {
     }
     this.displayGrid = function(delta)
     {
-        var width = 100*this.uiWidth/drawer.scale;
-        var height = 100*this.uiHeight/drawer.scale;
+        var width = myGameArea.uiWidth/drawer.scale;
+        var height = myGameArea.uiHeight/drawer.scale;
         var startX = delta*Math.floor((drawer.scroll.x - width/2)/delta);
         var startY = delta*Math.floor((drawer.scroll.y - height/2)/delta);
         
@@ -587,7 +587,7 @@ var GameState = function() {
         var endY = delta*(Math.floor((drawer.scroll.y + height/2)/delta) + 1);
         var ctx = myGameArea.context;
         ctx.lineWidth = 2;
-        ctx.strokeStyle = "rgba(0,0,0,0.2)";
+        ctx.strokeStyle = "rgba(0,0,0,0.1)";
         for (var x = startX; x <= endX; x += delta)
         {
             ctx.beginPath();
