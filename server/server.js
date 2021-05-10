@@ -177,6 +177,7 @@ var obstacleSector = function(point) {
     var out = [Math.floor(point.x / gridWidth), Math.floor(point.y / gridWidth)];
     out[0] = Math.max(Math.min(out[0],obstacles.length), 0);
     out[1] = Math.max(Math.min(out[1],obstacles[0].length), 0);
+    return out;
 }
 var loopThroughObstacles = function(objectPos, inner) {
     var sector = obstacleSector(objectPos);
