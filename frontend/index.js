@@ -587,7 +587,7 @@ var GameState = function() {
         var endY = delta*(Math.floor((drawer.scroll.y + height/2)/delta) + 1);
         var ctx = myGameArea.context;
         ctx.lineWidth = 2;
-        ctx.strokeStyle = "rgba(0,0,0,0.1)";
+        ctx.strokeStyle = "rgba(0,0,0,0.2)";
         for (var x = startX; x <= endX; x += delta)
         {
             ctx.beginPath();
