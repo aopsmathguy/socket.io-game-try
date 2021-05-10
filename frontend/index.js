@@ -578,8 +578,8 @@ var GameState = function() {
     }
     this.displayGrid = function(delta)
     {
-        var width = this.uiWidth/drawer.scale;
-        var height = this.uiHeight/drawer.scale;
+        var width = 100*this.uiWidth/drawer.scale;
+        var height = 100*this.uiHeight/drawer.scale;
         var startX = delta*Math.floor((drawer.scroll.x - width/2)/delta);
         var startY = delta*Math.floor((drawer.scroll.y - height/2)/delta);
         
