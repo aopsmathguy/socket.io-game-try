@@ -598,6 +598,7 @@ var GameState = function() {
             ctx.moveTo(startX,y);
             ctx.lineTo(endX,y);
         }
+        ctx.stroke();
     }
     this.displayLoadout = function()
     {
