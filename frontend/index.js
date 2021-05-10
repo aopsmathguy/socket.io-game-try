@@ -588,18 +588,20 @@ var GameState = function() {
         var ctx = myGameArea.context;
         ctx.lineWidth = 2;
         ctx.strokeStyle = "rgba(0,0,0,0.2)";
-        ctx.beginPath();
         for (var x = startX; x <= endX; x += delta)
         {
+            ctx.beginPath();
             ctx.moveTo(x,startY);
             ctx.lineTo(x,endY);
+            ctx.stroke();
         }
         for (var y = startY; y <= endY; y += delta)
         {
+            ctx.beginPath();
             ctx.moveTo(startX,y);
             ctx.lineTo(endX,y);
+            ctx.stroke();
         }
-        ctx.stroke();
     }
     this.displayLoadout = function()
     {
