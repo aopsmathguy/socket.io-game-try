@@ -460,6 +460,7 @@ var controlsBundle = {
     keys: [],
     mouse: 0,
     mouseDown: false,
+    prevAng: 0,
     ang: 0,
     start: function() {
         controlsBundle.mouse = new Vector(0,0);
@@ -502,8 +503,11 @@ var controlsBundle = {
     }
 }
 var emitMousePos = function() {
-    if (gameStates.length > 0 && controlId && gameStates[0].players[controlId].alive)
+    if (controlsBundle.prevAng != controlsBundle.ang && gameStates.length > 0 && controlId && gameStates[0].players[controlId].alive)
+    {
         socket.emit('mousemove', controlsBundle.ang);
+        controlsBundle.prevAng = controlsBundle.ang;
+    }
 }
 var setIfUndefined = function(obj, field, value) {
      if (obj[field] === undefined) {
