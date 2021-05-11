@@ -100,7 +100,8 @@ io.on('connection', client => {
         {
             return;
         }
-        client.inGameId = client.inGameId;
+        controls[client.inGameId].mouseDown = false;
+        controls[client.inGameId].keys = {};
         var player = gameState.players[client.inGameId];
         var startPos = findSpawnPosition();
         var color = (/^#([A-Fa-f0-9]{3}){1,2}$/.test(msg.color) ? msg.color : "#fcc976");
