@@ -109,6 +109,7 @@ io.on('connection', client => {
         var name = msg.name.substring(0,18);
         if (player) {
             player.pos = startPos;
+            player.vel = new Vector(0,0);
             player.health = 100;
             player.alive = true;
             player.color = color;
