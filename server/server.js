@@ -36,32 +36,31 @@ io.on('connection', client => {
     });
     client.on('keydown', (keycode) => {
         if (keycode || typeof keycode !== 'undefined') {
-            if (controls[client.inGameId] && gameState.players[client.inGameId]) {
+            if (controls[client.inGameId] && gameState.players[client.inGameId] && gameState.players[client.inGameId].alive) {
                 controls[client.inGameId].keys[keycode] = true;
                 gameState.players[client.inGameId].justKeyDowned[keycode] = true;
             }
         }
     });
     client.on('keyup', (keycode) => {
-        if (keycode || typeof keycode !== 'undefined') {
+        if ((keycode || typeof keycode !== 'undefined') && controls[client.inGameId] && gameState.players[client.inGameId] && gameState.players[client.inGameId].alive) {
 
-            if (controls[client.inGameId] && gameState.players[client.inGameId])
                 controls[client.inGameId].keys[keycode] = false;
         }
     });
     client.on('mousemove', (ang) => {
-        if (typeof ang !== 'undefined' && !isNaN(ang) && controls[client.inGameId] && gameState.players[client.inGameId])
+        if (typeof ang !== 'undefined' && !isNaN(ang) && controls[client.inGameId] && gameState.players[client.inGameId] && gameState.players[client.inGameId].alive)
             controls[client.inGameId].ang = ang;
     });
     client.on('mousedown', () => {
-        if (controls[client.inGameId] && gameState.players[client.inGameId]) {
+        if (controls[client.inGameId] && gameState.players[client.inGameId]&& gameState.players[client.inGameId].alive) {
             controls[client.inGameId].mouseDown = true;
             gameState.players[client.inGameId].justMouseDowned = true;
             gameState.players[client.inGameId].autoShot = true;
         }
     });
     client.on('mouseup', () => {
-        if (controls[client.inGameId] && gameState.players[client.inGameId])
+        if (controls[client.inGameId] && gameState.players[client.inGameId]&& gameState.players[client.inGameId].alive)
         {
             controls[client.inGameId].mouseDown = false;
             gameState.players[client.inGameId].autoShot = false;
