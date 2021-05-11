@@ -100,6 +100,7 @@ io.on('connection', client => {
         {
             return;
         }
+        controls[client.inGameId] = {};
         controls[client.inGameId].mouseDown = false;
         controls[client.inGameId].keys = {};
         var player = gameState.players[client.inGameId];
