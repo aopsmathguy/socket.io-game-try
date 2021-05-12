@@ -573,12 +573,12 @@ var GameState = function() {
                     if (this.players[idx].alive && idx != controlId)
                         this.players[idx].drawHealthBar(idx);
                 }
-                this.displayWeaponPickup();
             });
         
         
             if (this.players[controlId] && initialScreen.style.display == "none")
             {
+                this.displayWeaponPickup();
                 this.displayHealthMeter();
                 // this.displayReloadTime();
                 this.displayBulletCount();
@@ -619,9 +619,9 @@ var GameState = function() {
     }
     this.displayWeaponPickup = function()
     {
-        var screenPos = (new Vector(canvas.width, canvas.height)).multiply(0.5).add(-100,0);
-        var size = 20 / drawer.scale;
-        var buffer = size * 0.2
+        var screenPos = (new Vector(myGameArea.uiWidth, myGameArea.uiHeight)).multiply(0.5).add(new Vector(0,100));
+        var size = 20;
+        var buffer = size * 0.2;
         var player = this.players[controlId];
         if (!player)
         {
@@ -633,7 +633,7 @@ var GameState = function() {
         {
             var weapon = this.weapons[i];
             var dist = weapon.pos.distanceTo(player.pos);
-            if (dist < minDist)
+            if (!weapon.hold && dist < minDist)
             {
                 minDist = dist;
                 weaponId = i;
@@ -644,7 +644,9 @@ var GameState = function() {
             return;
         }
         var weapon = this.weapons[weaponId];
-        blackBoxedText(weapon.name,
+       
+        //console.log(screenPos);
+        blackBoxedText("f: " + weapon.name,
                 "bold " + size + "px Courier New",
                 "#fff",
                 size,
@@ -1443,7 +1445,8 @@ var linearInterpolator = {
             if (left.weapons[i] == undefined || right.weapons[i] == undefined) {
                 continue;
             }
-            out.weapons[i].pos = this.linearPosition(left.weapons[i].pos,right.weapons[i].pos, displayTime, left.time,right.time);
+            if (!right.weapons[i].hold && !left.weapons[i].hold)
+                out.weapons[i].pos = this.linearPosition(left.weapons[i].pos,right.weapons[i].pos, displayTime, left.time,right.time);
             //var arrIdx = arrayUnique(Object.keys(right.weapons[i].bullets).concat(Object.keys(left.weapons[i].bullets)));
             var arrIdx = Object.keys(right.weapons[i].bullets);
             for (var thing in arrIdx) {
