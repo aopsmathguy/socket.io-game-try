@@ -18,11 +18,14 @@
             position: relative;
         }
         #centerColumn {
+            background-color: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
             position: absolute;
             left: 35%;
             width: 30%;
-            top: 20%;
-            height:60%;
+            top: 15%;
+            height:35%;
+            overflow-y: scroll;
         }
         h1{
             margin:20px;
@@ -65,6 +68,26 @@
         ::placeholder{
             color: rgba(255, 255, 255, 0.6);
         }
+        #settings{
+            background-color: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            position: absolute;
+            left: 35%;
+            width: 30%;
+            top: 55%;
+            height:30%;
+            overflow-y: scroll;
+            padding: 10px 10px;
+        }
+        .settingsText{
+            text-align:left;
+            margin: 10px;
+            font-size: 20px;
+            color: #fff;
+        }
+        .settingsInput{
+            float:right;
+        }
         #instructions{
             position: absolute;
             left: 5%;
@@ -81,6 +104,11 @@
         h2{
             margin:10px;
             font-size: 40px;
+            color: #fff;
+        }
+        h3{
+            margin:10px;
+            font-size: 30px;
             color: #fff;
         }
         p{
@@ -117,7 +145,7 @@
       <div id = "initialScreen">
           <div id="centerColumn" class="h-100">
             <div class="d-flex flex-column align-items-center justify-content-center h-100">
-                <h1>Shooty thing</h1>
+                <h1>Shoot</h1>
                 <div class="form-group">
                   <input type="text" onmouseover="setBackroundToBlackBrightness(this,0.6);" onmouseout = "setBackroundToBlackBrightness(this,0.2);" placeholder="Enter Name" maxlength="18" onkeydown="if (event.keyCode == 13) document.getElementById('joinGameButton').click()"  id="gameCodeInput"/>
                   <input type="color" value = "#fcc976"  id="colorInput"/>
@@ -132,7 +160,16 @@
                 </button>
             </div>
           </div>
-
+          <div id = "settings">
+                  <h3>
+                      Settings
+                  </h3>
+                  <label class = "settingsText">
+                      Crosshair Size:
+                  </label>
+                  <input type = "range" class = "settingsInput" id = "crosshairSize"/>
+         
+          </div>
           <div id = "instructions">
               <h2>How To Play</h2>
               <p>

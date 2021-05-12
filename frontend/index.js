@@ -189,7 +189,28 @@ var yourKillFeed = {
 
     }
 };
-
+var crossHair = {
+    minSize : 5,
+    maxSize : 100,
+    elem : document.getElementById("crosshairSize"),
+    size : 10,
+    display : function() {
+        myGameArea.transform(controlsBundle.mouse.x,controlsBundle.mouse.y, 0, this.size, () => {
+            (new Vector(1, 0)).drawLine(new Vector(-1, 0), '#fff', .2);
+            (new Vector(0, 1)).drawLine(new Vector(0, -1), '#fff', .2);
+            (new Vector(0, 0)).circle(.6, '#fff', .2);
+        });
+        
+    },
+    start : function() {
+        this.elem = document.getElementById("crosshairSize");
+        this.elem.oninput = (function() {
+            this.size = this.minSize * Math.pow(this.maxSize/this.minSize,this.elem.value/100);
+        }).bind(this);
+    }
+    
+    
+}
 
 
 var tickIntervals = [];
@@ -240,6 +261,7 @@ function startGame(){
     myGameArea.start();
     drawer = new Drawer();
     controlsBundle.start();
+    crossHair.start();
     myGameArea.interval();
 }
 function joinGame() {
@@ -518,6 +540,7 @@ var setIfUndefined = function(obj, field, value) {
         obj[field] = value;
     }
 }
+console.log("define");
 var giveMethods = function(obj) {
     if (obj == null) {
         return;
@@ -1371,11 +1394,6 @@ var Vector = function(x, y) {
     }
 
 }
-var displayCrosshair = function() {
-    controlsBundle.mouse.add(new Vector(10, 0)).drawLine(controlsBundle.mouse.add(new Vector(-10, 0)), '#fff', 2);
-    controlsBundle.mouse.add(new Vector(0, 10)).drawLine(controlsBundle.mouse.add(new Vector(0, -10)), '#fff', 2);
-    controlsBundle.mouse.circle(6, '#fff', 2);
-}
 var linearInterpolator = {
     lagLimit : 4000,
     linearValue : function(v1, v2, t, t1, t2) {
@@ -1582,7 +1600,7 @@ function updateGameArea() {
         state.render();
 
     }
-    displayCrosshair();
+    crossHair.display();
 }
 
 function hexToRgbA(hex, alpha) {
