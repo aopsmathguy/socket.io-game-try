@@ -843,9 +843,9 @@ var Player = function(xStart, yStart, name, color, id) {
         }
     }
 }
-var GunStats = function(name, class, length, auto, firerate, multishot, capacity, reloadTime, reloadType, bulletSpeed, damage, damageDrop, damageRange, damageDropTension, range, defSpray, sprayCoef, stability, kickAnimation, animationMult, personRecoil, walkSpeedMult, shootWalkSpeedMult, color, ammoType, ammoColor, bulletWidth, fadeTime, buttPosition, handPos1x, handPos1y, handPos2x, handPos2y){
+var GunStats = function(name, weaponClass, length, auto, firerate, multishot, capacity, reloadTime, reloadType, bulletSpeed, damage, damageDrop, damageRange, damageDropTension, range, defSpray, sprayCoef, stability, kickAnimation, animationMult, personRecoil, walkSpeedMult, shootWalkSpeedMult, color, ammoType, ammoColor, bulletWidth, fadeTime, buttPosition, handPos1x, handPos1y, handPos2x, handPos2y){
     setIfUndefined(this, 'name', name);//
-    setIfUndefined(this, 'class', class);//
+    setIfUndefined(this, 'weaponClass', weaponClass);//
     setIfUndefined(this, 'length', length);//
     setIfUndefined(this, 'auto', auto);
     setIfUndefined(this, 'multishot', multishot);
