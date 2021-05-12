@@ -791,11 +791,11 @@ var GameState = function() {
             ctx.strokeStyle = '#000';
             
             ctx.beginPath();
-            ctx.arc(firstShoulder.x, firstShoulder.y, 13/2, 0, 2 * Math.PI);
+            ctx.arc(firstShoulder.x, firstShoulder.y, 14/2, 0, 2 * Math.PI);
             ctx.closePath();
             ctx.fill();
             ctx.beginPath();
-            ctx.arc(secondShoulder.x, secondShoulder.y, 13/2, 0, 2 * Math.PI);
+            ctx.arc(secondShoulder.x, secondShoulder.y, 14/2, 0, 2 * Math.PI);
             ctx.closePath();
             ctx.fill();
 
@@ -837,11 +837,11 @@ var GameState = function() {
 
             ctx.fillStyle = "#000";
             ctx.beginPath();
-            ctx.arc(firstHand.x, firstHand.y, 15/2,0,2*Math.PI);
+            ctx.arc(firstHand.x, firstHand.y, 16/2,0,2*Math.PI);
             ctx.closePath();
             ctx.fill();
             ctx.beginPath();
-            ctx.arc(secondHand.x, secondHand.y, 15/2,0,2*Math.PI);
+            ctx.arc(secondHand.x, secondHand.y, 16/2,0,2*Math.PI);
             ctx.closePath();
             ctx.fill();
 
@@ -863,7 +863,7 @@ var GameState = function() {
         
         myGameArea.transform(player.pos.x,player.pos.y,player.ang,1,()=>{
             ctx.strokeStyle = '#000';
-            ctx.lineWidth =  1.5;
+            ctx.lineWidth =  2;
             ctx.fillStyle = player.color;
             ctx.beginPath();
             ctx.arc(0, 0, player.radius,0,2*Math.PI);
