@@ -137,27 +137,30 @@ const viableWeapons = {
     start : function()
     {
         this.weapons = [
-            new GunStats('Glock 17', 35, false, 780, 1, 15, 1500, true, 30, 17, 4, 500, 150, 1000, 0.15, 0.12, 0.9, 7, 0.9, 0, 0.95, 1, '#80f','bullet','#ff0', 5, 60, 32, 3, 3, 3, -2),
-            new GunStats('Redhawk', 40, false, 300, 1, 6, 1700,true, 50, 30, 10, 700, 200, 1300, 0, 0.2, 0.9, 10, 0.9, 0.5, 0.95, 0.6, '#ff0','bullet','#ff0', 5, 60,32, 3, 3, 3, -2),
-            new GunStats('Executioner', 35, false, 450, 12, 6, 1900,true, 22.5, 5, 3.5, 330, 200, 600, 0.2, 0, 0.9, 10, 0.9, 0.5, 0.95, 0.6, '#088','bullet','#ff0', 3, 60,32, 3, 3, 3, -2),
+            new GunStats('Glock 17', 'Secondary', 35, false, 780, 1, 15, 1500, true, 30, 17, 4, 500, 150, 1000, 0.15, 0.12, 0.9, 7, 0.9, 0, 0.95, 1, '#80f','bullet','#ff0', 5, 60, 32, 3, 3, 3, -2),
+            new GunStats('Redhawk', 'Secondary', 40, false, 300, 1, 6, 1700,true, 50, 30, 10, 700, 200, 1300, 0, 0.2, 0.9, 10, 0.9, 0.5, 0.95, 0.6, '#ff0','bullet','#ff0', 5, 60,32, 3, 3, 3, -2),
+            new GunStats('Executioner', 'Secondary', 35, false, 450, 14, 6, 1900,true, 22.5, 5, 3.5, 330, 200, 600, 0.2, 0, 0.9, 10, 0.9, 0.5, 0.95, 0.6, '#088','bullet','#ff0', 3, 60,32, 3, 3, 3, -2),
+            
+            new GunStats('Stevens DB', 'Shotgun', 90, false, 450, 8, 2, 2300, true, 26.25, 15, 9, 350, 56, 700, 0.15, 0, 0.83, 10, 0.9, 1.5,1, 0.7, '#f0f', 'bullet','#ff0',4,60,2,30, 3, 53, -2),
+            new GunStats('M870', 'Shotgun', 105, false, 70, 8, 5, 1000, false, 26.25, 16, 11, 400, 88, 800, 0.14, 0, 0.83, 10, 0.9, 1.5,1, 0.5, '#8f8', 'bullet','#ff0',4,60,4,28, 3, 57, -2),
+            new GunStats('SPAS-12', 'Shotgun', 110, false, 100, 8, 9, 800, false, 30, 9, 1, 650, 100, 1100, 0.1, 0, 0.83, 10, 0.9, 1.5,0.95, 0.3, '#0ff', 'bullet','#ff0',4,60,4,28, 3, 58, -2),
+            
+            new GunStats('MAC-10', 'SMG', 50, true, 1200, 1, 32, 1600, true, 26.25, 12, 8, 340, 150, 850, 0.1, 0.06, 0.9, 3, 0.9, 0.4, 0.97, 0.8, '#08f','bullet', '#ff0',5,60,12,27, 3, 27, -2),
+            new GunStats('MP5', 'SMG',75, true, 750, 1, 30, 1900, true, 33.75, 12, 6, 500, 270, 1100, 0, 0.07, 0.91, 4, 0.9, 0.4, 0.95, 0.65, '#f80','bullet', '#ff0',5,60,6,26, 3, 46, -2),
+            new GunStats('M1A1', 'SMG',90, true, 700, 1, 50, 3100, true, 33.75, 11, 3, 550, 270, 1200, 0, 0.04, 0.96, 5, 0.9, 0.3, 0.9, 0.5, '#fff', 'bullet','#ff0',5,60,10,23, 3,48, -9),
+            
+            new GunStats('AK-47', 'Assault',95, true, 600, 1, 30, 2400, true, 41.25, 13, 2, 600, 400, 1300, 0, 0.15, 0.85, 6, 0.9, 0.48, 0.93, 0.5, '#bb7554', 'bullet','#ff0',6,60,8, 24, 3, 50, -2),
+            new GunStats('M4A1', 'Assault', 90, true, 700, 1, 30, 3000, true, 45, 14, 1, 650, 270, 1300, 0, 0.07, 0.9, 5, 0.9, 0.48, 0.93, 0.5, '#888', 'bullet','#ff0',6,60,12,20, 3,45, -2),
 
-            new GunStats('MAC-10', 50, true, 1200, 1, 32, 1600, true, 26.25, 12, 8, 340, 150, 850, 0.1, 0.06, 0.9, 3, 0.9, 0.4, 0.97, 0.8, '#08f','bullet', '#ff0',5,60,12,27, 3, 27, -2),
-            new GunStats('MP5', 75, true, 750, 1, 30, 1900, true, 33.75, 12, 6, 500, 270, 1100, 0, 0.07, 0.91, 4, 0.9, 0.4, 0.95, 0.65, '#f80','bullet', '#ff0',5,60,6,26, 3, 46, -2),
-            new GunStats('AK-47', 95, true, 600, 1, 30, 2400, true, 41.25, 13, 2, 600, 400, 1300, 0, 0.15, 0.85, 6, 0.9, 0.48, 0.93, 0.5, '#bb7554', 'bullet','#ff0',6,60,8, 24, 3, 50, -2),
-            new GunStats('MK11', 90, false, 550, 1, 15, 2600, true, 45, 26, 7, 710, 500, 1600, 0, 0.3, 0.83, 8, 0.84, 0.56, 0.92, 0.5, '#f08', 'bullet','#ff0',6,60,12,20, 3, 45, -2),
-            new GunStats('M1A1', 90, true, 700, 1, 50, 3100, true, 33.75, 11, 3, 550, 270, 1200, 0, 0.04, 0.96, 5, 0.9, 0.3, 0.9, 0.5, '#fff', 'bullet','#ff0',5,60,10,23, 3,48, -9),
-            new GunStats('M4A1', 90, true, 700, 1, 30, 3000, true, 45, 14, 1, 650, 270, 1300, 0, 0.07, 0.9, 5, 0.9, 0.48, 0.93, 0.5, '#888', 'bullet','#ff0',6,60,12,20, 3,45, -2),
+            new GunStats('MK11', 'DMR',90, false, 550, 1, 15, 2600, true, 45, 26, 7, 710, 500, 1600, 0, 0.3, 0.83, 8, 0.84, 0.56, 0.92, 0.5, '#f08', 'bullet','#ff0',6,60,12,20, 3, 45, -2),
 
+            new GunStats('Laser', 'Laser',90, false, 120, 1, 6, 2700, true,200, 50, 1, 700, 200, 2500, 0, 0, 0.91, 20, 0.9, 0, 0.9, 0.4, '#f00','laser','#f00', 6,120,12,20, 3, 45, -2),
 
-            new GunStats('Laser', 90, false, 120, 1, 6, 2700, true,200, 50, 1, 700, 200, 2500, 0, 0, 0.91, 20, 0.9, 0, 0.9, 0.4, '#f00','laser','#f00', 6,120,12,20, 3, 45, -2),
+            new GunStats('Mosin Nagant','Sniper', 130, false, 55, 1, 5, 1000, false, 52.5, 70, 20, 830, 240, 2500, 0, 0.3, 0.83, 14, 0.9, 2.5, 0.9, 0.6, '#8f0', 'bullet','#ff0',8,60,4,28, 3, 60, -2),
+            new GunStats('M200', 'Sniper',140, false, 40, 1, 7, 3500, true, 60, 106, 40, 400, 100, 2500, 0, 0.3, 0.83, 16, 0.9, 3, 0.9, 0.6, '#88f', 'bullet','#ff0',10,60,4,28, 3, 60, -2),
+            
+            new GunStats('Crossbow', 'Bow',70, false, 9000, 1, 1, 2400, false,18.75, 100, 0, 830, 240, 1500, 0, 0.3, 0.83, 14, 0.9, 3, 0.9, 1, '#000', 'arrow','#ff9f73',10,30,12,20, 3, 40, -2)
 
-            new GunStats('Mosin Nagant', 130, false, 55, 1, 5, 1000, false, 52.5, 70, 20, 830, 240, 2500, 0, 0.3, 0.83, 14, 0.9, 2.5, 0.9, 0.6, '#8f0', 'bullet','#ff0',8,60,4,28, 3, 60, -2),
-            new GunStats('M200', 140, false, 40, 1, 7, 3500, true, 60, 106, 40, 400, 100, 2500, 0, 0.3, 0.83, 16, 0.9, 3, 0.9, 0.6, '#88f', 'bullet','#ff0',10,60,4,28, 3, 60, -2),
-            new GunStats('Crossbow', 70, false, 9000, 1, 1, 2400, false,18.75, 100, 0, 830, 240, 1500, 0, 0.3, 0.83, 14, 0.9, 3, 0.9, 1, '#000', 'arrow','#ff9f73',10,30,12,20, 3, 40, -2),
-
-            new GunStats('Stevens DB', 90, false, 450, 8, 2, 2300, true, 26.25, 15, 9, 350, 56, 700, 0.15, 0, 0.83, 10, 0.9, 1.5,1, 0.7, '#f0f', 'bullet','#ff0',4,60,2,30, 3, 53, -2),
-            new GunStats('M870', 105, false, 70, 8, 5, 1000, false, 26.25, 16, 11, 400, 88, 800, 0.14, 0, 0.83, 10, 0.9, 1.5,1, 0.5, '#8f8', 'bullet','#ff0',4,60,4,28, 3, 57, -2),
-            new GunStats('SPAS-12', 110, false, 100, 8, 9, 800, false, 30, 9, 1, 650, 100, 1100, 0.1, 0, 0.83, 10, 0.9, 1.5,0.95, 0.3, '#0ff', 'bullet','#ff0',4,60,4,28, 3, 58, -2)
         ];
     }
 };
@@ -840,8 +843,9 @@ var Player = function(xStart, yStart, name, color, id) {
         }
     }
 }
-var GunStats = function(name, length, auto, firerate, multishot, capacity, reloadTime, reloadType, bulletSpeed, damage, damageDrop, damageRange, damageDropTension, range, defSpray, sprayCoef, stability, kickAnimation, animationMult, personRecoil, walkSpeedMult, shootWalkSpeedMult, color, ammoType, ammoColor, bulletWidth, fadeTime, buttPosition, handPos1x, handPos1y, handPos2x, handPos2y){
+var GunStats = function(name, class, length, auto, firerate, multishot, capacity, reloadTime, reloadType, bulletSpeed, damage, damageDrop, damageRange, damageDropTension, range, defSpray, sprayCoef, stability, kickAnimation, animationMult, personRecoil, walkSpeedMult, shootWalkSpeedMult, color, ammoType, ammoColor, bulletWidth, fadeTime, buttPosition, handPos1x, handPos1y, handPos2x, handPos2y){
     setIfUndefined(this, 'name', name);//
+    setIfUndefined(this, 'class', class);//
     setIfUndefined(this, 'length', length);//
     setIfUndefined(this, 'auto', auto);
     setIfUndefined(this, 'multishot', multishot);
