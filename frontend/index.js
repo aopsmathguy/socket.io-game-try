@@ -623,6 +623,10 @@ var GameState = function() {
         var size = 20 / drawer.scale;
         var buffer = size * 0.2
         var player = this.players[controlId];
+        if (!player)
+        {
+            return;
+        }
         var weaponId = -1;
         var minDist = player.reachDist;
         for (var i in this.weapons)
@@ -634,6 +638,10 @@ var GameState = function() {
                 minDist = dist;
                 weaponId = i;
             }
+        }
+        if (weaponId == -1)
+        {
+            return;
         }
         var weapon = this.weapons[weaponId];
         blackBoxedText(weapon.name,
