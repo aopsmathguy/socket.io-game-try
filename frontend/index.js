@@ -190,8 +190,8 @@ var yourKillFeed = {
     }
 };
 var crossHair = {
-    minSize : 5,
-    maxSize : 100,
+    minSize : 4,
+    maxSize : 400,
     elem : document.getElementById("crosshairSize"),
     size : 10,
     display : function() {
@@ -202,14 +202,16 @@ var crossHair = {
         });
         
     },
+    calculate : function(){
+        return this.minSize * Math.pow(this.maxSize/this.minSize,this.elem.value/100);
+    },
+    update : function() {
+        this.size = this.calculate();
+    },
     start : function() {
-        this.elem = document.getElementById("crosshairSize");
-        this.elem.oninput = (function() {
-            this.size = this.minSize * Math.pow(this.maxSize/this.minSize,this.elem.value/100);
-        }).bind(this);
+        this.update();
+        this.elem.oninput = this.update.bind(this);
     }
-    
-    
 }
 
 
@@ -642,9 +644,9 @@ var GameState = function() {
     }
     this.displayWeaponPickup = function()
     {
-        var screenPos = (new Vector(myGameArea.uiWidth, myGameArea.uiHeight)).multiply(0.5).add(new Vector(0,100));
-        var size = 20;
-        var buffer = size * 0.2;
+        var screenPos = (new Vector(myGameArea.uiWidth, myGameArea.uiHeight)).multiply(0.5).add(new Vector(0,60));
+        var size = 14;
+        var buffer = size * 0.3;
         var player = this.players[controlId];
         if (!player)
         {
@@ -669,7 +671,7 @@ var GameState = function() {
         var weapon = this.weapons[weaponId];
        
         //console.log(screenPos);
-        blackBoxedText("f: " + weapon.name,
+        blackBoxedText(weapon.name + " (" + weapon.weaponClass + ")",
                 "bold " + size + "px Courier New",
                 "#fff",
                 size,
