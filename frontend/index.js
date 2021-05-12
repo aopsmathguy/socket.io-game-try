@@ -1532,7 +1532,7 @@ function updateGameArea() {
             lastDeadTime = -1;
         } else if (lastDeadTime == -1) {
             lastDeadTime = Date.now();
-        } else if (Date.now() - lastDeadTime > 3000 && lastDeadTime != -2 || controlsBundle.keys[32]) {
+        } else if (Date.now() - lastDeadTime > 5000 && lastDeadTime != -2 || controlsBundle.keys[32]) {
 
             initialScreen.style.display = 'block';
         }
