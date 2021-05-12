@@ -244,6 +244,8 @@ function startGame(){
 }
 function joinGame() {
     lastDeadTime = -2;
+    yourKillFeed.scroll = 0;
+    yourKillFeed.list = [];
     
     killFeed.scroll = 0;
     initialScreen.style.display = "none";
