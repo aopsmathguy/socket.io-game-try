@@ -472,14 +472,14 @@ var controlsBundle = {
             controlsBundle.keys = (controlsBundle.keys || []);
             if (!controlsBundle.keys[e.keyCode]) {
                 controlsBundle.keys[e.keyCode] = true;
-                if (gameStates.length > 0 && controlId && gameStates[0].players[controlId].alive)
+                if (gameStates.length > 0 && controlId && gameStates[0].players[controlId] && gameStates[0].players[controlId].alive)
                     socket.emit('keydown', e.keyCode);
             }
         });
         window.addEventListener('keyup', function(e) {
             if (controlsBundle.keys[e.keyCode]) {
                 controlsBundle.keys[e.keyCode] = false;
-                if (gameStates.length > 0 && controlId && gameStates[0].players[controlId].alive)
+                if (gameStates.length > 0 && controlId && gameStates[0].players[controlId] && gameStates[0].players[controlId].alive)
                     socket.emit('keyup', e.keyCode);
             }
         });
@@ -493,14 +493,14 @@ var controlsBundle = {
         window.addEventListener('mousedown', function(e) {
             if (e.button == 0) {
                 controlsBundle.mouseDown = true;
-                if (gameStates.length > 0 && controlId && gameStates[0].players[controlId].alive)
+                if (gameStates.length > 0 && controlId && gameStates[0].players[controlId] && gameStates[0].players[controlId].alive)
                     socket.emit('mousedown');
             }
         });
         window.addEventListener('mouseup', function(e) {
             if (e.button == 0) {
                 controlsBundle.mouseDown = false;
-                if (gameStates.length > 0 && controlId && gameStates[0].players[controlId].alive)
+                if (gameStates.length > 0 && controlId && gameStates[0].players[controlId] && gameStates[0].players[controlId].alive)
                     socket.emit('mouseup');
             }
         });
