@@ -573,6 +573,7 @@ var GameState = function() {
                     if (this.players[idx].alive && idx != controlId)
                         this.players[idx].drawHealthBar(idx);
                 }
+                this.displayWeaponPickup();
             });
         
         
@@ -615,6 +616,32 @@ var GameState = function() {
             ctx.lineTo(endX,y);
             ctx.stroke();
         }
+    }
+    this.displayWeaponPickup = function()
+    {
+        var screenPos = (new Vector(canvas.width, canvas.height)).multiply(0.5).add(-100,0);
+        var size = 20 / drawer.scale;
+        var buffer = size * 0.2
+        var player = this.players[controlId];
+        var weaponId = -1;
+        var minDist = player.reachDist;
+        for (var i in this.weapons)
+        {
+            var weapon = this.weapons[i];
+            var dist = weapon.pos.distanceTo(player.pos);
+            if (dist < minDist)
+            {
+                minDist = dist;
+                weaponId = i;
+            }
+        }
+        var weapon = this.weapons[weaponId];
+        blackBoxedText(weapon.name,
+                "bold " + size + "px Courier New",
+                "#fff",
+                size,
+                screenPos.x, screenPos.y,
+                buffer, 1, "center");
     }
     this.displayLoadout = function()
     {
