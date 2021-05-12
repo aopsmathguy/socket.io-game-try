@@ -67,24 +67,16 @@ socket.on('killFeed', (msg) => {
     {
         killColor = "#fff";
     }
-    killFeed.list.splice(0, 0, {
-        msg: message,
-        time: Date.now(),
-        color : killColor
-    });
-    killFeed.scroll += 1;
+    
+    killFeed.add(message,killColor);
     
     if (msg.shooter == controlId)
     {
-        yourKillFeed.list.splice(0, 0, {
-            msg: "You killed " + deadName,
-            time: Date.now()
-        });
-        yourKillFeed.scroll += 1;
+        yourKillFeed.add("You killed " + deadName);
     }
     else if (msg.dead == controlId)
     {
-        msg.shooter;
+        yourKillFeed.add("You were killed by " + shooterName);
     }
 });
 socket.on('playerActivity', (msg) => {
@@ -97,16 +89,19 @@ socket.on('playerActivity', (msg) => {
     {
         message = (msg.name || "unknown") + " left";
     }
-    killFeed.list.splice(0, 0, {
-        msg: message,
-        time: Date.now(),
-        color : "#ccc"
-    });
-    killFeed.scroll += 1;
+    killFeed.add(message,"#ccc");
 });
 var killFeed = {
     list : [],
     scroll : 0,
+    add : function(msg,color){
+        this.list.splice(0, 0, {
+            msg: msg,
+            time: Date.now(),
+            color: color
+        });
+        this.scroll += 1;
+    },
     display : function () {
         var speed = 25;
         var fadeTime = 667;
@@ -144,6 +139,13 @@ var killFeed = {
 var yourKillFeed = {
     list : [],
     scroll : 0,
+    add : function(msg){
+        this.list.splice(0, 0, {
+            msg: msg,
+            time: Date.now()
+        });
+        this.scroll += 1;
+    },
     display : function () {
         var speed = 25;
         var fadeTime = 667;
@@ -503,7 +505,7 @@ var controlsBundle = {
     }
 }
 var emitMousePos = function() {
-    if (controlsBundle.prevAng != controlsBundle.ang && gameStates.length > 0 && controlId && gameStates[0].players[controlId].alive)
+    if (controlsBundle.prevAng != controlsBundle.ang && gameStates.length > 0 && controlId && gameStates[0].players[controlId] && gameStates[0].players[controlId].alive)
     {
         socket.emit('mousemove', controlsBundle.ang);
         controlsBundle.prevAng = controlsBundle.ang;
