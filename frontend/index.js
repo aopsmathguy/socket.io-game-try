@@ -196,9 +196,9 @@ var crossHair = {
     size : 10,
     display : function() {
         myGameArea.transform(controlsBundle.mouse.x,controlsBundle.mouse.y, 0, this.size, () => {
-            (new Vector(1, 0)).drawLine(new Vector(-1, 0), '#fff', .2);
-            (new Vector(0, 1)).drawLine(new Vector(0, -1), '#fff', .2);
-            (new Vector(0, 0)).circle(.6, '#fff', .2);
+            (new Vector(1, 0)).drawLine(new Vector(-1, 0), '#fff', .13);
+            (new Vector(0, 1)).drawLine(new Vector(0, -1), '#fff', .13);
+            (new Vector(0, 0)).circle(.6, '#fff', .13);
         });
         
     },
