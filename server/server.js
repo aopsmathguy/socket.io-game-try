@@ -133,7 +133,7 @@ io.on('connection', client => {
 });
 const viableWeapons = {
     weapons : [],
-    numEach : [3, 1, 1, 2, 2, 1,1, 1, 1, 1, 1, 1, 1, 1,1,1],
+    numEach : [3, 1, 1, 1, 1, 1,2, 2, 1, 1, 1, 1, 1, 1,1,1],
     start : function()
     {
         this.weapons = [
@@ -455,7 +455,7 @@ var inObjects = function(v) {
 var makeObstacles = function() {
     viableWeapons.start();
     var players = {};
-    var wallThick = -40;
+    var wallThick = 80;
 
     borderObstacles = [
         new Obstacle([new Vector(0, 0), new Vector(0, gameHeight), new Vector(-wallThick, gameHeight), new Vector(-wallThick, 0)], '#000', true),
