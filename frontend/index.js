@@ -220,7 +220,7 @@ var settings = {
     uiScale : {
         minSize : 0.2,
         maxSize : 2,
-        elem : document.getElementById("crosshairSize"),
+        elem : document.getElementById("uiScale"),
         size : 1,
         calculate : function(){
             return this.minSize * Math.pow(this.maxSize/this.minSize,this.elem.value/100);
