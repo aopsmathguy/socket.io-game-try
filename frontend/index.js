@@ -276,7 +276,10 @@ function joinGame() {
 
     name = gameCodeInput.value.substring(0,18);
     color = colorInput.value;
-    newPlayer(name, color);
+    if (gameStates.length > 0 && (!gameStates[0].players[controlId] || !gameStates[0].players[controlId].alive))
+    {
+        newPlayer(name, color);
+    }
 }
 
 function newPlayer(name, color) {
@@ -1592,8 +1595,12 @@ function updateGameArea() {
             lastDeadTime = -1;
         } else if (lastDeadTime == -1) {
             lastDeadTime = Date.now();
-        } else if (Date.now() - lastDeadTime > 5000 && lastDeadTime != -2 || controlsBundle.keys[32]) {
+        } else if (Date.now() - lastDeadTime > 5000 && lastDeadTime != -2 ) {
 
+            initialScreen.style.display = 'block';
+        }
+        if (controlsBundle.keys[27])
+        {
             initialScreen.style.display = 'block';
         }
 
