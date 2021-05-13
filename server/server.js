@@ -36,14 +36,14 @@ io.on('connection', client => {
     });
     client.on('keydown', (keycode) => {
         if (keycode || typeof keycode !== 'undefined') {
-            if (controls[client.inGameId] && gameState.players[client.inGameId] && gameState.players[client.inGameId].alive) {
+            if (controls.importantKeys.includes(keycode) && controls[client.inGameId] && gameState.players[client.inGameId] && gameState.players[client.inGameId].alive) {
                 controls[client.inGameId].keys[keycode] = true;
                 gameState.players[client.inGameId].justKeyDowned[keycode] = true;
             }
         }
     });
     client.on('keyup', (keycode) => {
-        if ((keycode || typeof keycode !== 'undefined') && controls[client.inGameId] && gameState.players[client.inGameId] && gameState.players[client.inGameId].alive) {
+        if ((keycode || typeof keycode !== 'undefined') && controls.importantKeys.includes(keycode) && controls[client.inGameId] && gameState.players[client.inGameId] && gameState.players[client.inGameId].alive) {
 
                 controls[client.inGameId].keys[keycode] = false;
         }
@@ -227,7 +227,9 @@ var loopThroughObstacles = function(objectPos, inner) {
 var obstacles;
 var borderObstacles;
 var gameState;
-var controls = {};
+var controls = {
+    importantKeys : [87,83,68,65,70,71,82,88,81]
+};
 var iterations;
 
 function emitNewKill(shooter,dead) {
