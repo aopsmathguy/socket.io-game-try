@@ -497,7 +497,7 @@ var myGameArea = {
 
     },
     transformUi : function(func){
-        this.transform(0,0,0,this.uiScale,()=>{
+        this.transform(0,0,0,this.scaleRatio,()=>{
             func();
         });
     },
