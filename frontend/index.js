@@ -894,7 +894,7 @@ var GameState = function() {
             ctx.closePath();
             ctx.fill();
 
-            ctx.lineWidth = 12;
+            ctx.lineWidth = 13;
             ctx.beginPath();
             ctx.moveTo(firstShoulder.x, firstShoulder.y);
             ctx.lineTo(firstHand.x,firstHand.y);
