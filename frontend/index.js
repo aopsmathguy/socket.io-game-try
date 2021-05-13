@@ -489,9 +489,9 @@ var myGameArea = {
         this.canvas.style.width = window.innerWidth;
         this.canvas.style.height = window.innerHeight;
         
-        this.uiScale = this.uiScale * (this.canvas.width + this.canvas.height)/2000;
-        this.uiWidth = this.canvas.width/this.uiScale;
-        this.uiHeight = this.canvas.height/this.uiScale;
+        this.scaleRatio = this.uiScale * (this.canvas.width + this.canvas.height)/2000;
+        this.uiWidth = this.canvas.width/this.scaleRatio;
+        this.uiHeight = this.canvas.height/this.scaleRatio;
         
         this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
