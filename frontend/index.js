@@ -496,20 +496,21 @@ var controlsBundle = {
     sendControls : function(){
         return initialScreen.style.display == 'none' && gameStates.length > 0 && controlId && gameStates[0].players[controlId] && gameStates[0].players[controlId].alive;
     },
+    importantKeys : [87,83,68,65,70,71,82,88,81],
     start: function() {
         controlsBundle.mouse = new Vector(0,0);
         window.addEventListener('keydown', (function(e) {
             this.keys = (this.keys || []);
             if (!this.keys[e.keyCode]) {
                 this.keys[e.keyCode] = true;
-                if (this.sendControls())
+                if (this.sendControls() && this.importantKeys.includes(e.keyCode))
                     socket.emit('keydown', e.keyCode);
             }
         }).bind(this));
         window.addEventListener('keyup', (function(e) {
             if (this.keys[e.keyCode]) {
                 this.keys[e.keyCode] = false;
-                if (this.sendControls())
+                if (this.sendControls() && this.importantKeys.includes(e.keyCode))
                     socket.emit('keyup', e.keyCode);
             }
         }).bind(this));
