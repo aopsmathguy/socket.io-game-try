@@ -66,6 +66,13 @@ io.on('connection', client => {
             gameState.players[client.inGameId].autoShot = false;
         }
     });
+    client.on('reset', ()=>{
+        if (controls[client.inGameId] && gameState.players[client.inGameId]&& gameState.players[client.inGameId].alive)
+        {
+            controls[client.inGameId].mouseDown = false;
+            controls[client.inGameId].keys = {};
+        }
+    });
     function makeId(){
         var sockets = io.sockets.sockets;
         var done = false;
