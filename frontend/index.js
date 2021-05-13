@@ -493,23 +493,26 @@ var controlsBundle = {
     mouseDown: false,
     prevAng: 0,
     ang: 0,
+    sendControls : function(){
+        return initialScreen.style.display == 'none' && gameStates.length > 0 && controlId && gameStates[0].players[controlId] && gameStates[0].players[controlId].alive;
+    },
     start: function() {
         controlsBundle.mouse = new Vector(0,0);
-        window.addEventListener('keydown', function(e) {
-            controlsBundle.keys = (controlsBundle.keys || []);
-            if (!controlsBundle.keys[e.keyCode]) {
-                controlsBundle.keys[e.keyCode] = true;
-                if (gameStates.length > 0 && controlId && gameStates[0].players[controlId] && gameStates[0].players[controlId].alive)
+        window.addEventListener('keydown', (function(e) {
+            this.keys = (this.keys || []);
+            if (!this.keys[e.keyCode]) {
+                this.keys[e.keyCode] = true;
+                if (this.sendControls())
                     socket.emit('keydown', e.keyCode);
             }
-        });
-        window.addEventListener('keyup', function(e) {
-            if (controlsBundle.keys[e.keyCode]) {
-                controlsBundle.keys[e.keyCode] = false;
-                if (gameStates.length > 0 && controlId && gameStates[0].players[controlId] && gameStates[0].players[controlId].alive)
+        }).bind(this));
+        window.addEventListener('keyup', (function(e) {
+            if (this.keys[e.keyCode]) {
+                this.keys[e.keyCode] = false;
+                if (this.sendControls())
                     socket.emit('keyup', e.keyCode);
             }
-        });
+        }).bind(this));
 
         const rect = myGameArea.canvas.getBoundingClientRect();
         window.addEventListener('mousemove', function(e) {
@@ -517,24 +520,27 @@ var controlsBundle = {
             controlsBundle.ang = controlsBundle.mouse.subtract(new Vector(myGameArea.canvas.width, myGameArea.canvas.height).multiply(0.5)).ang();
             //socket.emit('mousemove', controlsBundle.ang);
         });
-        window.addEventListener('mousedown', function(e) {
+        window.addEventListener('mousedown', (function(e) {
             if (e.button == 0) {
-                controlsBundle.mouseDown = true;
-                if (gameStates.length > 0 && controlId && gameStates[0].players[controlId] && gameStates[0].players[controlId].alive)
+                this.mouseDown = true;
+                if (this.sendControls())
                     socket.emit('mousedown');
             }
-        });
-        window.addEventListener('mouseup', function(e) {
+        }).bind(this));
+        window.addEventListener('mouseup', (function(e) {
             if (e.button == 0) {
-                controlsBundle.mouseDown = false;
-                if (gameStates.length > 0 && controlId && gameStates[0].players[controlId] && gameStates[0].players[controlId].alive)
+                this.mouseDown = false;
+                if (this.sendControls())
                     socket.emit('mouseup');
             }
-        });
+        }).bind(this));
+    },
+    reset: function(){
+        socket.emit('reset');
     }
 }
 var emitMousePos = function() {
-    if (controlsBundle.prevAng != controlsBundle.ang && gameStates.length > 0 && controlId && gameStates[0].players[controlId] && gameStates[0].players[controlId].alive)
+    if (controlsBundle.sendControls())
     {
         socket.emit('mousemove', controlsBundle.ang);
         controlsBundle.prevAng = controlsBundle.ang;
@@ -545,7 +551,6 @@ var setIfUndefined = function(obj, field, value) {
         obj[field] = value;
     }
 }
-console.log("define");
 var giveMethods = function(obj) {
     if (obj == null) {
         return;
@@ -1602,6 +1607,7 @@ function updateGameArea() {
         if (controlsBundle.keys[27])
         {
             initialScreen.style.display = 'block';
+            controlsBundle.reset();
         }
 
 
