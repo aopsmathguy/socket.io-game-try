@@ -16,7 +16,9 @@
     <style>
         #gameScreen {
             position: relative;
+            font-family: "Courier New", monospace;
         }
+        
         #centerColumn {
             background-color: rgba(0, 0, 0, 0.2);
             border-radius: 10px;
@@ -71,6 +73,7 @@
         ::placeholder{
             color: rgba(255, 255, 255, 0.6);
         }
+        
         #settings{
             background-color: rgba(0, 0, 0, 0.2);
             border-radius: 10px;
@@ -79,7 +82,9 @@
             width: 30%;
             top: 55%;
             height:30%;
+            
             overflow-y: scroll;
+            
             padding: 10px 10px;
         }
         .settingsText{
@@ -91,6 +96,7 @@
         .settingsInput{
             float:right;
         }
+        
         #instructions{
             position: absolute;
             left: 5%;
@@ -104,20 +110,37 @@
             border-radius: 20px;
             padding: 10px 10px;
         }
-        h2{
-            margin:10px;
-            font-size: 40px;
-            color: #fff;
+        
+        #loadout{
+            position: absolute;
+            left: 70%;
+            width: 25%;
+            top: 20%;
+            height:60%;
+
+            overflow-y: scroll;
+            
+            background-color:rgba(0, 0, 0, 0.2);
+            border-radius: 20px;
+            padding: 10px 10px;
         }
-        h3{
+        h2{
             margin:10px;
             font-size: 30px;
             color: #fff;
         }
+        h3{
+            margin:10px;
+            font-size: 24px;
+            color: #fff;
+        }
         p{
             margin: 10px;
-            font-size: 20px;
+            font-size: 18px;
             color: #fff;
+        }
+        input{
+            font-family : inherit;
         }
         canvas {
             border:0px;
@@ -140,6 +163,22 @@
         {
             elem.style.backgroundColor = 'rgba(0, 0, 0, ' + alpha + ')';
         }
+        document.addEventListener('DOMContentLoaded',()=>{
+            var hoverables = document.getElementsByClassName("hoverableDarken");
+            console.log(hoverables.length);
+            for (var i = 0, l = hoverables.length; i < l; i++)
+            {
+                var elem = hoverables[i];
+                console.log(i,l);
+                elem.addEventListener("mouseover", (function(){
+                    setBackroundToBlackBrightness(this,0.6);
+                }).bind(elem));
+                elem.addEventListener("mouseout", (function(){
+                    setBackroundToBlackBrightness(this,0.2);
+                }).bind(elem));
+            }
+        });
+        
     </script>
 </head>
 <body>
@@ -150,23 +189,22 @@
             <div class="d-flex flex-column align-items-center justify-content-center h-100">
                 <h1>Shoot</h1>
                 <div class="form-group">
-                  <input type="text" onmouseover="setBackroundToBlackBrightness(this,0.6);" onmouseout = "setBackroundToBlackBrightness(this,0.2);" placeholder="Enter Name" maxlength="18" onkeydown="if (event.keyCode == 13) document.getElementById('joinGameButton').click()"  id="gameCodeInput"/>
-                  <input type="color" value = "#fcc976"  id="colorInput"/>
+                  <input type="text" class = "hoverableDarken" placeholder="Enter Name" maxlength="18" onkeydown="if (event.keyCode == 13) document.getElementById('joinGameButton').click()"  id="gameCodeInput"/>
+                  <input type="color" class = "hoverableDarken" value = "#fcc976"  id="colorInput"/>
                 </div>
                 <button
                   type="submit"
-                  class="btn btn-success"
+                  class = "hoverableDarken"
                   id="joinGameButton"
-                  onmouseover="setBackroundToBlackBrightness(this,0.6);" onmouseout = "setBackroundToBlackBrightness(this,0.2);" 
                 >
                   Play
                 </button>
             </div>
           </div>
           <div id = "settings">
-                  <h3>
+                  <h2>
                       Settings
-                  </h3>
+                  </h2>
                   <label class = "settingsText">
                       Crosshair Size:
                   </label>
@@ -183,15 +221,20 @@
               <p>
                   Kill other players to gain points!<br><br>
                   
-                  Use WASD to move<br>
-                  Click to punch or shoot<br>
-                  Press F to pickup a weapon<br>
-                  Press G to drop your weapon<br>
-                  Press R to reload your weapon<br>
-                  Press X to cancel reload<br>
-                  Press Q to switch weapons<br>
-                  Press Esc to return to menu<br>
+                  WASD: move around<br>
+                  Click: punch or shoot<br>
+                  F: pickup a weapon<br>
+                  G: drop your weapon<br>
+                  R: reload your weapon<br>
+                  X: cancel reload<br>
+                  Q: switch weapons<br>
+                  Esc: return to menu<br>
               </p>
+          </div>
+          <div id = "loadout">
+             <h2>
+                 Loadout
+             </h2>
           </div>
       </div>
         
