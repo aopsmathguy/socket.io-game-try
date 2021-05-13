@@ -190,10 +190,7 @@ var yourKillFeed = {
     }
 };
 var crossHair = {
-    minSize : 4,
-    maxSize : 400,
-    elem : document.getElementById("crosshairSize"),
-    size : 10,
+    
     display : function() {
         myGameArea.transform(controlsBundle.mouse.x,controlsBundle.mouse.y, 0, this.size, () => {
             (new Vector(1, 0)).drawLine(new Vector(-1, 0), '#fff', .13);
@@ -201,19 +198,26 @@ var crossHair = {
             (new Vector(0, 0)).circle(.6, '#fff', .13);
         });
         
-    },
-    calculate : function(){
-        return this.minSize * Math.pow(this.maxSize/this.minSize,this.elem.value/100);
-    },
-    update : function() {
-        this.size = this.calculate();
-    },
-    start : function() {
-        this.update();
-        this.elem.oninput = this.update.bind(this);
     }
 }
-
+var settings = {
+    crosshairSize : {
+        minSize : 4,
+        maxSize : 400,
+        elem : document.getElementById("crosshairSize"),
+        size : 10,
+        calculate : function(){
+            return this.minSize * Math.pow(this.maxSize/this.minSize,this.elem.value/100);
+        },
+        update : function() {
+            crossHair.size = this.calculate();
+        },
+        start : function() {
+            this.update();
+            this.elem.oninput = this.update.bind(this);
+        }
+    }
+}
 
 var tickIntervals = [];
 var tickInterval;
@@ -263,7 +267,10 @@ function startGame(){
     myGameArea.start();
     drawer = new Drawer();
     controlsBundle.start();
-    crossHair.start();
+    for (var i in settings)
+    {
+        settings[i].start();
+    }
     myGameArea.interval();
 }
 function joinGame() {
