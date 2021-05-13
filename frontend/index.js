@@ -216,6 +216,22 @@ var settings = {
             this.update();
             this.elem.oninput = this.update.bind(this);
         }
+    },
+    uiScale : {
+        minSize : 0.2,
+        maxSize : 2,
+        elem : document.getElementById("crosshairSize"),
+        size : 1,
+        calculate : function(){
+            return this.minSize * Math.pow(this.maxSize/this.minSize,this.elem.value/100);
+        },
+        update : function() {
+            myGameArea.uiScale = this.calculate();
+        },
+        start : function() {
+            this.update();
+            this.elem.oninput = this.update.bind(this);
+        }
     }
 }
 
@@ -411,6 +427,7 @@ var drawer;
 
 var myGameArea = {
     canvas: document.createElement("canvas"),
+    uiScale : 1,
     start: function() {
         //make the canvas and stuff.
         this.canvas = canvas;
@@ -472,7 +489,7 @@ var myGameArea = {
         this.canvas.style.width = window.innerWidth;
         this.canvas.style.height = window.innerHeight;
         
-        this.uiScale = (this.canvas.width + this.canvas.height)/2000;
+        this.uiScale = this.uiScale * (this.canvas.width + this.canvas.height)/2000;
         this.uiWidth = this.canvas.width/this.uiScale;
         this.uiHeight = this.canvas.height/this.uiScale;
         
