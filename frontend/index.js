@@ -6,7 +6,68 @@ var framesPerTick;
 
 const socket = io('https://limitless-everglades-60126.herokuapp.com/');
 
-socket.on('init', handleInit);
+var tickIntervals = [];
+var tickInterval;
+const canvas = document.getElementById('canvas');
+
+const initialScreen = document.getElementById('initialScreen');
+const gameCodeInput = document.getElementById('gameCodeInput');
+const colorInput = document.getElementById('colorInput');
+const joinGameBtn = document.getElementById('joinGameButton');
+
+joinGameBtn.addEventListener('click', joinGame);
+
+var name;
+var color;
+var path1 = "img/weapons/";
+var path2 = "img/ground weapons/";
+function imageExists(weapon, imageSrc, good, bad) {
+    var img = new Image();
+    img.onload = (() => {good(weapon,img);}); 
+    img.onerror = (() => {bad();});
+    img.src = imageSrc;
+}
+var weaponImages = {
+    "AK-47" : 0,
+    "MP5" : 0,
+    "Stevens DB" : 0,
+    "Crossbow" : 0,
+    "M1A1" : 0,
+    "Laser" : 0,
+    "Glock 17" : 0
+};
+for (var i in weaponImages)
+{
+    weaponImages[i] = {};
+    imageExists(i,path1 + i + ".svg",(j,img) => {
+        weaponImages[j][true] = img;
+    },()=>{
+        weaponImages[i][true] = false;
+    });
+    imageExists(i,path2 + i + ".svg",(j,img) => {
+        weaponImages[j][false] = img;
+    },()=>{
+        weaponImages[i][false] = false;
+    });
+}
+var viableWeapons;
+
+socket.on('init', (msg) => {
+    timeDifference = msg.data - Date.now();
+    controlId = msg.id;
+    obstacles = msg.obstacles;
+    borderObstacles = msg.borderObstacles;
+
+    giveMethods(obstacles);
+    giveMethods(borderObstacles);
+
+    gameWidth = msg.gameWidth;
+    gameHeight = msg.gameHeight;
+    gridWidth = msg.gridWidth;
+
+    framesPerTick = msg.framesPerTick;
+    viableWeapons = msg.viableWeapons;
+});
 socket.on('gameState', (msg) => {
     for(var i in msg.weapons)
     {
@@ -91,6 +152,52 @@ socket.on('playerActivity', (msg) => {
     }
     killFeed.add(message,"#ccc");
 });
+
+var crossHair = {
+    
+    display : function() {
+        myGameArea.transform(controlsBundle.mouse.x,controlsBundle.mouse.y, 0, this.size, () => {
+            (new Vector(1, 0)).drawLine(new Vector(-1, 0), '#fff', .13);
+            (new Vector(0, 1)).drawLine(new Vector(0, -1), '#fff', .13);
+            (new Vector(0, 0)).circle(.6, '#fff', .13);
+        });
+        
+    }
+}
+var settings = {
+    crosshairSize : {
+        minSize : 4,
+        maxSize : 400,
+        elem : document.getElementById("crosshairSize"),
+        size : 10,
+        calculate : function(){
+            return this.minSize * Math.pow(this.maxSize/this.minSize,this.elem.value/100);
+        },
+        update : function() {
+            crossHair.size = this.calculate();
+        },
+        start : function() {
+            this.update();
+            this.elem.oninput = this.update.bind(this);
+        }
+    },
+    uiScale : {
+        minSize : 0.2,
+        maxSize : 2,
+        elem : document.getElementById("uiScale"),
+        size : 1,
+        calculate : function(){
+            return this.minSize * Math.pow(this.maxSize/this.minSize,this.elem.value/100);
+        },
+        update : function() {
+            myGameArea.uiScale = this.calculate();
+        },
+        start : function() {
+            this.update();
+            this.elem.oninput = this.update.bind(this);
+        }
+    }
+}
 var killFeed = {
     list : [],
     scroll : 0,
@@ -189,96 +296,7 @@ var yourKillFeed = {
 
     }
 };
-var crossHair = {
-    
-    display : function() {
-        myGameArea.transform(controlsBundle.mouse.x,controlsBundle.mouse.y, 0, this.size, () => {
-            (new Vector(1, 0)).drawLine(new Vector(-1, 0), '#fff', .13);
-            (new Vector(0, 1)).drawLine(new Vector(0, -1), '#fff', .13);
-            (new Vector(0, 0)).circle(.6, '#fff', .13);
-        });
-        
-    }
-}
-var settings = {
-    crosshairSize : {
-        minSize : 4,
-        maxSize : 400,
-        elem : document.getElementById("crosshairSize"),
-        size : 10,
-        calculate : function(){
-            return this.minSize * Math.pow(this.maxSize/this.minSize,this.elem.value/100);
-        },
-        update : function() {
-            crossHair.size = this.calculate();
-        },
-        start : function() {
-            this.update();
-            this.elem.oninput = this.update.bind(this);
-        }
-    },
-    uiScale : {
-        minSize : 0.2,
-        maxSize : 2,
-        elem : document.getElementById("uiScale"),
-        size : 1,
-        calculate : function(){
-            return this.minSize * Math.pow(this.maxSize/this.minSize,this.elem.value/100);
-        },
-        update : function() {
-            myGameArea.uiScale = this.calculate();
-        },
-        start : function() {
-            this.update();
-            this.elem.oninput = this.update.bind(this);
-        }
-    }
-}
 
-var tickIntervals = [];
-var tickInterval;
-const canvas = document.getElementById('canvas');
-
-const initialScreen = document.getElementById('initialScreen');
-const gameCodeInput = document.getElementById('gameCodeInput');
-const colorInput = document.getElementById('colorInput');
-const joinGameBtn = document.getElementById('joinGameButton');
-
-joinGameBtn.addEventListener('click', joinGame);
-var name;
-var color;
-var path1 = "img/weapons/";
-var path2 = "img/ground weapons/";
-function imageExists(weapon, imageSrc, good, bad) {
-    var img = new Image();
-    img.onload = (() => {good(weapon,img);}); 
-    img.onerror = (() => {bad();});
-    img.src = imageSrc;
-}
-var weaponImages = {
-    "AK-47" : 0,
-    "MP5" : 0,
-    "Stevens DB" : 0,
-    "Crossbow" : 0,
-    "M1A1" : 0,
-    "Laser" : 0,
-    "Glock 17" : 0
-};
-for (var i in weaponImages)
-{
-    weaponImages[i] = {};
-    imageExists(i,path1 + i + ".svg",(j,img) => {
-        weaponImages[j][true] = img;
-    },()=>{
-        weaponImages[i][true] = false;
-    });
-    imageExists(i,path2 + i + ".svg",(j,img) => {
-        weaponImages[j][false] = img;
-    },()=>{
-        weaponImages[i][false] = false;
-    });
-}
-var viableWeapons;
 function startGame(){
     myGameArea.start();
     drawer = new Drawer();
@@ -377,22 +395,7 @@ var controlId = 0;
 var obstacles;
 var borderObstacles;
 
-function handleInit(msg) {
-    timeDifference = msg.data - Date.now();
-    controlId = msg.id;
-    obstacles = msg.obstacles;
-    borderObstacles = msg.borderObstacles;
 
-    giveMethods(obstacles);
-    giveMethods(borderObstacles);
-
-    gameWidth = msg.gameWidth;
-    gameHeight = msg.gameHeight;
-    gridWidth = msg.gridWidth;
-
-    framesPerTick = msg.framesPerTick;
-    viableWeapons = msg.viableWeapons;
-}
 function blackBoxedText(txt, font, color, size, posx, posy, buffer, txtAlpha, align) {
     ctx = myGameArea.context;
     ctx.save();
