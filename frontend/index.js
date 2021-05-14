@@ -51,7 +51,7 @@ for (var i in weaponImages)
     });
 }
 var viableWeapons;
-
+var weaponClasses;
 socket.on('init', (msg) => {
     timeDifference = msg.data - Date.now();
     controlId = msg.id;
@@ -67,6 +67,17 @@ socket.on('init', (msg) => {
 
     framesPerTick = msg.framesPerTick;
     viableWeapons = msg.viableWeapons;
+    weaponClasses = {};
+    for (var i in viableWeapons)
+    {
+        var weapon = viableWeapons[i];
+        var weaponClass = weapon.weaponClass;
+        if (!weaponClasses[weaponClass])
+        {
+            weaponClasses[weaponClass] = [];
+        }
+        weaponClasses[weaponClass].push(weapon);
+    }
 });
 socket.on('gameState', (msg) => {
     for(var i in msg.weapons)
