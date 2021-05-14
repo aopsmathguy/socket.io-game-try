@@ -37,11 +37,11 @@ socket.on('gameState', (msg) => {
             }
             else
             {
-                if (!weaponBulletHitPoints[i])
+                if (!this.weaponBulletHitPoints[i])
                 {
-                    weaponBulletHitPoints[i] = {};
+                    this.weaponBulletHitPoints[i] = {};
                 }
-                weaponBulletHitPoints[i][j] = bullet.hitPoint;
+                this.weaponBulletHitPoints[i][j] = bullet.hitPoint;
             }
         }
     }
@@ -1431,6 +1431,34 @@ var Vector = function(x, y) {
 }
 var linearInterpolator = {
     lagLimit : 4000,
+    weaponBulletHitPoints : {},
+    manageHitPoints : function(state){
+        for (var i in state.weapons)
+        {
+            if (!this.weaponBulletHitPoints[i])
+            {
+                this.weaponBulletHitPoints[i] = {};
+            }
+            for (var j in state.weapons[i].bullets)
+            {
+                var bullet = state.weapons[i].bullets[j];
+                if (bullet.hitPoint != -1 && !this.weaponBulletHitPoints[i][j])
+                {
+                    this.weaponBulletHitPoints[i][j] = bullet.hitPoint;
+                }
+            }
+            for (var j in this.weaponBulletHitPoints[i])
+            {
+                if (!state.weapons[i].bullets[j])
+                {
+                    try{
+                        delete this.weaponBulletHitPoints[i][j];
+                    }
+                    catch{}
+                }
+            }
+        }
+    },
     linearValue : function(v1, v2, t, t1, t2) {
         var ratio = Math.max(-this.lagLimit, t2 - t) / (t2 - t1);
         return v1 * ratio + v2 * (1-ratio);
@@ -1451,7 +1479,7 @@ var linearInterpolator = {
             return dir1 + difference * (t - t1) / (t2 - t1);
         }
     },
-    linearGameState : function(weaponBulletHitPoints) {
+    linearGameState : function() {
         var displayTime = serverTime() - buffer;
         var rightIdx = 1;
         var time = 0;
@@ -1549,9 +1577,9 @@ var linearInterpolator = {
                 }
                 if (bullet.hitPoint == -1)
                 {
-                    if (weaponBulletHitPoints && weaponBulletHitPoints[i] && weaponBulletHitPoints[i][j])
+                    if (this.weaponBulletHitPoints && this.weaponBulletHitPoints[i] && this.weaponBulletHitPoints[i][j])
                     {
-                        var newHitPoint = weaponBulletHitPoints[i][j];
+                        var newHitPoint = this.weaponBulletHitPoints[i][j];
                         if (bullet.startPos.distanceTo(bullet.pos) > bullet.startPos.distanceTo(newHitPoint))
                         {
                             bullet.hitPoint = new Vector(newHitPoint.x,newHitPoint.y);
@@ -1587,40 +1615,13 @@ setInterval(() => {
     }
 },20);
 var lastDeadTime = -1;
-var weaponBulletHitPoints = {};
-function manageHitPoints(state){
-    for (var i in state.weapons)
-    {
-        if (!weaponBulletHitPoints[i])
-        {
-            weaponBulletHitPoints[i] = {};
-        }
-        for (var j in state.weapons[i].bullets)
-        {
-            var bullet = state.weapons[i].bullets[j];
-            if (bullet.hitPoint != -1 && !weaponBulletHitPoints[i][j])
-            {
-                weaponBulletHitPoints[i][j] = bullet.hitPoint;
-            }
-        }
-        for (var j in weaponBulletHitPoints[i])
-        {
-            if (!state.weapons[i].bullets[j])
-            {
-                try{
-                    delete weaponBulletHitPoints[i][j];
-                }
-                catch{}
-            }
-        }
-    }
-}
+
 function updateGameArea() {
     myGameArea.clear();
     if (gameStates.length > 1) {
         
-        var state = linearInterpolator.linearGameState(weaponBulletHitPoints);
-        manageHitPoints(state);
+        var state = linearInterpolator.linearGameState();
+        linearInterpolator.manageHitPoints(state);
         if (state.players[controlId] && state.players[controlId].alive) {
             lastDeadTime = -1;
         } else if (lastDeadTime == -1) {
