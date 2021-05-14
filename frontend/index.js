@@ -93,34 +93,7 @@ socket.on('gameState', (msg) => {
     }
     tickInterval = (tickIntervals[tickIntervals.length - 1] - tickIntervals[0])/(tickIntervals.length - 1);
     gameStates.push(msg);
-    
-    for (var i in msg.weapons)
-    {
-        var gun = msg.weapons[i]
-        for (var j in gun.bullets)
-        {
-            var bullet = gun.bullets[j];
-            if (bullet.hitPoint == -1)
-            {
-                try{
-                    delete weaponBulletHitPoints[i][j];
-                }
-                catch{}
-            }
-            else
-            {
-                if (!this.weaponBulletHitPoints)
-                {
-                    this.weaponBulletHitPoints = {};
-                }
-                if (!this.weaponBulletHitPoints[i])
-                {
-                    this.weaponBulletHitPoints[i] = {};
-                }
-                this.weaponBulletHitPoints[i][j] = bullet.hitPoint;
-            }
-        }
-    }
+    linearInterpolator.updateHitPointsFromState(msg);
 });
 socket.on('killFeed', (msg) => {
     var plyrs = gameStates[gameStates.length - 1].players;
@@ -1450,6 +1423,35 @@ var Vector = function(x, y) {
 var linearInterpolator = {
     lagLimit : 4000,
     weaponBulletHitPoints : {},
+    updateHitPointsFromState : function(state){
+        for (var i in state.weapons)
+        {
+            var gun = state.weapons[i]
+            for (var j in gun.bullets)
+            {
+                var bullet = gun.bullets[j];
+                if (bullet.hitPoint == -1)
+                {
+                    try{
+                        delete this.weaponBulletHitPoints[i][j];
+                    }
+                    catch{}
+                }
+                else
+                {
+                    if (!this.weaponBulletHitPoints)
+                    {
+                        this.weaponBulletHitPoints = {};
+                    }
+                    if (!this.weaponBulletHitPoints[i])
+                    {
+                        this.weaponBulletHitPoints[i] = {};
+                    }
+                    this.weaponBulletHitPoints[i][j] = bullet.hitPoint;
+                }
+            }
+        }
+    },
     manageHitPoints : function(state){
         for (var i in state.weapons)
         {
