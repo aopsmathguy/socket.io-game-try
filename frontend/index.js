@@ -109,6 +109,10 @@ socket.on('gameState', (msg) => {
             }
             else
             {
+                if (!this.weaponBulletHitPoints)
+                {
+                    this.weaponBulletHitPoints = {};
+                }
                 if (!this.weaponBulletHitPoints[i])
                 {
                     this.weaponBulletHitPoints[i] = {};
