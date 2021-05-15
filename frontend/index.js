@@ -466,14 +466,16 @@ function joinGame() {
     color = colorInput.value;
     if (gameStates.length > 0 && (!gameStates[0].players[controlId] || !gameStates[0].players[controlId].alive))
     {
-        newPlayer(name, color);
+        newPlayer(name, color, loadout.primary, loadout.secondary);
     }
 }
 
-function newPlayer(name, color) {
+function newPlayer(name, color, prim, sec) {
     socket.emit('new player', {
         name: name,
-        color: color
+        color: color,
+        primary : prim,
+        secondary : sec
     });
 }
 function limitInput()
