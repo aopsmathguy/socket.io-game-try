@@ -100,8 +100,8 @@ io.on('connection', client => {
     }
     function addPlayer(msg) {
         if (!(msg && typeof msg.name != 'undefined' && msg.color && 
-              msg.primary && Number.isInteger(msg.primary) && msg.primary >= 0 && msg.primary < viableWeapons.weapons.length &&
-              msg.secondary && Number.isInteger(msg.secondary) && msg.secondary >= 0 && msg.secondary < viableWeapons.weapons.length))
+              typeof msg.primary != 'undefined' && Number.isInteger(msg.primary) && msg.primary >= 0 && msg.primary < viableWeapons.weapons.length &&
+              typeof msg.secondary != 'undefined' && Number.isInteger(msg.secondary) && msg.secondary >= 0 && msg.secondary < viableWeapons.weapons.length))
         {
             return;
         }
