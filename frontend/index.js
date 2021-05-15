@@ -288,7 +288,7 @@ var loadout = {
                        }
                    }
                }
-               currentLoad.innerHtml = this.primary + " | " + this.secondary;
+               currentLoad.innerHTML = this.primary + " | " + this.secondary;
            }).bind(this));
         })).bind(this);
         header.parentNode.insertBefore(currentLoad, header.nextSibling);
