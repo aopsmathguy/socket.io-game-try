@@ -68,7 +68,7 @@ socket.on('init', (msg) => {
 
     framesPerTick = msg.framesPerTick;
     viableWeapons = msg.viableWeapons;
-
+    loadout.startNameToId(viableWeapons);
     loadout.updateWeaponClass(viableWeapons);
     loadout.updateElem();
 
@@ -151,11 +151,19 @@ var loadout = {
     elem : document.getElementById("loadout"),
     primary : -1,
     secondary : -1,
+    nameToId : {},
     weaponClasses : {},
+    startNameToId : function(viableWeapons)
+    {
+        for (var i = 0, l = viableWeapons.length; i < l; i++)
+        {
+            nameToId[viableWeapons[i].name] = i;
+        }
+    },
     updateWeaponClass : function(viableWeapons)
     {
         this.weaponClasses = {};
-        for (var i in viableWeapons)
+        for (var i = 0, l = viableWeapons.length; i < l; i++)
         {
             var weapon = viableWeapons[i];
             var weaponClass = weapon.weaponClass;
@@ -274,25 +282,23 @@ var loadout = {
         currentLoad.className = "currLoadout";
         currentLoad.appendChild(document.createTextNode(""));
         Array.prototype.forEach.call(radios, (function(radio) {
-           console.log(this);
             function update()
             {
-               console.log(this);
                for (var i = 0; i < radios.length; i++)
                {
                    if (radios[i].checked)
                    {
                        if (radios[i].name == "Primary")
                        {
-                            this.primary = radios[i].value;
+                            this.primary = this.nameToId[radios[i].value];
                        }
                        else
                        {
-                           this.secondary = radios[i].value;
+                           this.secondary = this.nameToId[radios[i].value];
                        }
                    }
                }
-               currentLoad.innerHTML = this.primary + " | " + this.secondary;
+               currentLoad.innerHTML = viableWeapons[this.primary].name + " | " + viableWeapons[this.secondary].name;
            }
            update();
            radio.addEventListener('change', update.bind(this));
@@ -303,9 +309,6 @@ var loadout = {
 
         giveHoverable();
         giveCollapsible();
-    },
-    getLoadout : function(){
-        
     }
 }
 var settings = {
