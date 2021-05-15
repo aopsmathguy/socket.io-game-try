@@ -302,7 +302,7 @@ var GameState = function(time, players, weapons) {
     setIfUndefined(this, 'weaponsSectors', []);//
     this.addWeapon = function(gun){
         this.weapons[this.weaponsLength] = gun;
-        this.weaponsLength ++;
+        return this.weaponsLength ++;
     }
     this.step = function() {
         iterations = 0;
@@ -620,16 +620,16 @@ function orientation(p, q, r) {
 var Player = function(xStart, yStart, name, color, id, prim, sec, state) {
     this.type = "Player";
     this.outfields = ['type','radius','reachDist','weapon','weapons','slot','health','pos','ang','punchLastTime','id','name','killstreak','points','color','alive'];
-    state.addWeapon(new Gun(0,0,prim));
-    state.addWeapon(new Gun(0,0,sec));
+    var idx1 = state.addWeapon(new Gun(0,0,prim));
+    var idx2 = state.addWeapon(new Gun(0,0,sec));
     
     setIfUndefined(this, 'speed', 5);
     setIfUndefined(this, 'agility', 0.1);
     setIfUndefined(this, 'radius', 20);//
     setIfUndefined(this, 'reachDist', 50);//
 
-    setIfUndefined(this, 'weapon', prim);//
-    setIfUndefined(this, 'weapons', [prim,sec]);//
+    setIfUndefined(this, 'weapon', idx1);//
+    setIfUndefined(this, 'weapons', [idx1,idx2]);//
     setIfUndefined(this, 'slot', 0);//
 
     setIfUndefined(this, 'health', 100);//
