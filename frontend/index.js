@@ -275,7 +275,8 @@ var loadout = {
         currentLoad.appendChild(document.createTextNode(""));
         Array.prototype.forEach.call(radios, (function(radio) {
            console.log(this);
-           radio.addEventListener('change', (function(){
+            function update()
+            {
                console.log(this);
                for (var i = 0; i < radios.length; i++)
                {
@@ -292,7 +293,9 @@ var loadout = {
                    }
                }
                currentLoad.innerHTML = this.primary + " | " + this.secondary;
-           }).bind(this));
+           }
+           update();
+           radio.addEventListener('change', update.bind(this));
         }).bind(this));
         this.elem.insertBefore(currentLoad, header.nextSibling);
         this.elem.insertBefore(document.createElement("br"), currentLoad.nextSibling);
