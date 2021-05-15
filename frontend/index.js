@@ -272,7 +272,7 @@ var loadout = {
         
         var currentLoad = document.createElement("label");
         currentLoad.className = "currLoadout";
-        currentLoad.appendChild(document.createTextNode("hjk"));
+        currentLoad.appendChild(document.createTextNode(""));
         Array.prototype.forEach.call(radios, (function(radio) {
            radio.addEventListener('change', (function(){
                for (var i = 0; i < radios.length; i++)
@@ -293,6 +293,7 @@ var loadout = {
            }).bind(this));
         }));
         this.elem.insertBefore(currentLoad, header.nextSibling);
+        this.elem.insertBefore(document.createElement("br"), currentLoad.nextSibling);
         
         giveHoverable();
         giveCollapsible();
