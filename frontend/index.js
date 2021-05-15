@@ -24,7 +24,7 @@ var path1 = "img/weapons/";
 var path2 = "img/ground weapons/";
 function imageExists(weapon, imageSrc, good, bad) {
     var img = new Image();
-    img.onload = (() => {good(weapon,img);}); 
+    img.onload = (() => {good(weapon,img);});
     img.onerror = (() => {bad();});
     img.src = imageSrc;
 }
@@ -68,10 +68,10 @@ socket.on('init', (msg) => {
 
     framesPerTick = msg.framesPerTick;
     viableWeapons = msg.viableWeapons;
-    
+
     loadout.updateWeaponClass(viableWeapons);
     loadout.updateElem();
-    
+
     joinGameBtn.hidden = false;
 });
 socket.on('gameState', (msg) => {
@@ -102,7 +102,7 @@ socket.on('killFeed', (msg) => {
     if (msg.shooter == controlId)
     {
         killColor = "#8f8";
-    } 
+    }
     else if (msg.dead == controlId)
     {
         killColor = "#f66";
@@ -111,9 +111,9 @@ socket.on('killFeed', (msg) => {
     {
         killColor = "#fff";
     }
-    
+
     killFeed.add(message,killColor);
-    
+
     if (msg.shooter == controlId)
     {
         yourKillFeed.add("You killed " + deadName);
@@ -137,14 +137,14 @@ socket.on('playerActivity', (msg) => {
 });
 
 var crossHair = {
-    
+
     display : function() {
         myGameArea.transform(controlsBundle.mouse.x,controlsBundle.mouse.y, 0, this.size, () => {
             (new Vector(1, 0)).drawLine(new Vector(-1, 0), '#fff', .13);
             (new Vector(0, 1)).drawLine(new Vector(0, -1), '#fff', .13);
             (new Vector(0, 0)).circle(.6, '#fff', .13);
         });
-        
+
     }
 }
 var loadout = {
@@ -171,11 +171,11 @@ var loadout = {
         while (this.elem.firstChild) {
             this.elem.removeChild(this.elem.firstChild);
         }
-        
+
         var header = document.createElement("h2");
         header.appendChild(document.createTextNode("Loadout"));
         this.elem.appendChild(header);
-        
+
         var primaryCollapse = document.createElement("button");
         primaryCollapse.type = "button";
         primaryCollapse.className = "mediumfont collapsible hoverableDarken";
@@ -184,8 +184,8 @@ var loadout = {
         var primaryContent = document.createElement("div");
         primaryContent.className = "content";
         this.elem.appendChild(primaryContent);
-        
-        
+
+
         var secondaryCollapse = document.createElement("button");
         secondaryCollapse.type = "button";
         secondaryCollapse.className = "mediumfont collapsible hoverableDarken";
@@ -193,7 +193,7 @@ var loadout = {
         this.elem.appendChild(secondaryCollapse);
         var secondaryContent = document.createElement("div");
         secondaryContent.className = "content";
-        
+
         for (var i in this.weaponClasses)
         {
             var weapons = this.weaponClasses[i];
@@ -202,10 +202,10 @@ var loadout = {
                 for (var j = 0, l = weapons.length; j < l; j++)
                 {
                     var weapon = weapons[j];
-                    
+
                     var label = document.createElement("label");
                     label.className = "loadoutWeaponLabels";
-                    
+
                     var elem = document.createElement("input");
                     elem.type = "radio"
                     elem.className = "loadoutSelect";
@@ -216,13 +216,13 @@ var loadout = {
                         elem.checked = true;
                     }
                     label.appendChild(elem);
-                    
+
                     var text = document.createElement("i");
                     text.appendChild(document.createTextNode(weapon.name));
                     label.appendChild(text);
-                    
-                    
-                    
+
+
+
                     secondaryContent.appendChild(label);
                     secondaryContent.appendChild(document.createElement("br"));
                 }
@@ -235,14 +235,14 @@ var loadout = {
                 newCollapse.appendChild(document.createTextNode(i));
                 var content = document.createElement("div");
                 content.className = "content";
-                
+
                 for (var j = 0, l = weapons.length; j < l; j++)
                 {
                     var weapon = weapons[j];
-                    
+
                     var label = document.createElement("label");
                     label.className = "loadoutWeaponLabels";
-                    
+
                     var elem = document.createElement("input");
                     elem.type = "radio"
                     elem.className = "loadoutSelect";
@@ -253,23 +253,23 @@ var loadout = {
                         elem.checked = true;
                     }
                     label.appendChild(elem);
-                    
+
                     var text = document.createElement("i");
                     text.appendChild(document.createTextNode(weapon.name));
                     label.appendChild(text);
                     content.appendChild(label);
                     content.appendChild(document.createElement("br"));
                 }
-                
+
                 primaryContent.appendChild(newCollapse);
                 primaryContent.appendChild(content);
             }
         }
 
         this.elem.appendChild(secondaryContent);
-        
+
         var radios = document.querySelectorAll('input.loadoutSelect');
-        
+
         var currentLoad = document.createElement("label");
         currentLoad.className = "currLoadout";
         currentLoad.appendChild(document.createTextNode(""));
@@ -293,15 +293,15 @@ var loadout = {
                }
                currentLoad.innerHTML = this.primary + " | " + this.secondary;
            }).bind(this));
-        }));
+        }).bind(this));
         this.elem.insertBefore(currentLoad, header.nextSibling);
         this.elem.insertBefore(document.createElement("br"), currentLoad.nextSibling);
-        
+
         giveHoverable();
         giveCollapsible();
     },
     getLoadout : function(){
-        
+
     }
 }
 var settings = {
@@ -417,7 +417,7 @@ var yourKillFeed = {
             var timeDiff = Date.now() - this.list[idx].time;
             var txtAlpha = Math.min(1, timeDiff / fadeTime, (upTime - timeDiff) / fadeTime);
 
-            
+
             var textPosX = myGameArea.uiWidth/2;
             var textPosY = myGameArea.uiHeight - 250 + (idx + 1 - this.scroll) * 30;
 
@@ -451,7 +451,7 @@ function joinGame() {
     lastDeadTime = -2;
     yourKillFeed.scroll = 0;
     yourKillFeed.list = [];
-    
+
     killFeed.scroll = 0;
     initialScreen.style.display = "none";
 
@@ -575,7 +575,7 @@ var myGameArea = {
         //make the canvas and stuff.
         this.canvas = canvas;
         this.canvas.style.border = "none";
-        
+
         this.canvas.style.margin = 0;
         this.canvas.style.padding = 0;
 
@@ -628,14 +628,14 @@ var myGameArea = {
     clear: function() {
         this.canvas.width = window.innerWidth * this.scale;
         this.canvas.height = window.innerHeight * this.scale;
-        
+
         this.canvas.style.width = window.innerWidth;
         this.canvas.style.height = window.innerHeight;
-        
+
         this.scaleRatio = this.uiScale * (this.canvas.width + this.canvas.height)/2000;
         this.uiWidth = this.canvas.width/this.scaleRatio;
         this.uiHeight = this.canvas.height/this.scaleRatio;
-        
+
         this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
     },
@@ -775,8 +775,8 @@ var GameState = function() {
                         this.players[idx].drawHealthBar(idx);
                 }
             });
-        
-        
+
+
             if (this.players[controlId] && initialScreen.style.display == "none")
             {
                 this.displayWeaponPickup();
@@ -797,7 +797,7 @@ var GameState = function() {
         var height = myGameArea.uiHeight/drawer.scale;
         var startX = Math.max(delta*Math.floor((drawer.scroll.x - width/2)/delta),0);
         var startY = Math.max(delta*Math.floor((drawer.scroll.y - height/2)/delta),0);
-        
+
         var endX = Math.min(delta*(Math.floor((drawer.scroll.x + width/2)/delta)+1),gameWidth);
         var endY = Math.min(delta*(Math.floor((drawer.scroll.y + height/2)/delta) + 1),gameWidth);
         var ctx = myGameArea.context;
@@ -845,7 +845,7 @@ var GameState = function() {
             return;
         }
         var weapon = this.weapons[weaponId];
-       
+
         //console.log(screenPos);
         blackBoxedText(weapon.name + " (" + weapon.weaponClass + ")",
                 "bold " + size + "px Courier New",
@@ -876,7 +876,7 @@ var GameState = function() {
             var weapon = this.weapons[player.weapons[i]];
              var img = (weapon && weaponImages[weapon.name] && weaponImages[weapon.name][false] ? weaponImages[weapon.name][false] : false);
             var scale = weapon.length/img.naturalWidth;
-           
+
             ctx.save();
             ctx.translate(startX  + length /2, startY + height * i + height/2);
             if (img)
@@ -890,7 +890,7 @@ var GameState = function() {
             }
             ctx.restore();
         }
-        
+
     }
     this.displayHealthMeter = function()
     {
@@ -957,27 +957,27 @@ var GameState = function() {
         var y = startY + margin;
         ctx.font = "bold " + height + "px Courier New";
         ctx.fillStyle = "#fff";
-        
+
         ctx.textAlign = "left";
         ctx.fillText("fps:" + Math.floor(myGameArea.fps + 0.5),  startX + margin, y + 3/4 * height);
-        
+
         ctx.textAlign = "center";
         ctx.fillText("tickspd:" + Math.floor(1000/tickInterval + 0.5),  startX + totalWidth/2, y + 3/4 * height);
-        
+
         ctx.textAlign = "right";
         ctx.fillText("Plyrs:" + Object.keys(this.players).length,  startX + totalWidth - margin, y + 3/4 * height);
-        
+
         y += margin + height;
         ctx.textAlign = "center";
         ctx.fillText("Leaderboard",  startX + totalWidth/2, y + 3/4 * height);
-        
-        
+
+
         y += margin + height;
         for (var i = 0; i < Math.min(displayObj.length,maxLength); i++)
         {
             var playerStats = displayObj[i];
             ctx.fillStyle = (playerStats.id == controlId ? "#8f8" : "#fff");
-            
+
             ctx.textAlign = "left";
             var name = (playerStats.name.length > 11 ? playerStats.name.substring(0,10) + "\u2026" : playerStats.name);
             ctx.fillText(i + 1 + ". " + name + ":", startX + margin, y + 3/4 * height);
@@ -1001,7 +1001,7 @@ var GameState = function() {
         ctx.fill();
         ctx.restore();*/
 
-        
+
         var ang = player.ang;
         var rotAng1 = 0;
         var rotAng2 = 0.25*Math.PI;
@@ -1027,7 +1027,7 @@ var GameState = function() {
         myGameArea.transform(player.pos.x,player.pos.y,player.ang,1,()=>{
             ctx.fillStyle = '#000';
             ctx.strokeStyle = '#000';
-            
+
             ctx.beginPath();
             ctx.arc(firstShoulder.x, firstShoulder.y, 14/2, 0, 2 * Math.PI);
             ctx.closePath();
@@ -1051,7 +1051,7 @@ var GameState = function() {
 
             ctx.fillStyle = player.color;
             ctx.strokeStyle = player.color;
-            
+
             ctx.beginPath();
             ctx.arc(firstShoulder.x, firstShoulder.y, 10/2, 0, 2 * Math.PI);
             ctx.closePath();
@@ -1060,7 +1060,7 @@ var GameState = function() {
             ctx.arc(secondShoulder.x, secondShoulder.y, 10/2, 0, 2 * Math.PI);
             ctx.closePath();
             ctx.fill();
-            
+
             ctx.lineWidth = 9;
             ctx.beginPath();
             ctx.moveTo(firstShoulder.x, firstShoulder.y);
@@ -1093,12 +1093,12 @@ var GameState = function() {
             ctx.closePath();
             ctx.fill();
         });
-        
+
         if (player.weapon != -1)
         {
             this.displayWeapon(player.weapon);
         }
-        
+
         myGameArea.transform(player.pos.x,player.pos.y,player.ang,1,()=>{
             ctx.strokeStyle = '#000';
             ctx.lineWidth =  2;
@@ -1112,9 +1112,9 @@ var GameState = function() {
     }
     this.displayWeapon = function(i) {
         var weapon = this.weapons[i];
-        
+
         var ctx = myGameArea.context;
-        
+
         myGameArea.transform(weapon.pos.x,weapon.pos.y,weapon.ang,1,()=>{
             if (!weapon.hold) {
                 ctx.strokeStyle = weapon.color;
@@ -1150,7 +1150,7 @@ var GameState = function() {
                 ctx.stroke();
             }
         })
-        
+
     }
     this.displayBullets = function(i) {
         var weapon = this.weapons[i];
@@ -1193,7 +1193,7 @@ var GameState = function() {
             }
         }
     }
-    
+
     this.displayName = function(i) {
 
         var player = this.players[i];
@@ -1298,7 +1298,7 @@ var Bullet = function() {
     this.type = "Bullet";
     this.display = function() {
         var ctx = myGameArea.context;
-        
+
         myGameArea.transform(this.pos.x,this.pos.y,this.ang, 1, ()=>{
             const g = ctx.createLinearGradient(0,0, -this.trailLength, 0);
             if (this.ammoType == 'bullet')
@@ -1336,7 +1336,7 @@ var Bullet = function() {
             ctx.closePath();
             ctx.stroke();
         });
-        
+
     }
     this.objectsIntersection = function(state) {
         if (this.hitPoint != -1)
@@ -1388,7 +1388,7 @@ var Drawer = function() {
     this.zoom = 1;
     this.targetScale;
     this.screenShake = this.screenShake || 0;
-    
+
     this.transform = function(point) {
         return point.subtract(this.scroll).multiply(this.scale).add((new Vector(myGameArea.uiWidth, myGameArea.uiHeight)).multiply(0.5));
     }
@@ -1398,7 +1398,7 @@ var Drawer = function() {
             myGameArea.transform(-this.scroll.x,-this.scroll.y,0,1, func);
         });
     }
-    
+
     this.update = function(state) {
 
         character = state.players[controlId];
@@ -1791,7 +1791,7 @@ var lastDeadTime = -1;
 function updateGameArea() {
     myGameArea.clear();
     if (gameStates.length > 1) {
-        
+
         var state = linearInterpolator.linearGameState();
         linearInterpolator.manageHitPoints(state);
         if (state.players[controlId] && state.players[controlId].alive) {
