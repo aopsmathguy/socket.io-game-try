@@ -99,7 +99,9 @@ io.on('connection', client => {
         client.inGameId = string;
     }
     function addPlayer(msg) {
-        if (!(msg && typeof msg.name != 'undefined' && msg.color))
+        if (!(msg && typeof msg.name != 'undefined' && msg.color && 
+              msg.primary && Number.isInteger(msg.primary) && msg.primary >= 0 && msg.primary < viableWeapons.weapons.length &&
+              msg.secondary && Number.isInteger(msg.secondary) && msg.secondary >= 0 && msg.secondary < viableWeapons.weapons.length))
         {
             return;
         }
@@ -125,7 +127,7 @@ io.on('connection', client => {
             player.points = 0;
 
         } else {
-            gameState.players[client.inGameId] = new Player(startPos.x, startPos.y, (name ? name : "Guest " + Math.floor(10000*Math.random())), color, client.inGameId);
+            gameState.players[client.inGameId] = new Player(startPos.x, startPos.y, (name ? name : "Guest " + Math.floor(10000*Math.random())), color, client.inGameId, msg.primary, msg.secondary, gameState);
             controls[client.inGameId] = {
                 keys: [],
                 mouseDown: false
@@ -296,7 +298,12 @@ var GameState = function(time, players, weapons) {
     setIfUndefined(this, 'time', time);//
     setIfUndefined(this, 'players', players);//
     setIfUndefined(this, 'weapons', weapons);//
+    setIfUndefined(this, 'weaponsLength', 0);//
     setIfUndefined(this, 'weaponsSectors', []);//
+    this.addWeapon = function(gun){
+        this.weapons[this.weaponsLength] = gun;
+        this.weaponsLength ++;
+    }
     this.step = function() {
         iterations = 0;
         this.updateWeaponsSectors();
@@ -580,15 +587,15 @@ var makeObstacles = function() {
         addTo[addTo.length] = ob;
     }
     
-    var weapons = [];
+    /*var weapons = [];
     for (var i = 0; i < viableWeapons.weapons.length; i++) {
         for (var j = 0; j < viableWeapons.numEach[i]; j++) {
             var weapon = new Gun(0,0,i);
             weapon.pos = findSpawnPosition();
             weapons.push(weapon);
         }
-    }
-    gameState = new GameState(Date.now(), players, weapons);
+    }*/
+    gameState = new GameState(Date.now(), players, {});
 }
 
 function getRandomColor() {
@@ -610,16 +617,19 @@ function orientation(p, q, r) {
 
     return (val > 0) ? 1 : 2; // clock or counterclock wise
 }
-var Player = function(xStart, yStart, name, color, id) {
+var Player = function(xStart, yStart, name, color, id, prim, sec, state) {
     this.type = "Player";
     this.outfields = ['type','radius','reachDist','weapon','weapons','slot','health','pos','ang','punchLastTime','id','name','killstreak','points','color','alive'];
+    state.addWeapon(new Gun(0,0,prim));
+    state.addWeapon(new Gun(0,0,sec));
+    
     setIfUndefined(this, 'speed', 5);
     setIfUndefined(this, 'agility', 0.1);
     setIfUndefined(this, 'radius', 20);//
     setIfUndefined(this, 'reachDist', 50);//
 
-    setIfUndefined(this, 'weapon', -1);//
-    setIfUndefined(this, 'weapons', [-1,-1]);//
+    setIfUndefined(this, 'weapon', prim);//
+    setIfUndefined(this, 'weapons', [prim,sec]);//
     setIfUndefined(this, 'slot', 0);//
 
     setIfUndefined(this, 'health', 100);//
@@ -648,8 +658,7 @@ var Player = function(xStart, yStart, name, color, id) {
     setIfUndefined(this, 'points', 0);//
     setIfUndefined(this, 'color', color);//
     setIfUndefined(this, 'alive', true);//
-
-
+    
     setIfUndefined(this, 'lastHitBy', -1);
     this.swapWeapon = function(state, newSlot)
     {
