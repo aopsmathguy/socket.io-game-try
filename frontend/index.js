@@ -267,6 +267,7 @@ var loadout = {
         
         giveHoverable();
         giveCollapsible();
+        giveCollapsible1();
     },
     getLoadout : function(){
         
