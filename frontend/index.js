@@ -282,7 +282,7 @@ var loadout = {
         currentLoad.className = "currLoadout";
         currentLoad.appendChild(document.createTextNode(""));
         Array.prototype.forEach.call(radios, (function(radio) {
-            function update()
+            var update = (function()
             {
                for (var i = 0; i < radios.length; i++)
                {
@@ -299,7 +299,7 @@ var loadout = {
                    }
                }
                currentLoad.innerHTML = viableWeapons[this.primary].name + " | " + viableWeapons[this.secondary].name;
-           }
+           }).bind(this);
            update();
            radio.addEventListener('change', update.bind(this));
         }).bind(this));
