@@ -149,6 +149,8 @@ var crossHair = {
 }
 var loadout = {
     elem : document.getElementById("loadout"),
+    primary : -1,
+    secondary : -1,
     weaponClasses : {},
     updateWeaponClass : function(viableWeapons)
     {
@@ -263,7 +265,33 @@ var loadout = {
                 primaryContent.appendChild(content);
             }
         }
+
         this.elem.appendChild(secondaryContent);
+        
+        var radios = document.querySelectorAll('input.loadoutSelect');
+        
+        var currentLoad = document.createElement("label");
+        currentLoad.appendChild(document.createTextNode(""));
+        Array.prototype.forEach.call(radios, function(radio) {
+           radio.addEventListener('change', () => {
+               for (var i = 0; i < radios.length; i++)
+               {
+                   if (radios[i].checked)
+                   {
+                       if (radios[i].name == "Primary")
+                       {
+                            this.primary = radios[i].value;
+                       }
+                       else
+                       {
+                           this.secondary = radios[i].value;
+                       }
+                   }
+               }
+               currentLoad.innerHtml = this.primary + " | " + this.secondary;
+           });
+        });
+        header.parentNode.insertBefore(currentLoad, header.nextSibling);
         
         giveHoverable();
         giveCollapsible();
