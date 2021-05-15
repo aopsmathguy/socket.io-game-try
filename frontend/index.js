@@ -274,7 +274,9 @@ var loadout = {
         currentLoad.className = "currLoadout";
         currentLoad.appendChild(document.createTextNode(""));
         Array.prototype.forEach.call(radios, (function(radio) {
+           console.log(this);
            radio.addEventListener('change', (function(){
+               console.log(this);
                for (var i = 0; i < radios.length; i++)
                {
                    if (radios[i].checked)
