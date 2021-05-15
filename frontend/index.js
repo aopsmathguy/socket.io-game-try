@@ -188,9 +188,6 @@ var loadout = {
         secondaryCollapse.type = "button";
         secondaryCollapse.className = "mediumfont collapsible hoverableDarken";
         secondaryCollapse.appendChild(document.createTextNode("Secondary"));
-        secondaryCollapse.style.top = "50%";
-        secondaryCollapse.style.position = "relative";
-        secondaryCollapse.style.transform = "translateY(-50%)";
         this.elem.appendChild(secondaryCollapse);
         var secondaryContent = document.createElement("div");
         secondaryContent.className = "content";
