@@ -176,7 +176,7 @@ var loadout = {
         
         var primaryCollapse = document.createElement("button");
         primaryCollapse.type = "button";
-        primaryCollapse.className = "mediumfont collapsible hoverableDarken";
+        primaryCollapse.className = "mediumfont collapsible1 hoverableDarken";
         primaryCollapse.appendChild(document.createTextNode("Primary"));
         this.elem.appendChild(primaryCollapse);
         var primaryContent = document.createElement("div");
