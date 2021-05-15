@@ -116,6 +116,10 @@
             color: #fff;
             border-radius: 10px;
         }
+        .collapsible1{
+            color: #fff;
+            border-radius: 10px;
+        }
         .content {
           padding: 0 10px;
           background-color: rgba(0,0,0,0);
@@ -193,6 +197,22 @@
                   content.style.maxHeight = null;
                 } else {
                   content.style.maxHeight = content.scrollHeight + "px";
+                }
+              });
+            }
+        }
+        function giveCollapsible1(){
+            var coll = document.getElementsByClassName("collapsible1");
+          
+
+            for (var i = 0; i < coll.length; i++) {
+              coll[i].addEventListener("click", function() {
+                this.classList.toggle("active");
+                var content = this.nextElementSibling;
+                if (content.style.maxHeight){
+                  content.style.maxHeight = null;
+                } else {
+                  content.style.maxHeight = "40%";
                 }
               });
             }
