@@ -5,6 +5,7 @@ var buffer = 50;
 var framesPerTick;
 
 const socket = io('https://limitless-everglades-60126.herokuapp.com/');
+//const socket = {on : function(){}};
 
 var tickIntervals = [];
 var tickInterval;
@@ -67,17 +68,11 @@ socket.on('init', (msg) => {
 
     framesPerTick = msg.framesPerTick;
     viableWeapons = msg.viableWeapons;
-    weaponClasses = {};
-    for (var i in viableWeapons)
-    {
-        var weapon = viableWeapons[i];
-        var weaponClass = weapon.weaponClass;
-        if (!weaponClasses[weaponClass])
-        {
-            weaponClasses[weaponClass] = [];
-        }
-        weaponClasses[weaponClass].push(weapon);
-    }
+    
+    loadout.updateWeaponClass(viableWeapons);
+    loadout.updateElem();
+    
+    joinGameBtn.hidden = false;
 });
 socket.on('gameState', (msg) => {
     for(var i in msg.weapons)
@@ -149,6 +144,131 @@ var crossHair = {
             (new Vector(0, 1)).drawLine(new Vector(0, -1), '#fff', .13);
             (new Vector(0, 0)).circle(.6, '#fff', .13);
         });
+        
+    }
+}
+var loadout = {
+    elem : document.getElementById("loadout"),
+    weaponClasses : {},
+    updateWeaponClass : function(viableWeapons)
+    {
+        this.weaponClasses = {};
+        for (var i in viableWeapons)
+        {
+            var weapon = viableWeapons[i];
+            var weaponClass = weapon.weaponClass;
+            if (!this.weaponClasses[weaponClass])
+            {
+                this.weaponClasses[weaponClass] = [];
+            }
+            this.weaponClasses[weaponClass].push(weapon);
+        }
+    },
+    updateElem : function()
+    {
+        while (this.elem.firstChild) {
+            this.elem.removeChild(this.elem.firstChild);
+        }
+        
+        var header = document.createElement("h2");
+        header.appendChild(document.createTextNode("Loadout"));
+        this.elem.appendChild(header);
+        
+        var primaryCollapse = document.createElement("button");
+        primaryCollapse.type = "button";
+        primaryCollapse.className = "mediumfont collapsible hoverableDarken";
+        primaryCollapse.appendChild(document.createTextNode("Primary"));
+        this.elem.appendChild(primaryCollapse);
+        var primaryContent = document.createElement("div");
+        primaryContent.className = "content";
+        this.elem.appendChild(primaryContent);
+        
+        
+        var secondaryCollapse = document.createElement("button");
+        secondaryCollapse.type = "button";
+        secondaryCollapse.className = "mediumfont collapsible hoverableDarken";
+        secondaryCollapse.appendChild(document.createTextNode("Secondary"));
+        this.elem.appendChild(secondaryCollapse);
+        var secondaryContent = document.createElement("div");
+        secondaryContent.className = "content";
+        
+        for (var i in this.weaponClasses)
+        {
+            var weapons = this.weaponClasses[i];
+            if (i == "Secondary")
+            {
+                for (var j = 0, l = weapons.length; j < l; j++)
+                {
+                    var weapon = weapons[j];
+                    
+                    var label = document.createElement("label");
+                    label.className = "loadoutWeaponLabels";
+                    
+                    var elem = document.createElement("input");
+                    elem.type = "radio"
+                    elem.className = "loadoutSelect";
+                    elem.name = "Secondary";
+                    elem.value = weapon.name;
+                    if (weapon.name == "Glock 17")
+                    {
+                        elem.checked = true;
+                    }
+                    label.appendChild(elem);
+                    
+                    var text = document.createElement("i");
+                    text.appendChild(document.createTextNode(weapon.name));
+                    label.appendChild(text);
+                    
+                    
+                    
+                    secondaryContent.appendChild(label);
+                    secondaryContent.appendChild(document.createElement("br"));
+                }
+            }
+            else
+            {
+                var newCollapse = document.createElement("button");
+                newCollapse.type = "button";
+                newCollapse.className = "mediumfont collapsible hoverableDarken";
+                newCollapse.appendChild(document.createTextNode(i));
+                var content = document.createElement("div");
+                content.className = "content";
+                
+                for (var j = 0, l = weapons.length; j < l; j++)
+                {
+                    var weapon = weapons[j];
+                    
+                    var label = document.createElement("label");
+                    label.className = "loadoutWeaponLabels";
+                    
+                    var elem = document.createElement("input");
+                    elem.type = "radio"
+                    elem.className = "loadoutSelect";
+                    elem.name = "Primary";
+                    elem.value = weapon.name;
+                    if (weapon.name == "AK-47")
+                    {
+                        elem.checked = true;
+                    }
+                    label.appendChild(elem);
+                    
+                    var text = document.createElement("i");
+                    text.appendChild(document.createTextNode(weapon.name));
+                    label.appendChild(text);
+                    content.appendChild(label);
+                    content.appendChild(document.createElement("br"));
+                }
+                
+                primaryContent.appendChild(newCollapse);
+                primaryContent.appendChild(content);
+            }
+        }
+        this.elem.appendChild(secondaryContent);
+        
+        giveHoverable();
+        giveCollapsible();
+    },
+    getLoadout : function(){
         
     }
 }
