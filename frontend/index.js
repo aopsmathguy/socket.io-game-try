@@ -157,7 +157,7 @@ var loadout = {
     {
         for (var i = 0, l = viableWeapons.length; i < l; i++)
         {
-            nameToId[viableWeapons[i].name] = i;
+            this.nameToId[viableWeapons[i].name] = i;
         }
     },
     updateWeaponClass : function(viableWeapons)
