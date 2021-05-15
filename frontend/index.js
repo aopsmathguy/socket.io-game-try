@@ -291,7 +291,7 @@ var loadout = {
                currentLoad.innerHTML = this.primary + " | " + this.secondary;
            }).bind(this));
         })).bind(this);
-        header.parentNode.insertBefore(currentLoad, header.nextSibling);
+        this.elem.insertBefore(currentLoad, header.nextSibling);
         
         giveHoverable();
         giveCollapsible();
