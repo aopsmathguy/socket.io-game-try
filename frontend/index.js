@@ -296,12 +296,13 @@ var loadout = {
         }).bind(this));
         this.elem.insertBefore(currentLoad, header.nextSibling);
         this.elem.insertBefore(document.createElement("br"), currentLoad.nextSibling);
+        this.elem.insertBefore(document.createElement("br"), currentLoad.nextSibling);
 
         giveHoverable();
         giveCollapsible();
     },
     getLoadout : function(){
-
+        
     }
 }
 var settings = {
