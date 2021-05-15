@@ -272,7 +272,7 @@ var loadout = {
         
         var currentLoad = document.createElement("label");
         currentLoad.appendChild(document.createTextNode(""));
-        Array.prototype.forEach.call(radios, function(radio) {
+        (Array.prototype.forEach.call(radios, (function(radio) {
            radio.addEventListener('change', () => {
                for (var i = 0; i < radios.length; i++)
                {
@@ -289,8 +289,8 @@ var loadout = {
                    }
                }
                currentLoad.innerHtml = this.primary + " | " + this.secondary;
-           });
-        });
+           }).bind(this));
+        })).bind(this);
         header.parentNode.insertBefore(currentLoad, header.nextSibling);
         
         giveHoverable();
