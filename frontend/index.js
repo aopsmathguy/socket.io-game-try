@@ -271,6 +271,7 @@ var loadout = {
         var radios = document.querySelectorAll('input.loadoutSelect');
         
         var currentLoad = document.createElement("label");
+        currentLoad.className = "currLoadout";
         currentLoad.appendChild(document.createTextNode("hjk"));
         Array.prototype.forEach.call(radios, (function(radio) {
            radio.addEventListener('change', (function(){
