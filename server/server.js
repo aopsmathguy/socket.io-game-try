@@ -952,7 +952,7 @@ var Gun = function(startX, startY, stats, playerIdx) {
       else if (state.time - this.lastFireTime >= 60000 / this.firerate) {
          this.lastFireTime = 0;
       }
-        if  (state.time - this.lastHoldTime > this.despawnTime)
+        if  (!this.hold && this.lastHoldTime != -1 && state.time - this.lastHoldTime > this.despawnTime)
         {
             state.removeWeapon(this.id);
         }
