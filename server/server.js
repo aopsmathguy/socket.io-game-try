@@ -142,7 +142,6 @@ io.on('connection', client => {
 });
 const viableWeapons = {
     weapons : [],
-    numEach : [3, 1, 1, 1, 1, 1,2, 2, 1, 1, 1, 1, 1, 1,1,1],
     start : function()
     {
         this.weapons = [
