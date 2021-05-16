@@ -907,11 +907,13 @@ var Gun = function(startX, startY, stats, playerIdx) {
     this.outfields = ['type','gunStats','pos','vel','ang','bulletsRemaining','reloadStartTime','recoil','hold','bullets'];
     
     setIfUndefined(this, 'gunStats', stats);//
+    Object.assign(this, viableWeapons.weapons[this.gunStats]);
+    
     setIfUndefined(this, 'pos', new Vector(startX, startY));//
     setIfUndefined(this, 'vel', new Vector(0, 0));//
     setIfUndefined(this, 'ang', -Math.PI/6);//
 
-    setIfUndefined(this, 'bulletsRemaining', 0);//
+    setIfUndefined(this, 'bulletsRemaining', (playerIdx != -1 ? this.capacity : 0));//
     setIfUndefined(this, 'reloadStartTime', -1);//
 
     setIfUndefined(this, 'spray', 0);
@@ -927,7 +929,6 @@ var Gun = function(startX, startY, stats, playerIdx) {
 
     setIfUndefined(this, 'playerHolding', playerIdx);
     
-    Object.assign(this, viableWeapons.weapons[this.gunStats]);
     this.type = "Gun";
     this.setLastFireTime = function(state)
     {
