@@ -301,7 +301,11 @@ var GameState = function(time, players, weapons) {
     setIfUndefined(this, 'weaponsSectors', []);//
     this.addWeapon = function(gun){
         this.weapons[this.weaponsLength] = gun;
+        gun.id = this.weaponsLength;
         return this.weaponsLength ++;
+    }
+    this.removeWeapon = function(gunIdx){
+        delete this.weapons[gunIdx];
     }
     this.step = function() {
         iterations = 0;
@@ -720,7 +724,7 @@ var Player = function(xStart, yStart, name, color, id, prim, sec, state) {
         weapon.ang = this.ang;
         weapon.hold = true;
         weapon.playerHolding = this.id;
-
+        weapon.lastHoldTime = -1;
     }
     this.dropWeapon = function(state) {
         var weapon = state.weapons[this.weapon];
@@ -740,6 +744,7 @@ var Player = function(xStart, yStart, name, color, id, prim, sec, state) {
             {
               weapon.lastFireTime = -1;
             }
+            weapon.lastHoldTime = state.time;
         }
         this.autoShot = false;
     }
@@ -900,6 +905,7 @@ var GunStats = function(name, weaponClass, length, auto, firerate, multishot, ca
 
     setIfUndefined(this, 'handPos1', new Vector(handPos1x, handPos1y));//
     setIfUndefined(this, 'handPos2', new Vector(handPos2x, handPos2y));//
+    setIfUndefined(this, 'despawnTime', 30000);//
     setIfUndefined(this, 'radius', 30);//
 }
 var Gun = function(startX, startY, stats, playerIdx) {
@@ -927,6 +933,10 @@ var Gun = function(startX, startY, stats, playerIdx) {
 
 
     setIfUndefined(this, 'playerHolding', playerIdx);
+    setIfUndefined(this, 'lastHoldTime', -1);
+    
+    setIfUndefined(this, 'id', -1);
+    
     
     this.type = "Gun";
     this.setLastFireTime = function(state)
@@ -942,9 +952,14 @@ var Gun = function(startX, startY, stats, playerIdx) {
       else if (state.time - this.lastFireTime >= 60000 / this.firerate) {
          this.lastFireTime = 0;
       }
+        if  (state.time - this.lastHoldTime > this.despawnTime)
+        {
+            state.removeWeapon(this.id);
+        }
     }
     this.pushFromAll = function(state)
     {
+        
         if (this.hold)
         {
             return;
@@ -1088,7 +1103,7 @@ var Gun = function(startX, startY, stats, playerIdx) {
 var Bullet = function(weapon) {
     this.type = "Bullet";
     if (weapon === undefined) {
-        weapon = new Gun(0, 0, 0,-1);
+        weapon = new Gun(0, 0, 0,-1, 0);
     }
     this.outfields = ['type','startPos','tailPos','pos','vel','ang','bulletSpeed','range','hitPoint','trailLength','width','color', 'ammoType'];
     setIfUndefined(this, 'startPos', weapon.pos.add((new Vector(weapon.length / 2, 0)).rotate(weapon.ang)));//
