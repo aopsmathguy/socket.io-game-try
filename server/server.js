@@ -278,7 +278,7 @@ function differenceBetweenObj(prev, curr)
     {
         return null;
     }
-    if (typeof curr == "object" && prev == "object")
+    if (typeof curr == "object" && typeof prev == "object")
     {
         var different = false;
         var out = {};
