@@ -99,6 +99,7 @@ function combineObj(prev, obj)
     }
 }
 socket.on('gameState', (msg) => {
+    console.log(msg);
     var prevGameState = gameStates[gameStates.length - 1];
     for(var i in msg.weapons)
     {
