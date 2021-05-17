@@ -22,6 +22,7 @@ var name;
 var color;
 var path1 = "img/weapons/";
 var path2 = "img/ground weapons/";
+var path3 = "img/ui/";
 function imageExists(weapon, imageSrc, good, bad) {
     var img = new Image();
     img.onload = (() => {good(weapon,img);});
@@ -51,8 +52,18 @@ for (var i in weaponImages)
         weaponImages[i][false] = false;
     });
 }
+var uiImages = {
+    crosshair : 0
+}
+for (var i in weaponImages)
+{
+    imageExists(i,path3 + i + ".svg",(j,img) => {
+        uiImages[j] = img;
+    },()=>{
+        uiImages[i] = false;
+    });
+}
 var viableWeapons;
-var weaponClasses;
 socket.on('init', (msg) => {
     timeDifference = msg.data - Date.now();
     controlId = msg.id;
@@ -167,10 +178,20 @@ var crossHair = {
 
     display : function() {
         myGameArea.transform(controlsBundle.mouse.x,controlsBundle.mouse.y, 0, this.size, () => {
-            (new Vector(1, 0)).drawLine(new Vector(-1, 0), '#fff', .13);
-            (new Vector(0, 1)).drawLine(new Vector(0, -1), '#fff', .13);
-            (new Vector(0, 0)).circle(.6, '#fff', .13);
+            if (uiImages.crosshair)
+            {
+                myGameArea.drawImage(uiImages.crosshair, -1, -1, 2, 2);
+            }
+            
+            else
+            {
+                
+                (new Vector(1, 0)).drawLine(new Vector(-1, 0), '#fff', .13);
+                (new Vector(0, 1)).drawLine(new Vector(0, -1), '#fff', .13);
+                (new Vector(0, 0)).circle(.6, '#fff', .13);
+            }
         });
+        
 
     }
 }
