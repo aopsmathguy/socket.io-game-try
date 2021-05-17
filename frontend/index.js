@@ -883,8 +883,8 @@ var GameState = function() {
         var width = gameWidth * scale;
         var startX = 20;
         var startY = myGameArea.uiHeight - height - 20;
-        myGameArea.transform(0,0,0,scale,()=>{
-            myGameArea.transform(startX,startY, 0, 1,() =>{
+        myGameArea.transform(0,0,0,1,()=>{
+            myGameArea.transform(startX,startY, 0, scale,() =>{
                 var ctx = myGameArea.context;
                 ctx.fillRect(0,0,gameWidth,gameHeight);
             });
