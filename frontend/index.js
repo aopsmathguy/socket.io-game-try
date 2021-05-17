@@ -842,6 +842,7 @@ var GameState = function() {
                 this.displayBulletCount();
                 //myGameArea.printFps();
                 this.displayLoadout();
+                this.displayMinimap();
                 killFeed.display();
                 yourKillFeed.display();
             }
@@ -874,6 +875,44 @@ var GameState = function() {
             ctx.lineTo(endX,y);
             ctx.stroke();
         }
+    }
+    this.displayMinimap = function()
+    {
+        var height = 100;
+        var scale = height/gameHeight;
+        var width = gameWidth * scale;
+        var startX = 20;
+        var startY = myGameArea.uiWidth - height - 20;
+        myGameArea.transform(startX,startY, 0, scale,() =>{
+            
+                for (var idx in this.weapons) {
+                    if (!this.weapons[idx].hold) {
+                        this.displayWeapon(idx)
+                    }
+                }
+                for (var idx in this.weapons) {
+                    this.displayBullets(idx)
+                }
+                loopThroughDisplayObstacles(drawer.scroll, (obstacle) => {
+                    if (obstacle.intersectable) {
+                        obstacle.display();
+                    }
+                });
+
+                for (var idx in this.players) {
+                    if (this.players[idx].alive && idx != controlId)
+                        this.displayName(idx);
+                }
+                for (var idx in this.players) {
+                    if (this.players[idx].alive)
+                        this.displayPlayer(idx);
+                }
+
+                for (var idx in this.players) {
+                    if (this.players[idx].alive && idx != controlId)
+                        this.players[idx].drawHealthBar(idx);
+                }
+        });
     }
     this.displayWeaponPickup = function()
     {
