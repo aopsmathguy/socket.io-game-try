@@ -878,11 +878,11 @@ var GameState = function() {
     }
     this.displayMinimap = function()
     {
-        var height = 100;
+        var height = 200;
         var scale = height/gameHeight;
         var width = gameWidth * scale;
         var startX = 20;
-        var startY = myGameArea.uiWidth - height - 20;
+        var startY = myGameArea.uiHeight - height - 20;
         myGameArea.transform(0,0,0,scale,()=>{
             myGameArea.transform(startX,startY, 0, 1,() =>{
             
