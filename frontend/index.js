@@ -101,19 +101,21 @@ function combineObj(prev, obj)
 socket.on('gameState', (msg) => {
     console.log(msg);
     var prevGameState = gameStates[gameStates.length - 1];
-    for(var i in msg.weapons)
-    {
-        var weapon = msg.weapons[i];
-        Object.assign(weapon, viableWeapons[weapon.gunStats]);
-        weapon.type = "Gun";
-    }
+    
     tickIntervals.push(msg.time);
     if (tickIntervals.length > 6)
     {
         tickIntervals.shift();
     }
     tickInterval = (tickIntervals[tickIntervals.length - 1] - tickIntervals[0])/(tickIntervals.length - 1);
-    gameStates.push(combineObj(prevGameState, msg));
+    msg = combineObj(prevGameState, msg);
+    for(var i in msg.weapons)
+    {
+        var weapon = msg.weapons[i];
+        Object.assign(weapon, viableWeapons[weapon.gunStats]);
+        weapon.type = "Gun";
+    }
+    gameStates.push(msg);
     linearInterpolator.updateHitPointsFromState(msg);
 });
 socket.on('killFeed', (msg) => {
