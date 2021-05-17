@@ -155,6 +155,7 @@ const viableWeapons = {
     {
         this.weapons = [
             new GunStats('Glock 17', 'Secondary', 35, false, 780, 1, 15, 1500, true, 30, 17, 4, 500, 150, 1000, 0.15, 0.12, 0.9, 7, 0.9, 0, 0.95, 1, '#80f','bullet','#ff0', 5, 60, 32, 3, 0, 3, 0),
+            new GunStats('Glock 18', 'Secondary', 35, true, 780, 1, 17, 1500, true, 30, 14, 5, 500, 150, 1000, 0.15, 0.09, 0.9, 7, 0.9, 0, 0.95, 1, '#444','bullet','#ff0', 5, 60, 32, 3, 0, 3, 0),
             new GunStats('Redhawk', 'Secondary', 40, false, 300, 1, 6, 1700,true, 50, 30, 10, 700, 200, 1300, 0, 0.2, 0.9, 10, 0.9, 0.5, 0.95, 0.6, '#ff0','bullet','#ff0', 5, 60,32, 3, 0, 3, 0),
             new GunStats('Executioner', 'Secondary', 35, false, 450, 14, 6, 2900,true, 22.5, 5, 3.5, 330, 200, 600, 0.2, 0, 0.9, 10, 0.9, 0.5, 0.95, 0.6, '#088','bullet','#ff0', 3, 60,32, 3, 0, 3, 0),
             
