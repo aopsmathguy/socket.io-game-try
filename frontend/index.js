@@ -180,7 +180,7 @@ var crossHair = {
         myGameArea.transform(controlsBundle.mouse.x,controlsBundle.mouse.y, 0, this.size, () => {
             if (uiImages.crosshair)
             {
-                myGameArea.drawImage(uiImages.crosshair, -1, -1, 2, 2);
+                myGameArea.context.drawImage(uiImages.crosshair, -1, -1, 2, 2);
             }
             
             else
