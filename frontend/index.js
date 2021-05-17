@@ -55,7 +55,7 @@ for (var i in weaponImages)
 var uiImages = {
     crosshair : 0
 }
-for (var i in weaponImages)
+for (var i in uiImages)
 {
     imageExists(i,path3 + i + ".svg",(j,img) => {
         uiImages[j] = img;
