@@ -44,12 +44,12 @@ for (var i in weaponImages)
     imageExists(i,path1 + i + ".svg",(j,img) => {
         weaponImages[j][true] = img;
     },()=>{
-        weaponImages[i][true] = false;
+        
     });
     imageExists(i,path2 + i + ".svg",(j,img) => {
         weaponImages[j][false] = img;
     },()=>{
-        weaponImages[i][false] = false;
+        
     });
 }
 var uiImages = {
@@ -60,7 +60,7 @@ for (var i in uiImages)
     imageExists(i,path3 + i + ".svg",(j,img) => {
         uiImages[j] = img;
     },()=>{
-        uiImages[i] = false;
+        
     });
 }
 var viableWeapons;
