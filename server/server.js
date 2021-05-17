@@ -125,6 +125,13 @@ io.on('connection', client => {
             player.name = (name ? name : player.name);
             player.killstreak = 0;
             player.points = 0;
+            
+            
+            var idx1 = gameState.addWeapon(new Gun(0,0,msg.primary , player.id));
+            var idx2 = gameState.addWeapon(new Gun(0,0,msg.secondary , player.id));
+
+            player.weapon = idx1;
+            player.weapons = [idx1,idx2];
 
         } else {
             gameState.players[client.inGameId] = new Player(startPos.x, startPos.y, (name ? name : "Guest " + Math.floor(10000*Math.random())), color, client.inGameId, msg.primary, msg.secondary, gameState);
