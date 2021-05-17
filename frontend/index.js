@@ -885,34 +885,8 @@ var GameState = function() {
         var startY = myGameArea.uiHeight - height - 20;
         myGameArea.transform(0,0,0,scale,()=>{
             myGameArea.transform(startX,startY, 0, 1,() =>{
-            
-                for (var idx in this.weapons) {
-                    if (!this.weapons[idx].hold) {
-                        this.displayWeapon(idx)
-                    }
-                }
-                for (var idx in this.weapons) {
-                    this.displayBullets(idx)
-                }
-                loopThroughDisplayObstacles(drawer.scroll, (obstacle) => {
-                    if (obstacle.intersectable) {
-                        obstacle.display();
-                    }
-                });
-
-                for (var idx in this.players) {
-                    if (this.players[idx].alive && idx != controlId)
-                        this.displayName(idx);
-                }
-                for (var idx in this.players) {
-                    if (this.players[idx].alive)
-                        this.displayPlayer(idx);
-                }
-
-                for (var idx in this.players) {
-                    if (this.players[idx].alive && idx != controlId)
-                        this.players[idx].drawHealthBar(idx);
-                }
+                var ctx = myGameArea.context;
+                ctx.fillRect(0,0,gameWidth,gameHeight);
             });
         });
         
