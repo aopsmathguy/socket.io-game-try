@@ -21,7 +21,7 @@ io.on('connection', client => {
         framesPerTick: framesPerTick,
         viableWeapons: viableWeapons.weapons
     });
-    client.emit(gameState);
+    client.emit('gameState', gameState);
     client.on('new player', addPlayer);
     client.on('disconnect', function() {
         var player = gameState.players[client.inGameId];
