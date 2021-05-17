@@ -883,7 +883,8 @@ var GameState = function() {
         var width = gameWidth * scale;
         var startX = 20;
         var startY = myGameArea.uiWidth - height - 20;
-        myGameArea.transform(startX,startY, 0, scale,() =>{
+        myGameArea.transform(0,0,0,scale,()=>{
+            myGameArea.transform(startX,startY, 0, 1,() =>{
             
                 for (var idx in this.weapons) {
                     if (!this.weapons[idx].hold) {
@@ -912,7 +913,9 @@ var GameState = function() {
                     if (this.players[idx].alive && idx != controlId)
                         this.players[idx].drawHealthBar(idx);
                 }
+            });
         });
+        
     }
     this.displayWeaponPickup = function()
     {
