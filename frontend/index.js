@@ -74,7 +74,32 @@ socket.on('init', (msg) => {
 
     joinGameBtn.hidden = false;
 });
+function combineObj(prev, obj)
+{
+    if (obj == null)
+    {
+        return null;
+    }
+    if (prev == null || prev == undefined)
+    {
+        return obj;
+    }
+    if (typeof obj === "object")
+    {
+        var out = {};
+        for (var field in obj)
+        {
+            out[field] = combineObj(prev[field],obj[field]);
+        }
+        return out;
+    }
+    else
+    {
+        return obj;
+    }
+}
 socket.on('gameState', (msg) => {
+    var prevGameState = gameStates[gameStates.length - 1];
     for(var i in msg.weapons)
     {
         var weapon = msg.weapons[i];
@@ -87,7 +112,7 @@ socket.on('gameState', (msg) => {
         tickIntervals.shift();
     }
     tickInterval = (tickIntervals[tickIntervals.length - 1] - tickIntervals[0])/(tickIntervals.length - 1);
-    gameStates.push(msg);
+    gameStates.push(combineObj(prevGameState, msg));
     linearInterpolator.updateHitPointsFromState(msg);
 });
 socket.on('killFeed', (msg) => {
