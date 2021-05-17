@@ -132,6 +132,7 @@ io.on('connection', client => {
 
             player.weapon = idx1;
             player.weapons = [idx1,idx2];
+            player.slot = 0;
 
         } else {
             gameState.players[client.inGameId] = new Player(startPos.x, startPos.y, (name ? name : "Guest " + Math.floor(10000*Math.random())), color, client.inGameId, msg.primary, msg.secondary, gameState);
