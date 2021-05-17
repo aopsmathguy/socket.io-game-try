@@ -78,7 +78,7 @@ function combineObj(prev, obj)
 {
     if (obj == null)
     {
-        return null;
+        return prev;
     }
     if (prev == null || prev == undefined)
     {
