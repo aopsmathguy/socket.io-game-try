@@ -21,6 +21,7 @@ io.on('connection', client => {
         framesPerTick: framesPerTick,
         viableWeapons: viableWeapons.weapons
     });
+    client.emit(gameState);
     client.on('new player', addPlayer);
     client.on('disconnect', function() {
         var player = gameState.players[client.inGameId];
@@ -253,15 +254,52 @@ function emitNewActivity(name, action) {
         action: action
     });
 }
+var previousState;
 function emitGameState(gameState) {
     // Send this event to everyone in the room.
+    
     var copy = JSON.parse(JSON.stringify(gameState));
     //logTime("copy",()=>{
         copy = trimObject(copy);
     //});
+    
     //logTime("emitcopy",()=>{
-        io.sockets.emit('gameState', copy);
+        io.sockets.emit('gameState', differenceBetweenObj(previousState, copy));
     //});
+    previousState = JSON.parse(JSON.stringify(gameState));
+}
+function differenceBetweenObj(prev, curr)
+{
+    if (prev == undefined)
+    {
+        return curr;
+    }
+    if (typeof curr != "object" && typeof prev != "object" && curr == prev)
+    {
+        return null;
+    }
+    if (typeof curr == "object" && prev == "object")
+    {
+        var different = false;
+        var out = {};
+        for (var field in curr)
+        {
+            out[field] = differenceBetweenObj(prev[field], curr[field]);
+            if (out[field] != null)
+            {
+                different = true;
+            }
+        }
+        if (different)
+        {
+            return out;
+        }
+        else
+        {
+            return null;
+        }
+    }
+    return curr;
 }
 var setIfUndefined = function(obj, field, value) {
     obj[field] = value;
