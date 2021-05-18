@@ -576,6 +576,19 @@ var loopThroughObstacles = function(objectPos, inner) {
         }
     }
 }
+var loopThroughAllObstacles = function(inner) {
+    for (var i in borderObstacles) {
+        inner(borderObstacles[i]);
+    }
+    for (var i = 0; i < obstacles.length; i++) {
+        for (var j = 0; j < obstacles[i].length; j++) {
+            var objectsToLoop = obstacles[i][j];
+            for (var idx in objectsToLoop) {
+                inner(objectsToLoop[idx]);
+            }
+        }
+    }
+}
 var fillDigits = function(num, length) {
     var out = num.toString();
     if (out.length > length) {
@@ -884,11 +897,9 @@ var GameState = function() {
         var startX = 20;
         var startY = myGameArea.uiHeight - height - 20;
         myGameArea.transform(startX,startY, 0, scale,() =>{
-            this.displayGrid(500);
-            for (var i in this.obstacles)  {
-                var obstacle = this.obstacles[i];
+            loopThroughAllObstacles((obstacle) => {
                 obstacle.display(true);
-            }
+            });
             this.displayPlayer(controlId, true);
         });
         
