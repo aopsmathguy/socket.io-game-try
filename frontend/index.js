@@ -929,7 +929,8 @@ var GameState = function() {
             });
             for (var i in this.players)
             {
-                this.displayPlayer(i, true);
+                if (this.players[i].alive)
+                    this.displayPlayer(i, true);
             }
         });
         
