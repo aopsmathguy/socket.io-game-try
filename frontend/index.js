@@ -883,11 +883,22 @@ var GameState = function() {
         var width = gameWidth * scale;
         var startX = 20;
         var startY = myGameArea.uiHeight - height - 20;
-        myGameArea.transform(0,0,0,1,()=>{
-            myGameArea.transform(startX,startY, 0, scale,() =>{
-                var ctx = myGameArea.context;
-                ctx.fillRect(0,0,gameWidth,gameHeight);
+        myGameArea.transform(startX,startY, 0, scale,() =>{
+            this.displayGrid(500);
+            loopThroughDisplayObstacles(drawer.scroll, (obstacle) => {
+                if (!obstacle.intersectable) {
+                    obstacle.display();
+                }
             });
+            loopThroughDisplayObstacles(drawer.scroll, (obstacle) => {
+                if (obstacle.intersectable) {
+                    obstacle.display();
+                }
+            });
+            for (var idx in this.players) {
+                if (this.players[idx].alive)
+                    this.displayPlayer(idx);
+            }
         });
         
     }
@@ -1491,7 +1502,7 @@ var Drawer = function() {
 }
 var Obstacle = function() {
     this.type = "Obstacle";
-    this.display = function() {
+    this.display = function(onMinimap) {
         var ctx = myGameArea.context;
 
         ctx.fillStyle = this.color;
@@ -1504,7 +1515,7 @@ var Obstacle = function() {
         }
         ctx.closePath();
         ctx.fill();
-        if (this.intersectable) {
+        if (this.intersectable && !onMinimap) {
             ctx.stroke();
         }
     }
