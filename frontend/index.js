@@ -927,7 +927,10 @@ var GameState = function() {
             loopThroughAllObstacles((obstacle) => {
                 obstacle.display(true);
             });
-            this.displayPlayer(controlId, true);
+            for (var i in this.players)
+            {
+                this.displayPlayer(i, true);
+            }
         });
         
     }
@@ -1228,7 +1231,7 @@ var GameState = function() {
         else
         {
             myGameArea.transform(player.pos.x,player.pos.y,player.ang,1,()=>{
-                ctx.fillStyle = player.color;
+                ctx.fillStyle = (i == controlId ? "#00f" : "#f00");
                 ctx.beginPath();
                 ctx.arc(0, 0, (i == controlId ? 8 : 6) * player.radius,0,2*Math.PI);
                 ctx.closePath();
