@@ -267,38 +267,45 @@ function emitGameState(gameState) {
     //logTime("emitcopy",()=>{
         io.sockets.emit('gameState', differenceBetweenObj(previousState, copy));
     //});
-    previousState = JSON.parse(JSON.stringify(gameState));
+    previousState = copy;
 }
 function differenceBetweenObj(prev, curr)
 {
-    if (prev == undefined)
-    {
-        return curr;
-    }
-    if (typeof curr != "object" && typeof prev != "object" && curr == prev)
+    if (curr === undefined)
     {
         return null;
+    }
+    if (typeof curr != "object" && typeof prev != "object" && curr === prev)
+    {
+        return undefined;
     }
     if (typeof curr == "object" && typeof prev == "object")
     {
         var different = false;
         var out = {};
-        for (var field in curr)
+        for (var field in prev)
         {
-            out[field] = differenceBetweenObj(prev[field], curr[field]);
-            if (out[field] != null)
+            var fieldDifference = differenceBetweenObj(prev[field], curr[field]);
+            if (fieldDifference !== undefined)
             {
+                out[field] = fieldDifference;
                 different = true;
             }
         }
-        if (different)
+        for (var field in curr)
         {
-            return out;
+            if (prev[field] !== undefined)
+            {
+                continue;
+            }
+            var fieldDifference = differenceBetweenObj(prev[field], curr[field]);
+            if (fieldDifference !== undefined)
+            {
+                out[field] = fieldDifference;
+                different = true;
+            }
         }
-        else
-        {
-            return null;
-        }
+        return different ? out : undefined;
     }
     return curr;
 }
