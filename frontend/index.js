@@ -84,6 +84,7 @@ socket.on('init', (msg) => {
     loadout.updateElem();
 
     joinGameBtn.hidden = false;
+    gameStates = [{}];
 });
 function combineObj(prev, obj)
 {
