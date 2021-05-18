@@ -87,7 +87,11 @@ socket.on('init', (msg) => {
 });
 function combineObj(prev, obj)
 {
-    if (obj == null)
+    if (obj === null)
+    {
+        return undefined;
+    }
+    if (obj === undefined)
     {
         return prev;
     }
@@ -95,12 +99,28 @@ function combineObj(prev, obj)
     {
         return obj;
     }
-    if (typeof obj === "object")
+    if (typeof obj === "object" && typeof prev === "object")
     {
         var out = {};
+        for (var field in prev)
+        {
+            var combinedField = combineObj(prev[field],obj[field]);
+            if (combinedField !== undefined)
+            {
+                out[field] = combinedField;
+            }
+        }
         for (var field in obj)
         {
-            out[field] = combineObj(prev[field],obj[field]);
+            if (prev[field] !== undefined)
+            {
+                continue;
+            }
+            var combinedField = combineObj(prev[field],obj[field]);
+            if (combinedField !== undefined)
+            {
+                out[field] = combinedField;
+            }
         }
         return out;
     }
