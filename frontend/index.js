@@ -130,7 +130,6 @@ function combineObj(prev, obj)
     }
 }
 socket.on('gameState', (msg) => {
-    console.log(msg);
     var prevGameState = gameStates[gameStates.length - 1];
     
     tickIntervals.push(msg.time);
