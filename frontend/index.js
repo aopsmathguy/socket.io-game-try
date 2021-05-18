@@ -706,7 +706,8 @@ var myGameArea = {
         this.uiWidth = this.canvas.width/this.scaleRatio;
         this.uiHeight = this.canvas.height/this.scaleRatio;
 
-        this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        this.context.fillStyle = "#6aa150";
+        this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
     },
     transformUi : function(func){
@@ -897,6 +898,9 @@ var GameState = function() {
         var startX = 20;
         var startY = myGameArea.uiHeight - height - 20;
         myGameArea.transform(startX,startY, 0, scale,() =>{
+            
+            myGameArea.context.fillStyle = "#6aa150";
+            myGameArea.context.fillRect(0, 0, gameWidth, gameHeight);
             loopThroughAllObstacles((obstacle) => {
                 obstacle.display(true);
             });
