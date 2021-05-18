@@ -885,20 +885,11 @@ var GameState = function() {
         var startY = myGameArea.uiHeight - height - 20;
         myGameArea.transform(startX,startY, 0, scale,() =>{
             this.displayGrid(500);
-            loopThroughDisplayObstacles(drawer.scroll, (obstacle) => {
-                if (!obstacle.intersectable) {
-                    obstacle.display();
-                }
-            });
-            loopThroughDisplayObstacles(drawer.scroll, (obstacle) => {
-                if (obstacle.intersectable) {
-                    obstacle.display();
-                }
-            });
-            for (var idx in this.players) {
-                if (this.players[idx].alive)
-                    this.displayPlayer(idx);
+            for (var i in this.obstacles)  {
+                var obstacle = this.obstacles[i];
+                obstacle.display(true);
             }
+            this.displayPlayer(controlId, true);
         });
         
     }
@@ -1072,7 +1063,7 @@ var GameState = function() {
             y += margin + height;
         }
     }
-    this.displayPlayer = function(i) {
+    this.displayPlayer = function(i, minimap) {
         var player = this.players[i];
 
         var ctx = myGameArea.context;
@@ -1085,114 +1076,126 @@ var GameState = function() {
         ctx.fill();
         ctx.restore();*/
 
-
-        var ang = player.ang;
-        var rotAng1 = 0;
-        var rotAng2 = 0.25*Math.PI;
-
-        var firstShoulder;
-        var secondShoulder;
-        var firstHand;
-        var secondHand;
-        if (player.weapon != -1) {
-            var weapon = this.weapons[player.weapon];
-            firstShoulder = (new Vector(0, player.radius + 2)).rotate(rotAng1);
-            secondShoulder = (new Vector(0, -player.radius-2)).rotate(rotAng2);
-            firstHand = weapon.handPos1.add(new Vector(weapon.buttPosition -this.weapons[player.weapon].recoil, 0));
-            secondHand = weapon.handPos2.add(new Vector(weapon.buttPosition-this.weapons[player.weapon].recoil, 0));
-
-        } else {
-            firstShoulder = (new Vector(0, player.radius + 2)).rotate(0);
-            secondShoulder = (new Vector(0, -player.radius - 2)).rotate(0);
-            firstHand = (new Vector(player.radius * 0.85, player.radius * 0.8)).add((new Vector(player.punchAnimation, 0)).rotate(-Math.PI / 6));
-            secondHand = new Vector(player.radius * 0.85, -player.radius * 0.8);
-
-        }
-        myGameArea.transform(player.pos.x,player.pos.y,player.ang,1,()=>{
-            ctx.fillStyle = '#000';
-            ctx.strokeStyle = '#000';
-
-            ctx.beginPath();
-            ctx.arc(firstShoulder.x, firstShoulder.y, 14/2, 0, 2 * Math.PI);
-            ctx.closePath();
-            ctx.fill();
-            ctx.beginPath();
-            ctx.arc(secondShoulder.x, secondShoulder.y, 14/2, 0, 2 * Math.PI);
-            ctx.closePath();
-            ctx.fill();
-
-            ctx.lineWidth = 13;
-            ctx.beginPath();
-            ctx.moveTo(firstShoulder.x, firstShoulder.y);
-            ctx.lineTo(firstHand.x,firstHand.y);
-            ctx.closePath();
-            ctx.stroke();
-            ctx.beginPath();
-            ctx.moveTo(secondShoulder.x, secondShoulder.y);
-            ctx.lineTo(secondHand.x,secondHand.y);
-            ctx.closePath();
-            ctx.stroke();
-
-            ctx.fillStyle = player.color;
-            ctx.strokeStyle = player.color;
-
-            ctx.beginPath();
-            ctx.arc(firstShoulder.x, firstShoulder.y, 10/2, 0, 2 * Math.PI);
-            ctx.closePath();
-            ctx.fill();
-            ctx.beginPath();
-            ctx.arc(secondShoulder.x, secondShoulder.y, 10/2, 0, 2 * Math.PI);
-            ctx.closePath();
-            ctx.fill();
-
-            ctx.lineWidth = 9;
-            ctx.beginPath();
-            ctx.moveTo(firstShoulder.x, firstShoulder.y);
-            ctx.lineTo(firstHand.x,firstHand.y);
-            ctx.closePath();
-            ctx.stroke();
-            ctx.beginPath();
-            ctx.moveTo(secondShoulder.x, secondShoulder.y);
-            ctx.lineTo(secondHand.x,secondHand.y);
-            ctx.closePath();
-            ctx.stroke();
-
-            ctx.fillStyle = "#000";
-            ctx.beginPath();
-            ctx.arc(firstHand.x, firstHand.y, 16/2,0,2*Math.PI);
-            ctx.closePath();
-            ctx.fill();
-            ctx.beginPath();
-            ctx.arc(secondHand.x, secondHand.y, 16/2,0,2*Math.PI);
-            ctx.closePath();
-            ctx.fill();
-
-            ctx.fillStyle = player.color;
-            ctx.beginPath();
-            ctx.arc(firstHand.x, firstHand.y, 12/2,0,2*Math.PI);
-            ctx.closePath();
-            ctx.fill();
-            ctx.beginPath();
-            ctx.arc(secondHand.x, secondHand.y, 12/2,0,2*Math.PI);
-            ctx.closePath();
-            ctx.fill();
-        });
-
-        if (player.weapon != -1)
+        if (!minimap)
         {
-            this.displayWeapon(player.weapon);
-        }
+            var ang = player.ang;
+            var rotAng1 = 0;
+            var rotAng2 = 0.25*Math.PI;
 
-        myGameArea.transform(player.pos.x,player.pos.y,player.ang,1,()=>{
-            ctx.strokeStyle = '#000';
-            ctx.lineWidth =  2;
-            ctx.fillStyle = player.color;
-            ctx.beginPath();
-            ctx.arc(0, 0, player.radius,0,2*Math.PI);
-            ctx.closePath();
-            ctx.fill();
-            ctx.stroke();
-        });
+            var firstShoulder;
+            var secondShoulder;
+            var firstHand;
+            var secondHand;
+            if (player.weapon != -1) {
+                var weapon = this.weapons[player.weapon];
+                firstShoulder = (new Vector(0, player.radius + 2)).rotate(rotAng1);
+                secondShoulder = (new Vector(0, -player.radius-2)).rotate(rotAng2);
+                firstHand = weapon.handPos1.add(new Vector(weapon.buttPosition -this.weapons[player.weapon].recoil, 0));
+                secondHand = weapon.handPos2.add(new Vector(weapon.buttPosition-this.weapons[player.weapon].recoil, 0));
+
+            } else {
+                firstShoulder = (new Vector(0, player.radius + 2)).rotate(0);
+                secondShoulder = (new Vector(0, -player.radius - 2)).rotate(0);
+                firstHand = (new Vector(player.radius * 0.85, player.radius * 0.8)).add((new Vector(player.punchAnimation, 0)).rotate(-Math.PI / 6));
+                secondHand = new Vector(player.radius * 0.85, -player.radius * 0.8);
+
+            }
+            myGameArea.transform(player.pos.x,player.pos.y,player.ang,1,()=>{
+                ctx.fillStyle = '#000';
+                ctx.strokeStyle = '#000';
+
+                ctx.beginPath();
+                ctx.arc(firstShoulder.x, firstShoulder.y, 14/2, 0, 2 * Math.PI);
+                ctx.closePath();
+                ctx.fill();
+                ctx.beginPath();
+                ctx.arc(secondShoulder.x, secondShoulder.y, 14/2, 0, 2 * Math.PI);
+                ctx.closePath();
+                ctx.fill();
+
+                ctx.lineWidth = 13;
+                ctx.beginPath();
+                ctx.moveTo(firstShoulder.x, firstShoulder.y);
+                ctx.lineTo(firstHand.x,firstHand.y);
+                ctx.closePath();
+                ctx.stroke();
+                ctx.beginPath();
+                ctx.moveTo(secondShoulder.x, secondShoulder.y);
+                ctx.lineTo(secondHand.x,secondHand.y);
+                ctx.closePath();
+                ctx.stroke();
+
+                ctx.fillStyle = player.color;
+                ctx.strokeStyle = player.color;
+
+                ctx.beginPath();
+                ctx.arc(firstShoulder.x, firstShoulder.y, 10/2, 0, 2 * Math.PI);
+                ctx.closePath();
+                ctx.fill();
+                ctx.beginPath();
+                ctx.arc(secondShoulder.x, secondShoulder.y, 10/2, 0, 2 * Math.PI);
+                ctx.closePath();
+                ctx.fill();
+
+                ctx.lineWidth = 9;
+                ctx.beginPath();
+                ctx.moveTo(firstShoulder.x, firstShoulder.y);
+                ctx.lineTo(firstHand.x,firstHand.y);
+                ctx.closePath();
+                ctx.stroke();
+                ctx.beginPath();
+                ctx.moveTo(secondShoulder.x, secondShoulder.y);
+                ctx.lineTo(secondHand.x,secondHand.y);
+                ctx.closePath();
+                ctx.stroke();
+
+                ctx.fillStyle = "#000";
+                ctx.beginPath();
+                ctx.arc(firstHand.x, firstHand.y, 16/2,0,2*Math.PI);
+                ctx.closePath();
+                ctx.fill();
+                ctx.beginPath();
+                ctx.arc(secondHand.x, secondHand.y, 16/2,0,2*Math.PI);
+                ctx.closePath();
+                ctx.fill();
+
+                ctx.fillStyle = player.color;
+                ctx.beginPath();
+                ctx.arc(firstHand.x, firstHand.y, 12/2,0,2*Math.PI);
+                ctx.closePath();
+                ctx.fill();
+                ctx.beginPath();
+                ctx.arc(secondHand.x, secondHand.y, 12/2,0,2*Math.PI);
+                ctx.closePath();
+                ctx.fill();
+            });
+
+            if (player.weapon != -1)
+            {
+                this.displayWeapon(player.weapon);
+            }
+
+            myGameArea.transform(player.pos.x,player.pos.y,player.ang,1,()=>{
+                ctx.strokeStyle = '#000';
+                ctx.lineWidth =  2;
+                ctx.fillStyle = player.color;
+                ctx.beginPath();
+                ctx.arc(0, 0, player.radius,0,2*Math.PI);
+                ctx.closePath();
+                ctx.fill();
+                ctx.stroke();
+            });
+        }
+        else
+        {
+            myGameArea.transform(player.pos.x,player.pos.y,player.ang,1,()=>{
+                ctx.fillStyle = player.color;
+                ctx.beginPath();
+                ctx.arc(0, 0, 4 * player.radius,0,2*Math.PI);
+                ctx.closePath();
+                ctx.fill();
+            });
+        }
     }
     this.displayWeapon = function(i) {
         var weapon = this.weapons[i];
