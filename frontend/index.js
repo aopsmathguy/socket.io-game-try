@@ -921,7 +921,7 @@ var GameState = function() {
         var startX = 20;
         var startY = myGameArea.uiHeight - height - 20;
         myGameArea.transform(startX,startY, 0, scale,() =>{
-            myGameArea.context.globalAlpha = 0.67;
+            myGameArea.context.globalAlpha = 0.6;
             myGameArea.context.fillStyle = "#6aa150";
             myGameArea.context.fillRect(0, 0, gameWidth, gameHeight);
             loopThroughAllObstacles((obstacle) => {
@@ -1222,6 +1222,7 @@ var GameState = function() {
                 ctx.closePath();
                 ctx.fill();
                 ctx.stroke();
+                
             });
         }
         else
@@ -1229,7 +1230,7 @@ var GameState = function() {
             myGameArea.transform(player.pos.x,player.pos.y,player.ang,1,()=>{
                 ctx.fillStyle = player.color;
                 ctx.beginPath();
-                ctx.arc(0, 0, 4 * player.radius,0,2*Math.PI);
+                ctx.arc(0, 0, (i == controlId ? 8 : 6) * player.radius,0,2*Math.PI);
                 ctx.closePath();
                 ctx.fill();
             });
