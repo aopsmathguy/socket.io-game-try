@@ -892,13 +892,13 @@ var GameState = function() {
     }
     this.displayMinimap = function()
     {
-        var height = 200;
+        var height = 150;
         var scale = height/gameHeight;
         var width = gameWidth * scale;
         var startX = 20;
         var startY = myGameArea.uiHeight - height - 20;
         myGameArea.transform(startX,startY, 0, scale,() =>{
-            
+            myGameArea.context.globalAlpha = 0.5;
             myGameArea.context.fillStyle = "#6aa150";
             myGameArea.context.fillRect(0, 0, gameWidth, gameHeight);
             loopThroughAllObstacles((obstacle) => {
