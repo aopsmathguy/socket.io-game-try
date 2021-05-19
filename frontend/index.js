@@ -935,7 +935,7 @@ var GameState = function() {
                 ctx.closePath();
                 ctx.fill();
 
-                ctx.fillStyle = "rgba(255,255,255," + (this.minimapInfo[i] ? 1 - this.minimapInfo[i].fade : 0) + ")";
+                ctx.fillStyle = "rgba(255,255,255," + (this.minimapInfo[controlId] ? 1 - this.minimapInfo[controlId].fade : 0) + ")";
                 ctx.beginPath();
                 ctx.arc(0, 0, 160,0,2*Math.PI);
                 ctx.closePath();
