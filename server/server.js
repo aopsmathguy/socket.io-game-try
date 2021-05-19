@@ -263,9 +263,26 @@ function emitGameState(gameState) {
     //logTime("copy",()=>{
         copy = trimObject(copy);
     //});
-    
     //logTime("emitcopy",()=>{
-        io.sockets.emit('gameState', differenceBetweenObj(previousState, copy));
+        var sockets = io.sockets.sockets;
+        for(var socketId in sockets) {
+            var out = JSON.parse(JSON.stringify(copy));
+            var s = sockets[socketId];
+            var inGameId = s.inGameId;
+            var playerPos = gameState.players[inGameId].pos;
+            for (var i in out.players)
+            {
+                var otherplayer = out.players[i];
+                if (!playerPos.inRect(otherplayer.pos, 3000, 3000 * 9/16))
+                {
+                    delete out.players[i];
+                }
+            }
+            var emitObj = differenceBetweenObj(previousState, out);
+            s.emit('gameState',emitObj);
+        }
+
+        //io.sockets.emit('gameState', );
     //});
     previousState = copy;
 }
@@ -362,6 +379,15 @@ var GameState = function(time, players, weapons) {
     }
     this.removeWeapon = function(gunIdx){
         delete this.weapons[gunIdx];
+    }
+    this.trimToPlayer = function(playerId)
+    {
+        var player = this.players[playerId];
+        for (var i = 0; i < this.players.length; i++)
+        {
+            var includePlayer = this.players[i];
+            if ()
+        }
     }
     this.generateMinimap = function()
     {
@@ -1471,6 +1497,10 @@ var Vector = function(x, y) {
     this.type = "Vector";
     setIfUndefined(this, 'x', x);//
     setIfUndefined(this, 'y', y);//
+    this.inRect = function(v, maxWidth,maxHeight)
+    {
+        return (Math.abs(v.x - this.x) < maxWidth/2 && Math.abs(v.y - this.y) < maxHeight/2);
+    }
     this.rotate = function(theta) {
         return new Vector(x * Math.cos(theta) - y * Math.sin(theta), y * Math.cos(theta) + x * Math.sin(theta));
     }
