@@ -1784,6 +1784,10 @@ var linearInterpolator = {
         }
     },
     linearValue : function(v1, v2, t, t1, t2) {
+        if (v1 == undefined)
+        {
+            return v2;
+        }
         var ratio = Math.max(-this.lagLimit, t2 - t) / (t2 - t1);
         return v1 * ratio + v2 * (1-ratio);
     },
