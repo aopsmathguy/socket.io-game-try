@@ -930,12 +930,29 @@ var GameState = function() {
             for (var i in this.minimapInfo)
             {
                 myGameArea.transform(this.minimapInfo[i].pos.x,this.minimapInfo[i].pos.y,0,1,()=>{
-                    ctx.globalAlpha = 1 - this.minimapInfo[i].fade;
-                    ctx.fillStyle = (i == controlId ? "#00f" : "#f00");
-                    ctx.beginPath();
-                    ctx.arc(0, 0, (i == controlId ? 160 : 120),0,2*Math.PI);
-                    ctx.closePath();
-                    ctx.fill();
+                    if (i == controlId)
+                    {
+                        ctx.fillStyle = "#fff";
+                        
+                        ctx.beginPath();
+                        ctx.arc(0, 0, 120,0,2*Math.PI);
+                        ctx.closePath();
+                        ctx.fill();
+                        
+                        ctx.globalAlpha = 1 - this.minimapInfo[i].fade;
+                        ctx.beginPath();
+                        ctx.arc(0, 0, 160,0,2*Math.PI);
+                        ctx.closePath();
+                        ctx.fill();
+                    }
+                    else{
+                        ctx.globalAlpha = 1 - this.minimapInfo[i].fade;
+                        ctx.fillStyle = "#f00"
+                        ctx.beginPath();
+                        ctx.arc(0, 0, 120,0,2*Math.PI);
+                        ctx.closePath();
+                        ctx.fill();
+                    }
                 });
             }
         });
