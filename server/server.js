@@ -347,11 +347,12 @@ var trimObject = function(obj)
 }
 var GameState = function(time, players, weapons) {
     this.type = "GameState";
-    this.outfields = ['type','time','players','weapons','minimapInfo'];
+    this.outfields = ['type','time','players','weapons','minimapInfo','leaderboard'];
     setIfUndefined(this, 'time', time);//
     setIfUndefined(this, 'players', players);//
     setIfUndefined(this, 'weapons', weapons);//
     setIfUndefined(this, 'minimapInfo', undefined);//
+    setIfUndefined(this, 'leaderboard', undefined);//
     setIfUndefined(this, 'weaponsLength', 0);//
     setIfUndefined(this, 'weaponsSectors', []);//
     this.addWeapon = function(gun){
@@ -372,9 +373,24 @@ var GameState = function(time, players, weapons) {
             if (this.time - player.lastOnRadar < 400)
             {
                 this.minimapInfo[i] = {
-                    id : player.id,
                     pos : new Vector(roundCoor*Math.round(player.pos.x/roundCoor), roundCoor*Math.round(player.pos.y/roundCoor)),
                     fade : (this.time - player.lastOnRadar)/400
+                };
+            }
+        }
+    }
+    this.generateLeaderboard = function()
+    {
+        this.leaderboard = {};
+        for (var i in this.players)
+        {
+            var player = this.players[i];
+            if (player.alive)
+            {
+                this.leaderboard[i] = {
+                    name : player.name,
+                    points : player.points,
+                    kills : player.kills
                 };
             }
         }
@@ -425,6 +441,7 @@ var GameState = function(time, players, weapons) {
             }
         }
         this.generateMinimap();
+        this.generateLeaderboard();
     }
     this.updateWeaponsSectors = function()
     {
