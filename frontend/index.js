@@ -1557,15 +1557,19 @@ var Drawer = function() {
         if (character)
         {
             this.scroll = character.pos.add((new Vector(Math.random() - 0.5, Math.random() - 0.5)).multiply(this.screenShake));
-            this.targetScale = this.zoom / 40000 * (9 * myGameArea.uiWidth + 16 * myGameArea.uiHeight);
+            var maxWidth = 1600;
+            var maxHeight = 900;
+            this.targetScale = Math.max(maxWidth/myGameArea.uiWidth,maxHeight/myGameArea.uiHeight);
         }
         else
         {
             this.scroll = (new Vector(gameWidth,gameHeight)).multiply(0.5).add((new Vector(Math.random() - 0.5, Math.random() - 0.5)).multiply(this.screenShake));
             this.targetScale =  (Math.max(myGameArea.uiWidth,myGameArea.uiHeight))/Math.max(gameWidth,gameHeight);
         }
-
-        this.scale *= Math.pow(this.targetScale / this.scale, 0.1);
+        if (this.scale > this.targetScale )
+            this.scale *= Math.pow(this.targetScale / this.scale, 0.1);
+        else
+            this.scale = this.targetScale;
     }
 }
 var Obstacle = function() {
