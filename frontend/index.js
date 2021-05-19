@@ -932,22 +932,21 @@ var GameState = function() {
                 myGameArea.transform(this.minimapInfo[i].pos.x,this.minimapInfo[i].pos.y,0,1,()=>{
                     if (i == controlId)
                     {
-                        ctx.fillStyle = "#fff";
+                        ctx.fillStyle = "rgba(255,255,255,1)";
                         
                         ctx.beginPath();
                         ctx.arc(0, 0, 120,0,2*Math.PI);
                         ctx.closePath();
                         ctx.fill();
                         
-                        ctx.globalAlpha = 1 - this.minimapInfo[i].fade;
+                        ctx.fillStyle = "rgba(255,255,255," + (1 - this.minimapInfo[i].ratio) + ")";
                         ctx.beginPath();
                         ctx.arc(0, 0, 160,0,2*Math.PI);
                         ctx.closePath();
                         ctx.fill();
                     }
                     else{
-                        ctx.globalAlpha = 1 - this.minimapInfo[i].fade;
-                        ctx.fillStyle = "#f00"
+                        ctx.fillStyle = "rgba(255,0,0," + (1 - this.minimapInfo[i].ratio) + ")";
                         ctx.beginPath();
                         ctx.arc(0, 0, 120,0,2*Math.PI);
                         ctx.closePath();
