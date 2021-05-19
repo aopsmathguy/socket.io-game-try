@@ -712,7 +712,7 @@ function orientation(p, q, r) {
 }
 var Player = function(xStart, yStart, name, color, id, prim, sec, state) {
     this.type = "Player";
-    this.outfields = ['type','radius','reachDist','weapon','weapons','slot','health','pos','ang','punchLastTime','id','name','killstreak','points','color','alive'];
+    this.outfields = ['type','radius','reachDist','weapon','weapons','slot','health','pos','ang','punchLastTime','id','name','color','alive'];
     
     
     setIfUndefined(this, 'speed', 5);
