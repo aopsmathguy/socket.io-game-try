@@ -347,10 +347,11 @@ var trimObject = function(obj)
 }
 var GameState = function(time, players, weapons) {
     this.type = "GameState";
-    this.outfields = ['type','time','players','weapons'];
+    this.outfields = ['type','time','players','weapons','minimapInfo'];
     setIfUndefined(this, 'time', time);//
     setIfUndefined(this, 'players', players);//
     setIfUndefined(this, 'weapons', weapons);//
+    setIfUndefined(this, 'minimapInfo', undefined);//
     setIfUndefined(this, 'weaponsLength', 0);//
     setIfUndefined(this, 'weaponsSectors', []);//
     this.addWeapon = function(gun){
@@ -360,6 +361,23 @@ var GameState = function(time, players, weapons) {
     }
     this.removeWeapon = function(gunIdx){
         delete this.weapons[gunIdx];
+    }
+    this.generateMinimap = function()
+    {
+        this.minimapInfo = {};
+        var roundCoor = 250;
+        for (var i in this.players)
+        {
+            var player = this.players[i];
+            if (this.time - player.lastOnRadar < 400)
+            {
+                this.minimapInfo[i] = {
+                    id : player.id,
+                    pos : new Vector(roundCoor*Math.round(player.pos.x/roundCoor), roundCoor*Math.round(player.pos.y/roundCoor)),
+                    fade : (this.time - player.lastOnRadar)/400
+                };
+            }
+        }
     }
     this.step = function() {
         iterations = 0;
@@ -406,6 +424,7 @@ var GameState = function(time, players, weapons) {
                 emitNewKill(player.lastHitBy, player.id);
             }
         }
+        this.generateMinimap();
     }
     this.updateWeaponsSectors = function()
     {
@@ -720,6 +739,8 @@ var Player = function(xStart, yStart, name, color, id, prim, sec, state) {
     
     setIfUndefined(this, 'weapon', idx1);//
     setIfUndefined(this, 'weapons', [idx1,idx2]);//
+    
+    setIfUndefined(this, 'lastOnRadar', 0);
     
     this.swapWeapon = function(state, newSlot)
     {
@@ -1094,8 +1115,10 @@ var Gun = function(startX, startY, stats, playerIdx) {
                 this.bulletsRemaining -= 1;
                 if (this.playerHolding != -1)
                 {
+                    
                     var player = state.players[this.playerHolding];
                     player.vel = player.vel.add((new Vector( - this.personRecoil,0)).rotate(this.ang));
+                    player.lastOnRadar = state.time;
                 }
             } else {
                 this.reload(state.time);
