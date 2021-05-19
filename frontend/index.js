@@ -927,10 +927,16 @@ var GameState = function() {
             loopThroughAllObstacles((obstacle) => {
                 obstacle.display(true);
             });
-            for (var i in this.players)
+            for (var i in this.minimapInfo)
             {
-                if (this.players[i].alive)
-                    this.displayPlayer(i, true);
+                myGameArea.transform(this.minimapInfo[i].pos.x,this.minimapInfo[i].pos.y,0,1,()=>{
+                    ctx.globalAlpha = 1 - this.minimapInfo[i].fade;
+                    ctx.fillStyle = (i == controlId ? "#00f" : "#f00");
+                    ctx.beginPath();
+                    ctx.arc(0, 0, (i == controlId ? 8 : 6) * player.radius,0,2*Math.PI);
+                    ctx.closePath();
+                    ctx.fill();
+                });
             }
         });
         
