@@ -933,7 +933,7 @@ var GameState = function() {
                     ctx.globalAlpha = 1 - this.minimapInfo[i].fade;
                     ctx.fillStyle = (i == controlId ? "#00f" : "#f00");
                     ctx.beginPath();
-                    ctx.arc(0, 0, (i == controlId ? 8 : 6) * player.radius,0,2*Math.PI);
+                    ctx.arc(0, 0, (i == controlId ? 160 : 120),0,2*Math.PI);
                     ctx.closePath();
                     ctx.fill();
                 });
