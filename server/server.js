@@ -380,15 +380,6 @@ var GameState = function(time, players, weapons) {
     this.removeWeapon = function(gunIdx){
         delete this.weapons[gunIdx];
     }
-    this.trimToPlayer = function(playerId)
-    {
-        var player = this.players[playerId];
-        for (var i = 0; i < this.players.length; i++)
-        {
-            var includePlayer = this.players[i];
-            if ()
-        }
-    }
     this.generateMinimap = function()
     {
         this.minimapInfo = {};
