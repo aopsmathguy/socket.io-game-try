@@ -927,26 +927,26 @@ var GameState = function() {
             loopThroughAllObstacles((obstacle) => {
                 obstacle.display(true);
             });
+            myGameArea.transform(this.players[controlId].pos.x,this.players[controlId].pos.y,0,1,()=>{
+                ctx.fillStyle = "rgba(255,255,255,1)";
+
+                ctx.beginPath();
+                ctx.arc(0, 0, 120,0,2*Math.PI);
+                ctx.closePath();
+                ctx.fill();
+
+                ctx.fillStyle = "rgba(255,255,255," + (1 - this.minimapInfo[i].fade) + ")";
+                ctx.beginPath();
+                ctx.arc(0, 0, 160,0,2*Math.PI);
+                ctx.closePath();
+                ctx.fill();
+            });
             for (var i in this.minimapInfo)
             {
                 myGameArea.transform(this.minimapInfo[i].pos.x,this.minimapInfo[i].pos.y,0,1,()=>{
-                    if (i == controlId)
+                    if (i != controlId)
                     {
-                        ctx.fillStyle = "rgba(255,255,255,1)";
-                        
-                        ctx.beginPath();
-                        ctx.arc(0, 0, 120,0,2*Math.PI);
-                        ctx.closePath();
-                        ctx.fill();
-                        
-                        ctx.fillStyle = "rgba(255,255,255," + (1 - this.minimapInfo[i].fade) + ")";
-                        ctx.beginPath();
-                        ctx.arc(0, 0, 160,0,2*Math.PI);
-                        ctx.closePath();
-                        ctx.fill();
-                    }
-                    else{
-                        ctx.fillStyle = "rgba(255,0,0," + (1 - this.minimapInfo[i].fade) + ")";
+                         ctx.fillStyle = "rgba(255,0,0," + (1 - this.minimapInfo[i].fade) + ")";
                         ctx.beginPath();
                         ctx.arc(0, 0, 120,0,2*Math.PI);
                         ctx.closePath();
