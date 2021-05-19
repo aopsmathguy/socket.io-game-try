@@ -939,14 +939,14 @@ var GameState = function() {
                         ctx.closePath();
                         ctx.fill();
                         
-                        ctx.fillStyle = "rgba(255,255,255," + (1 - this.minimapInfo[i].ratio) + ")";
+                        ctx.fillStyle = "rgba(255,255,255," + (1 - this.minimapInfo[i].fade) + ")";
                         ctx.beginPath();
                         ctx.arc(0, 0, 160,0,2*Math.PI);
                         ctx.closePath();
                         ctx.fill();
                     }
                     else{
-                        ctx.fillStyle = "rgba(255,0,0," + (1 - this.minimapInfo[i].ratio) + ")";
+                        ctx.fillStyle = "rgba(255,0,0," + (1 - this.minimapInfo[i].fade) + ")";
                         ctx.beginPath();
                         ctx.arc(0, 0, 120,0,2*Math.PI);
                         ctx.closePath();
