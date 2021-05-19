@@ -390,7 +390,7 @@ var GameState = function(time, players, weapons) {
                 this.leaderboard[i] = {
                     name : player.name,
                     points : player.points,
-                    kills : player.kills
+                    kills : player.killstreak
                 };
             }
         }
