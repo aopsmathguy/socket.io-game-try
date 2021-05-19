@@ -1557,7 +1557,7 @@ var Drawer = function() {
         if (character)
         {
             this.scroll = character.pos.add((new Vector(Math.random() - 0.5, Math.random() - 0.5)).multiply(this.screenShake));
-            var maxWidth = 2500;
+            var maxWidth = 2500 / this.zoom;
             var maxHeight = maxWidth * 9/16;
             this.targetScale = Math.max(myGameArea.uiWidth/maxWidth,myGameArea.uiHeight/maxHeight);
         }
