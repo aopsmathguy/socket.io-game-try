@@ -1061,18 +1061,14 @@ var GameState = function() {
     this.displayScoreBoard = function()
     {
         var displayObj = [];
-        for (var i in this.players)
+        for (var i in this.leaderboard)
         {
-            var player = this.players[i];
-            if (!player.alive)
-            {
-                continue;
-            }
+            var stats = this.leaderboard[i];
             displayObj.push({
-                id : player.id,
-                name: player.name,
-                killstreak: player.killstreak,
-                points: player.points
+                id : i,
+                name: stats.name,
+                killstreak: stats.kills,
+                points: stats.points
             });
         }
         displayObj.sort((a,b) => (b.points - a.points));
