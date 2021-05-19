@@ -278,6 +278,8 @@ function emitGameState(gameState) {
                     var otherplayer = out.players[i];
                     if (!playerPos.inRect(otherplayer.pos, 3000, 3000 * 9/16))
                     {
+                        delete out.weapons[out.players[i].weapons[0]];
+                        delete out.weapons[out.players[i].weapons[1]];
                         delete out.players[i];
                     }
                 }
