@@ -1100,7 +1100,7 @@ var GameState = function() {
         ctx.fillText("tickspd:" + Math.floor(1000/tickInterval + 0.5),  startX + totalWidth/2, y + 3/4 * height);
 
         ctx.textAlign = "right";
-        ctx.fillText("Plyrs:" + Object.keys(this.players).length,  startX + totalWidth - margin, y + 3/4 * height);
+        ctx.fillText("Plyrs:" + Object.keys(this.leaderboard).length,  startX + totalWidth - margin, y + 3/4 * height);
 
         y += margin + height;
         ctx.textAlign = "center";
