@@ -266,19 +266,27 @@ function emitGameState(gameState) {
     //logTime("emitcopy",()=>{
         var sockets = io.sockets.sockets;
         for(var socketId in sockets) {
-            var out = JSON.parse(JSON.stringify(copy));
             var s = sockets[socketId];
             var inGameId = s.inGameId;
-            var playerPos = gameState.players[inGameId].pos;
-            for (var i in out.players)
+            var emitObj;
+            if (gameState.players[inGameId])
             {
-                var otherplayer = out.players[i];
-                if (!playerPos.inRect(otherplayer.pos, 3000, 3000 * 9/16))
+                var out = JSON.parse(JSON.stringify(copy));
+                var playerPos = gameState.players[inGameId].pos;
+                for (var i in out.players)
                 {
-                    delete out.players[i];
+                    var otherplayer = out.players[i];
+                    if (!playerPos.inRect(otherplayer.pos, 3000, 3000 * 9/16))
+                    {
+                        delete out.players[i];
+                    }
                 }
+                emitObj = differenceBetweenObj(previousState, out);
             }
-            var emitObj = differenceBetweenObj(previousState, out);
+            else
+            {
+                emitObj = differenceBetweenObj(previousState, copy);
+            }
             s.emit('gameState',emitObj);
         }
 
