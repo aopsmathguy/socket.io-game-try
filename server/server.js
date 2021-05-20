@@ -303,9 +303,9 @@ var gameStateEmitter = {
                     {
                         
                         var indices = playerSectors[i][j];
-                        for (var i in indices)
+                        for (var idx in indices)
                         {
-                            newPlayers[indices[i]] = out.players[indices[i]];
+                            newPlayers[indices[idx]] = out.players[indices[idx]];
                         }
                     }
                 }
