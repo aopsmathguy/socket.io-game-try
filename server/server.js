@@ -255,11 +255,11 @@ function emitNewActivity(name, action) {
         action: action
     });
 }
-var previousState;
-function emitGameState(gameState) {
-    // Send this event to everyone in the room.
-    
-    var copy = JSON.parse(JSON.stringify(gameState));
+var gameStateEmitter = {
+    prevStates : {},
+    emitGameState : function(gameState)
+    {
+        var copy = JSON.parse(JSON.stringify(gameState));
     //logTime("copy",()=>{
         copy = trimObject(copy);
     //});
@@ -278,24 +278,25 @@ function emitGameState(gameState) {
                     var otherplayer = out.players[i];
                     if (!playerPos.inRect(otherplayer.pos, 3000, 3000 * 9/16))
                     {
-                        delete out.weapons[out.players[i].weapons[0]];
-                        delete out.weapons[out.players[i].weapons[1]];
                         delete out.players[i];
                     }
                 }
-                emitObj = differenceBetweenObj(previousState, out);
+                emitObj = differenceBetweenObj(this.prevStates[socketId], out);
+                this.prevStates[socketId] = out;
             }
             else
             {
-                emitObj = differenceBetweenObj(previousState, copy);
+                emitObj = differenceBetweenObj(this.prevStates[socketId], copy);
+                this.prevStates[socketId] = copy;
+                
             }
             s.emit('gameState',emitObj);
         }
 
         //io.sockets.emit('gameState', );
     //});
-    previousState = copy;
-}
+    }
+};
 function differenceBetweenObj(prev, curr)
 {
     if (curr === undefined)
@@ -1597,7 +1598,7 @@ function updateGameArea() {
         stage += 1;
         if (stage >= framesPerTick) {
             //logTime("emit",()=>{
-                emitGameState(gameState);
+                gameStateEmitter.emitGameState(gameState);
                 stage = 0;
             //});
         }
