@@ -152,7 +152,7 @@ socket.on('gameState', (msg) => {
     linearInterpolator.updateHitPointsFromState(msg);
 });
 socket.on('killFeed', (msg) => {
-    var plyrs = gameStates[gameStates.length - 1].players;
+    var plyrs = gameStates[gameStates.length - 1].leaderboard;
     var shooterName = (plyrs[msg.shooter] ? plyrs[msg.shooter].name : "unknown");
     var deadName = (plyrs[msg.dead] ? plyrs[msg.dead].name : "unknown");
     if (plyrs[msg.shooter])
