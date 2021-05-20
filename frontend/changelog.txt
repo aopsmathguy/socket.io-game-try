@@ -1,3 +1,10 @@
+v1.1.0 The huge update
+A bunch of stuff
+Most importantly the game is now more ffa oriented rather than survival oriented because you now spawn wit weapons and choose loadout
+lotta new guns and random weapon balancings
+minimap and weapon pickup preview
+new buildings
+
 v1.0.4: The Beeg Update
 Mar 17, 2021
 
