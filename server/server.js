@@ -297,9 +297,9 @@ var gameStateEmitter = {
                 var maxHeightGrid = Math.ceil(maxHeight/2 /gridWidth);
                 
                 var newPlayers = {};
-                for (var i = Math.max(playerSector[0] - maxWidthGrid, 0); i < Math.min(playerSector[0] + maxWidthGrid, gameWidth/gridWidth - 1); i++)
+                for (var i = Math.max(playerSector[0] - maxWidthGrid, 0); i <= Math.min(playerSector[0] + maxWidthGrid, gameWidth/gridWidth - 1); i++)
                 {
-                    for (var j = Math.max(playerSector[1] - maxHeightGrid, 0); j < Math.min(playerSector[1] + maxHeightGrid, gameHeight/gridWidth - 1); j++)
+                    for (var j = Math.max(playerSector[1] - maxHeightGrid, 0); j <= Math.min(playerSector[1] + maxHeightGrid, gameHeight/gridWidth - 1); j++)
                     {
                         
                         var indices = playerSectors[i][j];
