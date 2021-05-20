@@ -1350,7 +1350,7 @@ var GameState = function() {
     }
     this.snapWeapons = function() {
         for (var i in this.players) {
-            if (this.players[i].weapon == -1) {
+            if (this.players[i].weapon == -1 || this.weapons[this.players[i].weapon] == undefined) {
                 continue;
             }
             var player = this.players[i];
