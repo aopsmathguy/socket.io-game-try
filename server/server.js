@@ -31,6 +31,7 @@ io.on('connection', client => {
         }
         delete gameState.players[client.inGameId];
         delete controls[client.inGameId];
+        delete gameStateEmitter.prevStates[client.inGameId];
     });
     client.on('reconnect', function() {
         client.sendBuffer = [];
