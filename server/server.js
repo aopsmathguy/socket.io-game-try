@@ -267,6 +267,7 @@ var gameStateEmitter = {
         var playerSectors = {};
         for (var i = 0; i < gameWidth/gridWidth; i++)
         {
+            playerSectors[i] = {};
             for (var j = 0; j < gameHeight/gridWidth; j++)
             {
                 playerSectors[i][j] = [];
