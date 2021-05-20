@@ -299,7 +299,7 @@ var gameStateEmitter = {
                 {
                     for (var j = playerSector[1] - maxHeightGrid; j < playerSector[1] + maxHeightGrid; j++)
                     {
-                        delete out[playerSectors[i][j]];
+                        delete out.players[playerSectors[i][j]];
                     }
                 }
                 emitObj = differenceBetweenObj(this.prevStates[socketId], out);
