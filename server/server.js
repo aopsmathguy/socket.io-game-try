@@ -1591,10 +1591,8 @@ setInterval(() => {
 function updateGameArea() {
     //logTime("updateGameArea", () => {
         gameState.time = Date.now();
-        if (Object.keys(gameState.players).length != 0)
-        {
+       
             gameState.step();
-        }
         stage += 1;
         if (stage >= framesPerTick) {
             //logTime("emit",()=>{
