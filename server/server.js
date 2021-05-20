@@ -264,6 +264,20 @@ var gameStateEmitter = {
         copy = trimObject(copy);
     //});
     //logTime("emitcopy",()=>{
+        var playerSectors = {};
+        for (var i = 0; i < gameWidth/gridWidth; i++)
+        {
+            for (var j = 0; j < gameHeight/gridWidth; j++)
+            {
+                playerSectors[i][j] = [];
+            }
+        }
+        for (var i in gameState.players)
+        {
+            var player = gameState.players[i];
+            sector = obstacleSector(player.pos);
+            playerSectors[sector[0]][sector[1]].push(i);
+        }
         var sockets = io.sockets.sockets;
         for(var socketId in sockets) {
             var s = sockets[socketId];
@@ -273,12 +287,18 @@ var gameStateEmitter = {
             {
                 var out = JSON.parse(JSON.stringify(copy));
                 var playerPos = gameState.players[inGameId].pos;
-                for (var i in out.players)
+                var playerSector = obstacleSector(playerPos);
+                
+                var maxWidth = 3000;
+                var maxHeight = 3000 * 9/16;
+                var maxWidthGrid = Math.ceil(maxWidth/2 /gridWidth);
+                var maxHeightGrid = Math.ceil(maxHeight/2 /gridWidth);
+                
+                for (var i = playerSector[0] - maxWidthGrid; i < playerSector[0] + maxWidthGrid; i++)
                 {
-                    var otherplayer = out.players[i];
-                    if (!playerPos.inRect(otherplayer.pos, 3000, 3000 * 9/16))
+                    for (var j = playerSector[1] - maxHeightGrid; j < playerSector[1] + maxHeightGrid; j++)
                     {
-                        delete out.players[i];
+                        delete out[playerSectors[i][j]];
                     }
                 }
                 emitObj = differenceBetweenObj(this.prevStates[socketId], out);
