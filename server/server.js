@@ -291,8 +291,8 @@ var gameStateEmitter = {
                 var playerPos = gameState.players[inGameId].pos;
                 var playerSector = obstacleSector(playerPos);
                 
-                var maxWidth = 3000;
-                var maxHeight = 3000 * 9/16;
+                var maxWidth = 2700;
+                var maxHeight = maxWidth * 9/16;
                 var maxWidthGrid = Math.ceil(maxWidth/2 /gridWidth);
                 var maxHeightGrid = Math.ceil(maxHeight/2 /gridWidth);
                 
