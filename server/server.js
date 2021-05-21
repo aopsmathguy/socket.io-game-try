@@ -7,9 +7,34 @@ const gridWidth = 250;
 const framesPerTick = 2;
 
 const io = require('socket.io')();
-
+function makeId(){
+    if (gameState)
+    {
+        var done = false;
+        var possible = "abcdefghijklmnopqrstuvwxyz1234567890";
+        var length = 60;
+        var string;
+        while(!done)
+        {
+            string = "";
+            for (var i = 0; i < length; i++)
+            {
+                var rand = Math.floor(Math.random() * possible.length);
+                string = string + possible.charAt(rand);
+            }
+            done = true;
+            for(var playerId in gameState.players) {
+                if(playerId == string)
+                {
+                    done = false;
+                }
+            }
+        }
+        return string;
+    }
+}
 io.on('connection', client => {
-    makeId();
+    client.inGameId = makeId();
     client.emit('init', {
         data: Date.now(),
         id: client.inGameId,
@@ -75,35 +100,11 @@ io.on('connection', client => {
             controls[client.inGameId].keys = {};
         }
     });
-    function makeId(){
-        var sockets = io.sockets.sockets;
-        var done = false;
-        var possible = "abcdefghijklmnopqrstuvwxyz1234567890";
-        var length = 60;
-        var string;
-        while(!done)
-        {
-            string = "";
-            for (var i = 0; i < length; i++)
-            {
-                var rand = Math.floor(Math.random() * possible.length);
-                string = string + possible.charAt(rand);
-            }
-            done = true;
-            for(var socketId in sockets) {
-                var s = sockets[socketId]; 
-                if(s.inGameId == string)
-                {
-                    done = false;
-                }
-            }
-        }
-        client.inGameId = string;
-    }
+    
     function addPlayer(msg) {
         if (!(msg && typeof msg.name != 'undefined' && msg.color && 
-              typeof msg.primary != 'undefined' && Number.isInteger(msg.primary) && msg.primary >= 0 && msg.primary < viableWeapons.weapons.length &&
-              typeof msg.secondary != 'undefined' && Number.isInteger(msg.secondary) && msg.secondary >= 0 && msg.secondary < viableWeapons.weapons.length))
+              typeof msg.primary != 'undefined' && Number.isInteger(msg.primary) && msg.primary >= 0 && msg.primary < viableWeapons.weapons.length && viableWeapons.weapons[msg.primary].weaponClass != "Secondary" &&
+              typeof msg.secondary != 'undefined' && Number.isInteger(msg.secondary) && msg.secondary >= 0 && msg.secondary < viableWeapons.weapons.length && viableWeapons.weapons[msg.secondary].weaponClass == "Secondary"))
         {
             return;
         }
@@ -150,6 +151,39 @@ io.on('connection', client => {
 
 
 });
+var Bot = function()
+{
+    this.updateInterval = 500;
+    this.playerId = makeId();
+    this.name = "bot";
+    this.spawn = function(state)
+    {
+        if (state.players[this.playerId] == undefined)
+        {
+            controls[client.inGameId] = {};
+            controls[client.inGameId].mouseDown = false;
+            controls[client.inGameId].keys = {};
+            
+        }
+        else{
+            
+        }
+    }
+    this.mouseDown = function()
+    {
+        controls[this.playerId].mouseDown = true;
+        gameState.players[this.playerId].justMouseDowned = true;
+        gameState.players[this.playerId].autoShot = true;
+    }
+    this.mouseUp = function(){
+        
+    }
+    this.makeName = function()
+    {
+        var names = ['Bigboy','green ham', 'eggy','bigman','tumpgump','diddybop'];
+        this.name = names[Math.floor(names.length * Math.random())];
+    }
+}
 const viableWeapons = {
     weapons : [],
     start : function()
