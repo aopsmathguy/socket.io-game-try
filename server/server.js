@@ -79,7 +79,8 @@ var Bot = function(state)
     this.updateInterval = 500;
     this.playerId = this.state.generateId();
     
-    this.name = "bot";
+    var names = ['Bigboy','green ham', 'eggy','bigman','tumpgump','diddybop'];
+    this.name = names[Math.floor(names.length * Math.random())];
     this.color = getRandomColor();
     this.primary = 8;
     this.secondary = 1;
@@ -95,12 +96,8 @@ var Bot = function(state)
         this.state.players[this.playerId].autoShot = true;
     }
     this.mouseUp = function(){
-        
-    }
-    this.makeName = function()
-    {
-        var names = ['Bigboy','green ham', 'eggy','bigman','tumpgump','diddybop'];
-        this.name = names[Math.floor(names.length * Math.random())];
+        controls[this.playerId].mouseDown = false;
+        this.state.players[this.playerId].autoShot = false;
     }
 }
 const viableWeapons = {
@@ -192,6 +189,7 @@ var loopThroughObstacles = function(objectPos, inner) {
 var obstacles;
 var borderObstacles;
 var gameState;
+var bots;
 var controls = {
     importantKeys : [87,83,68,65,70,71,82,88,81]
 };
@@ -787,8 +785,17 @@ var makeObstacles = function() {
         }
     }*/
     gameState = new GameState(Date.now(), players, {});
+    createBots(gameState);
+    
 }
-
+function createBots(state){
+    bots = {};
+    for (var i = 0; i < 3; i++)
+    {
+        var bot = new Bot(state);
+        bot.spawn();
+    }
+}
 function getRandomColor() {
     var letters = '0123456789ABCDEF';
     var color = '#';
