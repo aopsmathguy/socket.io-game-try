@@ -7,34 +7,8 @@ const gridWidth = 250;
 const framesPerTick = 2;
 
 const io = require('socket.io')();
-function makeId(){
-    if (gameState)
-    {
-        var done = false;
-        var possible = "abcdefghijklmnopqrstuvwxyz1234567890";
-        var length = 60;
-        var string;
-        while(!done)
-        {
-            string = "";
-            for (var i = 0; i < length; i++)
-            {
-                var rand = Math.floor(Math.random() * possible.length);
-                string = string + possible.charAt(rand);
-            }
-            done = true;
-            for(var playerId in gameState.players) {
-                if(playerId == string)
-                {
-                    done = false;
-                }
-            }
-        }
-        return string;
-    }
-}
+
 io.on('connection', client => {
-    client.inGameId = makeId();
     client.emit('init', {
         data: Date.now(),
         id: client.inGameId,
@@ -47,16 +21,12 @@ io.on('connection', client => {
         viableWeapons: viableWeapons.weapons
     });
     client.emit('gameState', gameState);
-    client.on('new player', addPlayer);
+    client.on('new player', function(msg){
+        client.inGameId = gameState.generateId();
+        gameState.addPlayer(client.inGameId, msg.name, msg.color, msg.primary,msg.secondary);
+    });
     client.on('disconnect', function() {
-        var player = gameState.players[client.inGameId];
-        if (player != undefined){
-            player.dropEverything(gameState);
-            emitNewActivity(player.name, "leave");
-        }
-        delete gameState.players[client.inGameId];
-        delete controls[client.inGameId];
-        delete gameStateEmitter.prevStates[client.inGameId];
+        gameState.removePlayer(client.inGameId);
     });
     client.on('reconnect', function() {
         client.sendBuffer = [];
@@ -100,80 +70,30 @@ io.on('connection', client => {
             controls[client.inGameId].keys = {};
         }
     });
-    
-    function addPlayer(msg) {
-        if (!(msg && typeof msg.name != 'undefined' && msg.color && 
-              typeof msg.primary != 'undefined' && Number.isInteger(msg.primary) && msg.primary >= 0 && msg.primary < viableWeapons.weapons.length && viableWeapons.weapons[msg.primary].weaponClass != "Secondary" &&
-              typeof msg.secondary != 'undefined' && Number.isInteger(msg.secondary) && msg.secondary >= 0 && msg.secondary < viableWeapons.weapons.length && viableWeapons.weapons[msg.secondary].weaponClass == "Secondary"))
-        {
-            return;
-        }
-        if (gameState.players[client.inGameId] && gameState.players[client.inGameId].alive)
-        {
-            return;
-        }
-        controls[client.inGameId] = {};
-        controls[client.inGameId].mouseDown = false;
-        controls[client.inGameId].keys = {};
-        var player = gameState.players[client.inGameId];
-        var startPos = findSpawnPosition();
-        var color = (/^#([A-Fa-f0-9]{3}){1,2}$/.test(msg.color) ? msg.color : "#fcc976");
-        var name = msg.name.substring(0,18);
-        if (player) {
-            player.pos = startPos;
-            player.vel = new Vector(0,0);
-            player.health = 100;
-            player.alive = true;
-            player.color = color;
-            player.name = (name ? name : player.name);
-            player.killstreak = 0;
-            player.points = 0;
-            
-            
-            var idx1 = gameState.addWeapon(new Gun(0,0,msg.primary , player.id));
-            var idx2 = gameState.addWeapon(new Gun(0,0,msg.secondary , player.id));
-
-            player.weapon = idx1;
-            player.weapons = [idx1,idx2];
-            player.slot = 0;
-
-        } else {
-            gameState.players[client.inGameId] = new Player(startPos.x, startPos.y, (name ? name : "Guest " + Math.floor(10000*Math.random())), color, client.inGameId, msg.primary, msg.secondary, gameState);
-            controls[client.inGameId] = {
-                keys: [],
-                mouseDown: false
-            };
-            emitNewActivity(gameState.players[client.inGameId].name, "join");
-        }
-
-
-    }
-
-
 });
-var Bot = function()
+var Bot = function(state)
 {
+    this.state = state;
+    
+    
     this.updateInterval = 500;
-    this.playerId = makeId();
+    this.playerId = -1;
+    
     this.name = "bot";
-    this.spawn = function(state)
+    this.color = getRandomColor();
+    this.primary = 8;
+    this.secondary = 1;
+    this.player = -1;
+    this.spawn = function()
     {
-        if (state.players[this.playerId] == undefined)
-        {
-            controls[client.inGameId] = {};
-            controls[client.inGameId].mouseDown = false;
-            controls[client.inGameId].keys = {};
-            
-        }
-        else{
-            
-        }
+        this.playerId = this.state.generateId();
+        this.state.addPlayer(this.playerId, this.name, this.color, this.primary, this.secondary);
     }
     this.mouseDown = function()
     {
         controls[this.playerId].mouseDown = true;
-        gameState.players[this.playerId].justMouseDowned = true;
-        gameState.players[this.playerId].autoShot = true;
+        this.state.players[this.playerId].justMouseDowned = true;
+        this.state.players[this.playerId].autoShot = true;
     }
     this.mouseUp = function(){
         
@@ -453,6 +373,92 @@ var GameState = function(time, players, weapons) {
     }
     this.removeWeapon = function(gunIdx){
         delete this.weapons[gunIdx];
+    }
+    this.generateId = function()
+    {
+        var done = false;
+        var possible = "abcdefghijklmnopqrstuvwxyz1234567890";
+        var length = 60;
+        var string;
+        while(!done)
+        {
+            string = "";
+            for (var i = 0; i < length; i++)
+            {
+                var rand = Math.floor(Math.random() * possible.length);
+                string = string + possible.charAt(rand);
+            }
+            done = true;
+            for(var playerId in this.players) {
+                if(playerId == string)
+                {
+                    done = false;
+                }
+            }
+        }
+        return string;
+    }
+    this.addPlayer = function(id, name, color, primary, secondary)
+    {
+        if (id == undefined)
+        {
+            return;
+        }
+        if (!(typeof name == "string" && color && 
+              typeof primary == "number" && Number.isInteger(primary) && primary >= 0 && primary < viableWeapons.weapons.length && viableWeapons.weapons[primary].weaponClass != "Secondary" &&
+              typeof secondary == "number" && Number.isInteger(secondary) && secondary >= 0 && secondary < viableWeapons.weapons.length && viableWeapons.weapons[secondary].weaponClass == "Secondary"))
+        {
+            return;
+        }
+        if (this.players[id] && this.players[id].alive)
+        {
+            return;
+        }
+        
+        controls[id] = {};
+        controls[id].mouseDown = false;
+        controls[id].keys = {};
+        var player = this.players[id];
+        var startPos = findSpawnPosition();
+        color = (/^#([A-Fa-f0-9]{3}){1,2}$/.test(color) ? color : "#fcc976");
+        name = name.substring(0,18);
+        if (player) {
+            player.pos = startPos;
+            player.vel = new Vector(0,0);
+            player.health = 100;
+            player.alive = true;
+            player.color = color;
+            player.name = (name ? name : player.name);
+            player.killstreak = 0;
+            player.points = 0;
+            
+            
+            var idx1 = this.addWeapon(new Gun(0,0,primary , id));
+            var idx2 = this.addWeapon(new Gun(0,0,secondary , id));
+
+            player.weapon = idx1;
+            player.weapons = [idx1,idx2];
+            player.slot = 0;
+
+        } else {
+            this.players[id] = new Player(startPos.x, startPos.y, (name ? name : "Guest " + Math.floor(10000*Math.random())), color, id, primary, secondary, this);
+            controls[id] = {
+                keys: [],
+                mouseDown: false
+            };
+            emitNewActivity(this.players[id].name, "join");
+        }
+    }
+    this.removePlayer = function(id)
+    {
+        var player = this.players[id];
+        if (player != undefined){
+            player.dropEverything(this);
+            emitNewActivity(player.name, "leave");
+        }
+        delete this.players[id];
+        delete controls[id];
+        delete gameStateEmitter.prevStates[id];
     }
     this.generateMinimap = function()
     {
