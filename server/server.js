@@ -379,7 +379,7 @@ var GameState = function(time, players, weapons) {
     {
         var done = false;
         var possible = "abcdefghijklmnopqrstuvwxyz1234567890";
-        var length = 4;
+        var length = 2;
         var string;
         while(!done)
         {
