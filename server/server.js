@@ -85,6 +85,21 @@ var Bot = function(state)
     this.primary = 8;
     this.secondary = 1;
     this.player = -1;
+    
+    this.lastDeathTime = -1;
+    this.update = function()
+    {
+        this.player = this.state.players[this.playerId];
+        if (this.player && !this.player.alive && this.lastDeathTime == -1)
+        {
+            this.lastDeathTime = this.state.time;
+        }
+        else if (this.player && !this.player.alive && this.lastDeathTime != -1 && this.state.time - this.lastDeathTime > 5000)
+        {
+            this.spawn();
+            this.lastDeathTime = -1;
+        }
+    }
     this.spawn = function()
     {
         this.state.addPlayer(this.playerId, this.name, this.color, this.primary, this.secondary);
@@ -1667,6 +1682,10 @@ setInterval(() => {
 },100);
 function updateGameArea() {
     //logTime("updateGameArea", () => {
+    for (var i in bots)
+    {
+        bots[i].update();
+    }
         gameState.time = Date.now();
        
             gameState.step();
