@@ -21,7 +21,7 @@ io.on('connection', client => {
         framesPerTick: framesPerTick,
         viableWeapons: viableWeapons.weapons
     });
-    client.emit('gameState', gameState);
+    client.emit('gameState', trimObject(gameState));
     client.on('new player', function(msg){
         gameState.addPlayer(client.inGameId, msg.name, msg.color, msg.primary,msg.secondary);
     });
@@ -379,7 +379,7 @@ var GameState = function(time, players, weapons) {
     {
         var done = false;
         var possible = "abcdefghijklmnopqrstuvwxyz1234567890";
-        var length = 8;
+        var length = 4;
         var string;
         while(!done)
         {
