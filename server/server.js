@@ -9,6 +9,7 @@ const framesPerTick = 2;
 const io = require('socket.io')();
 
 io.on('connection', client => {
+    client.inGameId = gameState.generateId();
     client.emit('init', {
         data: Date.now(),
         id: client.inGameId,
@@ -22,7 +23,6 @@ io.on('connection', client => {
     });
     client.emit('gameState', gameState);
     client.on('new player', function(msg){
-        client.inGameId = gameState.generateId();
         gameState.addPlayer(client.inGameId, msg.name, msg.color, msg.primary,msg.secondary);
     });
     client.on('disconnect', function() {
@@ -77,7 +77,7 @@ var Bot = function(state)
     
     
     this.updateInterval = 500;
-    this.playerId = -1;
+    this.playerId = this.state.generateId();
     
     this.name = "bot";
     this.color = getRandomColor();
@@ -86,7 +86,6 @@ var Bot = function(state)
     this.player = -1;
     this.spawn = function()
     {
-        this.playerId = this.state.generateId();
         this.state.addPlayer(this.playerId, this.name, this.color, this.primary, this.secondary);
     }
     this.mouseDown = function()
@@ -361,6 +360,8 @@ var GameState = function(time, players, weapons) {
     this.outfields = ['type','time','players','weapons','minimapInfo','leaderboard'];
     setIfUndefined(this, 'time', time);//
     setIfUndefined(this, 'players', players);//
+    setIfUndefined(this, 'usedPlayerIds',  new Set());//
+    
     setIfUndefined(this, 'weapons', weapons);//
     setIfUndefined(this, 'minimapInfo', undefined);//
     setIfUndefined(this, 'leaderboard', undefined);//
@@ -378,7 +379,7 @@ var GameState = function(time, players, weapons) {
     {
         var done = false;
         var possible = "abcdefghijklmnopqrstuvwxyz1234567890";
-        var length = 60;
+        var length = 8;
         var string;
         while(!done)
         {
@@ -389,13 +390,12 @@ var GameState = function(time, players, weapons) {
                 string = string + possible.charAt(rand);
             }
             done = true;
-            for(var playerId in this.players) {
-                if(playerId == string)
-                {
-                    done = false;
-                }
+            if (this.usedPlayerIds.has(string))
+            {
+                done = false;
             }
         }
+        this.usedPlayerIds.add(string)
         return string;
     }
     this.addPlayer = function(id, name, color, primary, secondary)
@@ -459,6 +459,7 @@ var GameState = function(time, players, weapons) {
         delete this.players[id];
         delete controls[id];
         delete gameStateEmitter.prevStates[id];
+        this.usedPlayerIds.delete(id);
     }
     this.generateMinimap = function()
     {
