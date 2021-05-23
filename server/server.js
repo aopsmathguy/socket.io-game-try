@@ -667,15 +667,16 @@ var GameState = function(time, players, weapons) {
         
         
         player.snapWeapon(this);
-        if (playerControls.mouseDownFrame)
-        {
-            weapon.autoRem = weapon.auto;
-        }
-        else if (!playerControls.mouseDown){
-            weapon.autoRem = 0;
-        }
+        
         if (player.weapon != -1)
         {
+            if (playerControls.mouseDownFrame)
+            {
+                weapon.autoRem = weapon.auto;
+            }
+            else if (!playerControls.mouseDown){
+                weapon.autoRem = 0;
+            }
             var weapon = this.weapons[player.weapon];
             if (weapon.bulletsRemaining == 0){
                 if (playerControls.mouseDownFrame)
