@@ -456,6 +456,7 @@ var GameState = function(time, players, weapons) {
         controls.playerControls[id] = {};
         controls.playerControls[id].mouseDown = false;
         controls.playerControls[id].keys = {};
+        controls.playerControls[id].keyPressFrame = {};
         var player = this.players[id];
         var startPos = findSpawnPosition();
         color = (/^#([A-Fa-f0-9]{3}){1,2}$/.test(color) ? color : "#fcc976");
