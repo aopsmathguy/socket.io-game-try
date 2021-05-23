@@ -467,7 +467,7 @@ var GameState = function(time, players, weapons) {
             player.health = 100;
             player.alive = true;
             player.color = color;
-            player.name = (name == "" ? name : player.name);
+            player.name = (name.trim() != "" ? name.trim() : player.name);
             player.killstreak = 0;
             player.points = 0;
             
@@ -480,7 +480,7 @@ var GameState = function(time, players, weapons) {
             player.slot = 0;
 
         } else {
-            this.players[id] = new Player(startPos.x, startPos.y, (name ? name : "Guest " + Math.floor(10000*Math.random())), color, id, primary, secondary, this);
+            this.players[id] = new Player(startPos.x, startPos.y, (name.trim() != "" ? name.trim() : "Guest " + Math.floor(10000*Math.random())), color, id, primary, secondary, this);
             controls[id] = {
                 keys: [],
                 mouseDown: false
