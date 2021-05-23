@@ -146,8 +146,6 @@ socket.on('gameState', (msg) => {
         Object.assign(weapon, viableWeapons[weapon.gunStats]);
         weapon.type = "Gun";
     }
-    if (msg.players[controlId])
-        msg.players[controlId].ang = controlsBundle.ang;
     gameStates.push(msg);
     linearInterpolator.updateHitPointsFromState(msg);
 });
