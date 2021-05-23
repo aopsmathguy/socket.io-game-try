@@ -32,43 +32,22 @@ io.on('connection', client => {
         client.sendBuffer = [];
     });
     client.on('keydown', (keycode) => {
-        if (keycode || typeof keycode !== 'undefined') {
-            if (controls.importantKeys.includes(keycode) && controls[client.inGameId] && gameState.players[client.inGameId] && gameState.players[client.inGameId].alive) {
-                controls[client.inGameId].keys[keycode] = true;
-                gameState.players[client.inGameId].justKeyDowned[keycode] = true;
-            }
-        }
+        controls.keyDown(client.inGameId, keycode);
     });
     client.on('keyup', (keycode) => {
-        if ((keycode || typeof keycode !== 'undefined') && controls.importantKeys.includes(keycode) && controls[client.inGameId] && gameState.players[client.inGameId] && gameState.players[client.inGameId].alive) {
-
-                controls[client.inGameId].keys[keycode] = false;
-        }
+        controls.keyUp(client.inGameId, keycode);
     });
     client.on('mousemove', (ang) => {
-        if (typeof ang !== 'undefined' && !isNaN(ang) && controls[client.inGameId] && gameState.players[client.inGameId] && gameState.players[client.inGameId].alive)
-            controls[client.inGameId].ang = ang;
+        controls.angChange(client.inGameId, ang);
     });
     client.on('mousedown', () => {
-        if (controls[client.inGameId] && gameState.players[client.inGameId]&& gameState.players[client.inGameId].alive) {
-            controls[client.inGameId].mouseDown = true;
-            gameState.players[client.inGameId].justMouseDowned = true;
-            gameState.players[client.inGameId].autoShot = true;
-        }
+        controls.mouseDown(client.inGameId);
     });
     client.on('mouseup', () => {
-        if (controls[client.inGameId] && gameState.players[client.inGameId]&& gameState.players[client.inGameId].alive)
-        {
-            controls[client.inGameId].mouseDown = false;
-            gameState.players[client.inGameId].autoShot = false;
-        }
+        controls.mouseUp(client.inGameId);
     });
     client.on('reset', ()=>{
-        if (controls[client.inGameId] && gameState.players[client.inGameId]&& gameState.players[client.inGameId].alive)
-        {
-            controls[client.inGameId].mouseDown = false;
-            controls[client.inGameId].keys = {};
-        }
+        controls.resetPlayer(client.inGameId);
     });
 });
 var Bot = function(state)
@@ -84,17 +63,16 @@ var Bot = function(state)
     this.color = getRandomColor();
     this.primary = 8;
     this.secondary = 1;
-    this.player = -1;
     
     this.lastDeathTime = -1;
     this.update = function()
     {
-        this.player = this.state.players[this.playerId];
-        if (this.player && !this.player.alive && this.lastDeathTime == -1)
+        var player = this.state.players[this.playerId];
+        if (player && !player.alive && this.lastDeathTime == -1)
         {
             this.lastDeathTime = this.state.time;
         }
-        else if (this.player && !this.player.alive && this.lastDeathTime != -1 && this.state.time - this.lastDeathTime > 5000)
+        else if (player && !player.alive && this.lastDeathTime != -1 && this.state.time - this.lastDeathTime > 5000)
         {
             this.spawn();
             this.lastDeathTime = -1;
@@ -106,13 +84,8 @@ var Bot = function(state)
     }
     this.mouseDown = function()
     {
-        controls[this.playerId].mouseDown = true;
-        this.state.players[this.playerId].justMouseDowned = true;
-        this.state.players[this.playerId].autoShot = true;
     }
     this.mouseUp = function(){
-        controls[this.playerId].mouseDown = false;
-        this.state.players[this.playerId].autoShot = false;
     }
 }
 const viableWeapons = {
@@ -120,29 +93,30 @@ const viableWeapons = {
     start : function()
     {
         this.weapons = [
-            new GunStats('Glock 17', 'Secondary', 35, false, 780, 1, 15, 1500, true, 30, 20, 4, 500, 150, 1000, 0.15, 0.12, 0.9, 7, 0.9, 0, 0.95, 1, '#80f','bullet','#ff0', 5, 60, 32, 3, 0, 3, 0),
-            new GunStats('Glock 18', 'Secondary', 35, true, 780, 1, 17, 1500, true, 30, 17, 7, 500, 150, 1000, 0.15, 0.09, 0.9, 7, 0.9, 0, 0.95, 1, '#444','bullet','#ff0', 5, 60, 32, 3, 0, 3, 0),
-            new GunStats('Redhawk', 'Secondary', 40, false, 300, 1, 6, 1700,true, 50, 30, 10, 700, 200, 1300, 0, 0.2, 0.9, 10, 0.9, 0.5, 0.95, 0.6, '#ff0','bullet','#ff0', 5, 60,32, 3, 0, 3, 0),
-            new GunStats('Executioner', 'Secondary', 35, false, 450, 14, 6, 2900,true, 22.5, 5, 3.5, 330, 200, 600, 0.2, 0, 0.9, 10, 0.9, 0.5, 0.95, 0.6, '#088','bullet','#ff0', 3, 60,32, 3, 0, 3, 0),
+            new GunStats('Glock 17', 'Secondary', 35, 1, 780, 1, 15, 1500, true, 30, 20, 4, 500, 150, 1000, 0.15, 0.12, 0.9, 7, 0.9, 0, 0.95, 1, '#80f','bullet','#ff0', 5, 60, 32, 3, 0, 3, 0),
+            new GunStats('Glock 18', 'Secondary', 35, Infinity, 780, 1, 17, 1500, true, 30, 17, 7, 500, 150, 1000, 0.15, 0.09, 0.9, 7, 0.9, 0, 0.95, 1, '#444','bullet','#ff0', 5, 60, 32, 3, 0, 3, 0),
+            new GunStats('Redhawk', 'Secondary', 40, 1, 300, 1, 6, 1700,true, 50, 30, 10, 700, 200, 1300, 0, 0.2, 0.9, 10, 0.9, 0.5, 0.95, 0.6, '#ff0','bullet','#ff0', 5, 60,32, 3, 0, 3, 0),
+            new GunStats('Executioner', 'Secondary', 35, 1, 450, 14, 6, 2900,true, 22.5, 5, 3.5, 330, 200, 600, 0.2, 0, 0.9, 10, 0.9, 0.5, 0.95, 0.6, '#088','bullet','#ff0', 3, 60,32, 3, 0, 3, 0),
             
-            new GunStats('Stevens DB', 'Shotgun', 90, false, 450, 8, 2, 2300, true, 26.25, 15, 10, 350, 56, 700, 0.16, 0, 0.83, 10, 0.9, 1.5,1, 0.7, '#f0f', 'bullet','#ff0',4,60,2,30, 3, 53, -2),
-            new GunStats('M870', 'Shotgun', 105, false, 60, 8, 5, 1000, false, 26.25, 16, 12, 400, 88, 800, 0.15, 0, 0.83, 10, 0.9, 1.5,1, 0.3, '#8f8', 'bullet','#ff0',4,60,4,28, 3, 57, -2),
-            new GunStats('SPAS-12', 'Shotgun', 110, false, 100, 8, 9, 800, false, 30, 9, 1, 650, 100, 1100, 0.1, 0, 0.83, 10, 0.9, 1.5,0.95, 0.3, '#0ff', 'bullet','#ff0',4,60,4,28, 3, 58, -2),
+            new GunStats('Stevens DB', 'Shotgun', 90, 1, 450, 8, 2, 2300, true, 26.25, 15, 10, 350, 56, 700, 0.16, 0, 0.83, 10, 0.9, 1.5,1, 0.7, '#f0f', 'bullet','#ff0',4,60,2,30, 3, 53, -2),
+            new GunStats('M870', 'Shotgun', 105, 1, 60, 8, 5, 1000, false, 26.25, 16, 12, 400, 88, 800, 0.15, 0, 0.83, 10, 0.9, 1.5,1, 0.3, '#8f8', 'bullet','#ff0',4,60,4,28, 3, 57, -2),
+            new GunStats('SPAS-12', 'Shotgun', 110, 1, 100, 8, 9, 800, false, 30, 9, 1, 650, 100, 1100, 0.1, 0, 0.83, 10, 0.9, 1.5,0.95, 0.3, '#0ff', 'bullet','#ff0',4,60,4,28, 3, 58, -2),
             
-            new GunStats('MAC-10', 'SMG', 50, true, 1200, 1, 32, 1600, true, 26.25, 16, 10, 340, 150, 850, 0.1, 0.06, 0.9, 3, 0.9, 0.4, 0.97, 0.8, '#08f','bullet', '#ff0',5,60,12,22, 3, 40, -2),
-            new GunStats('MP5', 'SMG',75, true, 750, 1, 30, 1900, true, 33.75, 16, 8, 500, 270, 1100, 0, 0.07, 0.91, 4, 0.9, 0.4, 0.95, 0.65, '#f80','bullet', '#ff0',5,60,6,26, 3, 51, -2),
-            new GunStats('M1A1', 'SMG',90, true, 700, 1, 50, 3100, true, 33.75, 15, 5, 550, 270, 1200, 0, 0.04, 0.96, 5, 0.9, 0.3, 0.9, 0.5, '#fff', 'bullet','#ff0',5,60,10,23, 3,48, -9),
+            new GunStats('MAC-10', 'SMG', 50, Infinity, 1200, 1, 32, 1600, true, 26.25, 16, 10, 340, 150, 850, 0.1, 0.06, 0.9, 3, 0.9, 0.4, 0.97, 0.8, '#08f','bullet', '#ff0',5,60,12,22, 3, 40, -2),
+            new GunStats('MP5', 'SMG',75, Infinity, 750, 1, 30, 1900, true, 33.75, 16, 8, 500, 270, 1100, 0, 0.07, 0.91, 4, 0.9, 0.4, 0.95, 0.65, '#f80','bullet', '#ff0',5,60,6,26, 3, 51, -2),
+            new GunStats('M1A1', 'SMG',90, Infinity, 700, 1, 50, 3100, true, 33.75, 15, 5, 550, 270, 1200, 0, 0.04, 0.96, 5, 0.9, 0.3, 0.9, 0.5, '#fff', 'bullet','#ff0',5,60,10,23, 3,48, -9),
             
-            new GunStats('AK-47', 'Assault',95, true, 600, 1, 30, 2500, true, 41.25, 15, 2, 600, 400, 1300, 0, 0.15, 0.85, 6, 0.9, 0.48, 0.93, 0.5, '#bb7554', 'bullet','#ff0',6,60,8, 24, 3, 50, -2),
-            new GunStats('M4A1', 'Assault', 90, true, 700, 1, 30, 3000, true, 45, 17, 1, 650, 270, 1300, 0, 0.07, 0.9, 5, 0.9, 0.48, 0.93, 0.5, '#888', 'bullet','#ff0',6,60,12,20, 3,45, -2),
+            new GunStats('AK-47', 'Assault',95, Infinity, 600, 1, 30, 2500, true, 41.25, 15, 2, 600, 400, 1300, 0, 0.15, 0.85, 6, 0.9, 0.48, 0.93, 0.5, '#bb7554', 'bullet','#ff0',6,60,8, 24, 3, 50, -2),
+            new GunStats('M4A1', 'Assault', 90, Infinity, 700, 1, 30, 3000, true, 45, 17, 1, 650, 270, 1300, 0, 0.07, 0.9, 5, 0.9, 0.48, 0.93, 0.5, '#888', 'bullet','#ff0',6,60,12,20, 3,45, -2),
+            new GunStats('M4', 'Assault', 90, 3, 900, 1, 30, 2600, true, 45, 20, 2, 460, 200, 1300, 0, 0.035, 0.95, 5, 0.9, 0.48, 0.93, 0.5, '#ccc', 'bullet','#ff0',6,60,12,20, 3,45, -2),
 
-            new GunStats('MK11', 'DMR',90, false, 550, 1, 15, 2600, true, 45, 26, 6, 710, 500, 1600, 0, 0.3, 0.83, 8, 0.84, 0.56, 0.92, 0.5, '#f08', 'bullet','#ff0',6,60,12,20, 3, 45, -2),
+            new GunStats('MK11', 'DMR',90, 1, 550, 1, 15, 2600, true, 45, 26, 6, 710, 500, 1600, 0, 0.3, 0.83, 8, 0.84, 0.56, 0.92, 0.5, '#f08', 'bullet','#ff0',6,60,12,20, 3, 45, -2),
 
-            new GunStats('Mosin Nagant','Sniper', 130, false, 55, 1, 5, 1000, false, 52.5, 70, 20, 830, 240, 2500, 0, 0.3, 0.83, 14, 0.9, 2.5, 0.9, 0.6, '#8f0', 'bullet','#ff0',8,60,4,28, 3, 60, -2),
-            new GunStats('M200', 'Sniper',140, false, 40, 1, 7, 3500, true, 60, 106, 40, 400, 100, 2500, 0, 0.3, 0.83, 16, 0.9, 3, 0.9, 0.6, '#88f', 'bullet','#ff0',10,60,4,28, 3, 60, -2),
+            new GunStats('Mosin Nagant','Sniper', 130, 1, 55, 1, 5, 1000, false, 52.5, 70, 20, 830, 240, 2500, 0, 0.3, 0.83, 14, 0.9, 2.5, 0.9, 0.6, '#8f0', 'bullet','#ff0',8,60,4,28, 3, 60, -2),
+            new GunStats('M200', 'Sniper',140, 1, 40, 1, 7, 3500, true, 60, 106, 40, 400, 100, 2500, 0, 0.3, 0.83, 16, 0.9, 3, 0.9, 0.6, '#88f', 'bullet','#ff0',10,60,4,28, 3, 60, -2),
             
-            new GunStats('Crossbow', 'Other',70, false, 9000, 1, 1, 2400, false,18.75, 100, 0, 830, 240, 1500, 0, 0.3, 0.83, 14, 0.9, 3, 0.9, 1, '#000', 'arrow','#ff9f73',6,60,12,20, 3, 40, -2),
-            new GunStats('Laser', 'Other',90, false, 120, 1, 6, 2700, true,100, 40, 6, 700, 200, 2500, 0, 0, 0.91, 20, 0.9, 0, 0.9, 0.4, '#f00','laser','#f00', 6,60,12,20, 3, 45, -2)
+            new GunStats('Crossbow', 'Other',70, 1, 9000, 1, 1, 2400, false,18.75, 100, 0, 830, 240, 1500, 0, 0.3, 0.83, 14, 0.9, 3, 0.9, 1, '#000', 'arrow','#ff9f73',6,60,12,20, 3, 40, -2),
+            new GunStats('Laser', 'Other',90, 1, 120, 1, 6, 2700, true,100, 40, 6, 700, 200, 2500, 0, 0, 0.91, 20, 0.9, 0, 0.9, 0.4, '#f00','laser','#f00', 6,60,12,20, 3, 45, -2)
         ];
     }
 };
@@ -206,7 +180,58 @@ var borderObstacles;
 var gameState;
 var bots;
 var controls = {
-    importantKeys : [87,83,68,65,70,71,82,88,81]
+    playerControls : {},
+    importantKeys : new Set([87,83,68,65,70,71,82,88,81]),
+    keyDown : function(id, keycode)
+    {
+        if (typeof keycode == 'number' && this.importantKeys.has(keycode) && this.playerControls[id] && gameState.players[id] && gameState.players[id].alive) {
+            this.playerControls[id].keys[keycode] = true;
+            this.playerControls[id].keyPressFrame[keycode] = true;
+        }
+    },
+    keyUp : function(id, keycode)
+    {
+        if (typeof keycode == 'number' && this.importantKeys.has(keycode) && this.playerControls[id] && gameState.players[id] && gameState.players[id].alive) {
+            this.playerControls[id].keys[keycode] = false;
+        }
+    },
+    angChange : function(id, ang)
+    {
+        if (typeof ang == 'number' && isFinite(ang) && this.playerControls[id] && gameState.players[id] && gameState.players[id].alive){
+            this.playerControls[id].ang = ang;
+        }
+    },
+    mouseDown : function(id)
+    {
+        if (this.playerControls[id] && gameState.players[id] && gameState.players[id].alive) {
+            this.playerControls[id].mouseDown = true;
+            this.playerControls[id].mouseDownFrame = true;
+        }
+    },
+    mouseUp : function(id)
+    {
+        if (this.playerControls[id] && gameState.players[id] && gameState.players[id].alive) {
+            this.playerControls[id].mouseDown = false;
+        }
+    },
+    resetPlayer : function(id)
+    {
+        if (this.playerControls[id] && gameState.players[id] && gameState.players[id].alive) {
+            this.playerControls[id].keys = {};
+            this.playerControls[id].keyPressFrame = {};
+            this.playerControls[id].mouseDown = false;
+            this.playerControls[id].mouseDownFrame = false;
+            
+        }
+    },
+    resetAll : function(){
+        for (var i in this.playerControls)
+        {
+            this.playerControls[i].keyPressFrame = {};
+            this.playerControls[i].mouseDownFrame = false;
+            
+        }
+    }
 };
 var iterations;
 
@@ -428,9 +453,9 @@ var GameState = function(time, players, weapons) {
             return;
         }
         
-        controls[id] = {};
-        controls[id].mouseDown = false;
-        controls[id].keys = {};
+        controls.playerControls[id] = {};
+        controls.playerControls[id].mouseDown = false;
+        controls.playerControls[id].keys = {};
         var player = this.players[id];
         var startPos = findSpawnPosition();
         color = (/^#([A-Fa-f0-9]{3}){1,2}$/.test(color) ? color : "#fcc976");
@@ -441,7 +466,7 @@ var GameState = function(time, players, weapons) {
             player.health = 100;
             player.alive = true;
             player.color = color;
-            player.name = (name ? name : player.name);
+            player.name = (name == "" ? name : player.name);
             player.killstreak = 0;
             player.points = 0;
             
@@ -470,7 +495,7 @@ var GameState = function(time, players, weapons) {
             emitNewActivity(player.name, "leave");
         }
         delete this.players[id];
-        delete controls[id];
+        delete controls.playerControls[id];
         delete gameStateEmitter.prevStates[id];
         this.usedPlayerIds.delete(id);
     }
@@ -520,10 +545,9 @@ var GameState = function(time, players, weapons) {
         for (var k in this.players) {
             var player = this.players[k];
             if (player.alive) {
-                player.snapWeapon(this);
-                this.mouseControls(k);
 
                 this.controls(k);
+                
                 player.playerStep(this);
                 for (var i = 0; i < 2; i++)
                 {
@@ -536,6 +560,7 @@ var GameState = function(time, players, weapons) {
                 }
             }
         }
+        controls.resetAll();
         for (var k in this.weapons) {
             this.weapons[k].bulletsStep(this);
         }
@@ -587,75 +612,92 @@ var GameState = function(time, players, weapons) {
         }
     }
     this.controls = function(k) {
-        var targetVel = new Vector((controls[k].keys[68] ? 1 : 0) + (controls[k].keys[65] ? -1 : 0), (controls[k].keys[83] ? 1 : 0) + (controls[k].keys[87] ? -1 : 0));
-        if (!targetVel.magnitude() == 0) {
+        var playerControls = controls.playerControls[k];
+        var player = this.players[k];
+        player.ang = playerControls.ang || 0;
+        
+        var targetVel = new Vector((playerControls.keys[68] ? 1 : 0) + (playerControls.keys[65] ? -1 : 0), (playerControls.keys[83] ? 1 : 0) + (playerControls.keys[87] ? -1 : 0));
+        if (targetVel.magnitude() != 0) {
             targetVel = targetVel.multiply(this.players[k].speed / targetVel.magnitude());
         }
-        if (this.players[k].weapon != -1) {
-            targetVel = targetVel.multiply(this.weapons[this.players[k].weapon].walkSpeedMult);
-            if (this.weapons[this.players[k].weapon].lastFireTime != 0) {
-                targetVel = targetVel.multiply(this.weapons[this.players[k].weapon].shootWalkSpeedMult);
+        if (player.weapon != -1) {
+            var weapon = this.weapons[player.weapon];
+            targetVel = targetVel.multiply(weapon.walkSpeedMult);
+            if (weapon.lastFireTime != 0) {
+                targetVel = targetVel.multiply(weapon.shootWalkSpeedMult);
             }
         }
-        this.players[k].vel = this.players[k].vel.add(targetVel.subtract(this.players[k].vel).multiply(this.players[k].agility));
-        this.players[k].ang = controls[k].ang || 0;
+        player.vel = player.vel.add(targetVel.subtract(player.vel).multiply(player.agility));
 
-        if (this.players[k].justKeyDowned[70]) {
-            var minDist = this.players[k].reachDist;
+        if (playerControls.keyPressFrame[70]) {
+            var minDist = player.reachDist;
             var idx = -1;
-            this.loopThroughWeapons( this.players[k].pos, (weaponIdx) => {
+            this.loopThroughWeapons(player.pos, (weaponIdx) => {
                 if (this.weapons[weaponIdx].hold) {
                     return;
                 }
-                var distance = this.players[k].pos.distanceTo(this.weapons[weaponIdx].pos);
+                var distance = player.pos.distanceTo(this.weapons[weaponIdx].pos);
                 if (distance < minDist) {
                     idx = weaponIdx;
                     minDist = distance;
                 }
             });
             if (idx != -1) {
-                this.players[k].pickUpWeapon(this,idx);
+                player.pickUpWeapon(this,idx);
             }
-            this.players[k].justKeyDowned[70] = false;
         }
-        if (this.players[k].justKeyDowned[71]) {
-            this.players[k].dropWeapon(this);
-            this.players[k].justKeyDowned[71] = false;
+        if (playerControls.keyPressFrame[71]) {
+            player.dropWeapon(this);
         }
-        if (this.players[k].justKeyDowned[82]) {
-            if (this.players[k].weapon != -1){
-              this.weapons[this.players[k].weapon].reload(this.time);
+        if (playerControls.keyPressFrame[82]) {
+            if (player.weapon != -1){
+                var weapon = this.weapons[player.weapon];
+                weapon.reload(this.time);
             }
-            this.players[k].justKeyDowned[82] = false;
         }
-        if (this.players[k].justKeyDowned[88]) {
+        if (playerControls.keyPressFrame[88]) {
+            var weapon = this.weapons[player.weapon];
             this.weapons[this.players[k].weapon].cancelReload();
-            this.players[k].justKeyDowned[88] = false;
         }
-        if (this.players[k].justKeyDowned[81]) {
+        if (playerControls.keyPressFrame[81]) {
             this.players[k].swapWeapon(this, 1 - this.players[k].slot);
-            this.players[k].justKeyDowned[81] = false;
+        }
+        
+        
+        
+        player.snapWeapon(this);
+        if (playerControls.mouseDownFrame)
+        {
+            weapon.autoRem = weapon.auto;
+        }
+        else if (!playerControls.mouseDown){
+            weapon.autoRem = 0;
+        }
+        if (player.weapon != -1)
+        {
+            var weapon = this.weapons[player.weapon];
+            if (weapon.bulletsRemaining == 0){
+                if (playerControls.mouseDownFrame)
+                {
+                    weapon.reload(this.time);
+                }
+            }
+            else
+            {
+                if (weapon.autoRem > 0)
+                {
+                    weapon.fireBullets(this);
+                }
+            }
+        }
+        else
+        {
+            if (playerControls.mouseDownFrame)
+            {
+                player.punch(this);
+            }
         }
 
-    }
-    this.mouseControls = function(k){
-      var weapon = this.weapons[this.players[k].weapon];
-        if (this.players[k].autoShot && this.players[k].weapon != -1 && weapon.auto) {
-            weapon.fireBullets(this);
-            this.players[k].justMouseDowned = false;
-        } else if (this.players[k].justMouseDowned) {
-            if (this.players[k].weapon != -1 && !weapon.auto) {
-                weapon.fireBullets(this);
-            } else if (this.players[k].weapon == -1) {
-                this.players[k].punch(this);
-            }
-            this.players[k].justMouseDowned = false;
-        }
-        if (this.players[k].weapon != -1)
-        {
-          weapon.spray = weapon.stability * (weapon.spray - weapon.defSpray) + weapon.defSpray;
-          weapon.recoil *= weapon.animationMult;
-        }
     }
 }
 var inObjects = function(v) {
@@ -852,11 +894,7 @@ var Player = function(xStart, yStart, name, color, id, prim, sec, state) {
     setIfUndefined(this, 'punchReach', 10);
     setIfUndefined(this, 'punchLastTime', 0);//
     setIfUndefined(this, 'punchRate', 200);
-    setIfUndefined(this, 'punchDamage', 24);
-
-    setIfUndefined(this, 'justMouseDowned', false);
-    setIfUndefined(this, 'justKeyDowned', {});
-    setIfUndefined(this, 'autoShot', false);
+    setIfUndefined(this, 'punchDamage', 48);
 
     setIfUndefined(this, 'id', id);
 
@@ -889,6 +927,7 @@ var Player = function(xStart, yStart, name, color, id, prim, sec, state) {
         {
           prevWeapon.lastFireTime = -1;
         }
+        prevWeapon.autoRem = 0;
       }
       this.slot = newSlot;
       if (newSlot < this.weapons.length)
@@ -909,7 +948,6 @@ var Player = function(xStart, yStart, name, color, id, prim, sec, state) {
       }
       this.snapWeapon(state);
 
-      this.autoShot = false;
     }
     this.pickUpWeapon = function(state, weaponIdx) {
         if (this.weapons[0] != -1 &&  this.weapons[1] != -1)
@@ -957,8 +995,8 @@ var Player = function(xStart, yStart, name, color, id, prim, sec, state) {
               weapon.lastFireTime = -1;
             }
             weapon.lastHoldTime = state.time;
+            weapon.autoRem = 0;
         }
-        this.autoShot = false;
     }
     this.dropEverything = function(state)
     {
@@ -1129,7 +1167,8 @@ var Gun = function(startX, startY, stats, playerIdx) {
     setIfUndefined(this, 'pos', new Vector(startX, startY));//
     setIfUndefined(this, 'vel', new Vector(0, 0));//
     setIfUndefined(this, 'ang', -Math.PI/6);//
-
+    
+    setIfUndefined(this, 'autoRem', 0);//
     setIfUndefined(this, 'bulletsRemaining', (playerIdx != -1 ? this.capacity : 0));//
     setIfUndefined(this, 'reloadStartTime', -1);//
 
@@ -1218,15 +1257,17 @@ var Gun = function(startX, startY, stats, playerIdx) {
     }
     this.step = function()
     {
-        if (this.hold)
+        this.spray = this.stability * (this.spray - this.defSpray) + this.defSpray;
+        this.recoil *= this.animationMult;
+        if (!this.hold)
         {
-            return;
+            this.pos = this.pos.add(this.vel.multiply(1/60));
         }
-        this.pos = this.pos.add(this.vel.multiply(1/60));
     }
     this.reload = function(timeNow) {
         if (this.bulletsRemaining < this.capacity && this.reloadStartTime == -1 && this.lastFireTime == 0) {
             this.reloadStartTime = timeNow;
+            this.autoRem = 0;
         }
     }
     this.cancelReload = function() {
@@ -1249,6 +1290,8 @@ var Gun = function(startX, startY, stats, playerIdx) {
                 this.spray += this.sprayCoef;
                 this.recoil += this.kickAnimation;
                 this.lastFireTime = state.time;
+                
+                this.autoRem -= 1;
                 this.bulletsRemaining -= 1;
                 if (this.playerHolding != -1)
                 {
@@ -1257,8 +1300,6 @@ var Gun = function(startX, startY, stats, playerIdx) {
                     player.vel = player.vel.add((new Vector( - this.personRecoil,0)).rotate(this.ang));
                     player.lastOnRadar = state.time;
                 }
-            } else {
-                this.reload(state.time);
             }
         }
     }
