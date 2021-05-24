@@ -398,7 +398,7 @@ var trimObject = function(obj)
 }
 var GameState = function(time, players, weapons) {
     this.type = "GameState";
-    this.outfields = ['type','time','players','weapons','minimapInfo','leaderboard'];
+    this.outfields = ['type','time','players','weapons','bullets','minimapInfo','leaderboard'];
     setIfUndefined(this, 'time', time);//
     setIfUndefined(this, 'players', players);//
     setIfUndefined(this, 'usedPlayerIds',  new Set());//
@@ -1189,7 +1189,7 @@ var GunStats = function(name, weaponClass, length, auto, firerate, multishot, ca
     setIfUndefined(this, 'radius', 30);//
 }
 var Gun = function(startX, startY, stats, playerIdx) {
-    this.outfields = ['type','gunStats','pos','vel','ang','bulletsRemaining','reloadStartTime','recoil','hold','bullets'];
+    this.outfields = ['type','gunStats','pos','vel','ang','bulletsRemaining','reloadStartTime','recoil','hold'];
     
     setIfUndefined(this, 'gunStats', stats);//
     Object.assign(this, viableWeapons.weapons[this.gunStats]);
