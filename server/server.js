@@ -65,7 +65,7 @@ var Bot = function(state)
     this.secondary = 1;
     
     this.lastKeyUpdate = -1;
-    this.keyUpdatePeriod = 0.25 + 0.25*Math.random();
+    this.keyUpdatePeriod = 1 + 1*Math.random();
     
     this.lastDeathTime = -1;
     this.update = function()
