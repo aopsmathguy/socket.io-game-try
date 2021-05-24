@@ -404,10 +404,34 @@ var GameState = function(time, players, weapons) {
     setIfUndefined(this, 'usedPlayerIds',  new Set());//
     
     setIfUndefined(this, 'weapons', weapons);//
-    setIfUndefined(this, 'minimapInfo', undefined);//
-    setIfUndefined(this, 'leaderboard', undefined);//
     setIfUndefined(this, 'weaponsLength', 0);//
     setIfUndefined(this, 'weaponsSectors', []);//
+    
+    setIfUndefined(this, 'bullets', {});//
+    setIfUndefined(this, 'bulletsLength', 0);//
+    
+    setIfUndefined(this, 'minimapInfo', undefined);//
+    setIfUndefined(this, 'leaderboard', undefined);//
+    this.addBullet = function(bull)
+    {
+        this.bullets[this.bulletsLength] = bull;
+        this.bulletsLength ++;
+    }
+    this.deleteBullet = function(idx)
+    {
+        delete this.bullets[idx];
+    }
+    this.bulletsStep = function() {
+        
+        for (var i in this.bullets) {
+            this.bullets[i].step(this);
+            if (this.bullets[i].delete) {
+                this.deleteBullet(i);
+            }
+        }
+
+
+    }
     this.addWeapon = function(gun){
         this.weapons[this.weaponsLength] = gun;
         gun.id = this.weaponsLength;
@@ -566,8 +590,9 @@ var GameState = function(time, players, weapons) {
         }
         controls.resetAll();
         for (var k in this.weapons) {
-            this.weapons[k].bulletsStep(this);
+            this.weapons[k].updateReloads(this);
         }
+        this.bulletsStep();
         for (var k in this.players) {
             var player = this.players[k];
             if (player.health <= 0 && player.alive) {
@@ -1184,9 +1209,6 @@ var Gun = function(startX, startY, stats, playerIdx) {
     setIfUndefined(this, 'hold', (playerIdx != -1));//
     setIfUndefined(this, 'radius', 30);//
 
-    setIfUndefined(this, 'bullets', {});//
-    setIfUndefined(this, 'bulletsArrLength', 0);
-
 
     setIfUndefined(this, 'playerHolding', playerIdx);
     setIfUndefined(this, 'lastHoldTime', -1);
@@ -1288,8 +1310,7 @@ var Gun = function(startX, startY, stats, playerIdx) {
                 }
                 if (!this.stickingThroughWall(state)) {
                     for (var i = 0; i < this.multishot; i++) {
-                        this.bullets[this.bulletsArrLength] = new Bullet(this);
-                        this.bulletsArrLength += 1;
+                        state.addBullet(new Bullet(this));
                     }
                 }
                 this.spray += this.sprayCoef;
@@ -1308,7 +1329,7 @@ var Gun = function(startX, startY, stats, playerIdx) {
             }
         }
     }
-    this.bulletsStep = function(state) {
+    this.updateReloads = function(state) {
         if (this.reloadStartTime != -1 && state.time - this.reloadStartTime >= this.reloadTime) {
             if (this.reloadType)
             {
@@ -1326,12 +1347,6 @@ var Gun = function(startX, startY, stats, playerIdx) {
                 {
                     this.reloadStartTime = -1;
                 }
-            }
-        }
-        for (var i in this.bullets) {
-            this.bullets[i].step(state);
-            if (this.bullets[i].delete) {
-                delete this.bullets[i];
             }
         }
 
