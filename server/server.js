@@ -81,7 +81,50 @@ var Bot = function(state)
         }
         else if (player && player.alive)
         {
-            for (var i )
+        }
+    }
+    this.goDirection = function(dir)
+    {
+        var ang = dir * Math.PI/4;
+        if (dir == undefined)
+        {
+            controls.playerControls[this.playerId].keys[65] = false;
+            controls.playerControls[this.playerId].keys[68] = false;
+            
+            controls.playerControls[this.playerId].keys[87] = false;
+            controls.playerControls[this.playerId].keys[83] = false;
+            return;
+        }
+        if (Math.cos(ang) > 0)
+        {
+            controls.playerControls[this.playerId].keys[65] = false;
+            controls.playerControls[this.playerId].keys[68] = true;
+        }
+        else if (Math.cos(ang) < 0)
+        {
+            controls.playerControls[this.playerId].keys[65] = true;
+            controls.playerControls[this.playerId].keys[68] = false;
+        }
+        else
+        {
+            controls.playerControls[this.playerId].keys[65] = false;
+            controls.playerControls[this.playerId].keys[68] = false;
+        }
+        
+        if (Math.sin(ang) > 0)
+        {
+            controls.playerControls[this.playerId].keys[87] = false;
+            controls.playerControls[this.playerId].keys[83] = true;
+        }
+        else if (Math.sin(ang) < 0)
+        {
+            controls.playerControls[this.playerId].keys[87] = true;
+            controls.playerControls[this.playerId].keys[83] = false;
+        }
+        else
+        {
+            controls.playerControls[this.playerId].keys[87] = false;
+            controls.playerControls[this.playerId].keys[83] = false;
         }
     }
     this.spawn = function()
