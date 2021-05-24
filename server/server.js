@@ -334,7 +334,7 @@ var gameStateEmitter = {
     prevStates : {},
     trimToPlayer : function(gameState, copy, inGameId)
     {
-        if (gameState.players[inGameId])
+        if (gameState.players[inGameId] && this.playerSectors[0] && this.playerSectors[0][0])
         {
             var out = JSON.parse(JSON.stringify(copy));
             var playerPos = gameState.players[inGameId].pos;
