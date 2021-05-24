@@ -881,6 +881,7 @@ function createBots(state){
     for (var i = 0; i < 3; i++)
     {
         var bot = new Bot(state);
+        bots[bot.playerId] = bot;
         bot.spawn();
     }
 }
