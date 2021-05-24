@@ -64,8 +64,11 @@ var Bot = function(state)
     this.primary = 8;
     this.secondary = 1;
     
+    this.lastKeyUpdate = -1;
+    this.keyUpdatePeriod = 0.25 + 0.25*Math.random();
+    
     this.lastDeathTime = -1;
-    this.update = function()
+    this.updateKeys = function()
     {
         var player = this.state.players[this.playerId];
         if (player && !player.alive){
@@ -81,6 +84,11 @@ var Bot = function(state)
         }
         else if (player && player.alive)
         {
+            if (this.state.time - this.lastKeyUpdate > this.keyUpdatePeriod)
+            {
+                this.lastKeyUpdate = this.state.time;
+                this.goDirection(8*Math.random());
+            }
         }
     }
     this.goDirection = function(dir)
@@ -95,12 +103,12 @@ var Bot = function(state)
             controls.playerControls[this.playerId].keys[83] = false;
             return;
         }
-        if (Math.cos(ang) > 0)
+        if (Math.cos(ang) > 0.38268343236)
         {
             controls.playerControls[this.playerId].keys[65] = false;
             controls.playerControls[this.playerId].keys[68] = true;
         }
-        else if (Math.cos(ang) < 0)
+        else if (Math.cos(ang) < -0.38268343236)
         {
             controls.playerControls[this.playerId].keys[65] = true;
             controls.playerControls[this.playerId].keys[68] = false;
@@ -111,12 +119,12 @@ var Bot = function(state)
             controls.playerControls[this.playerId].keys[68] = false;
         }
         
-        if (Math.sin(ang) > 0)
+        if (Math.sin(ang) > 0.38268343236)
         {
             controls.playerControls[this.playerId].keys[87] = false;
             controls.playerControls[this.playerId].keys[83] = true;
         }
-        else if (Math.sin(ang) < 0)
+        else if (Math.sin(ang) < -0.38268343236)
         {
             controls.playerControls[this.playerId].keys[87] = true;
             controls.playerControls[this.playerId].keys[83] = false;
