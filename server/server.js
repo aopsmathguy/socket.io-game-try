@@ -114,9 +114,12 @@ var Bot = function(state)
                 }
                 if (idx != -1)
                 {
-                    var mouseAng = player.pos.angTo(this.state.players[idx].pos);
+                    var mouseAng = this.state.players[idx].pos.angTo(player.pos) + 0.1*Math.random();
                     this.mouseAng(mouseAng);
+                    controls.mouseDown(this.playerId);
                 }
+                else
+                    controls.mouseUp(this.playerId);
                 
             }
         }
