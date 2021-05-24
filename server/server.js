@@ -1728,7 +1728,7 @@ var Vector = function(x, y) {
 }
 makeObstacles();
 var stage = 0;
-setInterval(updateGameArea, 1000 / 60);
+setInterval(updateGameArea, 17);
 setInterval(() => {
     //logTime("push",()=>{
         for (var i in gameState.weapons)
