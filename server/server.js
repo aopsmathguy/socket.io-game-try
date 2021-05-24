@@ -282,7 +282,7 @@ var gameStateEmitter = {
                 var playerPos = gameState.players[inGameId].pos;
                 var playerSector = obstacleSector(playerPos);
                 
-                var maxWidth = 2700;
+                var maxWidth = 2500;
                 var maxHeight = maxWidth * 9/16;
                 var maxWidthGrid = Math.ceil(maxWidth/2 /gridWidth);
                 var maxHeightGrid = Math.ceil(maxHeight/2 /gridWidth);
@@ -296,7 +296,10 @@ var gameStateEmitter = {
                         var indices = playerSectors[i][j];
                         for (var idx in indices)
                         {
-                            newPlayers[indices[idx]] = out.players[indices[idx]];
+                            if (playerPos.inRect(out.players[indices[idx]].pos, maxWidth,maxHeight))
+                            {
+                                newPlayers[indices[idx]] = out.players[indices[idx]];
+                            }
                         }
                     }
                 }
