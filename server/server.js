@@ -68,13 +68,13 @@ var Bot = function(state)
     this.update = function()
     {
         var player = this.state.players[this.playerId];
+        console.log(this.state.time);
         if (player && !player.alive && this.lastDeathTime == -1)
         {
             this.lastDeathTime = this.state.time;
         }
         else if (player && !player.alive && this.lastDeathTime != -1 && this.state.time - this.lastDeathTime > 5000)
         {
-            console.log("spawn");
             this.spawn();
             this.lastDeathTime = -1;
         }
