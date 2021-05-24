@@ -67,6 +67,9 @@ var Bot = function(state)
     this.lastKeyUpdate = -1;
     this.keyUpdatePeriod = 1000*(2 + 1*Math.random());
     
+    this.lastMouseUpdate = -1;
+    this.mouseUpdate = 200*(2 + 1*Math.random());
+    
     this.lastDeathTime = -1;
     this.update = function()
     {
@@ -89,7 +92,35 @@ var Bot = function(state)
                 this.lastKeyUpdate = this.state.time;
                 this.goDirection(8*Math.random());
             }
+            if (this.state.time - this.lastMouseUpdate > this.mouseUpdate)
+            {
+                this.lastMouseUpdate = this.state.time;
+                var trimmedGameState = gameStateEmitter.trimToPlayer(this.state, this.state, this.playerId);
+                var minDist = Infinity;
+                var idx = -1;
+                for (var i in trimmedGameState.players)
+                {
+                    if (i == this.playerId)
+                    {
+                        continue;
+                    }
+                    var otherPlayer = trimmedGameState.players[i];
+                    var dist = otherPlayer.pos.distanceTo(player);
+                    if (dist < minDist)
+                    {
+                        minDist = dist;
+                        idx = i;
+                    }
+                }
+                var mouseAng = player.pos.angTo(this.state.players[idx].pos);
+                this.mouseAng(mouseAng);
+                
+            }
         }
+    }
+    this.mouseAng = function(ang)
+    {
+        controls.playerControls[this.playerId].ang = ang;
     }
     this.goDirection = function(dir)
     {
@@ -301,7 +332,7 @@ function emitNewActivity(name, action) {
 }
 var gameStateEmitter = {
     prevStates : {},
-    trimToPlayer : function(gameState, copy, inGameId, playerSectors)
+    trimToPlayer : function(gameState, copy, inGameId)
     {
         if (gameState.players[inGameId])
         {
@@ -320,7 +351,7 @@ var gameStateEmitter = {
                 for (var j = Math.max(playerSector[1] - maxHeightGrid, 0); j <= Math.min(playerSector[1] + maxHeightGrid, gameHeight/gridWidth - 1); j++)
                 {
 
-                    var indices = playerSectors[i][j];
+                    var indices = this.playerSectors[i][j];
                     for (var idx in indices)
                     {
                         if (playerPos.inRect(out.players[indices[idx]].pos, maxWidth,maxHeight))
@@ -338,6 +369,24 @@ var gameStateEmitter = {
             return copy;
         }
     },
+    playerSectors : {},
+    updatePlayerSectors : function(){
+        this.playerSectors = {};
+        for (var i = 0; i < gameWidth/gridWidth; i++)
+        {
+            this.playerSectors[i] = {};
+            for (var j = 0; j < gameHeight/gridWidth; j++)
+            {
+                this.playerSectors[i][j] = [];
+            }
+        }
+        for (var i in gameState.players)
+        {
+            var player = gameState.players[i];
+            sector = obstacleSector(player.pos);
+            this.playerSectors[sector[0]][sector[1]].push(i);
+        }
+    },
     emitGameState : function(gameState)
     {
         var copy = JSON.parse(JSON.stringify(gameState));
@@ -345,26 +394,11 @@ var gameStateEmitter = {
         copy = trimObject(copy);
     //});
     //logTime("emitcopy",()=>{
-        var playerSectors = {};
-        for (var i = 0; i < gameWidth/gridWidth; i++)
-        {
-            playerSectors[i] = {};
-            for (var j = 0; j < gameHeight/gridWidth; j++)
-            {
-                playerSectors[i][j] = [];
-            }
-        }
-        for (var i in gameState.players)
-        {
-            var player = gameState.players[i];
-            sector = obstacleSector(player.pos);
-            playerSectors[sector[0]][sector[1]].push(i);
-        }
         var sockets = io.sockets.sockets;
         for(var socketId in sockets) {
             var s = sockets[socketId];
             var inGameId = s.inGameId;
-            var out = this.trimToPlayer(gameState, copy, inGameId, playerSectors);
+            var out = this.trimToPlayer(gameState, copy, inGameId, this.playerSectors);
             var emitObj = differenceBetweenObj(this.prevStates[inGameId], out);
             this.prevStates[inGameId] = out;
             s.emit('gameState',emitObj);
