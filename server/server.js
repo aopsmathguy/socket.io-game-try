@@ -104,8 +104,8 @@ var Bot = function(state)
                     {
                         continue;
                     }
-                    var otherPlayer = trimmedGameState.players[i];
-                    var dist = otherPlayer.pos.distanceTo(player);
+                    var otherPlayer = this.state.players[i];
+                    var dist = otherPlayer.pos.distanceTo(player.pos);
                     if (dist < minDist)
                     {
                         minDist = dist;
