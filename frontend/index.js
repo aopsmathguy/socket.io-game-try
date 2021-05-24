@@ -1895,11 +1895,11 @@ var linearInterpolator = {
                     bullet.objectsIntersection(out);
                 }
             }
+            giveMethods(bullet.hitPoint);
             if (bullet.pos.onSegment(bullet.startPos,bullet.hitPoint))
             {
                 bullet.hitPoint = -1;
             }
-            giveMethods(bullet.hitPoint);
             else if (bullet.hitPoint.onSegment(bullet.startPos, bullet.tailPos) || bullet.pos.onSegment(bullet.startPos,bullet.tailPos))
             {
                 delete out.bullets[j];
