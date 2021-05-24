@@ -1868,6 +1868,7 @@ var linearInterpolator = {
                 rightBull = right.bullets[j];
             }
             var bullet = out.bullets[j];
+            giveMethods(bullet);
             if (bullet == undefined)
             {
                 out.bullets[j] = JSON.parse(JSON.stringify(leftBull));
