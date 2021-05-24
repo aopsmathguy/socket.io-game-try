@@ -393,6 +393,7 @@ var gameStateEmitter = {
     //logTime("copy",()=>{
         copy = trimObject(copy);
     //});
+        this.updatePlayerSectors();
     //logTime("emitcopy",()=>{
         var sockets = io.sockets.sockets;
         for(var socketId in sockets) {
