@@ -293,11 +293,11 @@ function emitNewActivity(name, action) {
 }
 var gameStateEmitter = {
     prevStates : {},
-    trimToPlayer : function(gameState, inGameId, playerSectors)
+    trimToPlayer : function(gameState, copy, inGameId, playerSectors)
     {
         if (gameState.players[inGameId])
         {
-            var out = JSON.parse(JSON.stringify(gameState));
+            var out = JSON.parse(JSON.stringify(copy));
             var playerPos = gameState.players[inGameId].pos;
             var playerSector = obstacleSector(playerPos);
 
@@ -327,7 +327,7 @@ var gameStateEmitter = {
         }
         else
         {
-            return gameState;
+            return copy;
         }
     },
     emitGameState : function(gameState)
@@ -356,7 +356,7 @@ var gameStateEmitter = {
         for(var socketId in sockets) {
             var s = sockets[socketId];
             var inGameId = s.inGameId;
-            var out = this.trimToPlayer(copy, inGameId, playerSectors);
+            var out = this.trimToPlayer(gameState, copy, inGameId, playerSectors);
             var emitObj = differenceBetweenObj(this.prevStates[inGameId], out);
             this.prevStates[inGameId] = out;
             s.emit('gameState',emitObj);
