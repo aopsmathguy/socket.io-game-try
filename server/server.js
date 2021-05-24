@@ -112,8 +112,11 @@ var Bot = function(state)
                         idx = i;
                     }
                 }
-                var mouseAng = player.pos.angTo(this.state.players[idx].pos);
-                this.mouseAng(mouseAng);
+                if (idx != -1)
+                {
+                    var mouseAng = player.pos.angTo(this.state.players[idx].pos);
+                    this.mouseAng(mouseAng);
+                }
                 
             }
         }
