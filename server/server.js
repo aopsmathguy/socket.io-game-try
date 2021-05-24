@@ -678,7 +678,7 @@ var GameState = function(time, players, weapons) {
         if (playerControls.keyPressFrame[71]) {
             player.dropWeapon(this);
         }
-        if (playerControls.keyPressFrame[82]) {
+        if (playerControls.keys[82]) {
             if (player.weapon != -1){
                 var weapon = this.weapons[player.weapon];
                 weapon.reload(this.time);
