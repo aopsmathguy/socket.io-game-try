@@ -4,7 +4,7 @@ const numOb = 90;
 const numHouse1 = 15;
 const numHouse2 = 15;
 const gridWidth = 250;
-const framesPerTick = 1;
+const framesPerTick = 2;
 
 const io = require('socket.io')();
 
@@ -68,24 +68,25 @@ var Bot = function(state)
     this.update = function()
     {
         var player = this.state.players[this.playerId];
-        if (player && !player.alive && this.lastDeathTime == -1)
-        {
-            this.lastDeathTime = this.state.time;
+        if (player && !player.alive){
+            if (this.lastDeathTime == -1)
+            {
+                this.lastDeathTime = this.state.time;
+            }
+            else if (this.lastDeathTime != -1 && this.state.time - this.lastDeathTime > 5000)
+            {
+                this.spawn();
+                this.lastDeathTime = -1;
+            }
         }
-        else if (player && !player.alive && this.lastDeathTime != -1 && this.state.time - this.lastDeathTime > 5000)
+        else if (player && player.alive)
         {
-            this.spawn();
-            this.lastDeathTime = -1;
+            for (var i )
         }
     }
     this.spawn = function()
     {
         this.state.addPlayer(this.playerId, this.name, this.color, this.primary, this.secondary);
-    }
-    this.mouseDown = function()
-    {
-    }
-    this.mouseUp = function(){
     }
 }
 const viableWeapons = {
@@ -249,6 +250,43 @@ function emitNewActivity(name, action) {
 }
 var gameStateEmitter = {
     prevStates : {},
+    trimToPlayer : function(gameState, inGameId)
+    {
+        if (gameState.players[inGameId])
+        {
+            var out = JSON.parse(JSON.stringify(gameState));
+            var playerPos = gameState.players[inGameId].pos;
+            var playerSector = obstacleSector(playerPos);
+
+            var maxWidth = 2500;
+            var maxHeight = maxWidth * 9/16;
+            var maxWidthGrid = Math.ceil(maxWidth/2 /gridWidth);
+            var maxHeightGrid = Math.ceil(maxHeight/2 /gridWidth);
+
+            var newPlayers = {};
+            for (var i = Math.max(playerSector[0] - maxWidthGrid, 0); i <= Math.min(playerSector[0] + maxWidthGrid, gameWidth/gridWidth - 1); i++)
+            {
+                for (var j = Math.max(playerSector[1] - maxHeightGrid, 0); j <= Math.min(playerSector[1] + maxHeightGrid, gameHeight/gridWidth - 1); j++)
+                {
+
+                    var indices = playerSectors[i][j];
+                    for (var idx in indices)
+                    {
+                        if (playerPos.inRect(out.players[indices[idx]].pos, maxWidth,maxHeight))
+                        {
+                            newPlayers[indices[idx]] = out.players[indices[idx]];
+                        }
+                    }
+                }
+            }
+            out.players = newPlayers;
+            return out;
+        }
+        else
+        {
+            return gameState;
+        }
+    },
     emitGameState : function(gameState)
     {
         var copy = JSON.parse(JSON.stringify(gameState));
@@ -275,44 +313,9 @@ var gameStateEmitter = {
         for(var socketId in sockets) {
             var s = sockets[socketId];
             var inGameId = s.inGameId;
-            var emitObj;
-            if (gameState.players[inGameId])
-            {
-                var out = JSON.parse(JSON.stringify(copy));
-                var playerPos = gameState.players[inGameId].pos;
-                var playerSector = obstacleSector(playerPos);
-                
-                var maxWidth = 2500;
-                var maxHeight = maxWidth * 9/16;
-                var maxWidthGrid = Math.ceil(maxWidth/2 /gridWidth);
-                var maxHeightGrid = Math.ceil(maxHeight/2 /gridWidth);
-                
-                var newPlayers = {};
-                for (var i = Math.max(playerSector[0] - maxWidthGrid, 0); i <= Math.min(playerSector[0] + maxWidthGrid, gameWidth/gridWidth - 1); i++)
-                {
-                    for (var j = Math.max(playerSector[1] - maxHeightGrid, 0); j <= Math.min(playerSector[1] + maxHeightGrid, gameHeight/gridWidth - 1); j++)
-                    {
-                        
-                        var indices = playerSectors[i][j];
-                        for (var idx in indices)
-                        {
-                            if (playerPos.inRect(out.players[indices[idx]].pos, maxWidth,maxHeight))
-                            {
-                                newPlayers[indices[idx]] = out.players[indices[idx]];
-                            }
-                        }
-                    }
-                }
-                out.players = newPlayers;
-                emitObj = differenceBetweenObj(this.prevStates[socketId], out);
-                this.prevStates[socketId] = out;
-            }
-            else
-            {
-                emitObj = differenceBetweenObj(this.prevStates[socketId], copy);
-                this.prevStates[socketId] = copy;
-                
-            }
+            var out = this.trimToPlayer(copy, inGameId);
+            var emitObj = differenceBetweenObj(this.prevStates[inGameId], out);
+            this.prevStates[inGameId] = out;
             s.emit('gameState',emitObj);
         }
 
