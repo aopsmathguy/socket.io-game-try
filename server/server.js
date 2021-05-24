@@ -293,7 +293,7 @@ function emitNewActivity(name, action) {
 }
 var gameStateEmitter = {
     prevStates : {},
-    trimToPlayer : function(gameState, inGameId)
+    trimToPlayer : function(gameState, inGameId, playerSectors)
     {
         if (gameState.players[inGameId])
         {
@@ -356,7 +356,7 @@ var gameStateEmitter = {
         for(var socketId in sockets) {
             var s = sockets[socketId];
             var inGameId = s.inGameId;
-            var out = this.trimToPlayer(copy, inGameId);
+            var out = this.trimToPlayer(copy, inGameId, playerSectors);
             var emitObj = differenceBetweenObj(this.prevStates[inGameId], out);
             this.prevStates[inGameId] = out;
             s.emit('gameState',emitObj);
