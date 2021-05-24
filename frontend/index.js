@@ -1720,7 +1720,7 @@ var Vector = function(x, y) {
 
 }
 var linearInterpolator = {
-    lagLimit : 4000,
+    lagLimit : 300,
     weaponBulletHitPoints : {},
     updateHitPointsFromState : function(state){
         for (var j in state.bullets)
@@ -1729,7 +1729,7 @@ var linearInterpolator = {
             if (bullet.hitPoint == -1)
             {
                 try{
-                    delete this.weaponBulletHitPoints[i][j];
+                    delete this.weaponBulletHitPoints[j];
                 }
                 catch{}
             }
@@ -1836,7 +1836,7 @@ var linearInterpolator = {
             
             out.weapons[i].recoil = this.linearValue(left.weapons[i].recoil, right.weapons[i].recoil, displayTime, left.time, right.time);
         }
-        for (var j in right.bullets) {
+        for (var j in out.bullets) {
             var rightBull;
             var leftBull;
             if (left.bullets[j] == undefined && right.bullets[j] == undefined)
@@ -1875,17 +1875,17 @@ var linearInterpolator = {
                 bullet = out.bullets[j];
             }
             bullet.pos = this.linearPosition(leftBull.pos, rightBull.pos, displayTime, left.time, right.time);
-            if (bullet.startPos.distanceTo(bullet.pos) < bullet.trailLength) {
+            if (bullet.startPos.onSegment(bullet.pos,bullet.tailPos)) {
                 bullet.tailPos = bullet.startPos;
             } else {
                 bullet.tailPos = bullet.pos.add((new Vector(-bullet.trailLength, 0)).rotate(bullet.ang));
             }
             if (bullet.hitPoint == -1)
             {
-                if (this.weaponBulletHitPoints && this.weaponBulletHitPoints[i] && this.weaponBulletHitPoints[i][j])
+                if (this.weaponBulletHitPoints && this.weaponBulletHitPoints[j])
                 {
-                    var newHitPoint = this.weaponBulletHitPoints[i][j];
-                    if (bullet.startPos.distanceTo(bullet.pos) > bullet.startPos.distanceTo(newHitPoint))
+                    var newHitPoint = this.weaponBulletHitPoints[j];
+                    if (newHitPoint.onSegment(bullet.startPos,bullet.pos))
                     {
                         bullet.hitPoint = new Vector(newHitPoint.x,newHitPoint.y);
                     }
@@ -1894,11 +1894,11 @@ var linearInterpolator = {
                     bullet.objectsIntersection(out);
                 }
             }
-            if ( bullet.startPos.distanceTo(bullet.pos) < bullet.startPos.distanceTo(bullet.hitPoint))
+            if (bullet.pos.onSegment(bullet.startPos,bullet.hitPoint))
             {
                 bullet.hitPoint = -1;
             }
-            else if (bullet.startPos.distanceTo(bullet.hitPoint) < bullet.startPos.distanceTo(bullet.tailPos) || bullet.startPos.distanceTo(rightBull.pos) < framesPerTick * bullet.vel.magnitude() * (right.time - displayTime) / (right.time - left.time))
+            else if (bullet.hitPoint.onSegment(bullet.startPos, bullet.tailPos) || bullet.pos.onSegment(bullet.startPos,bullet.tailPos))
             {
                 delete out.bullets[j];
             }
@@ -1929,7 +1929,7 @@ function updateGameArea() {
             lastDeadTime = -1;
         } else if (lastDeadTime == -1) {
             lastDeadTime = Date.now();
-        } else if (Date.now() - lastDeadTime > 5000 && lastDeadTime != -2 ) {
+        } else if (Date.now() - lastDeadTime > 4000 && lastDeadTime != -2 ) {
 
             initialScreen.style.display = 'block';
         }
