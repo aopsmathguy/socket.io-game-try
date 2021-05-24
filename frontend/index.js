@@ -844,9 +844,7 @@ var GameState = function() {
                         this.displayWeapon(idx)
                     }
                 }
-                for (var idx in this.weapons) {
-                    this.displayBullets(idx)
-                }
+                this.displayBullets(idx);
                 loopThroughDisplayObstacles(drawer.scroll, (obstacle) => {
                     if (obstacle.intersectable) {
                         obstacle.display();
@@ -1298,11 +1296,10 @@ var GameState = function() {
         })
 
     }
-    this.displayBullets = function(i) {
-        var weapon = this.weapons[i];
-        for (var j in weapon.bullets) {
-            if (weapon.bullets[j])
-                weapon.bullets[j].display();
+    this.displayBullets = function() {
+        for (var j in this.bullets) {
+            if (this.bullets[j])
+                this.bullets[j].display();
         }
     }
     this.displayBulletCount = function() {
