@@ -100,7 +100,7 @@ var Bot = function(state)
                 var idx = -1;
                 for (var i in trimmedGameState.players)
                 {
-                    if (i == this.playerId)
+                    if (i == this.playerId || !this.state.players[i].alive)
                     {
                         continue;
                     }
