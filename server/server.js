@@ -1833,10 +1833,7 @@ setInterval(() => {
 },100);
 function updateGameArea() {
     //logTime("updateGameArea", () => {
-    for (var i in bots)
-    {
-        bots[i].update();
-    }
+    
         gameState.time = Date.now();
        
             gameState.step();
@@ -1848,5 +1845,9 @@ function updateGameArea() {
             //});
         }
     //});
+    for (var i in bots)
+    {
+        bots[i].update();
+    }
 }
 io.listen(process.env.PORT || 3000);
