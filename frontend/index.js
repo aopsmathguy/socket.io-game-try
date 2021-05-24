@@ -1723,58 +1723,43 @@ var linearInterpolator = {
     lagLimit : 4000,
     weaponBulletHitPoints : {},
     updateHitPointsFromState : function(state){
-        for (var i in state.weapons)
+        for (var j in state.bullets)
         {
-            var gun = state.weapons[i]
-            for (var j in gun.bullets)
+            var bullet = state.bullets[j];
+            if (bullet.hitPoint == -1)
             {
-                var bullet = gun.bullets[j];
-                if (bullet.hitPoint == -1)
-                {
-                    try{
-                        delete this.weaponBulletHitPoints[i][j];
-                    }
-                    catch{}
+                try{
+                    delete this.weaponBulletHitPoints[i][j];
                 }
-                else
+                catch{}
+            }
+            else
+            {
+                if (!this.weaponBulletHitPoints)
                 {
-                    if (!this.weaponBulletHitPoints)
-                    {
-                        this.weaponBulletHitPoints = {};
-                    }
-                    if (!this.weaponBulletHitPoints[i])
-                    {
-                        this.weaponBulletHitPoints[i] = {};
-                    }
-                    this.weaponBulletHitPoints[i][j] = bullet.hitPoint;
+                    this.weaponBulletHitPoints = {};
                 }
+                this.weaponBulletHitPoints[j] = bullet.hitPoint;
             }
         }
     },
     manageHitPoints : function(state){
-        for (var i in state.weapons)
+        for (var j in state.bullets)
         {
-            if (!this.weaponBulletHitPoints[i])
+            var bullet = state.bullets[j];
+            if (bullet.hitPoint != -1 && !this.weaponBulletHitPoints[j])
             {
-                this.weaponBulletHitPoints[i] = {};
+                this.weaponBulletHitPoints[j] = bullet.hitPoint;
             }
-            for (var j in state.weapons[i].bullets)
+        }
+        for (var j in this.weaponBulletHitPoints)
+        {
+            if (!state.bullets[j])
             {
-                var bullet = state.weapons[i].bullets[j];
-                if (bullet.hitPoint != -1 && !this.weaponBulletHitPoints[i][j])
-                {
-                    this.weaponBulletHitPoints[i][j] = bullet.hitPoint;
+                try{
+                    delete this.weaponBulletHitPoints[j];
                 }
-            }
-            for (var j in this.weaponBulletHitPoints[i])
-            {
-                if (!state.weapons[i].bullets[j])
-                {
-                    try{
-                        delete this.weaponBulletHitPoints[i][j];
-                    }
-                    catch{}
-                }
+                catch{}
             }
         }
     },
@@ -1848,76 +1833,75 @@ var linearInterpolator = {
             if (!right.weapons[i].hold && !left.weapons[i].hold)
                 out.weapons[i].pos = this.linearPosition(left.weapons[i].pos,right.weapons[i].pos, displayTime, left.time,right.time);
             //var arrIdx = arrayUnique(Object.keys(right.weapons[i].bullets).concat(Object.keys(left.weapons[i].bullets)));
-            var arrIdx = Object.keys(right.weapons[i].bullets);
-            for (var thing in arrIdx) {
-                var j = arrIdx[thing];
-                var rightBull;
-                var leftBull;
-                if (left.weapons[i].bullets[j] == undefined && right.weapons[i].bullets[j] == undefined)
-                {
-                    console.log(arrIdx, j)
-                }
-                else if (left.weapons[i].bullets[j] == undefined) {
-                    rightBull = right.weapons[i].bullets[j];
-                    leftBull = JSON.parse(JSON.stringify(rightBull));
+            
+            out.weapons[i].recoil = this.linearValue(left.weapons[i].recoil, right.weapons[i].recoil, displayTime, left.time, right.time);
+        }
+        for (var j in right.bullets) {
+            var rightBull;
+            var leftBull;
+            if (left.bullets[j] == undefined && right.bullets[j] == undefined)
+            {
+                console.log(arrIdx, j)
+            }
+            else if (left.bullets[j] == undefined) {
+                rightBull = right.bullets[j];
+                leftBull = JSON.parse(JSON.stringify(rightBull));
 
-                    giveMethods([rightBull, leftBull]);
+                giveMethods([rightBull, leftBull]);
 
-                    var add = rightBull.vel.multiply(framesPerTick);
-                    leftBull.pos = rightBull.pos.subtract(add);
-                }
-                else if (right.weapons[i].bullets[j] == undefined)
-                {
-                    leftBull = left.weapons[i].bullets[j];
-                    rightBull = JSON.parse(JSON.stringify(leftBull));
+                var add = rightBull.vel.multiply(framesPerTick);
+                leftBull.pos = rightBull.pos.subtract(add);
+            }
+            else if (right.bullets[j] == undefined)
+            {
+                leftBull = left.bullets[j];
+                rightBull = JSON.parse(JSON.stringify(leftBull));
 
-                    giveMethods([rightBull, leftBull]);
+                giveMethods([rightBull, leftBull]);
 
-                    var add = leftBull.vel.multiply(framesPerTick);
-                    rightBull.pos = leftBull.pos.add(add);
-                }
-                else
+                var add = leftBull.vel.multiply(framesPerTick);
+                rightBull.pos = leftBull.pos.add(add);
+            }
+            else
+            {
+                leftBull = left.bullets[j];
+                rightBull = right.bullets[j];
+            }
+            var bullet = out.bullets[j];
+            if (bullet == undefined)
+            {
+                out.bullets[j] = JSON.parse(JSON.stringify(leftBull));
+                giveMethods(out.bullets[j]);
+                bullet = out.bullets[j];
+            }
+            bullet.pos = this.linearPosition(leftBull.pos, rightBull.pos, displayTime, left.time, right.time);
+            if (bullet.startPos.distanceTo(bullet.pos) < bullet.trailLength) {
+                bullet.tailPos = bullet.startPos;
+            } else {
+                bullet.tailPos = bullet.pos.add((new Vector(-bullet.trailLength, 0)).rotate(bullet.ang));
+            }
+            if (bullet.hitPoint == -1)
+            {
+                if (this.weaponBulletHitPoints && this.weaponBulletHitPoints[i] && this.weaponBulletHitPoints[i][j])
                 {
-                    leftBull = left.weapons[i].bullets[j];
-                    rightBull = right.weapons[i].bullets[j];
-                }
-                var bullet = out.weapons[i].bullets[j];
-                if (bullet == undefined)
-                {
-                    out.weapons[i].bullets[j] = JSON.parse(JSON.stringify(leftBull));
-                    giveMethods(out.weapons[i].bullets[j]);
-                    bullet = out.weapons[i].bullets[j];
-                }
-                bullet.pos = this.linearPosition(leftBull.pos, rightBull.pos, displayTime, left.time, right.time);
-                if (bullet.startPos.distanceTo(bullet.pos) < bullet.trailLength) {
-                    bullet.tailPos = bullet.startPos;
-                } else {
-                    bullet.tailPos = bullet.pos.add((new Vector(-bullet.trailLength, 0)).rotate(bullet.ang));
-                }
-                if (bullet.hitPoint == -1)
-                {
-                    if (this.weaponBulletHitPoints && this.weaponBulletHitPoints[i] && this.weaponBulletHitPoints[i][j])
+                    var newHitPoint = this.weaponBulletHitPoints[i][j];
+                    if (bullet.startPos.distanceTo(bullet.pos) > bullet.startPos.distanceTo(newHitPoint))
                     {
-                        var newHitPoint = this.weaponBulletHitPoints[i][j];
-                        if (bullet.startPos.distanceTo(bullet.pos) > bullet.startPos.distanceTo(newHitPoint))
-                        {
-                            bullet.hitPoint = new Vector(newHitPoint.x,newHitPoint.y);
-                        }
-                    }
-                    else{
-                        bullet.objectsIntersection(out);
+                        bullet.hitPoint = new Vector(newHitPoint.x,newHitPoint.y);
                     }
                 }
-                if ( bullet.startPos.distanceTo(bullet.pos) < bullet.startPos.distanceTo(bullet.hitPoint))
-                {
-                    bullet.hitPoint = -1;
-                }
-                else if (bullet.startPos.distanceTo(bullet.hitPoint) < bullet.startPos.distanceTo(bullet.tailPos) || bullet.startPos.distanceTo(rightBull.pos) < framesPerTick * bullet.vel.magnitude() * (right.time - displayTime) / (right.time - left.time))
-                {
-                    delete out.weapons[i].bullets[j];
+                else{
+                    bullet.objectsIntersection(out);
                 }
             }
-            out.weapons[i].recoil = this.linearValue(left.weapons[i].recoil, right.weapons[i].recoil, displayTime, left.time, right.time);
+            if ( bullet.startPos.distanceTo(bullet.pos) < bullet.startPos.distanceTo(bullet.hitPoint))
+            {
+                bullet.hitPoint = -1;
+            }
+            else if (bullet.startPos.distanceTo(bullet.hitPoint) < bullet.startPos.distanceTo(bullet.tailPos) || bullet.startPos.distanceTo(rightBull.pos) < framesPerTick * bullet.vel.magnitude() * (right.time - displayTime) / (right.time - left.time))
+            {
+                delete out.bullets[j];
+            }
         }
         out.snapWeapons();
         return out;
