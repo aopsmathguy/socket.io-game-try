@@ -68,7 +68,7 @@ var Bot = function(state)
     this.keyUpdatePeriod = 0.25 + 0.25*Math.random();
     
     this.lastDeathTime = -1;
-    this.updateKeys = function()
+    this.update = function()
     {
         var player = this.state.players[this.playerId];
         if (player && !player.alive){
