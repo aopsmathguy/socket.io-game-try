@@ -1886,6 +1886,7 @@ var linearInterpolator = {
                 if (this.weaponBulletHitPoints && this.weaponBulletHitPoints[j])
                 {
                     var newHitPoint = this.weaponBulletHitPoints[j];
+                    giveMethods(newHitPoint);
                     if (newHitPoint.onSegment(bullet.startPos,bullet.pos))
                     {
                         bullet.hitPoint = new Vector(newHitPoint.x,newHitPoint.y);
@@ -1895,7 +1896,6 @@ var linearInterpolator = {
                     bullet.objectsIntersection(out);
                 }
             }
-            giveMethods(bullet);
             if (bullet.pos.onSegment(bullet.startPos,bullet.hitPoint))
             {
                 bullet.hitPoint = -1;
