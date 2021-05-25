@@ -600,6 +600,10 @@ var trimObject = function(obj)
             }
         }
     }
+    else if (typeof obj == 'number')
+    {
+        out = Math.round(obj);
+    }
     else
     {
         out = obj;
@@ -761,14 +765,12 @@ var GameState = function(time, players, weapons) {
         for (var i in this.players)
         {
             var player = this.players[i];
-            if (player.alive)
-            {
-                this.leaderboard[i] = {
-                    name : player.name,
-                    points : player.points,
-                    kills : player.killstreak
-                };
-            }
+            this.leaderboard[i] = {
+                name : player.name,
+                points : player.points,
+                kills : player.killstreak,
+                alive : player.alive
+            };
         }
     }
     this.step = function() {
