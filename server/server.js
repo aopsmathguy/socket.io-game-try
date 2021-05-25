@@ -244,12 +244,12 @@ var Bot = function(state)
     this.spawn = function()
     {
         this.primary = 0;
-        while (viableWeapons.weapons[this.primary].class == 'Secondary')
+        while (viableWeapons.weapons[this.primary].weaponClass == 'Secondary')
         {
             this.primary = Math.floor(viableWeapons.weapons.length * Math.random());
         }
         this.secondary = 4;
-        while (viableWeapons.weapons[this.secondary].class != 'Secondary')
+        while (viableWeapons.weapons[this.secondary].weaponClass != 'Secondary')
         {
             this.secondary = Math.floor(viableWeapons.weapons.length * Math.random());
         }
