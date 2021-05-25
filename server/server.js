@@ -608,7 +608,7 @@ var trimObject = function(obj)
         }
         else
         {
-            out = 0.1 * Math.round(obj * 10);
+            out = 0.01 * Math.round(obj * 100);
         }
     }
     else
