@@ -155,7 +155,8 @@ var Bot = function(state)
                     }, width, height);
                     if (!inBetween)
                     {
-                        controls.keyDown(this.playerId, 88);
+                        if  (!controls.playerControls[this.playerId].keys[88])
+                            controls.keyDown(this.playerId, 88);
                         controls.mouseDown(this.playerId);
                         if  (controls.playerControls[this.playerId].keys[82])
                         {
@@ -164,7 +165,8 @@ var Bot = function(state)
                     }
                     else
                     {
-                        
+                        if  (!controls.playerControls[this.playerId].keys[88])
+                            controls.keyUp(this.playerId, 88);
                         if  (!controls.playerControls[this.playerId].keys[82])
                         {
                             controls.keyDown(this.playerId, 82);
