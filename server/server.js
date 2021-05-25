@@ -476,7 +476,7 @@ var gameStateEmitter = {
                     var indices = this.playerSectors[i][j];
                     for (var idx in indices)
                     {
-                        if (playerPos.inRect(out.players[indices[idx]].pos, maxWidth,maxHeight))
+                        if (out.players[indices[idx]] && playerPos.inRect(out.players[indices[idx]].pos, maxWidth,maxHeight))
                         {
                             newPlayers[indices[idx]] = out.players[indices[idx]];
                         }
@@ -521,7 +521,7 @@ var gameStateEmitter = {
         for(var socketId in sockets) {
             var s = sockets[socketId];
             var inGameId = s.inGameId;
-            var out = this.trimToPlayer(gameState, copy, inGameId, this.playerSectors);
+            var out = this.trimToPlayer(gameState, copy, inGameId);
             var emitObj = differenceBetweenObj(this.prevStates[inGameId], out);
             this.prevStates[inGameId] = out;
             s.emit('gameState',emitObj);
