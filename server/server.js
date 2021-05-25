@@ -602,7 +602,14 @@ var trimObject = function(obj)
     }
     else if (typeof obj == 'number')
     {
-        out = Math.round(obj);
+        if (Math.abs(obj) > 10)
+        {
+            out = Math.round(obj);
+        }
+        else
+        {
+            out = 0.1 * Math.round(obj * 10);
+        }
     }
     else
     {
