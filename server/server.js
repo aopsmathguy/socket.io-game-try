@@ -604,11 +604,11 @@ var trimObject = function(obj)
     {
         if (Math.abs(obj) > 10)
         {
-            out = Math.round(obj);
+            out = 0.1 * Math.round(10 * obj);
         }
         else
         {
-            out = 0.01 * Math.round(obj * 100);
+            out = 0.001 * Math.round(obj * 1000);
         }
     }
     else
