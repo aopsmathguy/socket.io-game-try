@@ -155,8 +155,8 @@ var Bot = function(state)
                     }, width, height);
                     if (!inBetween)
                     {
-                        controls.mouseDown(this.playerId);
                         controls.keyDown(this.playerId, 88);
+                        controls.mouseDown(this.playerId);
                         if  (controls.playerControls[this.playerId].keys[82])
                         {
                             controls.keyUp(this.playerId, 82);
