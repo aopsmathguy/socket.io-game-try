@@ -178,6 +178,7 @@ var Bot = function(state)
                 }
                 else
                 {
+                    this.prevTargetAng = this.targetAng;
                     if  (controls.playerControls[this.playerId].keys[88])
                         controls.keyUp(this.playerId, 88);
                     if  (!controls.playerControls[this.playerId].keys[82])
