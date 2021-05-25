@@ -1079,7 +1079,7 @@ var makeObstacles = function() {
 }
 function createBots(state){
     bots = {};
-    for (var i = 0; i < 3; i++)
+    for (var i = 0; i < 10; i++)
     {
         var bot = new Bot(state);
         bots[bot.playerId] = bot;
