@@ -155,7 +155,7 @@ var Bot = function(state)
                     }, width, height);
                     if (!inBetween)
                     {
-                        if  (!controls.playerControls[this.playerId].keys[88])
+                        if  (this.state.weapons[player.weapon].bulletsRemaining > 0 && !controls.playerControls[this.playerId].keys[88])
                             controls.keyDown(this.playerId, 88);
                         controls.mouseDown(this.playerId);
                         if  (controls.playerControls[this.playerId].keys[82])
