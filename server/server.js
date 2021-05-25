@@ -243,6 +243,16 @@ var Bot = function(state)
     }
     this.spawn = function()
     {
+        this.primary = 0;
+        while (viableWeapons.weapons[this.primary].class == 'Secondary')
+        {
+            this.primary = Math.floor(viableWeapons.weapons.length * Math.random());
+        }
+        this.secondary = 4;
+        while (viableWeapons.weapons[this.secondary].class != 'Secondary')
+        {
+            this.secondary = Math.floor(viableWeapons.weapons.length * Math.random());
+        }
         this.state.addPlayer(this.playerId, this.name, this.color, this.primary, this.secondary);
     }
 }
