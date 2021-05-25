@@ -71,6 +71,7 @@ var Bot = function(state)
     this.mouseUpdate = 200*(2 + 1*Math.random());
     
     this.lastDeathTime = -1;
+    this.direction = 0;
     this.update = function()
     {
         var player = this.state.players[this.playerId];
@@ -90,7 +91,33 @@ var Bot = function(state)
             if (this.state.time - this.lastKeyUpdate > this.keyUpdatePeriod)
             {
                 this.lastKeyUpdate = this.state.time;
-                this.goDirection(8*Math.random());
+                var minDist = Infinity;
+                var idx = -1;
+                for (var i in trimmedGameState.players)
+                {
+                    if (i == this.playerId || !this.state.players[i].alive)
+                    {
+                        continue;
+                    }
+                    var otherPlayer = this.state.players[i];
+                    var dist = otherPlayer.pos.distanceTo(player.pos);
+                    if (dist < minDist)
+                    {
+                        minDist = dist;
+                        idx = i;
+                    }
+                }
+                if (idx != -1)
+                {
+                    if (player.health > 50)
+                        this.goDirection(this.state.players[idx].pos.angTo(player.pos) + Math.PI * (Math.random() - 0.5));
+                    else
+                        this.goDirection(this.state.players[idx].pos.angTo(player.pos) + Math.PI * (Math.random() + 0.5));
+                }
+                else
+                {
+                    this.goDirection(2*Math.PI*Math.random());
+                }
             }
             if (this.state.time - this.lastMouseUpdate > this.mouseUpdate)
             {
@@ -128,9 +155,9 @@ var Bot = function(state)
     {
         controls.playerControls[this.playerId].ang = ang;
     }
-    this.goDirection = function(dir)
+    this.goDirection = function(ang)
     {
-        var ang = dir * Math.PI/4;
+        this.direction = ang
         if (dir == undefined)
         {
             controls.playerControls[this.playerId].keys[65] = false;
@@ -626,14 +653,15 @@ var GameState = function(time, players, weapons) {
     {
         this.minimapInfo = {};
         var roundCoor = 250;
+        var fadeTime = 1000;
         for (var i in this.players)
         {
             var player = this.players[i];
-            if (this.time - player.lastOnRadar < 400)
+            if (this.time - player.lastOnRadar < fadeTime)
             {
                 this.minimapInfo[i] = {
                     pos : new Vector(roundCoor*Math.round(player.pos.x/roundCoor), roundCoor*Math.round(player.pos.y/roundCoor)),
-                    fade : (this.time - player.lastOnRadar)/400
+                    fade : (this.time - player.lastOnRadar)/fadeTime
                 };
             }
         }
