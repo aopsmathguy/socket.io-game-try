@@ -70,6 +70,7 @@ var Bot = function(state)
     this.lastMouseUpdate = -1;
     this.mouseUpdate = 200*(2 + 1*Math.random());
     this.targetAng = 0;
+    this.prevTargetAng = 0;
     
     this.lastDeathTime = -1;
     this.direction = 0;
@@ -142,8 +143,8 @@ var Bot = function(state)
                 }
                 if (idx != -1)
                 {
-                    var mouseAng = this.state.players[idx].pos.angTo(player.pos) + 0.3*(Math.random()- 0.5);
-                    this.mouseAng(mouseAng);
+                    this.prevTargetAng = this.targetAng;
+                    this.targetAng = this.state.players[idx].pos.angTo(player.pos) + 0.3*(Math.random()- 0.5);
                     var inBetween = false;
                     var width = 2500;
                     var height = width * 9/16;
@@ -188,6 +189,8 @@ var Bot = function(state)
                 
             }
         }
+        var diff = (this.targetAng - this.prevTargetAng + 3* Math.PI) %(2*Math.PI) - Math.PI;
+        this.mouseAng(this.prevTargetAng + (this.state.time - this.lastMouseUpdate)/this.mouseUpdate * diff);
     }
     this.mouseAng = function(ang)
     {
