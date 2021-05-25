@@ -88,6 +88,7 @@ var Bot = function(state)
         }
         else if (player && player.alive)
         {
+            var trimmedGameState = gameStateEmitter.trimToPlayer(this.state, this.state, this.playerId);
             if (this.state.time - this.lastKeyUpdate > this.keyUpdatePeriod)
             {
                 this.lastKeyUpdate = this.state.time;
@@ -122,7 +123,6 @@ var Bot = function(state)
             if (this.state.time - this.lastMouseUpdate > this.mouseUpdate)
             {
                 this.lastMouseUpdate = this.state.time;
-                var trimmedGameState = gameStateEmitter.trimToPlayer(this.state, this.state, this.playerId);
                 var minDist = Infinity;
                 var idx = -1;
                 for (var i in trimmedGameState.players)
