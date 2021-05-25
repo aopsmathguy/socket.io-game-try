@@ -149,7 +149,7 @@ var Bot = function(state)
                     var width = 2500;
                     var height = width * 9/16;
                     loopThroughObstaclesRect(player.pos, (obstacle) => {
-                        if (!inBetween && obstacle.intersectSegment(player.pos, this.state.players[idx].pos) != -1)
+                        if (!inBetween && obstacle.intersectable && obstacle.intersectSegment(player.pos, this.state.players[idx].pos) != -1)
                         {
                             inBetween = true;
                             return;
