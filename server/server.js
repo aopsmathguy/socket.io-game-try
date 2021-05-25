@@ -158,7 +158,7 @@ var Bot = function(state)
     this.goDirection = function(ang)
     {
         this.direction = ang
-        if (dir == undefined)
+        if (ang == undefined)
         {
             controls.playerControls[this.playerId].keys[65] = false;
             controls.playerControls[this.playerId].keys[68] = false;
