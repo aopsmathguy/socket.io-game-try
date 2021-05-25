@@ -69,6 +69,7 @@ var Bot = function(state)
     
     this.lastMouseUpdate = -1;
     this.mouseUpdate = 200*(2 + 1*Math.random());
+    this.targetAng = 0;
     
     this.lastDeathTime = -1;
     this.direction = 0;
@@ -171,15 +172,18 @@ var Bot = function(state)
                         {
                             controls.keyDown(this.playerId, 82);
                         }
+                        controls.mouseUp(this.playerId);
                     }
                 }
                 else
                 {
-                    controls.mouseUp(this.playerId);
+                    if  (controls.playerControls[this.playerId].keys[88])
+                        controls.keyUp(this.playerId, 88);
                     if  (!controls.playerControls[this.playerId].keys[82])
                     {
                         controls.keyDown(this.playerId, 82);
                     }
+                    controls.mouseUp(this.playerId);
                 }
                 
             }
