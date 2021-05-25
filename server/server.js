@@ -117,7 +117,7 @@ var Bot = function(state)
                 }
                 else
                 {
-                    this.goDirection(2*Math.PI*Math.random());
+                    this.goDirection((new Vector(gameWidth/2,gameHeight/2)).angTo(player.pos));
                 }
             }
             if (this.state.time - this.lastMouseUpdate > this.mouseUpdate)
