@@ -156,7 +156,7 @@ var Bot = function(state)
                     if (!inBetween)
                     {
                         controls.mouseDown(this.playerId);
-                        
+                        controls.keyDown(this.playerId, 88);
                         if  (controls.playerControls[this.playerId].keys[82])
                         {
                             controls.keyUp(this.playerId, 82);
