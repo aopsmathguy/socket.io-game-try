@@ -1060,12 +1060,15 @@ var GameState = function() {
         for (var i in this.leaderboard)
         {
             var stats = this.leaderboard[i];
-            displayObj.push({
-                id : i,
-                name: stats.name,
-                killstreak: stats.kills,
-                points: stats.points
-            });
+            if (stats.alive)
+            {
+                displayObj.push({
+                    id : i,
+                    name: stats.name,
+                    killstreak: stats.kills,
+                    points: stats.points
+                });
+            }
         }
         displayObj.sort((a,b) => (b.points - a.points));
 
