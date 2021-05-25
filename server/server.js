@@ -154,16 +154,30 @@ var Bot = function(state)
                         }
                     }, width, height);
                     if (!inBetween)
-                        controls.mouseDown(this.playerId);
-                    if  (controls.playerControls[this.playerId].keys[82])
                     {
-                        controls.keyUp(this.playerId, 82);
+                        controls.mouseDown(this.playerId);
+                        
+                        if  (controls.playerControls[this.playerId].keys[82])
+                        {
+                            controls.keyUp(this.playerId, 82);
+                        }
+                    }
+                    else
+                    {
+                        
+                        if  (!controls.playerControls[this.playerId].keys[82])
+                        {
+                            controls.keyDown(this.playerId, 82);
+                        }
                     }
                 }
                 else
                 {
                     controls.mouseUp(this.playerId);
-                    controls.keyDown(this.playerId, 82);
+                    if  (!controls.playerControls[this.playerId].keys[82])
+                    {
+                        controls.keyDown(this.playerId, 82);
+                    }
                 }
                 
             }
