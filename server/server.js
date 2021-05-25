@@ -65,7 +65,7 @@ var Bot = function(state)
     this.secondary = 1;
     
     this.lastKeyUpdate = -1;
-    this.keyUpdatePeriod = 1000*(2 + 1*Math.random());
+    this.keyUpdatePeriod = 400*(2 + 1*Math.random());
     
     this.lastMouseUpdate = -1;
     this.mouseUpdate = 200*(2 + 1*Math.random());
@@ -141,12 +141,30 @@ var Bot = function(state)
                 }
                 if (idx != -1)
                 {
-                    var mouseAng = this.state.players[idx].pos.angTo(player.pos) + 0.1*Math.random();
+                    var mouseAng = this.state.players[idx].pos.angTo(player.pos) + 0.3*(Math.random()- 0.5);
                     this.mouseAng(mouseAng);
-                    controls.mouseDown(this.playerId);
+                    var inBetween = false;
+                    var width = 2500;
+                    var height = width * 9/16;
+                    loopThroughObstaclesRect(player.pos, (obstacle) => {
+                        if (!inBetween && obstacle.intersectSegment(player.pos, this.state.players[idx].pos) != -1)
+                        {
+                            inBetween = true;
+                            return;
+                        }
+                    }, width, height);
+                    if (!inBetween)
+                        controls.mouseDown(this.playerId);
+                    if  (controls.playerControls[this.playerId].keys[82])
+                    {
+                        controls.keyUp(this.playerId, 82);
+                    }
                 }
                 else
+                {
                     controls.mouseUp(this.playerId);
+                    controls.keyDown(this.playerId, 82);
+                }
                 
             }
         }
@@ -291,6 +309,43 @@ var loopThroughObstacles = function(objectPos, inner) {
     }
 }
 
+var loopThroughObstaclesRect = function(objectPos, inner, width, height) {
+    var sector = obstacleSector(objectPos);
+    
+    var maxWidthGrid = Math.ceil(width/2 /gridWidth);
+    var maxHeightGrid = Math.ceil(height/2 /gridWidth);
+    if (sector[0] < 1 + maxWidthGrid)
+    {
+        inner(borderObstacles[0]);
+    }
+    else if (sector[0] > obstacles.length - 2 - maxWidthGrid)
+    {
+        inner(borderObstacles[1]);
+    }
+    if (sector[1] < 1 + maxHeightGrid)
+    {
+        inner(borderObstacles[2]);
+    }
+    else if (sector[1] > obstacles[0].length - 2 - maxHeightGrid)
+    {
+        inner(borderObstacles[3]);
+    }
+
+    for (var i = sector[0] - maxWidthGrid; i < sector[0] + 1 + maxWidthGrid; i++) {
+        if (i < 0 || i >= obstacles.length) {
+            continue;
+        }
+        for (var j = sector[1] - maxHeightGrid; j < sector[1] + 1 + maxHeightGrid; j++) {
+            if (j < 0 || j >= obstacles[i].length) {
+                continue;
+            }
+            var objectsToLoop = obstacles[i][j];
+            for (var idx in objectsToLoop) {
+                inner(objectsToLoop[idx]);
+            }
+        }
+    }
+}
 var obstacles;
 var borderObstacles;
 var gameState;
