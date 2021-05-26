@@ -225,7 +225,7 @@ var Bot = function(state)
                 
             }
         }
-        }
+        
         
         
         var diff = (this.targetAng - this.prevTargetAng + 3* Math.PI) %(2*Math.PI) - Math.PI;
