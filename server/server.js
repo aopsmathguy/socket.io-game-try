@@ -130,48 +130,9 @@ var Bot = function(state)
                 {
                     this.prevTargetAng = this.targetAng;
                     this.targetAng = this.state.players[idx].pos.angTo(player.pos) + 0.3*(Math.random()- 0.5);
-                    var inBetween = false;
-                    var width = 2500;
-                    var height = width * 9/16;
-                    loopThroughObstaclesRect(player.pos, (obstacle) => {
-                        if (!inBetween && obstacle.intersectable && obstacle.intersectSegment(player.pos, this.state.players[idx].pos) != -1)
-                        {
-                            inBetween = true;
-                            return;
-                        }
-                    }, width, height);
-                    if (!inBetween)
-                    {
-                        if  (this.state.weapons[player.weapon].bulletsRemaining > 0 && !controls.playerControls[this.playerId].keys[88])
-                            controls.keyDown(this.playerId, 88);
-                        controls.mouseDown(this.playerId);
-                        if  (controls.playerControls[this.playerId].keys[82])
-                        {
-                            controls.keyUp(this.playerId, 82);
-                        }
-                    }
-                    else
-                    {
-                        if  (controls.playerControls[this.playerId].keys[88])
-                            controls.keyUp(this.playerId, 88);
-                        if  (!controls.playerControls[this.playerId].keys[82])
-                        {
-                            controls.keyDown(this.playerId, 82);
-                        }
-                        controls.mouseUp(this.playerId);
-                    }
+                    
                 }
-                else
-                {
-                    this.prevTargetAng = this.targetAng;
-                    if  (controls.playerControls[this.playerId].keys[88])
-                        controls.keyUp(this.playerId, 88);
-                    if  (!controls.playerControls[this.playerId].keys[82])
-                    {
-                        controls.keyDown(this.playerId, 82);
-                    }
-                    controls.mouseUp(this.playerId);
-                }
+                
                 
             }
             if (this.state.time - this.lastMouseClickUpdate > this.mouseClickUpdate)
