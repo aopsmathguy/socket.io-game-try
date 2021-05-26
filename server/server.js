@@ -273,8 +273,8 @@ var Bot = function(state)
         {
             this.secondary = Math.floor(viableWeapons.weapons.length * Math.random());
         }
-        this.lastMouseClickUpdate = -1;
-        this.mouseClickUpdate = 100;
+        this.lastMouseClickUpdate = this.state.time;
+        this.mouseClickUpdate = 1000;
         this.state.addPlayer(this.playerId, this.name, this.color, this.primary, this.secondary);
     }
 }
