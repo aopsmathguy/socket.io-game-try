@@ -253,6 +253,7 @@ var Bot = function(state)
         {
             this.secondary = Math.floor(viableWeapons.weapons.length * Math.random());
         }
+        this.mouseUpdate = 2 * 60000/viableWeapons.weapons[this.primary].firerate * Math.min(viableWeapons.weapons[this.primary].auto, 3);
         this.state.addPlayer(this.playerId, this.name, this.color, this.primary, this.secondary);
     }
 }
