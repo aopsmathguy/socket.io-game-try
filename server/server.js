@@ -107,6 +107,14 @@ var Bot = function(state)
                     idx = i;
                 }
             }
+            var weapon = this.state.weapons[player.weapon];
+            var time = minDist/weapon.bulletSpeed;
+            var predPos = player.pos.add(player.vel.multiply(time));
+            var otherPredPos;
+            if (idx != -1)
+            {
+                otherPredPos = this.state.players[idx].pos.add(this.state.players[idx].vel.multiply(time));
+            }
             if (this.state.time - this.lastKeyUpdate > this.keyUpdatePeriod)
             {
                 this.lastKeyUpdate = this.state.time;
@@ -129,7 +137,7 @@ var Bot = function(state)
                 if (idx != -1)
                 {
                     this.prevTargetAng = this.targetAng;
-                    this.targetAng = this.state.players[idx].pos.angTo(player.pos) + 0.3*(Math.random()- 0.5);
+                    this.targetAng = otherPredPos.angTo(predPos) + 0.3*(Math.random()- 0.5);
                     
                 }
                 else
@@ -141,7 +149,7 @@ var Bot = function(state)
             }
             if (this.state.time - this.lastMouseClickUpdate > this.mouseClickUpdate)
             {
-                this.mouseClickUpdate = (1.5+ 0.5*Math.random()) * 60000/viableWeapons.weapons[this.primary].firerate * Math.min(viableWeapons.weapons[this.primary].auto, 3);
+                this.mouseClickUpdate = (1.5+ 0.75*Math.random()) * 60000/viableWeapons.weapons[this.primary].firerate * Math.min(viableWeapons.weapons[this.primary].auto, 3);
                 this.lastMouseClickUpdate = this.state.time;
                 
                 if (idx != -1)
@@ -150,7 +158,7 @@ var Bot = function(state)
                     var width = 2500;
                     var height = width * 9/16;
                     loopThroughObstaclesRect(player.pos, (obstacle) => {
-                        if (!inBetween && obstacle.intersectable && obstacle.intersectSegment(player.pos, this.state.players[idx].pos) != -1)
+                        if (!inBetween && obstacle.intersectable && obstacle.intersectSegment(predPos, otherPredPos) != -1)
                         {
                             inBetween = true;
                             return;
