@@ -94,7 +94,7 @@ var Bot = function(state)
             if (this.state.time - this.lastKeyUpdate > this.keyUpdatePeriod)
             {
                 this.lastKeyUpdate = this.state.time;
-                var minDist = Infinity;
+                var minDist = 2300;
                 var idx = -1;
                 for (var i in trimmedGameState.players)
                 {
