@@ -132,7 +132,7 @@ var Bot = function(state)
                 }
                 else
                 {
-                    this.goDirection((new Vector(gameWidth/2 + 2000*(Math.random() - 1),gameHeight/2 + 2000*(Math.random() - 1))).angTo(player.pos) + Math.PI * (Math.random() - 0.5));
+                    this.goDirection((new Vector(gameWidth/2 + 500*(Math.random() - 1),gameHeight/2 + 500*(Math.random() - 1))).angTo(player.pos) + Math.PI/2 * (Math.random() - 0.5));
                 }
             }
             if (this.state.time - this.lastMouseUpdate > this.mouseUpdate)
