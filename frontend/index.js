@@ -1451,8 +1451,8 @@ var Bullet = function() {
             {
                 g.addColorStop(0, hexToRgbA(this.color, 1)); // opaque
                 g.addColorStop(0.07/3, hexToRgbA(this.color, 1)); // opaque
-                g.addColorStop(0.14/3, hexToRgbA('#ccc', 0.25)); // opaque
-                g.addColorStop(1/3, hexToRgbA('#ccc', 0)); // transparent
+                g.addColorStop(0.14/3, hexToRgbA('#ccc', 0.35)); // opaque
+                g.addColorStop(2/3, hexToRgbA('#ccc', 0)); // transparent
             }
             else if (this.ammoType == 'laser')
             {
