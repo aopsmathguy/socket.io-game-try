@@ -751,7 +751,7 @@ var GameState = function(time, players, weapons) {
             player.slot = 0;
 
         } else {
-            this.players[id] = new Player(startPos.x, startPos.y, (name.trim() != "" ? name.trim() : words.randomName(), color, id, primary, secondary, this);
+            this.players[id] = new Player(startPos.x, startPos.y, (name.trim() != "" ? name.trim() : words.randomName()), color, id, primary, secondary, this);
             controls[id] = {
                 keys: [],
                 mouseDown: false
