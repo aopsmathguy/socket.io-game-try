@@ -92,7 +92,7 @@ var Bot = function(state)
         {
             var weapon = this.state.weapons[player.weapon];
             var trimmedGameState = gameStateEmitter.trimToPlayer(this.state, this.state, this.playerId);
-            var minDist = weapon.range + weapon.length + weapon.buttPosition;
+            var minDist = 2300;
             var idx = -1;
             for (var i in trimmedGameState.players)
             {
@@ -114,6 +114,10 @@ var Bot = function(state)
             if (idx != -1)
             {
                 otherPredPos = this.state.players[idx].pos.add(this.state.players[idx].vel.multiply(time));
+                if (predPos.distanceTo(otherPredPos) > weapon.range + weapon.length + weapon.buttPosition)
+                {
+                    idx = -1;
+                }
             }
             if (this.state.time - this.lastKeyUpdate > this.keyUpdatePeriod)
             {
