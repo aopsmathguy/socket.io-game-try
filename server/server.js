@@ -119,10 +119,6 @@ var Bot = function(state)
             if (idx != -1)
             {
                 otherPredPos = this.state.players[idx].pos.add(this.state.players[idx].vel.multiply(time));
-                if (predPos.distanceTo(otherPredPos) > weapon.range + weapon.length + weapon.buttPosition)
-                {
-                    idx = -1;
-                }
             }
             if (this.state.time - this.lastKeyUpdate > this.keyUpdatePeriod)
             {
@@ -173,7 +169,7 @@ var Bot = function(state)
                             return;
                         }
                     }, width, height);
-                    if (!inBetween)
+                    if (!inBetween && predPos.distanceTo(otherPredPos) < weapon.range + weapon.length + weapon.buttPosition)
                     {
                         if  (this.state.weapons[player.weapon].bulletsRemaining > 0 && !controls.playerControls[this.playerId].keys[88])
                             controls.keyDown(this.playerId, 88);
