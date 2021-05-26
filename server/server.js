@@ -91,25 +91,25 @@ var Bot = function(state)
         else if (player && player.alive)
         {
             var trimmedGameState = gameStateEmitter.trimToPlayer(this.state, this.state, this.playerId);
+            var minDist = 2300;
+            var idx = -1;
+            for (var i in trimmedGameState.players)
+            {
+                if (i == this.playerId || !this.state.players[i].alive)
+                {
+                    continue;
+                }
+                var otherPlayer = this.state.players[i];
+                var dist = otherPlayer.pos.distanceTo(player.pos);
+                if (dist < minDist)
+                {
+                    minDist = dist;
+                    idx = i;
+                }
+            }
             if (this.state.time - this.lastKeyUpdate > this.keyUpdatePeriod)
             {
                 this.lastKeyUpdate = this.state.time;
-                var minDist = 2300;
-                var idx = -1;
-                for (var i in trimmedGameState.players)
-                {
-                    if (i == this.playerId || !this.state.players[i].alive)
-                    {
-                        continue;
-                    }
-                    var otherPlayer = this.state.players[i];
-                    var dist = otherPlayer.pos.distanceTo(player.pos);
-                    if (dist < minDist)
-                    {
-                        minDist = dist;
-                        idx = i;
-                    }
-                }
                 if (idx != -1)
                 {
                     if (player.health > 50)
@@ -125,22 +125,7 @@ var Bot = function(state)
             if (this.state.time - this.lastMouseUpdate > this.mouseUpdate)
             {
                 this.lastMouseUpdate = this.state.time;
-                var minDist = Infinity;
-                var idx = -1;
-                for (var i in trimmedGameState.players)
-                {
-                    if (i == this.playerId || !this.state.players[i].alive)
-                    {
-                        continue;
-                    }
-                    var otherPlayer = this.state.players[i];
-                    var dist = otherPlayer.pos.distanceTo(player.pos);
-                    if (dist < minDist)
-                    {
-                        minDist = dist;
-                        idx = i;
-                    }
-                }
+                
                 if (idx != -1)
                 {
                     this.prevTargetAng = this.targetAng;
@@ -189,7 +174,60 @@ var Bot = function(state)
                 }
                 
             }
+            if (this.state.time - this.lastMouseClickUpdate > this.mouseClickUpdate)
+            {
+                this.lastMouseClickUpdate = this.state.time;
+                
+                if (idx != -1)
+                {
+                    var inBetween = false;
+                    var width = 2500;
+                    var height = width * 9/16;
+                    loopThroughObstaclesRect(player.pos, (obstacle) => {
+                        if (!inBetween && obstacle.intersectable && obstacle.intersectSegment(player.pos, this.state.players[idx].pos) != -1)
+                        {
+                            inBetween = true;
+                            return;
+                        }
+                    }, width, height);
+                    if (!inBetween)
+                    {
+                        if  (this.state.weapons[player.weapon].bulletsRemaining > 0 && !controls.playerControls[this.playerId].keys[88])
+                            controls.keyDown(this.playerId, 88);
+                        controls.mouseDown(this.playerId);
+                        if  (controls.playerControls[this.playerId].keys[82])
+                        {
+                            controls.keyUp(this.playerId, 82);
+                        }
+                    }
+                    else
+                    {
+                        if  (controls.playerControls[this.playerId].keys[88])
+                            controls.keyUp(this.playerId, 88);
+                        if  (!controls.playerControls[this.playerId].keys[82])
+                        {
+                            controls.keyDown(this.playerId, 82);
+                        }
+                        controls.mouseUp(this.playerId);
+                    }
+                }
+                else
+                {
+                    this.prevTargetAng = this.targetAng;
+                    if  (controls.playerControls[this.playerId].keys[88])
+                        controls.keyUp(this.playerId, 88);
+                    if  (!controls.playerControls[this.playerId].keys[82])
+                    {
+                        controls.keyDown(this.playerId, 82);
+                    }
+                    controls.mouseUp(this.playerId);
+                }
+                
+            }
         }
+        }
+        
+        
         var diff = (this.targetAng - this.prevTargetAng + 3* Math.PI) %(2*Math.PI) - Math.PI;
         this.mouseAng(this.prevTargetAng + (this.state.time - this.lastMouseUpdate)/this.mouseUpdate * diff);
     }
@@ -253,7 +291,8 @@ var Bot = function(state)
         {
             this.secondary = Math.floor(viableWeapons.weapons.length * Math.random());
         }
-        this.mouseUpdate = (1+ 2*Math.random()) * 60000/viableWeapons.weapons[this.primary].firerate * Math.min(viableWeapons.weapons[this.primary].auto, 3);
+        this.lastMouseClickUpdate = -1;
+        this.mouseClickUpdate = (1+ Math.random()) * 60000/viableWeapons.weapons[this.primary].firerate * Math.min(viableWeapons.weapons[this.primary].auto, 3);
         this.state.addPlayer(this.playerId, this.name, this.color, this.primary, this.secondary);
     }
 }
