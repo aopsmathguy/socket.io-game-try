@@ -90,8 +90,9 @@ var Bot = function(state)
         }
         else if (player && player.alive)
         {
+            var weapon = this.state.weapons[player.weapon];
             var trimmedGameState = gameStateEmitter.trimToPlayer(this.state, this.state, this.playerId);
-            var minDist = 2300;
+            var minDist = weapon.range + weapon.length + weapon.buttPosition;
             var idx = -1;
             for (var i in trimmedGameState.players)
             {
@@ -107,7 +108,6 @@ var Bot = function(state)
                     idx = i;
                 }
             }
-            var weapon = this.state.weapons[player.weapon];
             var time = minDist/weapon.bulletSpeed;
             var predPos = player.pos.add(player.vel.multiply(time));
             var otherPredPos;
