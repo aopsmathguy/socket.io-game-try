@@ -813,7 +813,7 @@ var GameState = function(time, players, weapons) {
             var player = this.players[k];
             if (player.alive) {
 
-                this.controls(k);
+                this.movementControls(k);
                 
                 player.playerStep(this);
                 for (var i = 0; i < 2; i++)
@@ -825,6 +825,7 @@ var GameState = function(time, players, weapons) {
                       }
                   });
                 }
+                this.interactControls(k);
             }
         }
         controls.resetAll();
@@ -879,7 +880,7 @@ var GameState = function(time, players, weapons) {
             }
         }
     }
-    this.controls = function(k) {
+    this.movementControls = function(k) {
         var playerControls = controls.playerControls[k];
         var player = this.players[k];
         player.ang = playerControls.ang || 0;
@@ -897,6 +898,11 @@ var GameState = function(time, players, weapons) {
         }
         player.vel = player.vel.add(targetVel.subtract(player.vel).multiply(player.agility));
 
+        
+
+    }
+    this.interactControls = function(k)
+    {
         if (playerControls.keyPressFrame[70]) {
             var minDist = player.reachDist;
             var idx = -1;
@@ -966,7 +972,6 @@ var GameState = function(time, players, weapons) {
                 player.punch(this);
             }
         }
-
     }
 }
 var inObjects = function(v) {
