@@ -70,10 +70,10 @@ var Bot = function(state)
     this.secondary = 1;
     
     this.lastKeyUpdate = -1;
-    this.keyUpdatePeriod = 400*(2 + 1*Math.random());
+    this.keyUpdatePeriod = 800*(2 + 1*Math.random());
     
     this.lastMouseUpdate = -1;
-    this.mouseUpdate = 100*(2 + 1*Math.random());
+    this.mouseUpdate = 150*(2 + 1*Math.random());
     this.targetAng = 0;
     this.prevTargetAng = 0;
     
