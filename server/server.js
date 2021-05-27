@@ -1147,8 +1147,8 @@ var Player = function(xStart, yStart, name, color, id, prim, sec, state) {
     this.outfields = ['type','radius','reachDist','weapon','weapons','slot','health','pos','ang','punchLastTime','id','name','color','alive'];
     
     
-    setIfUndefined(this, 'speed', 5.3);
-    setIfUndefined(this, 'agility', 0.1);
+    setIfUndefined(this, 'speed', 5);
+    setIfUndefined(this, 'agility', 0.2);
     setIfUndefined(this, 'radius', 20);//
     setIfUndefined(this, 'reachDist', 50);//
 
