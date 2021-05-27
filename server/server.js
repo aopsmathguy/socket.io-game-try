@@ -542,7 +542,7 @@ var gameStateEmitter = {
             var out = this.trimToPlayer(gameState, copy, inGameId);
             var emitObj = differenceBetweenObj(this.prevStates[inGameId], out);
             this.prevStates[inGameId] = out;
-            s.emit('gameState',emitObj);
+            s.emit('gameState',roundObjectNumbers(emitObj));
         }
 
         //io.sockets.emit('gameState', );
@@ -616,6 +616,27 @@ var trimObject = function(obj)
             for (var field in obj) {
                 out[field] = trimObject(obj[field]);
             }
+        }
+    }
+    else
+    {
+        out = obj;
+    }
+    return out;
+
+}
+var roundObjectNumbers = function(obj)
+{
+    var out;
+    if (obj == null)
+    {
+        return;
+    }
+    if (typeof obj == 'object')
+    {
+        out = {};
+        for (var field in obj) {
+            out[field] = roundObjectNumbers(obj[field]);
         }
     }
     else if (typeof obj == 'number')
