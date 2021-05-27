@@ -903,6 +903,8 @@ var GameState = function(time, players, weapons) {
     }
     this.interactControls = function(k)
     {
+        var playerControls = controls.playerControls[k];
+        var player = this.players[k];
         if (playerControls.keyPressFrame[70]) {
             var minDist = player.reachDist;
             var idx = -1;
