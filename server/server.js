@@ -1147,7 +1147,7 @@ var Player = function(xStart, yStart, name, color, id, prim, sec, state) {
     this.outfields = ['type','radius','reachDist','weapon','weapons','slot','health','pos','ang','punchLastTime','id','name','color','alive'];
     
     
-    setIfUndefined(this, 'speed', 5);
+    setIfUndefined(this, 'speed', 5.3);
     setIfUndefined(this, 'agility', 0.1);
     setIfUndefined(this, 'radius', 20);//
     setIfUndefined(this, 'reachDist', 50);//
@@ -1968,7 +1968,7 @@ var Vector = function(x, y) {
 }
 makeObstacles();
 var stage = 0;
-setInterval(updateGameArea, 17);
+setInterval(updateGameArea, 16);
 setInterval(() => {
     //logTime("push",()=>{
         for (var i in gameState.weapons)
