@@ -539,10 +539,10 @@ var gameStateEmitter = {
         for(var socketId in sockets) {
             var s = sockets[socketId];
             var inGameId = s.inGameId;
-            var out = this.trimToPlayer(gameState, copy, inGameId);
+            var out = roundObjectNumbers(this.trimToPlayer(gameState, copy, inGameId));
             var emitObj = differenceBetweenObj(this.prevStates[inGameId], out);
             this.prevStates[inGameId] = out;
-            s.emit('gameState',roundObjectNumbers(emitObj));
+            s.emit('gameState',emitObj);
         }
 
         //io.sockets.emit('gameState', );
@@ -643,7 +643,7 @@ var roundObjectNumbers = function(obj)
     {
         if (Math.abs(obj) > 10)
         {
-            out = Math.round(obj);
+            out = 1/10 * Math.round(obj * 10);
         }
         else
         {
