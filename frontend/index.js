@@ -1724,6 +1724,34 @@ var Vector = function(x, y) {
 }
 var linearInterpolator = {
     lagLimit : 300,
+    ping : Infinity,
+    buffers : [],
+    pingServer : function(){
+        socket.emit('ping',Date.now())
+    },
+    updateBuffer : function(){
+        var average = 0;
+        for (var i = 0, l = this.buffers.length; i < l; i++)
+        {
+            average += this.buffers[i];
+        }
+        average /= this.buffers.length;
+        buffer = average;
+    },
+    addToBuffers : function(elem){
+        this.buffers.push(elem);
+        if (this.buffers.length > 3)
+            this.buffers.shift();
+    },
+    start : function(){
+        socket.on('pong', (function(msg){
+            this.ping = (Date.now() - msg.clientSend)/2;
+            var serverRecieveTime = (Date.now() + msg.clientSend)/2;
+            this.addToBuffers(msg.recieveTime - serverRecieveTime);
+            this.updateBuffer();
+        }).bind(this));
+        setInterval(this.pingServer.bind(this),1000);
+    },
     weaponBulletHitPoints : {},
     updateHitPointsFromState : function(state){
         for (var j in state.bullets)
@@ -1787,7 +1815,7 @@ var linearInterpolator = {
         }
     },
     linearGameState : function() {
-        var displayTime = serverTime() - buffer;
+        var displayTime = Date.now() + buffer;
         var rightIdx = 1;
         var time = 0;
         while (rightIdx < gameStates.length && gameStates[rightIdx].time < displayTime) {
@@ -1804,12 +1832,6 @@ var linearInterpolator = {
          out.snapWeapons();
         return out;*/
             rightIdx = gameStates.length - 1;
-        }
-        if (gameStates.length > 2) {
-            buffer -= Math.max((gameStates.length - 3)*1000/60*framesPerTick,2);
-        } else if (gameStates.length < 3) {
-
-            buffer += 2;
         }
 
         var right = gameStates[rightIdx];
