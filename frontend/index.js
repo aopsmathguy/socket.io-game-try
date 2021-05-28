@@ -1728,7 +1728,7 @@ var linearInterpolator = {
     ping : Infinity,
     buffers : [],
     pingServer : function(){
-        socket.emit('ping',Date.now());
+        socket.emit('pingServer',Date.now());
         console.log("ping");
     },
     updateBuffer : function(){
@@ -1746,7 +1746,7 @@ var linearInterpolator = {
             this.buffers.shift();
     },
     start : function(){
-        socket.on('pong', (function(msg){
+        socket.on('pongClient', (function(msg){
             this.ping = (Date.now() - msg.clientSend)/2;
             var serverRecieveTime = (Date.now() + msg.clientSend)/2;
             this.addToBuffers(msg.recieveTime - serverRecieveTime);
