@@ -1853,7 +1853,8 @@ var linearInterpolator = {
                 out.players[i].punchAnimation = 30*Math.pow(0.9,(displayTime - left.players[i].punchLastTime)/20);
             out.players[i].ang = this.linearAng(left.players[i].ang, right.players[i].ang, displayTime, left.time, right.time);
         }
-        out.players[controlId].ang = controlsBundle.ang;
+        if (out.players[controlId])
+            out.players[controlId].ang = controlsBundle.ang;
         for (var i in out.weapons) {
             if (left.weapons[i] == undefined || right.weapons[i] == undefined) {
                 continue;
