@@ -521,6 +521,7 @@ function startGame(){
     {
         settings[i].start();
     }
+    linearInterpolator.start();
     myGameArea.interval();
 }
 function joinGame() {
