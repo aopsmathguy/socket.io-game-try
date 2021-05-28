@@ -1806,9 +1806,9 @@ var linearInterpolator = {
     },
     linearAng : function(a1, a2, t, t1, t2) {
         if (t < t1) {
-            return a1;
+            //return a1;
         } else if (t > t2) {
-            return a2;
+            //return a2;
         } else {
             var dir1 = (a1 % (2 * Math.PI) + 2 * Math.PI) % (2 * Math.PI);
             var dir2 = (a2 % (2 * Math.PI) + 2 * Math.PI) % (2 * Math.PI);
