@@ -1097,7 +1097,7 @@ var GameState = function() {
         ctx.fillText("fps:" + Math.floor(myGameArea.fps + 0.5),  startX + margin, y + 3/4 * height);
 
         ctx.textAlign = "center";
-        ctx.fillText("tickspd:" + Math.floor(1000/tickInterval + 0.5),  startX + totalWidth/2, y + 3/4 * height);
+        ctx.fillText("ping:" + Math.round(linearInterpolator.ping),  startX + totalWidth/2, y + 3/4 * height);
 
         ctx.textAlign = "right";
         ctx.fillText("Plyrs:" + displayObj.length,  startX + totalWidth - margin, y + 3/4 * height);
