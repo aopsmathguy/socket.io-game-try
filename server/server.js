@@ -55,6 +55,12 @@ io.on('connection', client => {
     client.on('reset', ()=>{
         controls.resetPlayer(client.inGameId);
     });
+    client.on('ping',(time)=>{
+        client.emit('pong',{
+            clientSend : time,
+            recieveTime : Date.now()
+        })
+    });
 });
 var Bot = function(state)
 {
