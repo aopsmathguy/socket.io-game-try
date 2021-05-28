@@ -1805,17 +1805,16 @@ var linearInterpolator = {
         return new Vector(this.linearValue(v1.x,v2.x,t,t1,t2), this.linearValue(v1.y,v2.y,t,t1,t2));
     },
     linearAng : function(a1, a2, t, t1, t2) {
-        if (t < t1) {
-            //return a1;
+        /*if (t < t1) {
+            return a1;
         } else if (t > t2) {
-            //return a2;
-        } else {
-            var dir1 = (a1 % (2 * Math.PI) + 2 * Math.PI) % (2 * Math.PI);
-            var dir2 = (a2 % (2 * Math.PI) + 2 * Math.PI) % (2 * Math.PI);
-            var difference = dir2 - dir1;
-            var difference = (difference % (2 * Math.PI) + 3 * Math.PI) % (2 * Math.PI) - Math.PI;
-            return dir1 + difference * (t - t1) / (t2 - t1);
-        }
+            return a2;
+        } */
+        var dir1 = (a1 % (2 * Math.PI) + 2 * Math.PI) % (2 * Math.PI);
+        var dir2 = (a2 % (2 * Math.PI) + 2 * Math.PI) % (2 * Math.PI);
+        var difference = dir2 - dir1;
+        var difference = (difference % (2 * Math.PI) + 3 * Math.PI) % (2 * Math.PI) - Math.PI;
+        return dir1 + difference * (t - t1) / (t2 - t1);
     },
     linearGameState : function() {
         var displayTime = Date.now() + buffer;
