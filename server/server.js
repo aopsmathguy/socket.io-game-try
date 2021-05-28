@@ -55,8 +55,8 @@ io.on('connection', client => {
     client.on('reset', ()=>{
         controls.resetPlayer(client.inGameId);
     });
-    client.on('ping',(time)=>{
-        client.emit('pong',{
+    client.on('pingServer',(time)=>{
+        client.emit('pongClient',{
             clientSend : time,
             recieveTime : Date.now()
         })
