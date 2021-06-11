@@ -1738,7 +1738,7 @@ var linearInterpolator = {
             average += this.buffers[i];
         }
         average /= this.buffers.length;
-        buffer = average;
+        buffer = average + this.ping;
     },
     addToBuffers : function(elem){
         this.buffers.push(elem);
