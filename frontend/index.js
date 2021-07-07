@@ -1749,7 +1749,7 @@ var linearInterpolator = {
         socket.on('pongClient', (function(msg){
             this.ping = (Date.now() - msg.clientSend)/2;
             var serverRecieveTime = (Date.now() + msg.clientSend)/2;
-            this.addToBuffers(msg.recieveTime - serverRecieveTime + this.ping);
+            this.addToBuffers(msg.recieveTime - serverRecieveTime - this.ping);
             this.updateBuffer();
             console.log("pong");
         }).bind(this));
