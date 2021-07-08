@@ -649,11 +649,11 @@ var roundObjectNumbers = function(obj)
     {
         if (Math.abs(obj) > 10)
         {
-            out = 1/10 * Math.round(obj * 10);
+            out = 100 * Math.round(obj * 10);
         }
         else
         {
-            out = 1/1000 * Math.round(obj * 1000);
+            out = Math.round(obj * 1000);
         }
     }
     else
