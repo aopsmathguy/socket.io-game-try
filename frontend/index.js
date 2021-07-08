@@ -783,21 +783,38 @@ var controlsBundle = {
         return initialScreen.style.display == 'none' && gameStates.length > 0 && controlId && gameStates[0].players[controlId] && gameStates[0].players[controlId].alive;
     },
     importantKeys : [87,83,68,65,70,71,82,88,81],
+    keyMapper : {
+        87 : 87,
+        83 : 83,
+        68 : 68,
+        65 : 65,
+        70 : 70,
+        71 : 71,
+        82 : 82,
+        88 : 88,
+        81 : 81,
+        37 : 65,
+        38 : 87,
+        39 : 68,
+        40 : 83
+    },
     start: function() {
         controlsBundle.mouse = new Vector(0,0);
         window.addEventListener('keydown', (function(e) {
             this.keys = (this.keys || []);
-            if (!this.keys[e.keyCode]) {
-                this.keys[e.keyCode] = true;
-                if (this.sendControls() && this.importantKeys.includes(e.keyCode))
-                    socket.emit('keydown', e.keyCode);
+            var key = this.keyMapper[e.keyCode];
+            if (!this.keys[key]) {
+                this.keys[key] = true;
+                if (this.sendControls() && this.importantKeys.includes(key))
+                    socket.emit('keydown', key);
             }
         }).bind(this));
         window.addEventListener('keyup', (function(e) {
-            if (this.keys[e.keyCode]) {
-                this.keys[e.keyCode] = false;
-                if (this.sendControls() && this.importantKeys.includes(e.keyCode))
-                    socket.emit('keyup', e.keyCode);
+            var key = this.keyMapper[e.keyCode];
+            if (this.keys[key]) {
+                this.keys[key] = false;
+                if (this.sendControls() && this.importantKeys.includes(key))
+                    socket.emit('keyup', key);
             }
         }).bind(this));
 
