@@ -796,7 +796,8 @@ var controlsBundle = {
         37 : 65,
         38 : 87,
         39 : 68,
-        40 : 83
+        40 : 83,
+        27 : 27
     },
     start: function() {
         controlsBundle.mouse = new Vector(0,0);
