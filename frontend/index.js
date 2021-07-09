@@ -1309,7 +1309,7 @@ var GameState = function() {
 
         myGameArea.transform(weapon.pos.x,weapon.pos.y,weapon.ang,1,()=>{
             if (!weapon.hold) {
-                ctx.strokeStyle = pSBC(weapon.ammoColor, -0.4);
+                ctx.strokeStyle = pSBC(-0.4,weapon.ammoColor);
                 ctx.lineWidth = 4;
                 ctx.beginPath();
                 ctx.arc(0,0, 30, 0, 2*Math.PI);
