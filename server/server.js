@@ -1238,7 +1238,7 @@ var Player = function(xStart, yStart, name, color, id, prim, sec, state) {
 
     setIfUndefined(this, 'ang', 0);//
 
-    setIfUndefined(this, 'punchReach', 10);
+    setIfUndefined(this, 'punchReach', 20);
     setIfUndefined(this, 'punchLastTime', 0);//
     setIfUndefined(this, 'punchRate', 200);
     setIfUndefined(this, 'punchDamage', 48);
