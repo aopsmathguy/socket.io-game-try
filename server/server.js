@@ -25,7 +25,8 @@ io.on('connection', client => {
         gameHeight: gameHeight,
         gridWidth: gridWidth,
         framesPerTick: framesPerTick,
-        viableWeapons: viableWeapons.weapons
+        viableWeapons: viableWeapons.weapons,
+        ammoTypes : viableWeapons.ammo
     });
     client.emit('gameState', trimObject(gameState));
     client.on('new player', function(msg){
@@ -282,33 +283,75 @@ var Bot = function(state)
 }
 const viableWeapons = {
     weapons : [],
+    ammo : {
+        0 : {
+            n : "12 gauge",
+            g : "#c00",
+            b : "#f88"
+        },
+        1 : {
+            n : "9mm",
+            g : "#c60",
+            b : "#fc8"
+        },
+        2 : {
+            n : "45 acp",
+            g : "#880",
+            b : "#ff8"
+        },
+        3 : {
+            n : "5.56x45",
+            g : "#080",
+            b : "#8f8"
+        },
+        4 : {
+            n : "7.62x39",
+            g : "#00c",
+            b : "#bbf"
+        },
+        5 : {
+            n : ".308 Winchester",
+            g : "#c0c",
+            b : "#f8f"
+        },
+        6 : {
+            n : "laser",
+            g : "#f00",
+            b : "#f00"
+        },
+        7 : {
+            n : "arrow",
+            g : "#b06846",
+            b : "#ff9f73"
+        }
+    },  
     start : function()
     {
         this.weapons = [
-            new GunStats('Glock 17', 'Secondary', 35, 1, 780, 1, 15, 1500, true, 30, 20, 4, 500, 150, 750, 0.15, 0.12, 0.9, 7, 0.9, 0, 0.95, 1, '#80f','bullet','#fc8', 5, 60, 32, 3, 0, 3, 0),
-            new GunStats('Glock 18', 'Secondary', 35, Infinity, 780, 1, 17, 1500, true, 30, 17, 7, 500, 150, 750, 0.15, 0.09, 0.9, 7, 0.9, 0, 0.95, 1, '#444','bullet','#fc8', 5, 60, 32, 3, 0, 3, 0),
-            new GunStats('Redhawk', 'Secondary', 40, 1, 300, 1, 6, 1700,true, 50, 30, 10, 700, 200, 975, 0, 0.2, 0.9, 10, 0.9, 0.5, 0.95, 0.6, '#ff0','bullet','#bbf', 5, 60,32, 3, 0, 3, 0),
-            new GunStats('Executioner', 'Secondary', 35, 1, 450, 14, 6, 2900,true, 22.5, 5, 3.5, 330, 200, 450, 0.25, 0, 0.9, 10, 0.9, 0.5, 0.95, 0.6, '#088','bullet','#f88', 3, 60,32, 3, 0, 3, 0),
+            new GunStats('Glock 17', 'Secondary', 35, 1, 780, 1, 15, 1500, true, 30, 20, 4, 500, 150, 750, 0.15, 0.12, 0.9, 7, 0.9, 0, 0.95, 1, '#000','bullet',1, 5, 60, 32, 3, 0, 3, 0),
+            new GunStats('Glock 18', 'Secondary', 35, Infinity, 780, 1, 17, 1500, true, 30, 17, 7, 500, 150, 750, 0.15, 0.09, 0.9, 7, 0.9, 0, 0.95, 1, '#444','bullet',1, 5, 60, 32, 3, 0, 3, 0),
+            new GunStats('Redhawk', 'Secondary', 40, 1, 300, 1, 6, 1700,true, 50, 30, 10, 700, 200, 975, 0, 0.2, 0.9, 10, 0.9, 0.5, 0.95, 0.6, '#ff0','bullet',4, 5, 60,32, 3, 0, 3, 0),
+            new GunStats('Executioner', 'Secondary', 35, 1, 450, 14, 6, 2900,true, 22.5, 5, 3.5, 330, 200, 450, 0.25, 0, 0.9, 10, 0.9, 0.5, 0.95, 0.6, '#222','bullet',0, 3, 60,32, 3, 0, 3, 0),
             
-            new GunStats('Stevens DB', 'Shotgun', 90, 1, 450, 8, 2, 2300, true, 26.25, 15, 10, 350, 56, 525, 0.2, 0, 0.83, 10, 0.9, 1.5,1, 0.7, '#f0f', 'bullet','#f88',4,60,2,30, 3, 53, -2),
-            new GunStats('M870', 'Shotgun', 105, 1, 80, 8, 5, 1000, false, 26.25, 16, 12, 400, 88, 600, 0.19, 0, 0.83, 10, 0.9, 1.5,1, 0.3, '#8f8', 'bullet','#f88',4,60,4,28, 3, 57, -2),
-            new GunStats('SPAS-12', 'Shotgun', 110, 1, 120, 8, 9, 800, false, 30, 9, 1, 650, 100, 825, 0.12, 0, 0.83, 10, 0.9, 1.5,0.95, 0.3, '#0ff', 'bullet','#f88',4,60,4,28, 3, 58, -2),
+            new GunStats('Stevens DB', 'Shotgun', 90, 1, 450, 8, 2, 2300, true, 26.25, 15, 10, 350, 56, 525, 0.2, 0, 0.83, 10, 0.9, 1.5,1, 0.7, '#888', 'bullet',0,4,60,2,30, 3, 53, -2),
+            new GunStats('M870', 'Shotgun', 105, 1, 80, 8, 5, 1000, false, 26.25, 16, 12, 400, 88, 600, 0.19, 0, 0.83, 10, 0.9, 1.5,1, 0.3, '#555', 'bullet',0,4,60,4,28, 3, 57, -2),
+            new GunStats('SPAS-12', 'Shotgun', 110, 1, 120, 8, 9, 800, false, 30, 9, 1, 650, 100, 825, 0.12, 0, 0.83, 10, 0.9, 1.5,0.95, 0.3, '#333', 'bullet',0,4,60,4,28, 3, 58, -2),
             
-            new GunStats('MAC-10', 'SMG', 50, Infinity, 1200, 1, 32, 1600, true, 26.25, 16, 10, 300, 150, 637.5, 0.1, 0.06, 0.9, 3, 0.9, 0.4, 0.97, 0.8, '#08f','bullet', '#fc8',5,60,12,22, 3, 40, -2),
-            new GunStats('MP5', 'SMG',75, Infinity, 750, 1, 30, 1900, true, 33.75, 16, 8, 400, 270, 825, 0, 0.07, 0.91, 4, 0.9, 0.4, 0.95, 0.65, '#f80','bullet', '#fc8',5,60,6,26, 3, 51, -2),
-            new GunStats('M1A1', 'SMG',90, Infinity, 720, 1, 50, 3100, true, 28, 15, 5, 450, 270, 900, 0, 0.04, 0.96, 5, 0.9, 0.3, 0.9, 0.5, '#fff', 'bullet','#ff8',5,60,10,23, 3,48, -9),
+            new GunStats('MAC-10', 'SMG', 50, Infinity, 1200, 1, 32, 1600, true, 26.25, 16, 10, 300, 150, 637.5, 0.1, 0.06, 0.9, 3, 0.9, 0.4, 0.97, 0.8, '#333','bullet', 1,5,60,12,22, 3, 40, -2),
+            new GunStats('MP5', 'SMG',75, Infinity, 750, 1, 30, 1900, true, 33.75, 16, 8, 400, 270, 825, 0, 0.07, 0.91, 4, 0.9, 0.4, 0.95, 0.65, '#333','bullet', 1,5,60,6,26, 3, 51, -2),
+            new GunStats('M1A1', 'SMG',90, Infinity, 720, 1, 50, 3100, true, 28, 15, 5, 450, 270, 900, 0, 0.04, 0.96, 5, 0.9, 0.3, 0.9, 0.5, '#333', 'bullet', 2,5,60,10,23, 3,48, -9),
             
-            new GunStats('AK-47', 'Assault',95, Infinity, 600, 1, 30, 2500, true, 41.25, 16, 1, 600, 400, 1100, 0, 0.15, 0.85, 6, 0.9, 0.48, 0.93, 0.5, '#bb7554', 'bullet','#bbf',6,60,8, 24, 3, 50, -2),
-            new GunStats('M4A1', 'Assault', 90, Infinity, 720, 1, 30, 3000, true, 45, 16, 3, 550, 270, 975, 0, 0.07, 0.9, 5, 0.9, 0.48, 0.93, 0.5, '#888', 'bullet','#8f8',6,60,12,20, 3,45, -2),
-            new GunStats('M4', 'Assault', 90, 3, 900, 1, 30, 2600, true, 45, 17, 3, 550, 270, 975, 0, 0.035, 0.95, 5, 0.9, 0.48, 0.93, 0.5, '#ccc', 'bullet','#8f8',6,60,12,20, 3,45, -2),
+            new GunStats('AK-47', 'Assault',95, Infinity, 600, 1, 30, 2500, true, 41.25, 16, 1, 600, 400, 1100, 0, 0.15, 0.85, 6, 0.9, 0.48, 0.93, 0.5, '#333', 'bullet',4,6,60,8, 24, 3, 50, -2),
+            new GunStats('M4A1', 'Assault', 90, Infinity, 720, 1, 30, 3000, true, 45, 16, 3, 550, 270, 975, 0, 0.07, 0.9, 5, 0.9, 0.48, 0.93, 0.5, '#333', 'bullet',3,6,60,12,20, 3,45, -2),
+            new GunStats('M4', 'Assault', 90, 3, 900, 1, 30, 2600, true, 45, 17, 3, 550, 270, 975, 0, 0.035, 0.95, 5, 0.9, 0.48, 0.93, 0.5, '#333', 'bullet',4,6,60,12,20, 3,45, -2),
 
-            new GunStats('MK11', 'DMR',90, 1, 550, 1, 15, 2600, true, 45, 26, 6, 710, 500, 1200, 0, 0.3, 0.83, 8, 0.84, 0.56, 0.92, 0.5, '#f08', 'bullet','#bbf',6,90,12,20, 3, 45, -2),
+            new GunStats('MK11', 'DMR',90, 1, 550, 1, 15, 2600, true, 45, 26, 6, 710, 500, 1200, 0, 0.3, 0.83, 8, 0.84, 0.56, 0.92, 0.5, '#333', 'bullet',4,6,90,12,20, 3, 45, -2),
 
-            new GunStats('Mosin Nagant','Sniper', 130, 1, 65, 1, 5, 1000, false, 52.5, 70, 20, 830, 240, 1875, 0, 0.3, 0.83, 14, 0.9, 2.5, 0.9, 0.6, '#8f0', 'bullet','#f8f',8,170,4,28, 3, 60, -2),
-            new GunStats('M200', 'Sniper',140, 1, 50, 1, 7, 3500, true, 60, 106, 40, 400, 100, 1875, 0, 0.3, 0.83, 16, 0.9, 3, 0.9, 0.6, '#88f', 'bullet','#f8f',10,200,4,28, 3, 60, -2),
+            new GunStats('Remington 700','Sniper', 112, 1, 65, 1, 5, 1000, false, 52.5, 70, 20, 830, 240, 1875, 0, 0.3, 0.83, 14, 0.9, 2.5, 0.9, 0.6, '#333', 'bullet',5,8,170,4,28, 3, 60, -2),
+            new GunStats('AWP', 'Sniper',125, 1, 50, 1, 7, 3500, true, 60, 106, 40, 400, 100, 1875, 0, 0.3, 0.83, 16, 0.9, 3, 0.9, 0.6, '#333', 'bullet',5,10,200,4,28, 3, 60, -2),
             
-            new GunStats('Crossbow', 'Other',70, 1, 9000, 1, 1, 2400, false,18.75, 100, 0, 830, 240, 1500, 0, 0.3, 0.83, 14, 0.9, 3, 0.9, 1, '#000', 'arrow','#ff9f73',6,60,12,20, 3, 40, -2),
-            new GunStats('Laser', 'Other',90, 1, 120, 1, 6, 2700, true,100, 40, 6, 700, 200, 2500, 0, 0, 0.91, 20, 0.9, 0, 0.9, 0.4, '#f00','laser','#f00', 6,60,12,20, 3, 45, -2)
+            new GunStats('Crossbow', 'Other',70, 1, 9000, 1, 1, 2400, false,18.75, 100, 0, 830, 240, 1500, 0, 0.3, 0.83, 14, 0.9, 3, 0.9, 1, '#333', 'arrow',7,6,60,12,20, 3, 40, -2),
+            new GunStats('Laser', 'Other',90, 1, 120, 1, 6, 2700, true,100, 40, 6, 700, 200, 2500, 0, 0, 0.91, 20, 0.9, 0, 0.9, 0.4, '#f00','laser',6, 6,60,12,20, 3, 45, -2)
         ];
     }
 };
@@ -1421,7 +1464,7 @@ var Player = function(xStart, yStart, name, color, id, prim, sec, state) {
         }
     }
 }
-var GunStats = function(name, weaponClass, length, auto, firerate, multishot, capacity, reloadTime, reloadType, bulletSpeed, damage, damageDrop, damageRange, damageDropTension, range, defSpray, sprayCoef, stability, kickAnimation, animationMult, personRecoil, walkSpeedMult, shootWalkSpeedMult, color, ammoType, ammoColor, bulletWidth, fadeTime, buttPosition, handPos1x, handPos1y, handPos2x, handPos2y){
+var GunStats = function(name, weaponClass, length, auto, firerate, multishot, capacity, reloadTime, reloadType, bulletSpeed, damage, damageDrop, damageRange, damageDropTension, range, defSpray, sprayCoef, stability, kickAnimation, animationMult, personRecoil, walkSpeedMult, shootWalkSpeedMult, color, ammoType, ammoId, bulletWidth, fadeTime, buttPosition, handPos1x, handPos1y, handPos2x, handPos2y){
     setIfUndefined(this, 'name', name);//
     setIfUndefined(this, 'weaponClass', weaponClass);//
     setIfUndefined(this, 'length', length);//
@@ -1451,7 +1494,7 @@ var GunStats = function(name, weaponClass, length, auto, firerate, multishot, ca
 
     setIfUndefined(this, 'color', color);//
     setIfUndefined(this, 'ammoType', ammoType);//
-    setIfUndefined(this, 'ammoColor', ammoColor);//
+    setIfUndefined(this, 'ammoId', ammoId);//
     setIfUndefined(this, 'fadeTime', fadeTime);//
     
     setIfUndefined(this, 'buttPosition', buttPosition);//
@@ -1672,7 +1715,7 @@ var Bullet = function(weapon) {
     setIfUndefined(this, 'hitPoint', -1);//
     setIfUndefined(this, 'trailLength', this.bulletSpeed * weapon.fadeTime);//
     setIfUndefined(this, 'width', weapon.bulletWidth);//
-    setIfUndefined(this, 'color', weapon.ammoColor);//
+    setIfUndefined(this, 'ammoId', weapon.ammoId);//
     setIfUndefined(this, 'ammoType', weapon.ammoType);//
 
     setIfUndefined(this, 'bulletFiredBy', weapon.playerHolding);
