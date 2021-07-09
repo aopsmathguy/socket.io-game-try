@@ -1697,7 +1697,7 @@ var Bullet = function(weapon) {
     if (weapon === undefined) {
         weapon = new Gun(0, 0, 0,-1, 0);
     }
-    this.outfields = ['type','startPos','tailPos','pos','vel','ang','bulletSpeed','range','hitPoint','trailLength','width','color', 'ammoType'];
+    this.outfields = ['type','startPos','tailPos','pos','vel','ang','bulletSpeed','range','hitPoint','trailLength','width','ammoId', 'ammoType'];
     setIfUndefined(this, 'startPos', weapon.pos.add((new Vector(weapon.length / 2, 0)).rotate(weapon.ang)));//
     setIfUndefined(this, 'tailPos', this.startPos.copy());//
     setIfUndefined(this, 'pos', this.startPos.copy());//
