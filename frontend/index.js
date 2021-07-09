@@ -1776,7 +1776,6 @@ var linearInterpolator = {
     buffers : [],
     pingServer : function(){
         socket.emit('pingServer',Date.now());
-        console.log("ping");
     },
     updateBuffer : function(){
         var average = 0;
@@ -1798,7 +1797,6 @@ var linearInterpolator = {
             var serverRecieveTime = (Date.now() + msg.clientSend)/2;
             this.addToBuffers(msg.recieveTime - serverRecieveTime - this.ping/2);
             this.updateBuffer();
-            console.log("pong");
         }).bind(this));
         setInterval(this.pingServer.bind(this),1000);
     },
