@@ -286,17 +286,17 @@ const viableWeapons = {
     ammo : {
         0 : {
             n : "12 gauge",
-            g : "#c00",
+            g : "#f00",
             b : "#f88"
         },
         1 : {
             n : "9mm",
-            g : "#c60",
+            g : "#f80",
             b : "#fc8"
         },
         2 : {
             n : "45 acp",
-            g : "#880",
+            g : "#ff0",
             b : "#ff8"
         },
         3 : {
@@ -306,12 +306,12 @@ const viableWeapons = {
         },
         4 : {
             n : "7.62x39",
-            g : "#00c",
+            g : "#00f",
             b : "#bbf"
         },
         5 : {
             n : ".308 Winchester",
-            g : "#c0c",
+            g : "#f0f",
             b : "#f8f"
         },
         6 : {
