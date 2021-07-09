@@ -64,6 +64,7 @@ for (var i in uiImages)
     });
 }
 var viableWeapons;
+var ammoTypes;
 socket.on('init', (msg) => {
     timeDifference = msg.data - Date.now();
     controlId = msg.id;
@@ -79,6 +80,7 @@ socket.on('init', (msg) => {
 
     framesPerTick = msg.framesPerTick;
     viableWeapons = msg.viableWeapons;
+    ammoTypes = msg.ammoTypes;
     loadout.startNameToId(viableWeapons);
     loadout.updateWeaponClass(viableWeapons);
     loadout.updateElem();
@@ -1309,7 +1311,7 @@ var GameState = function() {
 
         myGameArea.transform(weapon.pos.x,weapon.pos.y,weapon.ang,1,()=>{
             if (!weapon.hold) {
-                ctx.strokeStyle = pSBC(-0.4,weapon.ammoColor);
+                ctx.strokeStyle = ammoTypes[weapon.ammoId].g;
                 ctx.lineWidth = 4;
                 ctx.beginPath();
                 ctx.arc(0,0, 30, 0, 2*Math.PI);
@@ -1489,27 +1491,28 @@ var Bullet = function() {
     this.type = "Bullet";
     this.display = function() {
         var ctx = myGameArea.context;
-
+        
         myGameArea.transform(this.pos.x,this.pos.y,this.ang, 1, ()=>{
+            var color = ammoTypes[this.ammoId].b;
             const g = ctx.createLinearGradient(0,0, -this.trailLength, 0);
             if (this.ammoType == 'bullet')
             {
-                g.addColorStop(0, hexToRgbA(this.color, 1)); // opaque
-                g.addColorStop(0.07/3, hexToRgbA(this.color, 1)); // opaque
+                g.addColorStop(0, hexToRgbA(color, 1)); // opaque
+                g.addColorStop(0.07/3, hexToRgbA(color, 1)); // opaque
                 g.addColorStop(0.14/3, hexToRgbA('#ccc', 0.35)); // opaque
                 g.addColorStop(2/3, hexToRgbA('#ccc', 0)); // transparent
             }
             else if (this.ammoType == 'laser')
             {
-                g.addColorStop(0, hexToRgbA(this.color, 0.5)); // opaque
-                g.addColorStop(0.5, hexToRgbA(this.color, 0.5)); // opaque
-                g.addColorStop(1, hexToRgbA(this.color, 0)); // transparent
+                g.addColorStop(0, hexToRgbA(color, 0.5)); // opaque
+                g.addColorStop(0.5, hexToRgbA(color, 0.5)); // opaque
+                g.addColorStop(1, hexToRgbA(color, 0)); // transparent
             }
             else if (this.ammoType == 'arrow')
             {
-                g.addColorStop(0, hexToRgbA(this.color, 1)); // opaque
-                g.addColorStop(0.07, hexToRgbA(this.color, 1)); // transparent
-                g.addColorStop(0.1, hexToRgbA(this.color, 0)); // transparent
+                g.addColorStop(0, hexToRgbA(color, 1)); // opaque
+                g.addColorStop(0.07, hexToRgbA(color, 1)); // transparent
+                g.addColorStop(0.1, hexToRgbA(color, 0)); // transparent
             }
             ctx.strokeStyle = g;
             ctx.lineWidth = this.width;
