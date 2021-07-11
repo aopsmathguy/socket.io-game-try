@@ -132,29 +132,6 @@ function combineObj(prev, obj)
         return obj;
     }
 }
-function unroundNum(obj){
-    var out;
-    if (obj == null)
-    {
-        return;
-    }
-    if (typeof obj == 'object')
-    {
-        out = {};
-        for (var field in obj) {
-            out[field] = unroundNum(obj[field]);
-        }
-    }
-    else if (typeof obj == 'number')
-    {
-        out = obj/1000;
-    }
-    else
-    {
-        out = obj;
-    }
-    return out;
-}
 lastMsg = null;
 socket.on('gameState', (msg) => {
     
@@ -166,7 +143,6 @@ socket.on('gameState', (msg) => {
     tickInterval = (tickIntervals[tickIntervals.length - 1] - tickIntervals[0])/(tickIntervals.length - 1);
     msg = combineObj(lastMsg, msg);
     lastMsg = msg;
-    msg = unroundNum(msg);
     
     for(var i in msg.weapons)
     {
