@@ -760,12 +760,13 @@ var controlsBundle = {
     sendControls : function(){
         return initialScreen.style.display == 'none' && gameStates.length > 0 && controlId && gameStates[0].players[controlId] && gameStates[0].players[controlId].alive;
     },
-    importantKeys : [87,83,68,65,70,71,82,88,81],
+    importantKeys : [87,83,68,65,70,71,82,88,81,16],
     keyMapper : {
         87 : 87,
         83 : 83,
         68 : 68,
         65 : 65,
+        16 : 16,
         70 : 70,
         71 : 71,
         82 : 82,
