@@ -966,6 +966,10 @@ var GameState = function(time, players, weapons) {
         }
         if (dashing){
             player.vel = (new Vector(player.dashSpeed,0)).rotate(player.ang);
+            if (player.weapon != -1) {
+                var weapon = this.weapons[player.weapon];
+                player.vel = player.vel.multiply(weapon.walkSpeedMult);
+            }
         }
         else{
             var targetVel = new Vector((playerControls.keys[68] ? 1 : 0) + (playerControls.keys[65] ? -1 : 0), (playerControls.keys[83] ? 1 : 0) + (playerControls.keys[87] ? -1 : 0));
