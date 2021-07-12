@@ -1250,9 +1250,9 @@ var Player = function(xStart, yStart, name, color, id, prim, sec, state) {
     setIfUndefined(this, 'vel', new Vector(0, 0));//
     
     setIfUndefined(this, 'lastDashTime', 0);//
-    setIfUndefined(this, 'dashDur', 1000);//
-    setIfUndefined(this, 'dashRchrg', 2500);//
-    setIfUndefined(this, 'dashSpeed', 15);//
+    setIfUndefined(this, 'dashDur', 300);//
+    setIfUndefined(this, 'dashRchrg', 3000);//
+    setIfUndefined(this, 'dashSpeed', 18);//
     
     setIfUndefined(this, 'ang', 0);//
 
