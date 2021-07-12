@@ -453,7 +453,7 @@ var gameState;
 var bots;
 var controls = {
     playerControls : {},
-    importantKeys : new Set([87,83,68,65,70,71,82,88,81]),
+    importantKeys : new Set([87,83,68,65,70,71,82,88,81,16]),
     keyDown : function(id, keycode)
     {
         if (typeof keycode == 'number' && this.importantKeys.has(keycode) && this.playerControls[id] && gameState.players[id] && gameState.players[id].alive) {
@@ -954,20 +954,33 @@ var GameState = function(time, players, weapons) {
         var playerControls = controls.playerControls[k];
         var player = this.players[k];
         player.ang = playerControls.ang || 0;
-        
-        var targetVel = new Vector((playerControls.keys[68] ? 1 : 0) + (playerControls.keys[65] ? -1 : 0), (playerControls.keys[83] ? 1 : 0) + (playerControls.keys[87] ? -1 : 0));
-        if (targetVel.magnitude() != 0) {
-            targetVel = targetVel.multiply(this.players[k].speed / targetVel.magnitude());
+        var dashing;
+        if (playerControls.keys[16] && this.time - player.lastDashTime > player.dashDur + player.dashRchrg)
+        {
+            player.lastDashTime = this.time;
+            dashing = true;
         }
-        if (player.weapon != -1) {
-            var weapon = this.weapons[player.weapon];
-            targetVel = targetVel.multiply(weapon.walkSpeedMult);
-            if (weapon.lastFireTime != 0) {
-                targetVel = targetVel.multiply(weapon.shootWalkSpeedMult);
+        else if (this.time - player.lastDashTime < player.dashDur)
+        {
+            dashing = true;
+        }
+        if (dashing){
+            player.vel = (new Vector(player.dashSpeed,0)).rotate(player.ang);
+        }
+        else{
+            var targetVel = new Vector((playerControls.keys[68] ? 1 : 0) + (playerControls.keys[65] ? -1 : 0), (playerControls.keys[83] ? 1 : 0) + (playerControls.keys[87] ? -1 : 0));
+            if (targetVel.magnitude() != 0) {
+                targetVel = targetVel.multiply(this.players[k].speed / targetVel.magnitude());
             }
+            if (player.weapon != -1) {
+                var weapon = this.weapons[player.weapon];
+                targetVel = targetVel.multiply(weapon.walkSpeedMult);
+                if (weapon.lastFireTime != 0) {
+                    targetVel = targetVel.multiply(weapon.shootWalkSpeedMult);
+                }
+            }
+            player.vel = player.vel.add(targetVel.subtract(player.vel).multiply(player.agility));
         }
-        player.vel = player.vel.add(targetVel.subtract(player.vel).multiply(player.agility));
-
         
 
     }
@@ -1235,7 +1248,12 @@ var Player = function(xStart, yStart, name, color, id, prim, sec, state) {
 
     setIfUndefined(this, 'pos', new Vector(xStart, yStart));//
     setIfUndefined(this, 'vel', new Vector(0, 0));//
-
+    
+    setIfUndefined(this, 'lastDashTime', 0);//
+    setIfUndefined(this, 'dashDur', 1000);//
+    setIfUndefined(this, 'dashRchrg', 2500);//
+    setIfUndefined(this, 'dashSpeed', 15);//
+    
     setIfUndefined(this, 'ang', 0);//
 
     setIfUndefined(this, 'punchReach', 20);
