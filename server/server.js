@@ -1238,7 +1238,7 @@ var Player = function(xStart, yStart, name, color, id, prim, sec, state) {
     
     
     setIfUndefined(this, 'speed', 5);
-    setIfUndefined(this, 'agility', 0.2);
+    setIfUndefined(this, 'agility', 0.07);
     setIfUndefined(this, 'radius', 20);//
     setIfUndefined(this, 'reachDist', 50);//
 
@@ -1250,8 +1250,8 @@ var Player = function(xStart, yStart, name, color, id, prim, sec, state) {
     setIfUndefined(this, 'vel', new Vector(0, 0));//
     
     setIfUndefined(this, 'lastDashTime', 0);//
-    setIfUndefined(this, 'dashDur', 300);//
-    setIfUndefined(this, 'dashRchrg', 3000);//
+    setIfUndefined(this, 'dashDur', 220);//
+    setIfUndefined(this, 'dashRchrg', 4000);//
     setIfUndefined(this, 'dashSpeed', 18);//
     
     setIfUndefined(this, 'ang', 0);//
