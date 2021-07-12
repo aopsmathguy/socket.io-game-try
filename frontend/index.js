@@ -760,7 +760,7 @@ var controlsBundle = {
     sendControls : function(){
         return initialScreen.style.display == 'none' && gameStates.length > 0 && controlId && gameStates[0].players[controlId] && gameStates[0].players[controlId].alive;
     },
-    importantKeys : [87,83,68,65,70,71,82,88,81,16],
+    importantKeys : new Set([87,83,68,65,70,71,82,88,81,16]),
     keyMapper : {
         87 : 87,
         83 : 83,
@@ -785,7 +785,7 @@ var controlsBundle = {
             var key = this.keyMapper[e.keyCode];
             if (!this.keys[key]) {
                 this.keys[key] = true;
-                if (this.sendControls() && this.importantKeys.includes(key))
+                if (this.sendControls() && this.importantKeys.has(key))
                     socket.emit('keydown', key);
             }
         }).bind(this));
@@ -793,7 +793,7 @@ var controlsBundle = {
             var key = this.keyMapper[e.keyCode];
             if (this.keys[key]) {
                 this.keys[key] = false;
-                if (this.sendControls() && this.importantKeys.includes(key))
+                if (this.sendControls() && this.importantKeys.has(key))
                     socket.emit('keyup', key);
             }
         }).bind(this));
