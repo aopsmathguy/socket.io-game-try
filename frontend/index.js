@@ -63,7 +63,7 @@ for (var i in uiImages)
 
     });
 }
-var viableWeapons;
+var constants;
 var ammoTypes;
 socket.on('init', (msg) => {
     timeDifference = msg.data - Date.now();
@@ -77,10 +77,10 @@ socket.on('init', (msg) => {
     gridWidth = msg.gridWidth;
 
     framesPerTick = msg.framesPerTick;
-    viableWeapons = msg.viableWeapons;
+    constants = msg.constants;
     ammoTypes = msg.ammoTypes;
-    loadout.startNameToId(viableWeapons);
-    loadout.updateWeaponClass(viableWeapons);
+    loadout.startNameToId(constants);
+    loadout.updateWeaponClass(constants);
     loadout.updateElem();
 
     joinGameBtn.hidden = false;
@@ -145,7 +145,7 @@ socket.on('gameState', (msg) => {
     for(var i in msg.weapons)
     {
         var weapon = msg.weapons[i];
-        Object.assign(weapon, viableWeapons[weapon.gunStats]);
+        Object.assign(weapon, constants[weapon.gunStats]);
         weapon.type = "Gun";
     }
     gameStates.push(msg);
@@ -224,19 +224,19 @@ var loadout = {
     secondary : -1,
     nameToId : {},
     weaponClasses : {},
-    startNameToId : function(viableWeapons)
+    startNameToId : function(constants)
     {
-        for (var i = 0, l = viableWeapons.length; i < l; i++)
+        for (var i = 0, l = constants.length; i < l; i++)
         {
-            this.nameToId[viableWeapons[i].name] = i;
+            this.nameToId[constants[i].name] = i;
         }
     },
-    updateWeaponClass : function(viableWeapons)
+    updateWeaponClass : function(constants)
     {
         this.weaponClasses = {};
-        for (var i = 0, l = viableWeapons.length; i < l; i++)
+        for (var i = 0, l = constants.length; i < l; i++)
         {
-            var weapon = viableWeapons[i];
+            var weapon = constants[i];
             var weaponClass = weapon.weaponClass;
             if (!this.weaponClasses[weaponClass])
             {
@@ -369,7 +369,7 @@ var loadout = {
                        }
                    }
                }
-               currentLoad.innerHTML = viableWeapons[this.primary].name + " | " + viableWeapons[this.secondary].name;
+               currentLoad.innerHTML = constants[this.primary].name + " | " + constants[this.secondary].name;
            }).bind(this);
            update();
            radio.addEventListener('change', update.bind(this));
