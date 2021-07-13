@@ -1681,6 +1681,29 @@ var Obstacle = function() {
         }
         return pointOfInter;
     }
+    this.insideOf = function(point) {
+        // ray-casting algorithm based on
+        // https://wrf.ecse.rpi.edu/Research/Short_Notes/pnpoly.html/pnpoly.html
+        if (this.radius < point.distanceTo(this.center)) {
+            return false;
+        }
+        var x = point.x,
+            y = point.y;
+
+        var inside = false;
+        for (var i = 0, j = this.vs.length - 1; i < this.vs.length; j = i++) {
+            var xi = this.vs[i].x,
+                yi = this.vs[i].y;
+            var xj = this.vs[j].x,
+                yj = this.vs[j].y;
+
+            var intersect = ((yi > y) != (yj > y)) &&
+                (x < (xj - xi) * (y - yi) / (yj - yi) + xi);
+            if (intersect) inside = !inside;
+        }
+
+        return inside;
+    }
 }
 var Vector = function(x, y) {
     this.type = "Vector";
