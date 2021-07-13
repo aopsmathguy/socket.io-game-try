@@ -104,7 +104,7 @@ var Bot = function(state)
             var idx = -1;
             var visible = [];
             for (var i in trimmedGameState.players){
-                if (this.state.players[i].pos.distanceTo(player.pos) < 100 || !underCover(this.state.players[i].pos)){
+                if (this.state.players[i].pos.distanceTo(player.pos) < 200 || !underCover(this.state.players[i].pos)){
                     visible.push(i);
                 }
             }
