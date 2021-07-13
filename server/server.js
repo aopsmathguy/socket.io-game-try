@@ -102,8 +102,15 @@ var Bot = function(state)
             var trimmedGameState = gameStateEmitter.trimToPlayer(this.state, this.state, this.playerId);
             var minDist = 2300;
             var idx = -1;
-            for (var i in trimmedGameState.players)
+            var visible = [];
+            for (var i in trimmedGameState.players){
+                if (this.state.players[i].pos.distanceTo(player.pos) < 100 || !underCover(this.state.players[i].pos)){
+                    visible.push(i);
+                }
+            }
+            for (var j = 0; j < visible.length; j++)
             {
+                var i = visible[j];
                 if (i == this.playerId || !this.state.players[i].alive)
                 {
                     continue;
@@ -1137,7 +1144,16 @@ var inObjects = function(v) {
     });
     return out;
 }
-
+var underCover = function(v) {
+    var out = false;
+    loopThroughObstacles("cvr",v, (obstacle) => {
+        if (obstacle.insideOf(v)) {
+            out = true;
+            return;
+        }
+    });
+    return out;
+}
 
 var makeObstacles = function() {
     constants.start();
