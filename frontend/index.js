@@ -1883,7 +1883,7 @@ var linearInterpolator = {
         giveMethods(out);
         out.time = this.linearValue(left.time,right.time,displayTime,left.time,right.time);
         for (var i in out.players) {
-            if (left.players[i] == undefined || right.players[i] == undefined || !left.players[i].alive) {
+            if (left.players == undefined || right.players == undefined || left.players[i] == undefined || right.players[i] == undefined || !left.players[i].alive) {
                 continue;
             }
             out.players[i].pos = this.linearPosition(left.players[i].pos, right.players[i].pos, displayTime, left.time, right.time);
