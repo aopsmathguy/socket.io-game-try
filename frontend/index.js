@@ -893,7 +893,8 @@ var GameState = function() {
                         visible.push(idx);
                     }
                 }
-                for (var idx in visible) {
+                for (var i = 0; i < visible.length; i ++) {
+                    var idx = visible[i];
                     if (this.players[idx].alive && idx != controlId){
                         this.displayName(idx);
                     }
@@ -903,7 +904,8 @@ var GameState = function() {
                         this.displayPlayer(idx);
                 }
 
-                for (var idx in visible) {
+                for (var i = 0; i < visible.length; i ++) {
+                    var idx = visible[i];
                     if (this.players[idx].alive && idx != controlId){
                         this.players[idx].drawHealthBar(idx);
                     }
