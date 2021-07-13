@@ -887,19 +887,26 @@ var GameState = function() {
                 loopThroughDisplayObstacles("wall",drawer.scroll, (obstacle) => {
                     obstacle.display();
                 });
-
-                for (var idx in this.players) {
-                    if (this.players[idx].alive && idx != controlId)
+                var visible = [];
+                for (var idx in this.players){
+                    if (!underCover(this.players[idx].pos)){
+                        visible.push(idx);
+                    }
+                }
+                for (var idx in visible) {
+                    if (this.players[idx].alive && idx != controlId){
                         this.displayName(idx);
+                    }
                 }
                 for (var idx in this.players) {
                     if (this.players[idx].alive)
                         this.displayPlayer(idx);
                 }
 
-                for (var idx in this.players) {
-                    if (this.players[idx].alive && idx != controlId)
+                for (var idx in visible) {
+                    if (this.players[idx].alive && idx != controlId){
                         this.players[idx].drawHealthBar(idx);
+                    }
                 }
                 loopThroughDisplayObstacles("cvr",drawer.scroll, (obstacle) => {
                     obstacle.display();
@@ -1407,6 +1414,16 @@ var GameState = function() {
     this.toString = function() {
         return JSON.stringify(this);
     }
+}
+var underCover = function(v) {
+    var out = false;
+    loopThroughObstacles("cvr",v, (obstacle) => {
+        if (!out && obstacle.insideOf(v)) {
+            out = true;
+            return;
+        }
+    });
+    return out;
 }
 var makeObstacles = function() {
     drawer = new Drawer();
