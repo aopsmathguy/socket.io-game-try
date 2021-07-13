@@ -873,31 +873,15 @@ var GameState = function(time, players, weapons) {
         color = (/^#([A-Fa-f0-9]{3}){1,2}$/.test(color) ? color : "#fcc976");
         name = name.substring(0,18);
         if (player) {
-            player.pos = startPos;
-            player.vel = new Vector(0,0);
-            player.health = 100;
-            player.alive = true;
-            player.color = color;
-            player.name = (name.trim() != "" ? name.trim() : player.name);
-            player.killstreak = 0;
-            player.points = 0;
-
-
-            var idx1 = this.addWeapon(new Gun(0,0,primary , id));
-            var idx2 = this.addWeapon(new Gun(0,0,secondary , id));
-
-            player.weapon = idx1;
-            player.weapons = [idx1,idx2];
-            player.slot = 0;
-
+            this.players[id] = new Player(startPos.x, startPos.y, (name.trim() != "" ? name.trim() : player.name), color, id, primary, secondary, this);
         } else {
             this.players[id] = new Player(startPos.x, startPos.y, (name.trim() != "" ? name.trim() : words.randomName()), color, id, primary, secondary, this);
-            controls[id] = {
-                keys: [],
-                mouseDown: false
-            };
             emitNewActivity(this.players[id].name, "join");
         }
+        controls[id] = {
+            keys: [],
+            mouseDown: false
+        };
     }
     this.removePlayer = function(id)
     {
