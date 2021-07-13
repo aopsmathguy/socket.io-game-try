@@ -1,8 +1,5 @@
 const gameWidth = 3000;
 const gameHeight = 3000;
-const numOb = 45;
-const numHouse1 = 8;
-const numHouse2 = 8;
 const gridWidth = 250;
 const framesPerTick = 2;
 
@@ -20,13 +17,12 @@ io.on('connection', client => {
         data: Date.now(),
         id: client.inGameId,
         obstacles: obstacles,
-        borderObstacles: borderObstacles,
         gameWidth: gameWidth,
         gameHeight: gameHeight,
         gridWidth: gridWidth,
         framesPerTick: framesPerTick,
-        viableWeapons: viableWeapons.weapons,
-        ammoTypes : viableWeapons.ammo
+        constants: constants.weapons,
+        ammoTypes : constants.ammo
     });
     client.emit('gameState', trimObject(gameState));
     client.on('new player', function(msg){
@@ -66,24 +62,24 @@ io.on('connection', client => {
 var Bot = function(state)
 {
     this.state = state;
-    
-    
+
+
     this.updateInterval = 500;
     this.playerId = this.state.generateId();
-    
+
     this.name = "";
     this.color = getRandomColor();
     this.primary = 8;
     this.secondary = 1;
-    
+
     this.lastKeyUpdate = -1;
     this.keyUpdatePeriod = 800*(2 + 1*Math.random());
-    
+
     this.lastMouseUpdate = -1;
     this.mouseUpdate = 150*(2 + 1*Math.random());
     this.targetAng = 0;
     this.prevTargetAng = 0;
-    
+
     this.lastDeathTime = -1;
     this.direction = 0;
     this.update = function()
@@ -145,32 +141,32 @@ var Bot = function(state)
             if (this.state.time - this.lastMouseUpdate > this.mouseUpdate)
             {
                 this.lastMouseUpdate = this.state.time;
-                
+
                 if (idx != -1)
                 {
                     this.prevTargetAng = this.targetAng;
                     this.targetAng = otherPredPos.angTo(predPos) + 0.3*(Math.random()- 0.5);
-                    
+
                 }
                 else
                 {
                     this.prevTargetAng = this.targetAng;
                 }
-                
-                
+
+
             }
             if (this.state.time - this.lastMouseClickUpdate > this.mouseClickUpdate)
             {
-                this.mouseClickUpdate = (1.5+ 0.75*Math.random()) * 60000/viableWeapons.weapons[this.primary].firerate * Math.min(viableWeapons.weapons[this.primary].auto, 3);
+                this.mouseClickUpdate = (1.5+ 0.75*Math.random()) * 60000/constants.weapons[this.primary].firerate * Math.min(constants.weapons[this.primary].auto, 3);
                 this.lastMouseClickUpdate = this.state.time;
-                
+
                 if (idx != -1)
                 {
                     var inBetween = false;
                     var width = 2500;
                     var height = width * 9/16;
-                    loopThroughObstaclesRect(player.pos, (obstacle) => {
-                        if (!inBetween && obstacle.intersectable && obstacle.intersectSegment(predPos, otherPredPos) != -1)
+                    loopThroughObstaclesRect("wall",player.pos, (obstacle) => {
+                        if (!inBetween && obstacle.intersectSegment(predPos, otherPredPos) != -1)
                         {
                             inBetween = true;
                             return;
@@ -207,12 +203,12 @@ var Bot = function(state)
                     }
                     controls.mouseUp(this.playerId);
                 }
-                
+
             }
         }
-        
-        
-        
+
+
+
         var diff = (this.targetAng - this.prevTargetAng + 3* Math.PI) %(2*Math.PI) - Math.PI;
         this.mouseAng(this.prevTargetAng + (this.state.time - this.lastMouseUpdate)/this.mouseUpdate * diff);
     }
@@ -227,7 +223,7 @@ var Bot = function(state)
         {
             controls.playerControls[this.playerId].keys[65] = false;
             controls.playerControls[this.playerId].keys[68] = false;
-            
+
             controls.playerControls[this.playerId].keys[87] = false;
             controls.playerControls[this.playerId].keys[83] = false;
             return;
@@ -247,7 +243,7 @@ var Bot = function(state)
             controls.playerControls[this.playerId].keys[65] = false;
             controls.playerControls[this.playerId].keys[68] = false;
         }
-        
+
         if (Math.sin(ang) > 0.38268343236)
         {
             controls.playerControls[this.playerId].keys[87] = false;
@@ -267,22 +263,23 @@ var Bot = function(state)
     this.spawn = function()
     {
         this.primary = 0;
-        while (viableWeapons.weapons[this.primary].weaponClass == 'Secondary')
+        while (constants.weapons[this.primary].weaponClass == 'Secondary')
         {
-            this.primary = Math.floor(viableWeapons.weapons.length * Math.random());
+            this.primary = Math.floor(constants.weapons.length * Math.random());
         }
         this.secondary = 4;
-        while (viableWeapons.weapons[this.secondary].weaponClass != 'Secondary')
+        while (constants.weapons[this.secondary].weaponClass != 'Secondary')
         {
-            this.secondary = Math.floor(viableWeapons.weapons.length * Math.random());
+            this.secondary = Math.floor(constants.weapons.length * Math.random());
         }
         this.lastMouseClickUpdate = this.state.time;
         this.mouseClickUpdate = 1000;
         this.state.addPlayer(this.playerId, this.name, this.color, this.primary, this.secondary);
     }
 }
-const viableWeapons = {
+const constants = {
     weapons : [],
+    structures : [],
     ammo : {
         0 : {
             n : "12 gauge",
@@ -324,7 +321,12 @@ const viableWeapons = {
             g : "#000",
             b : "#ff9f73"
         }
-    },  
+    },
+    makeAllOb : function(){
+      for (var i = 0; i < this.structures.length; i++){
+        this.structures[i].createAllObs();
+      }
+    },
     start : function()
     {
         this.weapons = [
@@ -332,15 +334,15 @@ const viableWeapons = {
             new GunStats('Glock 18', 'Secondary', 35, Infinity, 780, 1, 17, 1500, true, 30, 17, 7, 500, 150, 750, 0.15, 0.09, 0.9, 7, 0.9, 0, 0.95, 1, '#444','bullet',1, 5, 60, 32, 3, 0, 3, 0),
             new GunStats('Redhawk', 'Secondary', 40, 1, 300, 1, 6, 1700,true, 50, 40, 10, 700, 200, 975, 0, 0.2, 0.9, 10, 0.9, 0.5, 0.95, 0.6, '#ff0','bullet',4, 5, 60,32, 3, 0, 3, 0),
             new GunStats('Executioner', 'Secondary', 35, 1, 450, 14, 6, 2900,true, 22.5, 5, 3.5, 330, 200, 450, 0.25, 0, 0.9, 10, 0.9, 0.5, 0.95, 0.6, '#222','bullet',0, 3, 60,32, 3, 0, 3, 0),
-            
+
             new GunStats('Stevens DB', 'Shotgun', 90, 1, 450, 8, 2, 2200, true, 26.25, 15, 10, 350, 56, 525, 0.2, 0, 0.83, 10, 0.9, 1.5,1, 0.7, '#888', 'bullet',0,4,60,2,30, 3, 53, -2),
             new GunStats('M870', 'Shotgun', 105, 1, 80, 8, 5, 870, false, 26.25, 16, 12, 400, 88, 600, 0.19, 0, 0.83, 10, 0.9, 1.5,1, 0.3, '#555', 'bullet',0,4,60,4,28, 3, 57, -2),
             new GunStats('SPAS-12', 'Shotgun', 110, 1, 120, 8, 9, 750, false, 30, 9, 1, 650, 100, 825, 0.12, 0, 0.83, 10, 0.9, 1.5,0.95, 0.3, '#333', 'bullet',0,4,60,4,28, 3, 58, -2),
-            
+
             new GunStats('MAC-10', 'SMG', 50, Infinity, 1200, 1, 32, 1600, true, 26.25, 16, 10, 300, 150, 637.5, 0.1, 0.06, 0.9, 3, 0.9, 0.4, 0.97, 0.8, '#333','bullet', 1,5,60,12,22, 3, 40, -2),
             new GunStats('MP5', 'SMG',75, Infinity, 750, 1, 30, 1900, true, 33.75, 16, 8, 400, 270, 825, 0, 0.07, 0.91, 4, 0.9, 0.4, 0.95, 0.65, '#333','bullet', 1,5,60,6,26, 3, 51, -2),
             new GunStats('M1A1', 'SMG',90, Infinity, 720, 1, 50, 3100, true, 28, 17, 10, 450, 300, 900, 0, 0.04, 0.96, 5, 0.9, 0.3, 0.9, 0.5, '#333', 'bullet', 2,5,60,10,23, 3,48, -9),
-            
+
             new GunStats('AK-47', 'Assault',95, Infinity, 600, 1, 30, 2500, true, 41.25, 17, 4, 600, 400, 1100, 0, 0.15, 0.85, 6, 0.9, 0.48, 0.93, 0.5, '#333', 'bullet',4,6,60,8, 24, 3, 50, -2),
             new GunStats('M4A1', 'Assault', 90, Infinity, 720, 1, 30, 2200, true, 45, 14, 1, 550, 270, 975, 0, 0.07, 0.9, 5, 0.9, 0.48, 0.93, 0.5, '#333', 'bullet',3,6,60,12,20, 3,45, -2),
             new GunStats('M4', 'Assault', 90, 3, 950, 1, 30, 2200, true, 45, 14, 1, 550, 270, 975, 0, 0.035, 0.95, 5, 0.9, 0.48, 0.93, 0.5, '#333', 'bullet',3,6,60,12,20, 3,45, -2),
@@ -349,9 +351,49 @@ const viableWeapons = {
 
             new GunStats('Remington 700','Sniper', 112, 1, 65, 1, 5, 3700, true, 52.5, 70, 20, 830, 240, 1875, 0, 0.3, 0.83, 14, 0.9, 2.5, 0.9, 0.6, '#333', 'bullet',5,8,170,4,28, 3, 60, -2),
             new GunStats('AWP', 'Sniper',125, 1, 50, 1, 3, 3000, true, 60, 106, 40, 400, 100, 1875, 0, 0.3, 0.83, 16, 0.9, 3, 0.9, 0.6, '#333', 'bullet',5,10,200,4,28, 3, 60, -2),
-            
+
             new GunStats('Crossbow', 'Other',70, 1, 9000, 1, 1, 2400, false,18.75, 100, 0, 830, 240, 1500, 0, 0.3, 0.83, 14, 0.9, 3, 0.9, 1, '#333', 'arrow',7,6,60,12,20, 3, 40, -2),
             new GunStats('Laser', 'Other',90, 1, 120, 1, 6, 2700, true,100, 40, 6, 700, 200, 2500, 0, 0, 0.91, 20, 0.9, 0, 0.9, 0.4, '#f00','laser',6, 6,60,12,20, 3, 45, -2)
+        ];
+        this.structures = [
+            new Structure(
+              "rock",
+              45,
+              new Obstacle([(new Vector(20,0)).rotate(0),(new Vector(20,0)).rotate(Math.PI/3),(new Vector(20,0)).rotate(2 * Math.PI/3),(new Vector(20,0)).rotate(3 * Math.PI/3),(new Vector(20,0)).rotate(4 * Math.PI/3),(new Vector(20,0)).rotate(5 * Math.PI/3)],'#000',false),
+              [],
+              [
+                new Obstacle([(new Vector(20,0)).rotate(0),(new Vector(20,0)).rotate(Math.PI/3),(new Vector(20,0)).rotate(2 * Math.PI/3),(new Vector(20,0)).rotate(3 * Math.PI/3),(new Vector(20,0)).rotate(4 * Math.PI/3),(new Vector(20,0)).rotate(5 * Math.PI/3)],'#B1B1B1',true)
+              ],
+              [],
+              [0], 2.5, 3.5
+            ),
+            new Structure(
+              "container1",
+              8,
+              new Obstacle([new Vector(-52,-100),new Vector(52,-100),new Vector(52,100),new Vector(-52,100)],'#008',false),
+              [
+                new Obstacle([new Vector(-52,-100),new Vector(52,-100),new Vector(52,100),new Vector(-52,100)],'#008',false)
+              ],
+              [
+                new Obstacle([new Vector(-40,-100),new Vector(-52,-100),new Vector(-52,100),new Vector(-40,100)],'#008',true),
+                new Obstacle([new Vector(40,-100),new Vector(52,-100),new Vector(52,100),new Vector(40,100)],'#008',true)
+              ],
+              [],
+              [0,Math.PI/2,Math.PI,3*Math.PI/2],1,1
+            ),
+            new Structure(
+              "container2",
+              8,
+              new Obstacle([new Vector(-52,-100),new Vector(52,-100),new Vector(52,100),new Vector(-52,100)],'#800',false),
+              [
+                new Obstacle([new Vector(-52,-100),new Vector(52,-100),new Vector(52,100),new Vector(-52,100)],'#800',false)
+              ],
+              [
+                new Obstacle([new Vector(-40,-100),new Vector(-52,-100),new Vector(-52,100),new Vector(52,100),new Vector(52,-100), new Vector(40, -100),new Vector(40,88),new Vector(-40,88)],'#800',true)
+              ],
+              [],
+              [0,Math.PI/2,Math.PI,3*Math.PI/2],1,1
+            )
         ];
     }
 };
@@ -371,38 +413,39 @@ var findSpawnPosition = function(objects) {
 }
 var obstacleSector = function(point) {
     var out = [Math.floor(point.x / gridWidth), Math.floor(point.y / gridWidth)];
-    out[0] = Math.max(Math.min(out[0],obstacles.length - 1), 0);
-    out[1] = Math.max(Math.min(out[1],obstacles[0].length - 1), 0);
+    out[0] = Math.max(Math.min(out[0],obstacles.boxes.length - 1), 0);
+    out[1] = Math.max(Math.min(out[1],obstacles.boxes[0].length - 1), 0);
     return out;
 }
-var loopThroughObstacles = function(objectPos, inner) {
+var loopThroughObstacles = function(type, objectPos, inner) {
     var sector = obstacleSector(objectPos);
-    if (sector[0] < 2)
-    {
-        inner(borderObstacles[0]);
+    if (type == "wall"){
+      if (sector[0] < 2)
+      {
+          inner(obstacles.brdr[0]);
+      }
+      else if (sector[0] > obstacles.boxes.length - 3)
+      {
+          inner(obstacles.brdr[1]);
+      }
+      if (sector[1] < 2)
+      {
+          inner(obstacles.brdr[2]);
+      }
+      else if (sector[1] > obstacles.boxes[0].length - 3)
+      {
+          inner(obstacles.brdr[3]);
+      }
     }
-    else if (sector[0] > obstacles.length - 3)
-    {
-        inner(borderObstacles[1]);
-    }
-    if (sector[1] < 2)
-    {
-        inner(borderObstacles[2]);
-    }
-    else if (sector[1] > obstacles[0].length - 3)
-    {
-        inner(borderObstacles[3]);
-    }
-
     for (var i = sector[0] - 1; i < sector[0] + 2; i++) {
-        if (i < 0 || i >= obstacles.length) {
+        if (i < 0 || i >= obstacles[type].length) {
             continue;
         }
         for (var j = sector[1] - 1; j < sector[1] + 2; j++) {
-            if (j < 0 || j >= obstacles[i].length) {
+            if (j < 0 || j >= obstacles[type][i].length) {
                 continue;
             }
-            var objectsToLoop = obstacles[i][j];
+            var objectsToLoop = obstacles[type][i][j];
             for (var idx in objectsToLoop) {
                 inner(objectsToLoop[idx]);
             }
@@ -410,45 +453,58 @@ var loopThroughObstacles = function(objectPos, inner) {
     }
 }
 
-var loopThroughObstaclesRect = function(objectPos, inner, width, height) {
+var loopThroughObstaclesRect = function(type, objectPos, inner, width, height) {
     var sector = obstacleSector(objectPos);
-    
+
     var maxWidthGrid = Math.ceil(width/2 /gridWidth);
     var maxHeightGrid = Math.ceil(height/2 /gridWidth);
-    if (sector[0] < 1 + maxWidthGrid)
-    {
-        inner(borderObstacles[0]);
-    }
-    else if (sector[0] > obstacles.length - 2 - maxWidthGrid)
-    {
-        inner(borderObstacles[1]);
-    }
-    if (sector[1] < 1 + maxHeightGrid)
-    {
-        inner(borderObstacles[2]);
-    }
-    else if (sector[1] > obstacles[0].length - 2 - maxHeightGrid)
-    {
-        inner(borderObstacles[3]);
+    if (type == "wall"){
+      if (sector[0] < 1 + maxWidthGrid)
+      {
+          inner(obstacles.brdr[0]);
+      }
+      else if (sector[0] > obstacles.boxes.length - 2 - maxWidthGrid)
+      {
+          inner(obstacles.brdr[1]);
+      }
+      if (sector[1] < 1 + maxHeightGrid)
+      {
+          inner(obstacles.brdr[2]);
+      }
+      else if (sector[1] > obstacles.boxes[0].length - 2 - maxHeightGrid)
+      {
+          inner(obstacles.brdr[3]);
+      }
     }
 
     for (var i = sector[0] - maxWidthGrid; i < sector[0] + 1 + maxWidthGrid; i++) {
-        if (i < 0 || i >= obstacles.length) {
+        if (i < 0 || i >= obstacles[type].length) {
             continue;
         }
         for (var j = sector[1] - maxHeightGrid; j < sector[1] + 1 + maxHeightGrid; j++) {
-            if (j < 0 || j >= obstacles[i].length) {
+            if (j < 0 || j >= obstacles[type][i].length) {
                 continue;
             }
-            var objectsToLoop = obstacles[i][j];
+            var objectsToLoop = obstacles[type][i][j];
             for (var idx in objectsToLoop) {
                 inner(objectsToLoop[idx]);
             }
         }
     }
 }
-var obstacles;
-var borderObstacles;
+var obstacles = {
+  boxes : [],
+  grd : [],
+  wall : [],
+  cvr : [],
+  brdr : [],
+  add : function(type, ob)
+  {
+    var s = obstacleSector(ob.center);
+    var addTo = this[type][s[0]][s[1]];
+    addTo[addTo.length] = ob;
+  }
+};
 var gameState;
 var bots;
 var controls = {
@@ -493,7 +549,7 @@ var controls = {
             this.playerControls[id].keyPressFrame = {};
             this.playerControls[id].mouseDown = false;
             this.playerControls[id].mouseDownFrame = false;
-            
+
         }
     },
     resetAll : function(){
@@ -501,7 +557,7 @@ var controls = {
         {
             this.playerControls[i].keyPressFrame = {};
             this.playerControls[i].mouseDownFrame = false;
-            
+
         }
     }
 };
@@ -712,14 +768,14 @@ var GameState = function(time, players, weapons) {
     setIfUndefined(this, 'time', time);//
     setIfUndefined(this, 'players', players);//
     setIfUndefined(this, 'usedPlayerIds',  new Set());//
-    
+
     setIfUndefined(this, 'weapons', weapons);//
     setIfUndefined(this, 'weaponsLength', 0);//
     setIfUndefined(this, 'weaponsSectors', []);//
-    
+
     setIfUndefined(this, 'bullets', {});//
     setIfUndefined(this, 'bulletsLength', 0);//
-    
+
     setIfUndefined(this, 'minimapInfo', undefined);//
     setIfUndefined(this, 'leaderboard', undefined);//
     this.addBullet = function(bull)
@@ -732,7 +788,7 @@ var GameState = function(time, players, weapons) {
         delete this.bullets[idx];
     }
     this.bulletsStep = function() {
-        
+
         for (var i in this.bullets) {
             this.bullets[i].step(this);
             if (this.bullets[i].delete) {
@@ -779,9 +835,9 @@ var GameState = function(time, players, weapons) {
         {
             return;
         }
-        if (!(typeof name == "string" && color && 
-              typeof primary == "number" && Number.isInteger(primary) && primary >= 0 && primary < viableWeapons.weapons.length && viableWeapons.weapons[primary].weaponClass != "Secondary" &&
-              typeof secondary == "number" && Number.isInteger(secondary) && secondary >= 0 && secondary < viableWeapons.weapons.length && viableWeapons.weapons[secondary].weaponClass == "Secondary"))
+        if (!(typeof name == "string" && color &&
+              typeof primary == "number" && Number.isInteger(primary) && primary >= 0 && primary < constants.weapons.length && constants.weapons[primary].weaponClass != "Secondary" &&
+              typeof secondary == "number" && Number.isInteger(secondary) && secondary >= 0 && secondary < constants.weapons.length && constants.weapons[secondary].weaponClass == "Secondary"))
         {
             return;
         }
@@ -789,7 +845,7 @@ var GameState = function(time, players, weapons) {
         {
             return;
         }
-        
+
         controls.playerControls[id] = {};
         controls.playerControls[id].mouseDown = false;
         controls.playerControls[id].keys = {};
@@ -807,8 +863,8 @@ var GameState = function(time, players, weapons) {
             player.name = (name.trim() != "" ? name.trim() : player.name);
             player.killstreak = 0;
             player.points = 0;
-            
-            
+
+
             var idx1 = this.addWeapon(new Gun(0,0,primary , id));
             var idx2 = this.addWeapon(new Gun(0,0,secondary , id));
 
@@ -884,15 +940,12 @@ var GameState = function(time, players, weapons) {
             if (player.alive) {
 
                 this.movementControls(k);
-                
+
                 player.playerStep(this);
                 for (var i = 0; i < 2; i++)
                 {
-                  loopThroughObstacles(player.pos, (obstacle) => {
-                      if (obstacle.intersectable)
-                      {
-                        player.intersect(obstacle);
-                      }
+                  loopThroughObstacles("wall",player.pos, (obstacle) => {
+                      player.intersect(obstacle);
                   });
                 }
                 this.interactControls(k);
@@ -985,7 +1038,7 @@ var GameState = function(time, players, weapons) {
             }
             player.vel = player.vel.add(targetVel.subtract(player.vel).multiply(player.agility));
         }
-        
+
 
     }
     this.interactControls = function(k)
@@ -1025,11 +1078,11 @@ var GameState = function(time, players, weapons) {
         if (playerControls.keyPressFrame[81]) {
             this.players[k].swapWeapon(this, 1 - this.players[k].slot);
         }
-        
-        
-        
+
+
+
         player.snapWeapon(this);
-        
+
         if (player.weapon != -1)
         {
             var weapon = this.weapons[player.weapon];
@@ -1065,7 +1118,7 @@ var GameState = function(time, players, weapons) {
 }
 var inObjects = function(v) {
     var out = false;
-    loopThroughObstacles(v, (obstacle) => {
+    loopThroughObstacles("boxes",v, (obstacle) => {
         if (obstacle.insideOf(v)) {
             out = true;
             return;
@@ -1076,137 +1129,33 @@ var inObjects = function(v) {
 
 
 var makeObstacles = function() {
-    viableWeapons.start();
+    constants.start();
     var players = {};
     var wallThick = 80;
 
-    borderObstacles = [
+    obstacles.brdr = [
         new Obstacle([new Vector(0, 0), new Vector(0, gameHeight), new Vector(-wallThick, gameHeight), new Vector(-wallThick, 0)], '#000', true),
         new Obstacle([new Vector(gameWidth, 0), new Vector(gameWidth, gameHeight), new Vector(gameWidth + wallThick, gameHeight), new Vector(gameWidth + wallThick, 0)], '#000', true),
         new Obstacle([new Vector(0, 0), new Vector(gameWidth, 0), new Vector(gameWidth, -wallThick), new Vector(0, -wallThick)], '#000', true),
         new Obstacle([new Vector(0, gameHeight), new Vector(gameWidth, gameHeight), new Vector(gameWidth, gameHeight + wallThick), new Vector(0, gameHeight + wallThick)], '#000', true)
     ];
-    obstacles = [];
-    for (var i = 0; i < gameWidth / gridWidth; i++) {
-        obstacles[i] = [];
-        for (var j = 0; j < gameHeight / gridWidth; j++) {
-            obstacles[i][j] = [];
+    var width = gameWidth / gridWidth;
+    var height = gameHeight / gridWidth;
+    for (var i = 0; i < width; i++) {
+        obstacles.boxes[i] = [];
+        obstacles.grd[i] = [];
+        obstacles.wall[i] = [];
+        obstacles.cvr[i] = [];
+        for (var j = 0; j < height; j++) {
+            obstacles.boxes[i][j] = [];
+            obstacles.grd[i][j] = [];
+            obstacles.wall[i][j] = [];
+            obstacles.cvr[i][j] = [];
         }
     }
-    for (var blah = 0; blah < numHouse1; blah ++)
-    {
-      var insideOther = true;
-      while (insideOther)
-      {
-        var center = findSpawnPosition();
-        var house = new House1(center.x,center.y, Math.PI/2*Math.floor(4*Math.random()));
-        for (var i in house.obstacles)
-        {
-          var ob = house.obstacles[i];
-          insideOther = false;
-          loopThroughObstacles(ob.center, (obstacle) => {
-            if (ob.intersectOtherOb(obstacle))
-            {
-              insideOther = true;
-            }
-          });
-          if (insideOther)
-          {
-            break;
-          }
-        }
-      }
-      for (var i in house.obstacles)
-      {
-        var ob = house.obstacles[i];
-        var addTo = obstacles[Math.floor(ob.center.x / gridWidth)][Math.floor(ob.center.y / gridWidth)];
-        addTo[addTo.length] = ob;
-      }
-    }
-    for (var blah = 0; blah < numHouse2; blah ++)
-    {
-      var insideOther = true;
-      while (insideOther)
-      {
-        var center = findSpawnPosition();
-        var house = new House2(center.x,center.y, Math.PI/2*Math.floor(4*Math.random()));
-        for (var i in house.obstacles)
-        {
-          var ob = house.obstacles[i];
-          insideOther = false;
-          loopThroughObstacles(ob.center, (obstacle) => {
-            if (ob.intersectOtherOb(obstacle))
-            {
-              insideOther = true;
-            }
-          });
-          if (insideOther)
-          {
-            break;
-          }
-        }
-      }
-      for (var i in house.obstacles)
-      {
-        var ob = house.obstacles[i];
-        var addTo = obstacles[Math.floor(ob.center.x / gridWidth)][Math.floor(ob.center.y / gridWidth)];
-        addTo[addTo.length] = ob;
-      }
-    }
-    for (var blah = 0; blah < numOb; blah++) {
-        var insideOther = true;
-        var addTo;
-        var ob;
-        while (insideOther)
-        {
-          var center = findSpawnPosition();
-          addTo = obstacles[Math.floor(center.x / gridWidth)][Math.floor(center.y / gridWidth)];
-
-          var resolution = 6;
-          var vertList = [];
-          var distList = [];
-          var size = Math.random();
-          for (var i = 0; i < resolution; i++) {
-              distList[i] = (0.5 + 0.5*size) * (60);
-
-          }
-          for (var i = 0; i < 6; i++) {
-              var temp = [];
-              for (var j = 0; j < resolution; j++) {
-                  temp[j] = distList[j];
-              }
-              for (var j = 0; j < resolution; j++) {
-                  distList[j] = (temp[j] + 2 * temp[(j + 1) % resolution] + temp[(j + 2) % resolution]) / 4;
-              }
-          }
-          for (var i = 0; i < resolution; i++) {
-              var ang = i * 2 * Math.PI / resolution;
-              vertList[i] = center.add((new Vector(distList[i], 0)).rotate(ang));
-          }
-          ob = new Obstacle(vertList, '#B1B1B1', true);
-          insideOther = false;
-          loopThroughObstacles(ob.center, (obstacle) => {
-            if (ob.intersectOtherOb(obstacle))
-            {
-              insideOther = true;
-            }
-          });
-
-        }
-        addTo[addTo.length] = ob;
-    }
-    
-    /*var weapons = [];
-    for (var i = 0; i < viableWeapons.weapons.length; i++) {
-        for (var j = 0; j < viableWeapons.numEach[i]; j++) {
-            var weapon = new Gun(0,0,i);
-            weapon.pos = findSpawnPosition();
-            weapons.push(weapon);
-        }
-    }*/
+    constants.makeAllOb();
     gameState = new GameState(Date.now(), players, {});
     createBots(gameState);
-    
 }
 function createBots(state){
     bots = {};
@@ -1239,8 +1188,8 @@ function orientation(p, q, r) {
 var Player = function(xStart, yStart, name, color, id, prim, sec, state) {
     this.type = "Player";
     this.outfields = ['type','radius','reachDist','weapon','weapons','slot','health','pos','ang','punchLastTime','id','name','color','alive'];
-    
-    
+
+
     setIfUndefined(this, 'speed', 5);
     setIfUndefined(this, 'agility', 0.07);
     setIfUndefined(this, 'radius', 20);//
@@ -1252,12 +1201,12 @@ var Player = function(xStart, yStart, name, color, id, prim, sec, state) {
 
     setIfUndefined(this, 'pos', new Vector(xStart, yStart));//
     setIfUndefined(this, 'vel', new Vector(0, 0));//
-    
+
     setIfUndefined(this, 'lastDashTime', 0);//
     setIfUndefined(this, 'dashDur', 100);//
     setIfUndefined(this, 'dashRchrg', 10000);//
     setIfUndefined(this, 'dashSpeed', 12);//
-    
+
     setIfUndefined(this, 'ang', 0);//
 
     setIfUndefined(this, 'punchReach', 20);
@@ -1275,17 +1224,17 @@ var Player = function(xStart, yStart, name, color, id, prim, sec, state) {
     setIfUndefined(this, 'points', 0);//
     setIfUndefined(this, 'color', color);//
     setIfUndefined(this, 'alive', true);//
-    
+
     setIfUndefined(this, 'lastHitBy', -1);
-    
+
     var idx1 = state.addWeapon(new Gun(0,0,prim, this.id));
     var idx2 = state.addWeapon(new Gun(0,0,sec, this.id));
-    
+
     setIfUndefined(this, 'weapon', idx1);//
     setIfUndefined(this, 'weapons', [idx1,idx2]);//
-    
+
     setIfUndefined(this, 'lastOnRadar', 0);
-    
+
     this.swapWeapon = function(state, newSlot)
     {
       if (this.slot != newSlot && this.weapon != -1)
@@ -1518,7 +1467,7 @@ var GunStats = function(name, weaponClass, length, auto, firerate, multishot, ca
     setIfUndefined(this, 'ammoType', ammoType);//
     setIfUndefined(this, 'ammoId', ammoId);//
     setIfUndefined(this, 'fadeTime', fadeTime);//
-    
+
     setIfUndefined(this, 'buttPosition', buttPosition);//
     setIfUndefined(this, 'bulletWidth', bulletWidth);//
 
@@ -1529,14 +1478,14 @@ var GunStats = function(name, weaponClass, length, auto, firerate, multishot, ca
 }
 var Gun = function(startX, startY, stats, playerIdx) {
     this.outfields = ['type','gunStats','pos','vel','ang','bulletsRemaining','reloadStartTime','recoil','hold'];
-    
+
     setIfUndefined(this, 'gunStats', stats);//
-    Object.assign(this, viableWeapons.weapons[this.gunStats]);
-    
+    Object.assign(this, constants.weapons[this.gunStats]);
+
     setIfUndefined(this, 'pos', new Vector(startX, startY));//
     setIfUndefined(this, 'vel', new Vector(0, 0));//
     setIfUndefined(this, 'ang', -Math.PI/6);//
-    
+
     setIfUndefined(this, 'autoRem', 0);//
     setIfUndefined(this, 'bulletsRemaining', (playerIdx != -1 ? this.capacity : 0));//
     setIfUndefined(this, 'reloadStartTime', -1);//
@@ -1551,10 +1500,10 @@ var Gun = function(startX, startY, stats, playerIdx) {
 
     setIfUndefined(this, 'playerHolding', playerIdx);
     setIfUndefined(this, 'lastHoldTime', -1);
-    
+
     setIfUndefined(this, 'id', -1);
-    
-    
+
+
     this.type = "Gun";
     this.setLastFireTime = function(state)
     {
@@ -1576,7 +1525,7 @@ var Gun = function(startX, startY, stats, playerIdx) {
     }
     this.pushFromAll = function(state)
     {
-        
+
         if (this.hold)
         {
             return;
@@ -1601,9 +1550,9 @@ var Gun = function(startX, startY, stats, playerIdx) {
             }
         });
         this.vel = this.vel.add(finalForce).multiply(0.8);
-        loopThroughObstacles(this.pos, (obstacle) => {
+        loopThroughObstacles("wall",this.pos, (obstacle) => {
             iterations += 1;
-            if (this.pos.distanceTo(obstacle.center) > this.radius + obstacle.maxRadius || !obstacle.intersectable)
+            if (this.pos.distanceTo(obstacle.center) > this.radius + obstacle.maxRadius)
             {
                 return;
             }
@@ -1655,12 +1604,12 @@ var Gun = function(startX, startY, stats, playerIdx) {
                 this.spray += this.sprayCoef;
                 this.recoil += this.kickAnimation;
                 this.lastFireTime = state.time;
-                
+
                 this.autoRem -= 1;
                 this.bulletsRemaining -= 1;
                 if (this.playerHolding != -1)
                 {
-                    
+
                     var player = state.players[this.playerHolding];
                     player.vel = player.vel.add((new Vector( - this.personRecoil,0)).rotate(this.ang));
                     player.lastOnRadar = state.time;
@@ -1705,8 +1654,8 @@ var Gun = function(startX, startY, stats, playerIdx) {
     }
     this.stickingThroughWall = function(state) {
         var out = false;
-        loopThroughObstacles(this.pos, (obstacle) => {
-            if (obstacle.intersectable && this.intersectOb(obstacle,state)) {
+        loopThroughObstacles("wall",this.pos, (obstacle) => {
+            if (this.intersectOb(obstacle,state)) {
                 out = true;
                 return;
             }
@@ -1776,11 +1725,7 @@ var Bullet = function(weapon) {
         var smallestDistance = Number.MAX_VALUE;
         var objectsPoint = -1;
         var tailCheck = this.startPos.onSegment(this.pos.subtract(this.vel.multiply(2)), this.pos) ? this.startPos : this.pos.subtract(this.vel.multiply(2));
-        loopThroughObstacles(this.pos, (obstacle) => {
-            if (!obstacle.intersectable)
-            {
-              return;
-            }
+        loopThroughObstacles("wall",this.pos, (obstacle) => {
             var point = obstacle.intersectSegment(tailCheck,this.pos);
             if (point != -1) {
                 var dist = this.startPos.distanceTo(point);
@@ -1813,45 +1758,79 @@ var Bullet = function(weapon) {
         return [objectsPoint, playerHit];
     }
 }
-var House1 = function(x,y,ang)
-{
-  this.center = new Vector(x,y);
-  this.ang = ang;
-  this.wallThickness = 6;
-  this.obstacles = [
-    new Obstacle([new Vector(-52,-100),new Vector(52,-100),new Vector(52,100),new Vector(-52,100)],'#008',false),
-    new Obstacle([new Vector(-40,-100),new Vector(-52,-100),new Vector(-52,100),new Vector(-40,100)],'#008',true),
-    new Obstacle([new Vector(40,-100),new Vector(52,-100),new Vector(52,100),new Vector(40,100)],'#008',true)
-  ];
-  for (var i in this.obstacles)
-  {
-    var ob = this.obstacles[i];
-    ob.rotate(this.ang);
-    ob.move(this.center);
+var Structure = function(name, num, box, grd, wall, cvr, rots, minScale, maxScale){
+  this.name = name;
+  this.num = num;
+  this.box = box;
+  this.grd = grd;
+  this.wall = wall;
+  this.cvr = cvr;
+  this.rots = rots;
+  this.minScale = minScale;
+  this.maxScale = maxScale;
+  this.createAllObs = function(){
+    for (var i = 0; i < this.num; i++){
+      this.createObstacle();
+    }
   }
-}
-var House2 = function(x,y,ang)
-{
-  this.center = new Vector(x,y);
-  this.ang = ang;
-  this.wallThickness = 6;
-  this.obstacles = [
-    new Obstacle([new Vector(-52,-100),new Vector(52,-100),new Vector(52,100),new Vector(-52,100)],'#800',false),
-    new Obstacle([new Vector(-40,-100),new Vector(-52,-100),new Vector(-52,100),new Vector(52,100),new Vector(52,-100), new Vector(40, -100),new Vector(40,88),new Vector(-40,88)],'#800',true)
-  ];
-  for (var i in this.obstacles)
-  {
-    var ob = this.obstacles[i];
-    ob.rotate(this.ang);
-    ob.move(this.center);
+  this.createObstacle = function(){
+    var scale;
+    var rot;
+    var center;
+    var done = false;
+    do{
+      scale = Math.random() * (this.maxScale - this.minScale) + this.minScale;
+      rot = this.rots[Math.floor(rots.length * Math.random())];
+      center = findSpawnPosition();
+      var ob = this.box.copy();
+      ob.scale(scale);
+      ob.rotate(rot);
+      ob.move(center);
+      done = true;
+      loopThroughObstacles("boxes", center, (obst) => {
+        if (done && obst.intersectOtherOb(ob)){
+          done = false;
+        }
+      });
+    } while(!done);
+    var box = this.box.copy();
+    box.scale(scale);
+    box.rotate(rot);
+    box.move(center);
+    obstacles.add("boxes", box);
+    for (var i = 0, l = this.grd.length; i < l; i++)
+    {
+      var ob = this.grd[i].copy();
+      ob.scale(scale);
+      ob.rotate(rot);
+      ob.move(center);
+      obstacles.add("grd", ob);
+    }
+    for (var i = 0, l = this.wall.length; i < l; i++)
+    {
+      var ob = this.wall[i].copy();
+      ob.scale(scale);
+      ob.rotate(rot);
+      ob.move(center);
+      obstacles.add("wall", ob);
+    }
+    for (var i = 0, l = this.cvr.length; i < l; i++)
+    {
+      var ob = this.cvr[i].copy();
+      ob.scale(scale);
+      ob.rotate(rot);
+      ob.move(center);
+      obstacles.add("cvr", ob);
+    }
   }
+
 }
-var Obstacle = function(vs, color, intersectable) {
+var Obstacle = function(vs, color, bordered) {
     this.type = "Obstacle";
     setIfUndefined(this, 'color', color);//
 
     setIfUndefined(this, 'vs', vs);//
-    setIfUndefined(this, 'intersectable', intersectable);//
+    setIfUndefined(this, 'bordered', bordered);//
     if (this.center == undefined) {
         this.center = new Vector(0, 0);
         for (var i = 0; i < this.vs.length; i++) {
@@ -1865,6 +1844,13 @@ var Obstacle = function(vs, color, intersectable) {
             this.maxRadius = Math.max(this.center.distanceTo(this.vs[i]), this.maxRadius);
         }
     }
+    this.copy = function(){
+      var vs = [];
+      for (var i = 0; i < this.vs.length; i++) {
+          vs[i] = this.vs[i].copy();
+      }
+      return new Obstacle(vs, this.color, this.bordered);
+    }
     this.move = function(displace)
     {
       for (var i in this.vs)
@@ -1872,6 +1858,14 @@ var Obstacle = function(vs, color, intersectable) {
         this.vs[i] = this.vs[i].add(displace);
       }
       this.center = this.center.add(displace);
+    }
+    this.scale = function(scl){
+      for (var i in this.vs)
+      {
+        this.vs[i] = this.vs[i].multiply(scl);
+      }
+      this.center = this.center.multiply(scl);
+      this.maxRadius *= scl;
     }
     this.rotate = function(ang)
     {
@@ -2082,9 +2076,9 @@ setInterval(() => {
 },100);
 function updateGameArea() {
     //logTime("updateGameArea", () => {
-    
+
         gameState.time = Date.now();
-       
+
             gameState.step();
         stage += 1;
         if (stage >= framesPerTick) {
