@@ -44,12 +44,12 @@ for (var i in weaponImages)
     imageExists(i,path1 + i + ".svg",(j,img) => {
         weaponImages[j][true] = img;
     },()=>{
-        
+
     });
     imageExists(i,path2 + i + ".svg",(j,img) => {
         weaponImages[j][false] = img;
     },()=>{
-        
+
     });
 }
 var uiImages = {
@@ -60,7 +60,7 @@ for (var i in uiImages)
     imageExists(i,path3 + i + ".svg",(j,img) => {
         uiImages[j] = img;
     },()=>{
-        
+
     });
 }
 var viableWeapons;
@@ -69,10 +69,8 @@ socket.on('init', (msg) => {
     timeDifference = msg.data - Date.now();
     controlId = msg.id;
     obstacles = msg.obstacles;
-    borderObstacles = msg.borderObstacles;
 
     giveMethods(obstacles);
-    giveMethods(borderObstacles);
 
     gameWidth = msg.gameWidth;
     gameHeight = msg.gameHeight;
@@ -134,7 +132,7 @@ function combineObj(prev, obj)
 }
 lastMsg = null;
 socket.on('gameState', (msg) => {
-    
+
     tickIntervals.push(msg.time);
     if (tickIntervals.length > 6)
     {
@@ -143,7 +141,7 @@ socket.on('gameState', (msg) => {
     tickInterval = (tickIntervals[tickIntervals.length - 1] - tickIntervals[0])/(tickIntervals.length - 1);
     msg = combineObj(lastMsg, msg);
     lastMsg = msg;
-    
+
     for(var i in msg.weapons)
     {
         var weapon = msg.weapons[i];
@@ -207,16 +205,16 @@ var crossHair = {
             {
                 myGameArea.context.drawImage(uiImages.crosshair, -1, -1, 2, 2);
             }
-            
+
             else
             {
-                
+
                 (new Vector(1, 0)).drawLine(new Vector(-1, 0), '#fff', .13);
                 (new Vector(0, 1)).drawLine(new Vector(0, -1), '#fff', .13);
                 (new Vector(0, 0)).circle(.6, '#fff', .13);
             }
         });
-        
+
 
     }
 }
@@ -562,53 +560,73 @@ function limitInput()
 var obstacleSector = function(point) {
     return [Math.floor(point.x / gridWidth), Math.floor(point.y / gridWidth)];
 }
-var loopThroughDisplayObstacles = function(objectPos, inner) {
-    for (var i in borderObstacles) {
-        inner(borderObstacles[i]);
+var loopThroughDisplayObstacles = function(type, objectPos, inner) {
+    if (type == "wall"){
+      for (var i in obstacles.brdr) {
+          inner(obstacles.brdr[i]);
+      }
     }
     var sector = obstacleSector(objectPos);
     for (var i = sector[0] - Math.floor(myGameArea.uiWidth / (2 * drawer.scale * gridWidth)) - 2; i < sector[0] + Math.floor(myGameArea.uiWidth / (2 * drawer.scale * gridWidth)) + 3; i++) {
-        if (i < 0 || i >= obstacles.length) {
+        if (i < 0 || i >= obstacles[type].length) {
             continue;
         }
         for (var j = sector[1] - Math.floor(myGameArea.uiHeight / (2 * drawer.scale * gridWidth)) - 2; j < sector[1] + Math.floor(myGameArea.uiHeight / (2 * drawer.scale * gridWidth)) + 3; j++) {
-            if (j < 0 || j >= obstacles[i].length) {
+            if (j < 0 || j >= obstacles[type][i].length) {
                 continue;
             }
-            var objectsToLoop = obstacles[i][j];
+            var objectsToLoop = obstacles[type][i][j];
             for (var idx in objectsToLoop) {
                 inner(objectsToLoop[idx]);
             }
         }
     }
 }
-var loopThroughObstacles = function(objectPos, inner) {
-    for (var i in borderObstacles) {
-        inner(borderObstacles[i]);
-    }
+
+var loopThroughObstacles = function(type, objectPos, inner) {
     var sector = obstacleSector(objectPos);
+    if (type == "wall"){
+      if (sector[0] < 2)
+      {
+          inner(obstacles.brdr[0]);
+      }
+      else if (sector[0] > obstacles.boxes.length - 3)
+      {
+          inner(obstacles.brdr[1]);
+      }
+      if (sector[1] < 2)
+      {
+          inner(obstacles.brdr[2]);
+      }
+      else if (sector[1] > obstacles.boxes[0].length - 3)
+      {
+          inner(obstacles.brdr[3]);
+      }
+    }
     for (var i = sector[0] - 1; i < sector[0] + 2; i++) {
-        if (i < 0 || i >= obstacles.length) {
+        if (i < 0 || i >= obstacles[type].length) {
             continue;
         }
         for (var j = sector[1] - 1; j < sector[1] + 2; j++) {
-            if (j < 0 || j >= obstacles[i].length) {
+            if (j < 0 || j >= obstacles[type][i].length) {
                 continue;
             }
-            var objectsToLoop = obstacles[i][j];
+            var objectsToLoop = obstacles[type][i][j];
             for (var idx in objectsToLoop) {
                 inner(objectsToLoop[idx]);
             }
         }
     }
 }
-var loopThroughAllObstacles = function(inner) {
-    for (var i in borderObstacles) {
-        inner(borderObstacles[i]);
+var loopThroughAllObstacles = function(type, inner) {
+    if (type == "wall"){
+      for (var i in obstacles.brdr) {
+          inner(obstacles.brdr[i]);
+      }
     }
-    for (var i = 0; i < obstacles.length; i++) {
-        for (var j = 0; j < obstacles[i].length; j++) {
-            var objectsToLoop = obstacles[i][j];
+    for (var i = 0; i < obstacles[type].length; i++) {
+        for (var j = 0; j < obstacles[type][i].length; j++) {
+            var objectsToLoop = obstacles[type][i][j];
             for (var idx in objectsToLoop) {
                 inner(objectsToLoop[idx]);
             }
@@ -629,7 +647,6 @@ var fillDigits = function(num, length) {
 var timeDifference = 0;
 var controlId = 0;
 var obstacles;
-var borderObstacles;
 
 
 function blackBoxedText(txt, font, color, size, posx, posy, buffer, txtAlpha, align) {
@@ -858,10 +875,8 @@ var GameState = function() {
         myGameArea.transformUi(() => {
             drawer.transformPoint(() => {
                 this.displayGrid(500);
-                loopThroughDisplayObstacles(drawer.scroll, (obstacle) => {
-                    if (!obstacle.intersectable) {
-                        obstacle.display();
-                    }
+                loopThroughDisplayObstacles("grd",drawer.scroll, (obstacle) => {
+                    obstacle.display();
                 });
                 for (var idx in this.weapons) {
                     if (!this.weapons[idx].hold) {
@@ -869,10 +884,8 @@ var GameState = function() {
                     }
                 }
                 this.displayBullets(idx);
-                loopThroughDisplayObstacles(drawer.scroll, (obstacle) => {
-                    if (obstacle.intersectable) {
-                        obstacle.display();
-                    }
+                loopThroughDisplayObstacles("wall",drawer.scroll, (obstacle) => {
+                    obstacle.display();
                 });
 
                 for (var idx in this.players) {
@@ -888,6 +901,9 @@ var GameState = function() {
                     if (this.players[idx].alive && idx != controlId)
                         this.players[idx].drawHealthBar(idx);
                 }
+                loopThroughDisplayObstacles("cvr",drawer.scroll, (obstacle) => {
+                    obstacle.display();
+                });
             });
 
 
@@ -944,7 +960,13 @@ var GameState = function() {
             myGameArea.context.globalAlpha = 0.6;
             myGameArea.context.fillStyle = "#6aa150";
             myGameArea.context.fillRect(0, 0, gameWidth, gameHeight);
-            loopThroughAllObstacles((obstacle) => {
+            loopThroughAllObstacles("grd",(obstacle) => {
+                obstacle.display(true);
+            });
+            loopThroughAllObstacles("wall",(obstacle) => {
+                obstacle.display(true);
+            });
+            loopThroughAllObstacles("cvr",(obstacle) => {
                 obstacle.display(true);
             });
             myGameArea.transform(this.players[controlId].pos.x,this.players[controlId].pos.y,0,1,()=>{
@@ -975,7 +997,7 @@ var GameState = function() {
                 });
             }
         });
-        
+
     }
     this.displayWeaponPickup = function()
     {
@@ -1267,7 +1289,7 @@ var GameState = function() {
                 ctx.closePath();
                 ctx.fill();
                 ctx.stroke();
-                
+
             });
         }
         else
@@ -1468,7 +1490,7 @@ var Bullet = function() {
     this.type = "Bullet";
     this.display = function() {
         var ctx = myGameArea.context;
-        
+
         myGameArea.transform(this.pos.x,this.pos.y,this.ang, 1, ()=>{
             var color = ammoTypes[this.ammoId].b;
             const g = ctx.createLinearGradient(0,0, -this.trailLength, 0);
@@ -1518,11 +1540,7 @@ var Bullet = function() {
         var objectsPoint = -1;
         var bulletHitbox = 2;
         var tailCheck = this.startPos.onSegment(this.pos.subtract(this.vel.multiply(bulletHitbox)),this.pos) ? this.startPos : this.pos.subtract(this.vel.multiply(bulletHitbox));
-        loopThroughObstacles(this.pos, (obstacle) => {
-            if (!obstacle.intersectable)
-            {
-                return;
-            }
+        loopThroughObstacles("wall",this.pos, (obstacle) => {
             var point = obstacle.intersectSegment(tailCheck,this.pos);
             if (point != -1) {
                 var dist = this.startPos.distanceTo(point);
@@ -1606,7 +1624,7 @@ var Obstacle = function() {
         }
         ctx.closePath();
         ctx.fill();
-        if (this.intersectable && !onMinimap) {
+        if (this.bordered && !onMinimap) {
             ctx.stroke();
         }
     }
@@ -1831,7 +1849,7 @@ var linearInterpolator = {
             return a1;
         } else if (t > t2) {
             return a2;
-        } 
+        }
         var dir1 = (a1 % (2 * Math.PI) + 2 * Math.PI) % (2 * Math.PI);
         var dir2 = (a2 % (2 * Math.PI) + 2 * Math.PI) % (2 * Math.PI);
         var difference = dir2 - dir1;
@@ -1884,7 +1902,7 @@ var linearInterpolator = {
             if (!right.weapons[i].hold && !left.weapons[i].hold)
                 out.weapons[i].pos = this.linearPosition(left.weapons[i].pos,right.weapons[i].pos, displayTime, left.time,right.time);
             //var arrIdx = arrayUnique(Object.keys(right.weapons[i].bullets).concat(Object.keys(left.weapons[i].bullets)));
-            
+
             out.weapons[i].recoil = this.linearValue(left.weapons[i].recoil, right.weapons[i].recoil, displayTime, left.time, right.time);
         }
         for (var j in out.bullets) {
