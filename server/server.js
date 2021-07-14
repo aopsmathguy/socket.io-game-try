@@ -365,7 +365,7 @@ const constants = {
         this.structures = [
             new Structure(
               "rock",
-              45,
+              20,
               new Obstacle([(new Vector(20,0)).rotate(0),(new Vector(20,0)).rotate(Math.PI/3),(new Vector(20,0)).rotate(2 * Math.PI/3),(new Vector(20,0)).rotate(3 * Math.PI/3),(new Vector(20,0)).rotate(4 * Math.PI/3),(new Vector(20,0)).rotate(5 * Math.PI/3)],'#000',false),
               [],
               [
@@ -384,6 +384,19 @@ const constants = {
                 new Obstacle([(new Vector(20,0)).rotate(0),(new Vector(20,0)).rotate(Math.PI/3),(new Vector(20,0)).rotate(2 * Math.PI/3),(new Vector(20,0)).rotate(3 * Math.PI/3),(new Vector(20,0)).rotate(4 * Math.PI/3),(new Vector(20,0)).rotate(5 * Math.PI/3)],'rgba(77, 117, 57, 0.97)',false)
               ],
               [0,Math.PI/2,Math.PI,3*Math.PI/2],2.5,3.5
+            ),
+            new Structure(
+              "tree",
+              40,
+              new Obstacle([(new Vector(20,0)).rotate(0),(new Vector(20,0)).rotate(Math.PI/3),(new Vector(20,0)).rotate(2 * Math.PI/3),(new Vector(20,0)).rotate(3 * Math.PI/3),(new Vector(20,0)).rotate(4 * Math.PI/3),(new Vector(20,0)).rotate(5 * Math.PI/3)],'#000',false),
+              [],
+              [
+                  new Obstacle([(new Vector(20,0)).rotate(0),(new Vector(20,0)).rotate(Math.PI/3),(new Vector(20,0)).rotate(2 * Math.PI/3),(new Vector(20,0)).rotate(3 * Math.PI/3),(new Vector(20,0)).rotate(4 * Math.PI/3),(new Vector(20,0)).rotate(5 * Math.PI/3)],'#654321',true)
+              ],
+              [
+                new Obstacle([(new Vector(70,0)).rotate(0),(new Vector(70,0)).rotate(Math.PI/3),(new Vector(70,0)).rotate(2 * Math.PI/3),(new Vector(70,0)).rotate(3 * Math.PI/3),(new Vector(70,0)).rotate(4 * Math.PI/3),(new Vector(70,0)).rotate(5 * Math.PI/3)],'rgba(77, 117, 57, 0.93)',false)
+              ],
+              [0,Math.PI/2,Math.PI,3*Math.PI/2],1,1.2
             ),
             new Structure(
               "container1",
