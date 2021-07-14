@@ -1,5 +1,5 @@
-const gameWidth = 3000;
-const gameHeight = 3000;
+const gameWidth = 4000;
+const gameHeight = 4000;
 const gridWidth = 250;
 const framesPerTick = 2;
 
@@ -365,7 +365,7 @@ const constants = {
         this.structures = [
             new Structure(
               "rock",
-              15,
+              24,
               new Obstacle([(new Vector(20,0)).rotate(0),(new Vector(20,0)).rotate(Math.PI/3),(new Vector(20,0)).rotate(2 * Math.PI/3),(new Vector(20,0)).rotate(3 * Math.PI/3),(new Vector(20,0)).rotate(4 * Math.PI/3),(new Vector(20,0)).rotate(5 * Math.PI/3)],'#000',false),
               [],
               [
@@ -376,7 +376,7 @@ const constants = {
             ),
             new Structure(
               "bush",
-              8,
+              12,
               new Obstacle([(new Vector(10,0)).rotate(0),(new Vector(10,0)).rotate(Math.PI/3),(new Vector(10,0)).rotate(2 * Math.PI/3),(new Vector(10,0)).rotate(3 * Math.PI/3),(new Vector(10,0)).rotate(4 * Math.PI/3),(new Vector(10,0)).rotate(5 * Math.PI/3)],'#000',false),
               [],
               [],
