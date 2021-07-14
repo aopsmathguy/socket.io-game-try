@@ -365,7 +365,7 @@ const constants = {
         this.structures = [
             new Structure(
               "rock",
-              24,
+              28,
               new Obstacle([(new Vector(20,0)).rotate(0),(new Vector(20,0)).rotate(Math.PI/3),(new Vector(20,0)).rotate(2 * Math.PI/3),(new Vector(20,0)).rotate(3 * Math.PI/3),(new Vector(20,0)).rotate(4 * Math.PI/3),(new Vector(20,0)).rotate(5 * Math.PI/3)],'#000',false),
               [],
               [
@@ -376,7 +376,7 @@ const constants = {
             ),
             new Structure(
               "bush",
-              12,
+              18,
               new Obstacle([(new Vector(10,0)).rotate(0),(new Vector(10,0)).rotate(Math.PI/3),(new Vector(10,0)).rotate(2 * Math.PI/3),(new Vector(10,0)).rotate(3 * Math.PI/3),(new Vector(10,0)).rotate(4 * Math.PI/3),(new Vector(10,0)).rotate(5 * Math.PI/3)],'#000',false),
               [],
               [],
@@ -387,7 +387,7 @@ const constants = {
             ),
             new Structure(
               "tree",
-              30,
+              40,
               new Obstacle([(new Vector(20,0)).rotate(0),(new Vector(20,0)).rotate(Math.PI/3),(new Vector(20,0)).rotate(2 * Math.PI/3),(new Vector(20,0)).rotate(3 * Math.PI/3),(new Vector(20,0)).rotate(4 * Math.PI/3),(new Vector(20,0)).rotate(5 * Math.PI/3)],'#000',false),
               [],
               [
