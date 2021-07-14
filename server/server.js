@@ -330,7 +330,7 @@ const constants = {
         }
     },
     makeAllOb : function(){
-      for (var i = 0; i < this.structures.length; i++){
+      for (var i = this.structures.length - 1; i >= 0; i--){
         this.structures[i].createAllObs();
       }
     },
