@@ -396,7 +396,7 @@ const constants = {
               [
                 new Obstacle([(new Vector(70,0)).rotate(0),(new Vector(70,0)).rotate(Math.PI/3),(new Vector(70,0)).rotate(2 * Math.PI/3),(new Vector(70,0)).rotate(3 * Math.PI/3),(new Vector(70,0)).rotate(4 * Math.PI/3),(new Vector(70,0)).rotate(5 * Math.PI/3)],'rgba(77, 117, 57, 0.93)',false)
               ],
-              [0,Math.PI/2,Math.PI,3*Math.PI/2],1,1.2
+              [0,Math.PI/2,Math.PI,3*Math.PI/2],1.5,2
             ),
             new Structure(
               "container1",
@@ -1994,6 +1994,9 @@ var Obstacle = function(vs, color, bordered) {
       if (this.center.distanceTo(ob.center) > this.maxRadius + ob.maxRadius)
       {
         return false;
+      }
+      if (ob.insideOf(vs[0]) || this.insideOf(ob.vs[0])){
+        return true;
       }
       for (var idx = 0; idx < ob.vs.length; idx ++)
       {
