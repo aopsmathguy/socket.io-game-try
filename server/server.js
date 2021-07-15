@@ -381,7 +381,7 @@ const constants = {
               [],
               [],
               [
-                new Obstacle([(new Vector(20,0)).rotate(0),(new Vector(20,0)).rotate(Math.PI/3),(new Vector(20,0)).rotate(2 * Math.PI/3),(new Vector(20,0)).rotate(3 * Math.PI/3),(new Vector(20,0)).rotate(4 * Math.PI/3),(new Vector(20,0)).rotate(5 * Math.PI/3)],'rgba(77, 117, 57, 0.95)',false)
+                new Obstacle([(new Vector(20,0)).rotate(0),(new Vector(20,0)).rotate(Math.PI/3),(new Vector(20,0)).rotate(2 * Math.PI/3),(new Vector(20,0)).rotate(3 * Math.PI/3),(new Vector(20,0)).rotate(4 * Math.PI/3),(new Vector(20,0)).rotate(5 * Math.PI/3)],'rgba(67, 92, 55, 0.95)',false)
               ],
               [0,Math.PI/2,Math.PI,3*Math.PI/2],2.5,3.5
             ),
@@ -394,7 +394,7 @@ const constants = {
                   new Obstacle([(new Vector(20,0)).rotate(0),(new Vector(20,0)).rotate(Math.PI/3),(new Vector(20,0)).rotate(2 * Math.PI/3),(new Vector(20,0)).rotate(3 * Math.PI/3),(new Vector(20,0)).rotate(4 * Math.PI/3),(new Vector(20,0)).rotate(5 * Math.PI/3)],'#654321',true)
               ],
               [
-                new Obstacle([(new Vector(70,0)).rotate(0),(new Vector(70,0)).rotate(Math.PI/3),(new Vector(70,0)).rotate(2 * Math.PI/3),(new Vector(70,0)).rotate(3 * Math.PI/3),(new Vector(70,0)).rotate(4 * Math.PI/3),(new Vector(70,0)).rotate(5 * Math.PI/3)],'rgba(77, 117, 57, 0.85)',false)
+                new Obstacle([(new Vector(70,0)).rotate(0),(new Vector(70,0)).rotate(Math.PI/3),(new Vector(70,0)).rotate(2 * Math.PI/3),(new Vector(70,0)).rotate(3 * Math.PI/3),(new Vector(70,0)).rotate(4 * Math.PI/3),(new Vector(70,0)).rotate(5 * Math.PI/3)],'rgba(67, 92, 55, 0.85)',false)
               ],
               [0,Math.PI/2,Math.PI,3*Math.PI/2],1.5,2
             ),
