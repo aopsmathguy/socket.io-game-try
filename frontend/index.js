@@ -739,13 +739,13 @@ var myGameArea = {
         this.fpsInterval = 1000 / 60;
         this.animate = function() {
             requestAnimationFrame(this.animate.bind(this));
-            now = Date.now();
-            elapsed = now - then;
-            if (elapsed > this.fpsInterval) {
-                this.updateFps();
-                then = now - elapsed % this.fpsInterval;
+//             now = Date.now();
+//             elapsed = now - then;
+//             if (elapsed > this.fpsInterval) {
+//                 this.updateFps();
+//                 then = now - elapsed % this.fpsInterval;
                 updateGameArea();
-            }
+//             }
         }
         this.interval = function() {
             then = Date.now();
