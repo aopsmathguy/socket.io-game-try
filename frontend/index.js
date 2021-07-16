@@ -414,7 +414,25 @@ var settings = {
             this.update();
             this.elem.oninput = this.update.bind(this);
         }
+    },
+    graphicsRatio : {
+        minSize : 0.1,
+        maxSize : 1.9,
+        value : 1,
+        elem : document.getElementById("graphics"),
+        size : 1,
+        calculate : function(){
+            return this.minSize * this.elem.value/100 + this.maxSize * (1 - this.elem.value/100);
+        },
+        update : function() {
+            this.value = this.calculate();
+        },
+        start : function() {
+            this.update();
+            this.elem.oninput = this.update.bind(this);
+        }
     }
+    
 }
 var killFeed = {
     list : [],
@@ -739,8 +757,8 @@ var myGameArea = {
     },
     scale : window.devicePixelRatio,
     clear: function() {
-        this.canvas.width = window.innerWidth * this.scale;
-        this.canvas.height = window.innerHeight * this.scale;
+        this.canvas.width = window.innerWidth * this.scale * settings.graphicsRatio.value;
+        this.canvas.height = window.innerHeight * this.scale * settings.graphicsRatio.value;
 
         this.canvas.style.width = window.innerWidth;
         this.canvas.style.height = window.innerHeight;
@@ -817,7 +835,7 @@ var controlsBundle = {
 
         const rect = myGameArea.canvas.getBoundingClientRect();
         window.addEventListener('mousemove', function(e) {
-            controlsBundle.mouse = (new Vector(e.clientX - rect.left, e.clientY - rect.top)).multiply(myGameArea.scale);
+            controlsBundle.mouse = (new Vector(e.clientX - rect.left, e.clientY - rect.top)).multiply(myGameArea.scale * settings.graphicsRatio.value);
             controlsBundle.ang = controlsBundle.mouse.subtract(new Vector(myGameArea.canvas.width, myGameArea.canvas.height).multiply(0.5)).ang();
             //socket.emit('mousemove', controlsBundle.ang);
         });
@@ -1924,6 +1942,9 @@ var linearInterpolator = {
         var out = JSON.parse(JSON.stringify(right));
         giveMethods(out);
         out.time = this.linearValue(left.time,right.time,displayTime,left.time,right.time);
+        if (!left || !left.players){
+          return out;
+        }
         for (var i in out.players) {
             if (left.players == undefined || right.players == undefined || left.players[i] == undefined || right.players[i] == undefined || !left.players[i].alive) {
                 continue;
