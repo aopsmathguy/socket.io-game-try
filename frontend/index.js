@@ -272,7 +272,7 @@ var loadout = {
         this.elem.appendChild(secondaryCollapse);
         var secondaryContent = document.createElement("div");
         secondaryContent.className = "content";
-        var loadout = JSON.parse(localStorage.loadout) || {};
+        var loadout = (localStorage.loadout ? JSON.parse(localStorage.loadout) : {});
         var defaultPrim = loadout.prim || "AK-47";
         var defaultSec = loadout.sec || "Glock 17";
         for (var i in this.weaponClasses)
