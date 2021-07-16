@@ -272,9 +272,9 @@ var loadout = {
         this.elem.appendChild(secondaryCollapse);
         var secondaryContent = document.createElement("div");
         secondaryContent.className = "content";
-        localStorage.loadout = {};
-        var defaultPrim = localStorage.loadout.prim || "AK-47";
-        var defaultSec = localStorage.loadout.sec || "Glock 17";
+        var loadout = JSON.parse(localStorage.loadout) || {};
+        var defaultPrim = loadout.prim || "AK-47";
+        var defaultSec = loadout.sec || "Glock 17";
         for (var i in this.weaponClasses)
         {
             var weapons = this.weaponClasses[i];
@@ -372,8 +372,10 @@ var loadout = {
                    }
                }
                currentLoad.innerHTML = constants[this.primary].name + " | " + constants[this.secondary].name;
-               localStorage.loadout.prim = constants[this.primary].name;
-               localStorage.loadout.sec = constants[this.secondary].name
+               localStorage.loadout = JSON.stringify({
+                   prim : constants[this.primary].name,
+                   sec : constants[this.secondary].name
+              });
            }).bind(this);
            update();
            radio.addEventListener('change', update.bind(this));
