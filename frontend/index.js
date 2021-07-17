@@ -36,7 +36,8 @@ var weaponImages = {
     "Crossbow" : 0,
     "M1A1" : 0,
     "Laser" : 0,
-    "Glock 17" : 0
+    "Glock 17" : 0,
+    "MK12 SPR" : 0
 };
 for (var i in weaponImages)
 {
