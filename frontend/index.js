@@ -2085,7 +2085,7 @@ function updateGameArea() {
         state.render();
 
     }
-    crossHair.display();
+    //crossHair.display();
 }
 
 function hexToRgbA(hex, alpha) {
