@@ -1244,15 +1244,15 @@ var GameState = function() {
                 ctx.strokeStyle = '#000';
 
                 ctx.beginPath();
-                ctx.arc(firstShoulder.x, firstShoulder.y, 13/2, 0, 2 * Math.PI);
+                ctx.arc(firstShoulder.x, firstShoulder.y, 14/2, 0, 2 * Math.PI);
                 ctx.closePath();
                 ctx.fill();
                 ctx.beginPath();
-                ctx.arc(secondShoulder.x, secondShoulder.y, 13/2, 0, 2 * Math.PI);
+                ctx.arc(secondShoulder.x, secondShoulder.y, 14/2, 0, 2 * Math.PI);
                 ctx.closePath();
                 ctx.fill();
 
-                ctx.lineWidth = 11;
+                ctx.lineWidth = 13;
                 ctx.beginPath();
                 ctx.moveTo(firstShoulder.x, firstShoulder.y);
                 ctx.lineTo(firstHand.x,firstHand.y);
@@ -1268,15 +1268,15 @@ var GameState = function() {
                 ctx.strokeStyle = player.color;
 
                 ctx.beginPath();
-                ctx.arc(firstShoulder.x, firstShoulder.y, 9/2, 0, 2 * Math.PI);
+                ctx.arc(firstShoulder.x, firstShoulder.y, 10/2, 0, 2 * Math.PI);
                 ctx.closePath();
                 ctx.fill();
                 ctx.beginPath();
-                ctx.arc(secondShoulder.x, secondShoulder.y, 9/2, 0, 2 * Math.PI);
+                ctx.arc(secondShoulder.x, secondShoulder.y, 10/2, 0, 2 * Math.PI);
                 ctx.closePath();
                 ctx.fill();
 
-                ctx.lineWidth = 7;
+                ctx.lineWidth = 9;
                 ctx.beginPath();
                 ctx.moveTo(firstShoulder.x, firstShoulder.y);
                 ctx.lineTo(firstHand.x,firstHand.y);
@@ -1290,21 +1290,21 @@ var GameState = function() {
 
                 ctx.fillStyle = "#000";
                 ctx.beginPath();
-                ctx.arc(firstHand.x, firstHand.y, 14/2,0,2*Math.PI);
+                ctx.arc(firstHand.x, firstHand.y, 16/2,0,2*Math.PI);
                 ctx.closePath();
                 ctx.fill();
                 ctx.beginPath();
-                ctx.arc(secondHand.x, secondHand.y, 14/2,0,2*Math.PI);
+                ctx.arc(secondHand.x, secondHand.y, 16/2,0,2*Math.PI);
                 ctx.closePath();
                 ctx.fill();
 
                 ctx.fillStyle = player.color;
                 ctx.beginPath();
-                ctx.arc(firstHand.x, firstHand.y, 10/2,0,2*Math.PI);
+                ctx.arc(firstHand.x, firstHand.y, 12/2,0,2*Math.PI);
                 ctx.closePath();
                 ctx.fill();
                 ctx.beginPath();
-                ctx.arc(secondHand.x, secondHand.y, 10/2,0,2*Math.PI);
+                ctx.arc(secondHand.x, secondHand.y, 12/2,0,2*Math.PI);
                 ctx.closePath();
                 ctx.fill();
             });
