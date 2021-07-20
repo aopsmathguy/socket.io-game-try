@@ -1,7 +1,7 @@
 const gameWidth = 4000;
 const gameHeight = 4000;
 const gridWidth = 250;
-const framesPerTick = 10;
+const framesPerTick = 2;
 
 const io = require('socket.io')();
 const words = {
