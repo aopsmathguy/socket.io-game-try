@@ -1696,7 +1696,7 @@ var Bullet = function(weapon) {
     setIfUndefined(this, 'startPos', weapon.pos.add((new Vector(weapon.length / 2, 0)).rotate(weapon.ang)));//
     setIfUndefined(this, 'tailPos', this.startPos.copy());//
     setIfUndefined(this, 'pos', this.startPos.copy());//
-    var ang = weapon.ang + Math.random() * weapon.spray * (Math.random() - 0.5);
+    var ang = weapon.ang + 1.5 * Math.random() * weapon.spray * (Math.random() - 0.5);
     setIfUndefined(this, 'vel', (new Vector(weapon.bulletSpeed, 0)).rotate(ang).add(weapon.vel));//
     setIfUndefined(this, 'ang', this.vel.ang());//
     setIfUndefined(this, 'bulletSpeed', weapon.bulletSpeed);//
