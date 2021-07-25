@@ -824,7 +824,7 @@ var controlsBundle = {
         controlsBundle.mouse = new Vector(0,0);
         window.addEventListener('keydown', (function(e) {
             this.keys = (this.keys || []);
-            var key = this.keyMapper[e.keyCode];
+            var key = this.keyMapper[e.keyCode] || e.keyCode;
             if (!this.keys[key]) {
                 this.keys[key] = true;
                 if (this.sendControls() && this.importantKeys.has(key))
@@ -832,7 +832,7 @@ var controlsBundle = {
             }
         }).bind(this));
         window.addEventListener('keyup', (function(e) {
-            var key = this.keyMapper[e.keyCode];
+            var key = this.keyMapper[e.keyCode] || e.keyCode;
             if (this.keys[key]) {
                 this.keys[key] = false;
                 if (this.sendControls() && this.importantKeys.has(key))
