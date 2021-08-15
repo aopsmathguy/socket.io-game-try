@@ -1687,21 +1687,21 @@ var Gun = function(startX, startY, stats, playerIdx) {
         return out;
     }
 }
-var cdf = function(k, spray){
-    var frac = k/spray;
+var cdf = function(frac){
     return (frac * Math.sqrt(1 - frac ** 2) + Math.asin(frac) + Math.PI/2)/Math.PI;
 }
-var invcdf = function(x, spray){
-    var low = -spray;
-    var high = spray;
+var invcdf = function(x){
+    var low = -1;
+    var high = 1;
     for (var i = 0; i < 10; i++){
         var mid = (high + low)/2;
-        var val = cdf(mid, spray);
+        var val = cdf(mid);
+        console.log(val, x);
         if (val < x){
-            high = mid;
+            low = mid;
         }
         if (val > x){
-            low = mid;
+            high = mid;
         }
     }
     var mid = (high + low)/2;
@@ -1716,7 +1716,7 @@ var Bullet = function(weapon) {
     setIfUndefined(this, 'startPos', weapon.pos.add((new Vector(weapon.length / 2, 0)).rotate(weapon.ang)));//
     setIfUndefined(this, 'tailPos', this.startPos.copy());//
     setIfUndefined(this, 'pos', this.startPos.copy());//
-    var ang = weapon.ang + invcdf(Math.random(), weapon.spray);
+    var ang = weapon.ang + weapon.spray * invcdf(Math.random());
     setIfUndefined(this, 'vel', (new Vector(weapon.bulletSpeed, 0)).rotate(ang).add(weapon.vel));//
     setIfUndefined(this, 'ang', this.vel.ang());//
     setIfUndefined(this, 'bulletSpeed', weapon.bulletSpeed);//
