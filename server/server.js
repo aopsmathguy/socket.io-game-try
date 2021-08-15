@@ -1694,7 +1694,7 @@ var cdf = function(k, spray){
 var invcdf = function(x, spray){
     var low = -spray;
     var high = spray;
-    for (int i = 0; i < 10; i++){
+    for (var i = 0; i < 10; i++){
         var mid = (high + low)/2;
         var val = cdf(mid, spray);
         if (val < x){
