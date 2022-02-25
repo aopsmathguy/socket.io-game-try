@@ -1,2 +1,2 @@
-# shooting thing 
-hosted https://gunnaz.netlify.app/ very unstable so lmao don't blame me
+# survival ffa game 
+hosted https://gunnaz.netlify.app/ very unstable and messy coding resulting in questionable netcodes 
